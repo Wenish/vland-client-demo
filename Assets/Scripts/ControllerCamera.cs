@@ -12,8 +12,12 @@ namespace Game.Scripts.Controllers
         public float ScrollSpeed = 20f;
         public float MinCameraDistance = 3f;
         public float MaxCameraDistance = 120f;
+        public float MouseOffsetInfluenceZ = 10f;
+        public float MouseOffsetInfluenceX = 20f;
 
         public float Zoom = 1f;
+
+        Vector3 mousePositionRelativeToCenterOfScreen = Vector3.zero;
 
         void Start()
         {
@@ -40,6 +44,15 @@ namespace Game.Scripts.Controllers
                 // Lookg for target to focusing
             }
             OnScroll();
+            MousePositionChange();
+        }
+
+        void MousePositionChange()
+        {
+            mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((Input.mousePosition.x - Screen.width/2) / Screen.width, -0.5f, 0.5f);
+            mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((Input.mousePosition.y - Screen.height/2) / Screen.height, -0.5f, 0.5f);
+
+            Debug.Log($"Mouse X:{mousePositionRelativeToCenterOfScreen.x} Y:{mousePositionRelativeToCenterOfScreen.y}");
         }
 
         void OnScroll()
@@ -59,6 +72,8 @@ namespace Game.Scripts.Controllers
                 if (CameraTarget != null)
                 {
                     Vector3 offset = OffsetCamera;
+                    offset.z = offset.z + (mousePositionRelativeToCenterOfScreen.y * MouseOffsetInfluenceZ);
+                    offset.x = offset.x + (mousePositionRelativeToCenterOfScreen.x * MouseOffsetInfluenceX);
                     offset.y = offset.y * Zoom;
                     offset.z = offset.z * Zoom;
                     var desiredPosition = CameraTarget.position + offset;

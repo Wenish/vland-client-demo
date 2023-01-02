@@ -8,8 +8,9 @@ public class UnitController : MonoBehaviour
     public float moveSpeed = 5f;
     Rigidbody unitRigidbody;
 
-    float horizontalInput = 0f;
-    float verticalInput = 0f;
+    public float horizontalInput = 0f;
+    public float verticalInput = 0f;
+    public float angle = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -20,18 +21,13 @@ public class UnitController : MonoBehaviour
     void FixedUpdate()
     {
         MovePlayer();
+        RotatePlayer();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MyInput();
-    }
-
-    private void MyInput()
-    {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        
     }
 
     private void MovePlayer()
@@ -46,5 +42,11 @@ public class UnitController : MonoBehaviour
         Debug.Log(inputs);
         Debug.Log(moveDirection);
         unitRigidbody.velocity = moveDirection;
+    }
+
+    private void RotatePlayer()
+    {
+        float lerpedAngle = Mathf.LerpAngle(transform.rotation.eulerAngles.y, angle, Time.deltaTime * 10);
+        transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
     }
 }
