@@ -9,7 +9,12 @@ public class ManagerInput : MonoBehaviour
     public float verticalInput;
     public Vector3 mousePositionRelativeToCenterOfScreen = Vector3.zero;
     public float angle = 0f;
+    public Transform UnitTransform;
     public UnitController UnitController;
+
+    public Vector3 MouseWorldPosition;
+
+    Plane plane = new Plane(Vector3.up, 0);
     
     // Start is called before the first frame update
     void Start()
@@ -20,19 +25,26 @@ public class ManagerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        InputMouse();
+        SetMouseWorldPosition();
+        CalculateAngle();
         InputAxis();
         ControlUnit();
     }
 
-    private void InputMouse()
+    private void SetMouseWorldPosition()
     {
-        mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((Input.mousePosition.x - Screen.width/2) / Screen.width, -0.5f, 0.5f);
-        mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((Input.mousePosition.y - Screen.height/2) / Screen.height, -0.5f, 0.5f);
+        float distance;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (plane.Raycast(ray, out distance))
+        {
+            MouseWorldPosition = ray.GetPoint(distance);
+        }
+    }
 
-        Debug.Log($"Mouse X:{mousePositionRelativeToCenterOfScreen.x} Y:{mousePositionRelativeToCenterOfScreen.y}");
-
-        angle = -(Mathf.Atan2(mousePositionRelativeToCenterOfScreen.y, mousePositionRelativeToCenterOfScreen.x) * Mathf.Rad2Deg);
+    private void CalculateAngle()
+    {
+        Vector3 pos = UnitTransform.position - MouseWorldPosition;
+        angle = -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90;
     }
 
     private void InputAxis()

@@ -1321,7 +1321,9 @@ MonoBehaviour:
   verticalInput: 0
   mousePositionRelativeToCenterOfScreen: {x: 0, y: 0, z: 0}
   angle: 0
+  UnitTransform: {fileID: 795324800}
   UnitController: {fileID: 795324801}
+  MouseWorldPosition: {x: 0, y: 0, z: 0}
 --- !u!1001 &321437018848504802
 PrefabInstance:
   m_ObjectHideFlags: 0
