@@ -12,9 +12,17 @@ public class UnitController : MonoBehaviour
     public float verticalInput = 0f;
     public float angle = 0f;
 
+    public int maxHealth = 100;
+    public int currentHealth;
+
+    public ControllerHealthbar controllerHealthbar;
+
     // Start is called before the first frame update
     void Start()
     {
+        currentHealth = maxHealth;
+        controllerHealthbar.SetMaxHealth(maxHealth);
+        controllerHealthbar.SetHealth(currentHealth);
         unitRigidbody = GetComponent<Rigidbody>();
     }
 
@@ -27,7 +35,21 @@ public class UnitController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TakeDamage(20);
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            TakeDamage(-maxHealth);
+        }
+    }
+
+    void TakeDamage (int damage)
+    {
+        var newHealth = currentHealth - damage;
+        currentHealth = Mathf.Clamp(newHealth, 0, maxHealth);
+        controllerHealthbar.SetHealth(currentHealth);
     }
 
     private void MovePlayer()
