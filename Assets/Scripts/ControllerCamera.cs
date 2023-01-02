@@ -74,8 +74,7 @@ namespace Game.Scripts.Controllers
                     Vector3 offset = OffsetCamera;
                     offset.z = offset.z + (mousePositionRelativeToCenterOfScreen.y * MouseOffsetInfluenceZ);
                     offset.x = offset.x + (mousePositionRelativeToCenterOfScreen.x * MouseOffsetInfluenceX);
-                    offset.y = offset.y * Zoom;
-                    offset.z = offset.z * Zoom;
+                    offset = offset * Zoom;
                     var desiredPosition = CameraTarget.position + offset;
                     var t = Time.deltaTime * SpeedCamera;
                     transform.position = Vector3.Lerp(transform.position, desiredPosition, t);
