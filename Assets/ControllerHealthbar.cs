@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,13 +6,14 @@ public class ControllerHealthbar : MonoBehaviour
 {
     public Slider slider;
     public float updateSpeedSeconds = 0.2f;
-    public void SetMaxHealth(int health)
+    private void Awake()
     {
-        slider.maxValue = health;
+        GetComponentInParent<UnitController>().OnHealthChange += HandleOnHealthChange;
     }
-    public void SetHealth(int health)
+    private void HandleOnHealthChange(int currentHealth, int maxHealth)
     {
-        StartCoroutine(ChangeHealth(health));
+        slider.maxValue = maxHealth;
+        StartCoroutine(ChangeHealth(currentHealth));
     }
 
     private IEnumerator ChangeHealth(int health)

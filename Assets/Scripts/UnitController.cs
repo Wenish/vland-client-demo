@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class UnitController : MonoBehaviour
@@ -11,19 +10,17 @@ public class UnitController : MonoBehaviour
     public float horizontalInput = 0f;
     public float verticalInput = 0f;
     public float angle = 0f;
-
     public int maxHealth = 100;
     public int currentHealth;
 
-    public ControllerHealthbar controllerHealthbar;
+    public event Action<int, int> OnHealthChange = delegate {};
 
     // Start is called before the first frame update
     void Start()
     {
         currentHealth = maxHealth;
-        controllerHealthbar.SetMaxHealth(maxHealth);
-        controllerHealthbar.SetHealth(currentHealth);
         unitRigidbody = GetComponent<Rigidbody>();
+        OnHealthChange(currentHealth, maxHealth);
     }
 
     void FixedUpdate()
@@ -37,19 +34,19 @@ public class UnitController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            TakeDamage(20);
+            ModifyHealth(-20);
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            TakeDamage(-maxHealth);
+            ModifyHealth(maxHealth);
         }
     }
 
-    void TakeDamage (int damage)
+    public void ModifyHealth(int amount)
     {
-        var newHealth = currentHealth - damage;
+        var newHealth = currentHealth + amount;
         currentHealth = Mathf.Clamp(newHealth, 0, maxHealth);
-        controllerHealthbar.SetHealth(currentHealth);
+        OnHealthChange(currentHealth, maxHealth);
     }
 
     private void MovePlayer()
