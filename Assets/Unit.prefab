@@ -190,7 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c627da6f802fe944a11631b2d12d178, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Camera: {fileID: 0}
+  Target: {fileID: 321437018096114274}
+  angle: 0
 --- !u!1 &582131730
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,6 +532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1415595218}
+  updateSpeedSeconds: 0.2
 --- !u!1 &321437016910551366
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +702,6 @@ MonoBehaviour:
   angle: 0
   maxHealth: 100
   currentHealth: 0
-  controllerHealthbar: {fileID: 1415595219}
 --- !u!1 &1375402725892642739
 GameObject:
   m_ObjectHideFlags: 0
