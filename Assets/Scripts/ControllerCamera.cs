@@ -54,18 +54,13 @@ namespace Game.Scripts.Controllers
         {
             mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((Input.mousePosition.x - Screen.width/2) / Screen.width, -0.5f, 0.5f);
             mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((Input.mousePosition.y - Screen.height/2) / Screen.height, -0.5f, 0.5f);
-
-            Debug.Log($"Mouse X:{mousePositionRelativeToCenterOfScreen.x} Y:{mousePositionRelativeToCenterOfScreen.y}");
         }
 
         void OnScroll()
         {
                 float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
-                Debug.Log(scroll);
                 Zoom += -scroll * 100 * Time.deltaTime;
-
                 Zoom = Mathf.Clamp(Zoom, 0.2f, 1f);
-                Debug.Log("Zoom" + Zoom);
         }
 
         void LateUpdate()

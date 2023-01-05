@@ -59,5 +59,12 @@ public class ManagerInput : MonoBehaviour
         UnitController.horizontalInput = horizontalInput;
         UnitController.verticalInput = verticalInput;
         UnitController.angle = angle;
+
+        
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Debug.Log("FIRE11111");
+            UnitController.weapon.Attack(UnitController.gameObject);
+        }
     }
 }
