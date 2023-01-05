@@ -19,7 +19,7 @@ public class Billboard : MonoBehaviour
     }
     void LateUpdate()
     {
-        CalculatePosition();
+        // CalculatePosition();
 
 
         LookAtCamera();
