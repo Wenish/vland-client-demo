@@ -4,6 +4,8 @@ namespace Game.Scripts.Controllers
 {
     public class ControllerCamera : MonoBehaviour
     {
+        public float fieldOfView = 60.0f;
+        public float aspectRatio = 16.0f / 9.0f;
         public Vector3 OffsetCamera;
         public float SpeedCamera = 3f;
         public float BorderThickness = 10f;
@@ -21,6 +23,7 @@ namespace Game.Scripts.Controllers
 
         void Start()
         {
+            Camera.main.projectionMatrix = Matrix4x4.Perspective(fieldOfView, aspectRatio, 0.1f, 100.0f);
         }
 
         void Update()

@@ -4,30 +4,39 @@ using UnityEngine;
 
 public class Billboard : MonoBehaviour
 {
-    private Camera CameraMain;
-    public Transform Target;
-
-    [SerializeField]
-    private float Angle;
+    Camera cameraToLookAt;
+    public Transform unit;
+    public float distanceFromCamera = 1.0f;
+    public Vector3 offset;
+    public float yOffset = 0.5f;
     void Awake()
     {
-        CameraMain = Camera.main;
+        cameraToLookAt = Camera.main;
     }
     void Update()
     {
-        CalculateAngle();
+        // CalculatePosition();
     }
     void LateUpdate()
     {
-        transform.LookAt(transform.position + CameraMain.transform.forward);
+        CalculatePosition();
+
+
+        LookAtCamera();
+        // LookAtCamera();
+        // transform.LookAt(transform.position + CameraMain.transform.forward);
         //transform.rotation = Quaternion.LookRotation(transform.position - CameraMain.transform.position);
     }
 
-    private void CalculateAngle()
+    private void LookAtCamera()
     {
-        if (Target) {
-            Angle = Vector3.SignedAngle((Target.position - CameraMain.transform.position), CameraMain.transform.forward, CameraMain.transform.right);
-            Debug.Log("Angle:" + Angle);
-        }
+        transform.LookAt(transform.position + cameraToLookAt.transform.rotation * Vector3.forward, cameraToLookAt.transform.rotation * Vector3.up);
+    }
+
+    private void CalculatePosition()
+    {
+        Vector3 screenPos = cameraToLookAt.WorldToViewportPoint(unit.position);
+        screenPos.y = Mathf.Abs(screenPos.y * 2 - 1);
+        transform.position = unit.position + offset + (transform.up * screenPos.y);
     }
 }
