@@ -13,6 +13,8 @@ public class Billboard : MonoBehaviour
     public float yOffset = 0.5f;
     public Vector3 scaleMax = new Vector3(0.01f, 0.01f, 0.01f);
     public Vector3 scaleMin = new Vector3(0.005f, 0.005f, 0.005f);
+    public Vector3 positionMax = new Vector3(0, 1, 0);
+    public Vector3 positionMin = new Vector3(0, 2, 0);
     public float Zoom = 1f;
     public float SpeedScale = 0.2f;
     void Awake()
@@ -39,9 +41,15 @@ public class Billboard : MonoBehaviour
 
     private void ScaleCanvas()
     {
-        var desiredPosition = Vector3.Lerp(scaleMin, scaleMax, Zoom);
         var t = Time.deltaTime * SpeedScale;
-        rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, desiredPosition, Zoom);
+
+        var desiredScale = Vector3.Lerp(scaleMin, scaleMax, Zoom);
+        rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, desiredScale, t);
+
+        var desiredPosition = Vector3.Lerp(positionMin, positionMax, Zoom);
+        Debug.Log(desiredPosition);
+        rectTransform.localPosition = Vector3.Lerp(rectTransform.localPosition, desiredPosition, t);
+
     }
 
     private void LookAtCamera()
