@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponType: 0
-  attackPower: 20
+  attackPower: 38
   attackRange: 3
   attackTime: 0.6
   attackSpeed: 0.1
