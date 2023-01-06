@@ -723,7 +723,7 @@ MonoBehaviour:
   weaponType: 0
   attackPower: 55
   attackRange: 3
-  attackTime: 4
+  attackTime: 0.2
   attackSpeed: 1
   attackCooldown: 0
   coneAngleRadians: 90

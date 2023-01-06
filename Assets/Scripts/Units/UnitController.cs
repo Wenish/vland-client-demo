@@ -99,6 +99,20 @@ public class UnitController : MonoBehaviour
         OnHealthChange(health, maxHealth);
     }
 
+    // Heal the unit
+    public void Heal(int amount)
+    {
+        // Increase the health by the heal amount
+        health = Mathf.Min(health + amount, maxHealth);
+    }
+
+    // Shield the unit
+    public void Shield(int amount)
+    {
+        // Increase the shield by the shield amount
+        shield = Mathf.Min(shield + amount, maxShield);
+    }
+
     private void Die()
     {
         // Destroy the unit game object

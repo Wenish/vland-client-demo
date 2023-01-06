@@ -64,7 +64,7 @@ public class ManagerInput : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             Debug.Log("FIRE11111");
-            UnitController.weapon.Attack(UnitController.gameObject);
+            UnitController.weapon.Attack(UnitController);
         }
     }
 }

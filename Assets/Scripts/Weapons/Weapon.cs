@@ -31,7 +31,7 @@ public abstract class Weapon : MonoBehaviour
     }
 
     // Called when the attack button is pressed
-    public async void Attack(GameObject attacker)
+    public async void Attack(UnitController attacker)
     {
         // Check if the attack is on cooldown
         if (attackCooldown > 0.0f)
@@ -57,5 +57,5 @@ public abstract class Weapon : MonoBehaviour
     }
 
     // Perform the attack
-    protected abstract void PerformAttack(GameObject attacker);
+    protected abstract void PerformAttack(UnitController attacker);
 }

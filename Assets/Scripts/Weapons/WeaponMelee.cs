@@ -7,7 +7,7 @@ public class WeaponMelee : Weapon
     private float coneAngleRadians = 90f;
     [SerializeField]
     private int numRays = 20;
-    protected override void PerformAttack(GameObject unit)
+    protected override void PerformAttack(UnitController unit)
     {
         Debug.Log("PerformAttack Weapon");
         // Get the position and rotation of the unit
