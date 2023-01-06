@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Game.Scripts.Controllers
@@ -21,9 +22,17 @@ namespace Game.Scripts.Controllers
 
         Vector3 mousePositionRelativeToCenterOfScreen = Vector3.zero;
 
+        public event Action<float> OnZoomChange = delegate {};
+
+        private void RaiseOnZoomChangeEvent()
+        {
+            OnZoomChange(Zoom);
+        }
+
         void Start()
         {
             Camera.main.projectionMatrix = Matrix4x4.Perspective(fieldOfView, aspectRatio, 0.1f, 100.0f);
+            RaiseOnZoomChangeEvent();
         }
 
         void Update()
@@ -58,9 +67,15 @@ namespace Game.Scripts.Controllers
 
         void OnScroll()
         {
+                float oldZoom = Zoom;
                 float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
                 Zoom += -scroll * 100 * Time.deltaTime;
-                Zoom = Mathf.Clamp(Zoom, 0.2f, 1f);
+                float newZoom = Mathf.Clamp(Zoom, 0.3f, 1f);
+                Zoom = newZoom;
+                if (oldZoom != newZoom)
+                {
+                    RaiseOnZoomChangeEvent();
+                }
         }
 
         void LateUpdate()

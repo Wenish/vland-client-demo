@@ -10,10 +10,10 @@ public class ControllerHealthbar : MonoBehaviour
     {
         GetComponentInParent<UnitController>().OnHealthChange += HandleOnHealthChange;
     }
-    private void HandleOnHealthChange(int currentHealth, int maxHealth)
+    private void HandleOnHealthChange((int current, int max) health)
     {
-        slider.maxValue = maxHealth;
-        StartCoroutine(ChangeHealth(currentHealth));
+        slider.maxValue = health.max;
+        StartCoroutine(ChangeHealth(health.current));
     }
 
     private IEnumerator ChangeHealth(int health)

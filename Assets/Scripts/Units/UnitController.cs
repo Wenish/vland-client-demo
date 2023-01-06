@@ -17,14 +17,16 @@ public class UnitController : MonoBehaviour
 
     public Weapon weapon;
 
-    public event Action<int, int> OnHealthChange = delegate {};
+    public event Action<(int current, int max)> OnHealthChange = delegate {};
+    public event Action<(int current, int max)> OnShieldChange = delegate {};
 
     // Start is called before the first frame update
     void Start()
     {
         health = maxHealth;
         unitRigidbody = GetComponent<Rigidbody>();
-        OnHealthChange(health, maxHealth);
+        RaiseHealthChangeEvent();
+        RaiseShieldChangeEvent();
     }
 
     void FixedUpdate()
@@ -38,19 +40,13 @@ public class UnitController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ModifyHealth(-20);
+            TakeDamage(20);
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            ModifyHealth(maxHealth);
+            Heal(maxHealth);
+            Shield(maxShield);
         }
-    }
-
-    public void ModifyHealth(int amount)
-    {
-        var newHealth = health + amount;
-        health = Mathf.Clamp(newHealth, 0, maxHealth);
-        OnHealthChange(health, maxHealth);
     }
 
     private void MovePlayer()
@@ -72,7 +68,6 @@ public class UnitController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        Debug.Log("Heyy dmg" + damage);
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
         {
@@ -81,9 +76,11 @@ public class UnitController : MonoBehaviour
             {
                 damage = -shield;
                 shield = 0;
+                RaiseShieldChangeEvent();
             }
             else
             {
+                RaiseShieldChangeEvent();
                 return;
             }
         }
@@ -91,12 +88,14 @@ public class UnitController : MonoBehaviour
         // Reduce the health points by the remaining damage
         health -= damage;
 
+        health = Mathf.Clamp(health, 0, maxHealth);
+
         // Check if the unit is dead
         if (health <= 0)
         {
             Die();
         }
-        OnHealthChange(health, maxHealth);
+        RaiseHealthChangeEvent();
     }
 
     // Heal the unit
@@ -104,6 +103,7 @@ public class UnitController : MonoBehaviour
     {
         // Increase the health by the heal amount
         health = Mathf.Min(health + amount, maxHealth);
+        RaiseHealthChangeEvent();
     }
 
     // Shield the unit
@@ -111,6 +111,7 @@ public class UnitController : MonoBehaviour
     {
         // Increase the shield by the shield amount
         shield = Mathf.Min(shield + amount, maxShield);
+        RaiseShieldChangeEvent();
     }
 
     private void Die()
@@ -118,5 +119,16 @@ public class UnitController : MonoBehaviour
         // Destroy the unit game object
         Debug.Log("Unit Dead");
         // Destroy(gameObject);
+    }
+
+    private void RaiseHealthChangeEvent()
+    {
+        OnHealthChange((current: health, max: maxHealth));
+    }
+
+    private void RaiseShieldChangeEvent()
+    {
+        Debug.Log("Shield Change");
+        OnShieldChange((current: shield, max: maxShield));
     }
 }

@@ -86,7 +86,6 @@ public class WeaponMelee : Weapon
 
             // Rotate the direction vector by the angle
             Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * unitRotation * Vector3.forward;
-            Debug.Log(direction);
             Gizmos.DrawRay(unitPosition, direction * this.attackRange);
         }
     }
