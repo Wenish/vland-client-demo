@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Black
+  m_Name: BlackGlowArrow
   m_Shader: {fileID: -6465566751694194690, guid: ee011aa26eb14e64ba4aab1fca3d9d9a, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -67,6 +67,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
+    - _Glow_Power: 30
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -79,6 +80,7 @@ Material:
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0.5, g: 0, b: 0, a: 1}
+    - _Glow_Color: {r: 1.0352942, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &6328901968886347760
 MonoBehaviour:
