@@ -38,11 +38,7 @@ public class WeaponMelee : Weapon
                     enemiesHit.Add(enemy);
                 }
             }
-            
-            Debug.Log(hit.point);
         }
-
-        Debug.Log(enemiesHit.Count);
 
         // If multiple enemies were hit, choose the one that is most in the center of the cone
         if (enemiesHit.Count > 1)

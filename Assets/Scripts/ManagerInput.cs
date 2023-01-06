@@ -15,6 +15,8 @@ public class ManagerInput : MonoBehaviour
     public Vector3 MouseWorldPosition;
 
     Plane plane = new Plane(Vector3.up, 0);
+
+    public bool isPressingFire1 = false;
     
     // Start is called before the first frame update
     void Start()
@@ -29,6 +31,18 @@ public class ManagerInput : MonoBehaviour
         CalculateAngle();
         InputAxis();
         ControlUnit();
+
+        
+
+        
+        if (Input.GetButtonDown("Fire1"))
+        {
+            isPressingFire1 = true;
+        }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            isPressingFire1 = false;
+        }
     }
 
     private void SetMouseWorldPosition()
@@ -61,9 +75,8 @@ public class ManagerInput : MonoBehaviour
         UnitController.angle = angle;
 
         
-        if (Input.GetButtonDown("Fire1"))
+        if (isPressingFire1)
         {
-            Debug.Log("FIRE11111");
             UnitController.weapon.Attack(UnitController);
         }
     }

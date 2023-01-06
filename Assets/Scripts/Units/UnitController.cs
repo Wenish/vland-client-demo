@@ -128,7 +128,6 @@ public class UnitController : MonoBehaviour
 
     private void RaiseShieldChangeEvent()
     {
-        Debug.Log("Shield Change");
         OnShieldChange((current: shield, max: maxShield));
     }
 }

@@ -42,8 +42,9 @@ public abstract class Weapon : MonoBehaviour
         // Set the attack cooldown
         attackCooldown = attackTime + attackSpeed;
         Debug.Log("Attack Weapon");
-
-        await Task.Delay((int)attackTime * 1000);
+        var delay = attackTime * 1000;
+        Debug.Log(delay);
+        await Task.Delay((int)delay);
 
         // Perform the attack
         PerformAttack(attacker);
