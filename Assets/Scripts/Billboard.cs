@@ -47,7 +47,6 @@ public class Billboard : MonoBehaviour
         rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, desiredScale, t);
 
         var desiredPosition = Vector3.Lerp(positionMin, positionMax, Zoom);
-        Debug.Log(desiredPosition);
         rectTransform.localPosition = Vector3.Lerp(rectTransform.localPosition, desiredPosition, t);
 
     }

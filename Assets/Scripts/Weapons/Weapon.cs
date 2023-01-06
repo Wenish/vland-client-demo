@@ -38,6 +38,8 @@ public abstract class Weapon : MonoBehaviour
         {
             return;
         }
+        var attackerMoveSpeed = attacker.moveSpeed;
+        attacker.moveSpeed = 1f;
 
         // Set the attack cooldown
         attackCooldown = attackTime + attackSpeed;
@@ -48,6 +50,7 @@ public abstract class Weapon : MonoBehaviour
 
         // Perform the attack
         PerformAttack(attacker);
+        attacker.moveSpeed = attackerMoveSpeed;
     }
 
     // Called every frame
