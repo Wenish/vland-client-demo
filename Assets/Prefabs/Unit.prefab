@@ -733,6 +733,7 @@ MonoBehaviour:
   attackTime: 0.6
   attackSpeed: 0.1
   attackCooldown: 0
+  moveSpeedPercentWhileAttacking: 0.8
   coneAngleRadians: 90
   numRays: 20
 --- !u!1 &1375402725892642739

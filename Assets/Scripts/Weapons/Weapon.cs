@@ -20,6 +20,9 @@ public abstract class Weapon : MonoBehaviour
     // The time until the next attack can be performed
     public float attackCooldown = 0.0f;
 
+    // 0 - 1
+    public float moveSpeedPercentWhileAttacking = 0.5f;
+
     
 
     public enum WeaponType
@@ -39,7 +42,7 @@ public abstract class Weapon : MonoBehaviour
             return;
         }
         var attackerMoveSpeed = attacker.moveSpeed;
-        attacker.moveSpeed = 1f;
+        attacker.moveSpeed = attacker.moveSpeed * moveSpeedPercentWhileAttacking;
 
         // Set the attack cooldown
         attackCooldown = attackTime + attackSpeed;
