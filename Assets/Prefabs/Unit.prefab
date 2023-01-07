@@ -715,7 +715,7 @@ MonoBehaviour:
   shield: 50
   maxShield: 50
   moveSpeed: 5
-  weapon: {fileID: 8405535932912576057}
+  weapon: {fileID: 947192566}
 --- !u!114 &8405535932912576057
 MonoBehaviour:
   m_ObjectHideFlags: 0
