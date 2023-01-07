@@ -1,0 +1,40 @@
+name: Unity Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Unity
+        uses: actions/setup-unity@v1
+        with:
+          unity-version: '2021.3.15f1'
+      - name: Build Unity project
+        uses: game-ci/unity-builder@v2
+        with:
+          args: -batchmode -nographics -logFile -quit -buildWindows64Player "MyBuild/Vland-Demo.exe"
+          unity-version: '2021.3.15f1'
+          project-path: .
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.${{ github.sha }}
+          release_name: Vland Windows Build v1.0.${{ github.sha }}
+          draft: false
+          prerelease: false
+      - name: Upload build package to GitHub release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: MyBuild/Vland-Demo.exe
+          asset_name: Vland-Demo_v1.0.${GITHUB_SHA}.zip
+          asset_content_type: application/zip
