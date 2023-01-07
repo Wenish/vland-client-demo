@@ -640,6 +640,7 @@ GameObject:
   - component: {fileID: 5679917720207950704}
   - component: {fileID: 795324802}
   - component: {fileID: 8405535932912576057}
+  - component: {fileID: 947192566}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -736,6 +737,28 @@ MonoBehaviour:
   moveSpeedPercentWhileAttacking: 0.8
   coneAngleRadians: 90
   numRays: 20
+--- !u!114 &947192566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3738a0fec57453f44ba7226e8615e0a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponType: 2
+  attackPower: 28
+  attackRange: 12
+  attackTime: 0.5
+  attackSpeed: 0.3
+  attackCooldown: 0
+  moveSpeedPercentWhileAttacking: 0.1
+  projectile: {fileID: 11400000, guid: 196370f6a0a8f4846a3a154ca9f64484, type: 2}
+  projectileSpeed: 22
+  spawnDistance: 1.2
 --- !u!1 &1375402725892642739
 GameObject:
   m_ObjectHideFlags: 0
