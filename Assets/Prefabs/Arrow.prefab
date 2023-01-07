@@ -42,7 +42,7 @@ ParticleSystem:
   m_GameObject: {fileID: 384637089}
   serializedVersion: 8
   lengthInSec: 5
-  simulationSpeed: 1
+  simulationSpeed: 3
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -5112,6 +5112,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1348300943886897627, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1348300943886897627, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1348300943886897627, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1348300943886897627, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -5121,7 +5133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1348300943886897627, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: -0.648
       objectReference: {fileID: 0}
     - target: {fileID: 1348300943886897627, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
       propertyPath: m_LocalRotation.w
