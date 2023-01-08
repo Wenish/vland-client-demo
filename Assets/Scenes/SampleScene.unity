@@ -1242,7 +1242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c85b7ea9ad8f0349b85ffe5aa777a11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OffsetCamera: {x: 0, y: 20, z: -9}
+  OffsetCamera: {x: 0, y: 15, z: -9}
   SpeedCamera: 5
   BorderThickness: 10
   IsFocusingPlayer: 1
