@@ -9,8 +9,6 @@ public class Billboard : MonoBehaviour
     RectTransform rectTransform;
     public Transform unit;
     public float distanceFromCamera = 1.0f;
-    public Vector3 offset;
-    public float yOffset = 0.5f;
     public Vector3 scaleMax = new Vector3(0.01f, 0.01f, 0.01f);
     public Vector3 scaleMin = new Vector3(0.005f, 0.005f, 0.005f);
     public Vector3 positionMax = new Vector3(0, 1, 0);
@@ -23,20 +21,12 @@ public class Billboard : MonoBehaviour
         rectTransform = gameObject.GetComponent<RectTransform>();
         cameraToLookAt.GetComponent<ControllerCamera>().OnZoomChange += HandleOnZoomChange;
     }
-    void Update()
-    {
-        // CalculatePosition();
-    }
     void LateUpdate()
     {
-        // CalculatePosition();
         ScaleCanvas();
 
 
         LookAtCamera();
-        // LookAtCamera();
-        // transform.LookAt(transform.position + CameraMain.transform.forward);
-        //transform.rotation = Quaternion.LookRotation(transform.position - CameraMain.transform.position);
     }
 
     private void ScaleCanvas()
@@ -54,13 +44,6 @@ public class Billboard : MonoBehaviour
     private void LookAtCamera()
     {
         transform.LookAt(transform.position + cameraToLookAt.transform.rotation * Vector3.forward, cameraToLookAt.transform.rotation * Vector3.up);
-    }
-
-    private void CalculatePosition()
-    {
-        Vector3 screenPos = cameraToLookAt.WorldToViewportPoint(unit.position);
-        screenPos.y = Mathf.Abs(screenPos.y * 2 - 1);
-        transform.position = unit.position + offset + (transform.up * screenPos.y);
     }
 
     private void HandleOnZoomChange(float zoom)

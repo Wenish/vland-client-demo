@@ -304,6 +304,8 @@ GameObject:
   - component: {fileID: 160335895}
   - component: {fileID: 160335897}
   - component: {fileID: 160335898}
+  - component: {fileID: 160335899}
+  - component: {fileID: 160335900}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -402,6 +404,34 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &160335899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160335894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c71cb45c8ba53c7428f9c8e226309def, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldOfView: 60
+  aspectRatio: 1.7777778
+--- !u!114 &160335900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160335894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c71cb45c8ba53c7428f9c8e226309def, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldOfView: 60
+  aspectRatio: 1.7777778
 --- !u!1001 &252370519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1125,6 +1155,7 @@ GameObject:
   - component: {fileID: 963194229}
   - component: {fileID: 963194231}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194232}
   m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1211,8 +1242,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c85b7ea9ad8f0349b85ffe5aa777a11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldOfView: 60
-  aspectRatio: 1.7777778
   OffsetCamera: {x: 0, y: 20, z: -9}
   SpeedCamera: 5
   BorderThickness: 10
@@ -1275,6 +1304,20 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: acafb23580d4f244a841d660c59f6628, type: 2}
+--- !u!114 &963194232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c71cb45c8ba53c7428f9c8e226309def, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldOfView: 60
+  aspectRatio: 1.7777778
 --- !u!1 &1109775325
 GameObject:
   m_ObjectHideFlags: 0
