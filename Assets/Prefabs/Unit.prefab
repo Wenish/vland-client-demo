@@ -196,7 +196,7 @@ MonoBehaviour:
   scaleMax: {x: 0.01, y: 0.01, z: 0.01}
   scaleMin: {x: 0.001, y: 0.001, z: 0.001}
   positionMax: {x: 0, y: 0.5, z: 0}
-  positionMin: {x: 0, y: 2.5, z: 0}
+  positionMin: {x: 0, y: 2, z: 0}
   Zoom: 1
   SpeedScale: 20
 --- !u!1 &582131730
