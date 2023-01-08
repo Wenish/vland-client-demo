@@ -140,6 +140,9 @@
         },
         {
             "m_Id": "9bd637207d114c0a9bd7eaed3bd870fd"
+        },
+        {
+            "m_Id": "03c2f5ae5c1e48f7a0e4bfc25ebe33d1"
         }
     ],
     "m_GroupDatas": [],
@@ -570,6 +573,9 @@
             },
             {
                 "m_Id": "4cd546c880d44ca7a5a75a1059da53a8"
+            },
+            {
+                "m_Id": "03c2f5ae5c1e48f7a0e4bfc25ebe33d1"
             }
         ]
     },
@@ -630,6 +636,39 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.BlockNode",
+    "m_ObjectId": "03c2f5ae5c1e48f7a0e4bfc25ebe33d1",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "SurfaceDescription.Specular",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "06f971f0b3d14c7f941a1d6d1e692df3"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_SerializedDescriptor": "SurfaceDescription.Specular"
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "044dd5c12af24ef781b525400f6a702a",
     "m_Id": 0,
@@ -674,6 +713,36 @@
         "w": 0.0
     },
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.ColorRGBMaterialSlot",
+    "m_ObjectId": "06f971f0b3d14c7f941a1d6d1e692df3",
+    "m_Id": 0,
+    "m_DisplayName": "Specular Color",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Specular",
+    "m_StageCapability": 2,
+    "m_Value": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.5
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "m_Labels": [],
+    "m_ColorMode": 0,
+    "m_DefaultColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    }
 }
 
 {
@@ -3781,7 +3850,7 @@
     "m_ActiveSubTarget": {
         "m_Id": "d9f0bd04003a4a99a9a8ee6753ddaf4b"
     },
-    "m_AllowMaterialOverride": false,
+    "m_AllowMaterialOverride": true,
     "m_SurfaceType": 1,
     "m_ZTestMode": 4,
     "m_ZWriteControl": 0,
