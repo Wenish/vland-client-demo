@@ -32,8 +32,6 @@ public class ProjectileController : MonoBehaviour
         transform.position += transform.forward * speed * Time.deltaTime;
 
         var distanceTravelled = Vector3.Distance(spawn, transform.position);
-        Debug.Log(distanceTravelled);
-        Debug.Log(range);
 
          // If the projectile has travelled its range, destroy it
         if (distanceTravelled >= range)
