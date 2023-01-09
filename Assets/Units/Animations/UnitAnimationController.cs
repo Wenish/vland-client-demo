@@ -12,6 +12,7 @@ public class UnitAnimationController : MonoBehaviour
         unitController = GetComponentInParent<UnitController>();
         animator = GetComponent<Animator>();
         animator.fireEvents = false;
+        unitController.OnAttackStart += HandleOnAttackStartChange;
     }
 
     void Update()
@@ -29,5 +30,11 @@ public class UnitAnimationController : MonoBehaviour
 
         animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
         animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
+    }
+
+    private void HandleOnAttackStartChange(UnitController unitController)
+    {
+        animator.SetInteger("AttackVersion", Random.Range(0, 2));
+        animator.SetTrigger("Attack");
     }
 }

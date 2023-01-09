@@ -19,6 +19,7 @@ public class UnitController : MonoBehaviour
 
     public event Action<(int current, int max)> OnHealthChange = delegate {};
     public event Action<(int current, int max)> OnShieldChange = delegate {};
+    public event Action<UnitController> OnAttackStart = delegate {};
 
     // Start is called before the first frame update
     void Start()
@@ -98,6 +99,10 @@ public class UnitController : MonoBehaviour
         RaiseHealthChangeEvent();
     }
 
+    public void Attack() {
+        weapon.Attack(this);
+    }
+
     // Heal the unit
     public void Heal(int amount)
     {
@@ -129,5 +134,10 @@ public class UnitController : MonoBehaviour
     private void RaiseShieldChangeEvent()
     {
         OnShieldChange((current: shield, max: maxShield));
+    }
+
+    public void RaiseOnAttackStartEvent()
+    {
+        OnAttackStart(this);
     }
 }

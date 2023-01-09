@@ -41,6 +41,7 @@ public abstract class Weapon : MonoBehaviour
         {
             return;
         }
+        attacker.RaiseOnAttackStartEvent();
         var attackerMoveSpeed = attacker.moveSpeed;
         attacker.moveSpeed = attacker.moveSpeed * moveSpeedPercentWhileAttacking;
 

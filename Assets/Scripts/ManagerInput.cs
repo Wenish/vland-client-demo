@@ -77,7 +77,7 @@ public class ManagerInput : MonoBehaviour
         
         if (isPressingFire1)
         {
-            UnitController.weapon.Attack(UnitController);
+            UnitController.Attack();
         }
     }
 }
