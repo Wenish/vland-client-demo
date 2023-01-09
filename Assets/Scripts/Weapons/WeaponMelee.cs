@@ -6,7 +6,7 @@ public class WeaponMelee : Weapon
     [SerializeField]
     private float coneAngleRadians = 90f;
     [SerializeField]
-    private int numRays = 20;
+    private int numRays = 21;
     protected override void PerformAttack(UnitController unit)
     {
         Debug.Log("PerformAttack Weapon");
@@ -33,8 +33,9 @@ public class WeaponMelee : Weapon
             {
                 // If the raycast hits an enemy, add the enemy to the list
                 UnitController enemy = hit.collider.GetComponent<UnitController>();
-                if (enemy != null)
+                if (enemy != null && !enemy.isDead)
                 {
+                    Debug.Log(enemy.isDead);
                     enemiesHit.Add(enemy);
                 }
             }
@@ -44,14 +45,35 @@ public class WeaponMelee : Weapon
         if (enemiesHit.Count > 1)
         {
             UnitController closestEnemy = enemiesHit[0];
+            /*
             float closestAngle = Vector3.Angle(unitRotation * Vector3.forward, closestEnemy.transform.position - unitPosition);
             foreach (UnitController enemy in enemiesHit)
             {
+                // (gewichtung * distance.normalize^2) + ((1 - gewichtung) * angle.normalized^2)
                 float angle = Vector3.Angle(unitRotation * Vector3.forward, enemy.transform.position - unitPosition);
+                Debug.Log(angle);
                 if (angle < closestAngle)
                 {
                     closestEnemy = enemy;
                     closestAngle = angle;
+                }
+            }
+            */
+
+            // (gewichtung * distance.normalize^2) + ((1 - gewichtung) * angle.normalized^2)
+            float weighting = 0.5f;
+            float bestScore = (weighting * 1) + ((1 - weighting) * 1);
+            Debug.Log(bestScore);
+            foreach (UnitController enemy in enemiesHit)
+            {
+                
+                float angleNormalized = Mathf.Clamp(Vector3.Angle(unitRotation * Vector3.forward, enemy.transform.position - unitPosition), 0, coneAngleRadians) / coneAngleRadians;
+                float distanceNormalized = Mathf.Clamp(Vector3.Distance(unitPosition, enemy.transform.position), 0, attackRange) / attackRange;
+                float scrore = (weighting * distanceNormalized) + ((1 - weighting) * angleNormalized);
+                if (scrore < bestScore)
+                {
+                    closestEnemy = enemy;
+                    bestScore = scrore;
                 }
             }
 

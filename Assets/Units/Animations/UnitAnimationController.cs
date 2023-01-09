@@ -13,6 +13,7 @@ public class UnitAnimationController : MonoBehaviour
         animator = GetComponent<Animator>();
         animator.fireEvents = false;
         unitController.OnAttackStart += HandleOnAttackStartChange;
+        unitController.OnHealthChange += HandleOnHealthChange;
     }
 
     void Update()
@@ -36,5 +37,10 @@ public class UnitAnimationController : MonoBehaviour
     {
         animator.SetInteger("AttackVersion", Random.Range(0, 2));
         animator.SetTrigger("Attack");
+    }
+
+    private void HandleOnHealthChange((int current, int max) health)
+    {
+        animator.SetInteger("Health", health.current);
     }
 }

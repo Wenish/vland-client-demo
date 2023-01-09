@@ -15,11 +15,15 @@ public class UnitController : MonoBehaviour
     public int maxShield = 50;
     public float moveSpeed = 5f;
 
+    public bool isDead => health <= 0;
+
     public Weapon weapon;
 
     public event Action<(int current, int max)> OnHealthChange = delegate {};
     public event Action<(int current, int max)> OnShieldChange = delegate {};
     public event Action<UnitController> OnAttackStart = delegate {};
+    public event Action<UnitController> OnTakeDamage = delegate {};
+    public event Action OnDied = delegate {};
 
     // Start is called before the first frame update
     void Start()
@@ -52,7 +56,11 @@ public class UnitController : MonoBehaviour
 
     private void MovePlayer()
     {
-        
+        if(isDead) {
+            unitRigidbody.velocity = Vector3.zero;
+            return;
+        };
+
         Vector3 inputs = Vector3.zero;
         inputs.x = horizontalInput;
         inputs.z = verticalInput;
@@ -63,6 +71,8 @@ public class UnitController : MonoBehaviour
 
     private void RotatePlayer()
     {
+        if(isDead) return;
+
         float lerpedAngle = Mathf.LerpAngle(transform.rotation.eulerAngles.y, angle, Time.deltaTime * 10);
         transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
     }
@@ -97,6 +107,7 @@ public class UnitController : MonoBehaviour
             Die();
         }
         RaiseHealthChangeEvent();
+        RaiseOnTakeDamageEvent();
     }
 
     public void Attack() {
@@ -121,9 +132,7 @@ public class UnitController : MonoBehaviour
 
     private void Die()
     {
-        // Destroy the unit game object
-        Debug.Log("Unit Dead");
-        // Destroy(gameObject);
+        RaiseOnDiedEvent();
     }
 
     private void RaiseHealthChangeEvent()
@@ -139,5 +148,15 @@ public class UnitController : MonoBehaviour
     public void RaiseOnAttackStartEvent()
     {
         OnAttackStart(this);
+    }
+
+    private void RaiseOnDiedEvent()
+    {
+        OnDied();
+    }
+
+    private void RaiseOnTakeDamageEvent()
+    {
+        OnTakeDamage(this);
     }
 }
