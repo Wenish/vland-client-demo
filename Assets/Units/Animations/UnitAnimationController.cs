@@ -14,6 +14,7 @@ public class UnitAnimationController : MonoBehaviour
         animator.fireEvents = false;
         unitController.OnAttackStart += HandleOnAttackStartChange;
         unitController.OnHealthChange += HandleOnHealthChange;
+        unitController.OnTakeDamage += HandleOnTakeDamage;
     }
 
     void Update()
@@ -42,5 +43,10 @@ public class UnitAnimationController : MonoBehaviour
     private void HandleOnHealthChange((int current, int max) health)
     {
         animator.SetInteger("Health", health.current);
+    }
+
+    private void HandleOnTakeDamage(UnitController unitController)
+    {
+        animator.SetTrigger("Hitted");
     }
 }

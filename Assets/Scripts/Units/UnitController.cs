@@ -79,6 +79,7 @@ public class UnitController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        RaiseOnTakeDamageEvent();
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
         {
@@ -107,7 +108,6 @@ public class UnitController : MonoBehaviour
             Die();
         }
         RaiseHealthChangeEvent();
-        RaiseOnTakeDamageEvent();
     }
 
     public void Attack() {
