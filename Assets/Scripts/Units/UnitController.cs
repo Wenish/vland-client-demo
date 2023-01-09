@@ -117,6 +117,7 @@ public class UnitController : MonoBehaviour
     // Heal the unit
     public void Heal(int amount)
     {
+        unitRigidbody.detectCollisions = true;
         // Increase the health by the heal amount
         health = Mathf.Min(health + amount, maxHealth);
         RaiseHealthChangeEvent();
@@ -132,6 +133,7 @@ public class UnitController : MonoBehaviour
 
     private void Die()
     {
+        unitRigidbody.detectCollisions = false;
         RaiseOnDiedEvent();
     }
 
