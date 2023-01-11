@@ -3,10 +3,13 @@ using UnityEngine;
 
 public class WeaponMelee : Weapon
 {
+    public Mode mode = Mode.Linear;
     [SerializeField]
     private float coneAngleRadians = 90f;
     [SerializeField]
     private int numRays = 21;
+    [SerializeField]
+    private float Weighting = 0.5f;
     protected override void PerformAttack(UnitController unit)
     {
         Debug.Log("PerformAttack Weapon");
@@ -66,10 +69,7 @@ public class WeaponMelee : Weapon
             Debug.Log(bestScore);
             foreach (UnitController enemy in enemiesHit)
             {
-                
-                float angleNormalized = Mathf.Clamp(Vector3.Angle(unitRotation * Vector3.forward, enemy.transform.position - unitPosition), 0, coneAngleRadians) / coneAngleRadians;
-                float distanceNormalized = Mathf.Clamp(Vector3.Distance(unitPosition, enemy.transform.position), 0, attackRange) / attackRange;
-                float scrore = (weighting * distanceNormalized) + ((1 - weighting) * angleNormalized);
+                float scrore = calcScore(Weighting, unit.transform, enemy.transform.position, mode);
                 if (scrore < bestScore)
                 {
                     closestEnemy = enemy;
@@ -85,6 +85,27 @@ public class WeaponMelee : Weapon
         {
             enemiesHit[0].TakeDamage(attackPower);
         }
+    }
+
+    public enum Mode {
+        Quadratic,
+        Linear
+    }
+
+    private float calcScore(float weighting, Transform unit, Vector3 target, Mode mode)
+    {
+        float angleNormalized = Mathf.Clamp(Vector3.Angle(unit.rotation * Vector3.forward, target - unit.position), 0, coneAngleRadians) / coneAngleRadians;
+        float distanceNormalized = Mathf.Clamp(Vector3.Distance(unit.position, target), 0, attackRange) / attackRange;
+        if (mode == Mode.Linear) {
+            float score = (weighting * distanceNormalized) + ((1 - weighting) * angleNormalized);
+            return score;
+        }
+
+        if (mode == Mode.Quadratic) {
+            float score = (weighting * distanceNormalized * distanceNormalized) + ((1 - weighting) * angleNormalized * angleNormalized);
+            return score;
+        }
+        return -1;
     }
 
     void OnDrawGizmos()
@@ -105,6 +126,24 @@ public class WeaponMelee : Weapon
             // Rotate the direction vector by the angle
             Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * unitRotation * Vector3.forward;
             Gizmos.DrawRay(unitPosition, direction * this.attackRange);
+        }
+
+        var height = attackRange * 2;
+        var width = attackRange * 2;
+
+        for (int w = 0; w < width; w++)
+        {
+            for(int h = 0; h < height; h++)
+            {
+                Vector3 target = new Vector3(w - attackRange + 0.5f, 0, h - attackRange + 0.5f) + transform.position;
+                var score = calcScore(Weighting, transform, target, mode);
+                Gizmos.color = new Color(score, score, 0);
+                if (score > 0.7f) {
+                    Gizmos.color = Color.white;
+                }
+                Gizmos.DrawSphere(target, 0.03f);
+            }
+            
         }
     }
 }
