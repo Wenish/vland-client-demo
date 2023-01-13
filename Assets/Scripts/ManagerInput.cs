@@ -31,9 +31,6 @@ public class ManagerInput : MonoBehaviour
         CalculateAngle();
         InputAxis();
         ControlUnit();
-
-        
-
         
         if (Input.GetButtonDown("Fire1"))
         {
@@ -43,6 +40,30 @@ public class ManagerInput : MonoBehaviour
         {
             isPressingFire1 = false;
         }
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            UnitEquipSword();
+        }
+        if(Input.GetKeyDown(KeyCode.U))
+        {
+            UnitEquipBow();
+        }
+    }
+
+    private void UnitEquipSword()
+    {
+        if(!UnitController) return;
+        WeaponMelee weaponMelee = UnitController.GetComponent<WeaponMelee>();
+        if(!weaponMelee) return;
+        UnitController.weapon = weaponMelee;
+    }
+
+    private void UnitEquipBow()
+    {
+        if(!UnitController) return;
+        WeaponRanged weaponRanged = UnitController.GetComponent<WeaponRanged>();
+        if(!weaponRanged) return;
+        UnitController.weapon = weaponRanged;
     }
 
     private void SetMouseWorldPosition()
