@@ -146,7 +146,7 @@ public class CustomNetworkManager : NetworkManager
     /// <summary>
     /// Called on the server when a client adds a new player with ClientScene.AddPlayer.
     /// <para>The default implementation for this function creates a new player object from the playerPrefab.</para>
-    /// </summary>
+    /// </summary>OnClientConnect
     /// <param name="conn">Connection from client.</param>
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
@@ -160,6 +160,9 @@ public class CustomNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
+        GameObject player = conn.identity.gameObject;
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        NetworkServer.Destroy(playerController.Unit);
         base.OnServerDisconnect(conn);
     }
 
