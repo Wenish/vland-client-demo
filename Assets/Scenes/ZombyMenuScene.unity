@@ -268,7 +268,7 @@ MonoBehaviour:
     dynamicAdjustment: 1
     dynamicAdjustmentTolerance: 1
     deliveryTimeEmaDuration: 2
-  timeInterpolationGui: 0
+  timeInterpolationGui: 1
 --- !u!4 &160518161
 Transform:
   m_ObjectHideFlags: 0
