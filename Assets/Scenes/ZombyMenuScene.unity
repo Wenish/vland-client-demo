@@ -247,7 +247,7 @@ MonoBehaviour:
   runInBackground: 1
   autoStartServerBuild: 1
   autoConnectClientBuild: 0
-  sendRate: 30
+  sendRate: 60
   offlineScene: Assets/Scenes/ZombyMenuScene.unity
   onlineScene: Assets/Scenes/ZombyGameScene.unity
   transport: {fileID: 160518159}
@@ -450,7 +450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2742432ab670524896d1b439085b23b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isAutoStart: 0
+  isAutoStart: 1
   _networkManager: {fileID: 160518160}
 --- !u!4 &1424813858
 Transform:
