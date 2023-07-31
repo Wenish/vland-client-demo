@@ -122,6 +122,7 @@ public class UnitController : NetworkBehaviour
         }
     }
 
+    [Server]
     public void Attack() {
         weapon.Attack(this);
     }
