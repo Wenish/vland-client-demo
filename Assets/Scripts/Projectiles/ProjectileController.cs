@@ -61,6 +61,7 @@ public class ProjectileController : NetworkBehaviour
     [Server]
     void CollisionEnter(Collision collision)
     {
+        Debug.Log("Collision");
         // Get the unit controller component of the collided game object
         UnitController unit = collision.collider.GetComponent<UnitController>();
 
