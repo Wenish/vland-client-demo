@@ -61,7 +61,9 @@ public class ProjectileController : NetworkBehaviour
     [Server]
     void CollisionEnter(Collision collision)
     {
-        Debug.Log("Collision");
+        ProjectileController projectileController = collision.collider.GetComponent<ProjectileController>();
+        if (projectileController != null) return;
+
         // Get the unit controller component of the collided game object
         UnitController unit = collision.collider.GetComponent<UnitController>();
 
@@ -70,6 +72,7 @@ public class ProjectileController : NetworkBehaviour
         {
             unit.TakeDamage(damage);
         }
+
 
         // Destroy the projectile
         NetworkServer.Destroy(gameObject);
