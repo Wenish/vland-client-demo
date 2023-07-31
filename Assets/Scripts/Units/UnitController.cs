@@ -178,6 +178,7 @@ public class UnitController : NetworkBehaviour
         OnDied();
     }
 
+    [ClientRpc]
     private void RaiseOnTakeDamageEvent()
     {
         OnTakeDamage(this);
