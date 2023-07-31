@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class WeaponRanged : Weapon
@@ -23,7 +24,8 @@ public class WeaponRanged : Weapon
         Vector3 spawnPosition = attackerPosition + attackerRotation * Vector3.forward * spawnDistance;
 
         // Instantiate the projectile
-        GameObject projectileObject = Instantiate(this.projectile.prefab, spawnPosition + Vector3.up, attackerRotation);
+        GameObject projectileObject = NetworkManager.Instantiate(CustomNetworkManager.singleton.spawnPrefabs[1], spawnPosition + Vector3.up, attackerRotation);
+        NetworkServer.Spawn(projectileObject);
 
         // Get the projectile component of the spawned projectile
         ProjectileController projectile = projectileObject.GetComponent<ProjectileController>();

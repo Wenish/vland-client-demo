@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class RotateObject : MonoBehaviour
+public class RotateObject : NetworkBehaviour
 {    
     public float rotationSpeed = 100f;
 

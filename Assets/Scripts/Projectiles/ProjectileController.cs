@@ -1,6 +1,7 @@
 using UnityEngine;
+using Mirror;
 
-public class ProjectileController : MonoBehaviour
+public class ProjectileController : NetworkBehaviour
 {
     // The projectile scriptable object
     public Projectile projectile;
@@ -28,20 +29,37 @@ public class ProjectileController : MonoBehaviour
     // Called every frame
     void Update()
     {
+        if (isServer) {
+            MoveProjectile();
+        }
+    }
+
+    [Server]
+    void MoveProjectile()
+    {
         // Move the projectile
         transform.position += transform.forward * speed * Time.deltaTime;
 
         var distanceTravelled = Vector3.Distance(spawn, transform.position);
 
-         // If the projectile has travelled its range, destroy it
+        // If the projectile has travelled its range, destroy it
         if (distanceTravelled >= range)
         {
-            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
     }
 
     // Called when the projectile collides with another collider
     void OnCollisionEnter(Collision collision)
+    {
+        if (isServer)
+        {
+            CollisionEnter(collision);
+        }
+    }
+
+    [Server]
+    void CollisionEnter(Collision collision)
     {
         // Get the unit controller component of the collided game object
         UnitController unit = collision.collider.GetComponent<UnitController>();
@@ -53,6 +71,6 @@ public class ProjectileController : MonoBehaviour
         }
 
         // Destroy the projectile
-        Destroy(gameObject);
+        NetworkServer.Destroy(gameObject);
     }
 }
