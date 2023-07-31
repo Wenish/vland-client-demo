@@ -13,14 +13,14 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Voland
-  productName: Vland-Demo
+  productName: Vland Zomby - Pre Alpha
   defaultCursor: {fileID: 2800000, guid: ff0ed52df4e8ceb419d7120ce0cc6919, type: 3}
   cursorHotspot: {x: 32, y: 32}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1
   m_SplashScreenOverlayOpacity: 1
-  m_SplashScreenAnimation: 1
+  m_SplashScreenAnimation: 0
   m_SplashScreenLogoStyle: 1
   m_SplashScreenDrawMode: 0
   m_SplashScreenBackgroundAnimationZoom: 1
@@ -154,7 +154,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.Voland.Vland-Demo
+    Standalone: com.Voland.Vland-Zomby---Pre-Alpha
   buildNumber:
     Standalone: 0
     VisionOS: 0
