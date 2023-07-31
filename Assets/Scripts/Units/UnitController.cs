@@ -12,7 +12,6 @@ public class UnitController : NetworkBehaviour
     public float verticalInput = 0f;
     [SyncVar]
     public float angle = 0f;
-
     [SyncVar]
     public int health = 100;
     [SyncVar]

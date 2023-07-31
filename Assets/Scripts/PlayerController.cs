@@ -9,17 +9,21 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     public GameObject Unit;
     [SyncVar]
-    public float horizontalInput = 0f;
+    public float HorizontalInput = 0f;
     [SyncVar]
-    public float verticalInput = 0f;
+    public float VerticalInput = 0f;
     [SyncVar]
-    public float angle = 0f;
+    public float Angle = 0f;
     [SyncVar]
-    public bool isPressingFire1 = false;
+    public bool IsPressingFire1 = false;
 
     private UnitController _unitController;
 
     private ControllerCamera _controllerCamera;
+    private Vector3 _mouseWorldPosition;
+    
+    Plane _plane;
+    Camera _cameraMain;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +34,8 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer) {
             _controllerCamera = Camera.main.GetComponent<ControllerCamera>();
             SetCameraTargetToPlayerUnit();
+            _plane = new Plane(Vector3.up, 0);
+            _cameraMain = Camera.main;
         }
     }
 
@@ -38,7 +44,10 @@ public class PlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            SetMouseWorldPosition();
             InputAxis();
+            InputPressingFire1();
+            CalculateAngle();
         }
 
         if(isServer) {
@@ -60,35 +69,80 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Client]
+    void SetMouseWorldPosition()
+    {
+        float distance;
+        Ray ray = _cameraMain.ScreenPointToRay(Input.mousePosition);
+        if (_plane.Raycast(ray, out distance))
+        {
+            _mouseWorldPosition = ray.GetPoint(distance);
+        }
+    }
+
+    [Client]
     void InputAxis()
     {
         var newHorizontalInput = Input.GetAxisRaw("Horizontal");
-        var hasHorizontalInputChanged = newHorizontalInput != horizontalInput;
+        var hasHorizontalInputChanged = newHorizontalInput != HorizontalInput;
         var newVerticalInput = Input.GetAxisRaw("Vertical");
-        var hasVerticalInputChanged = newVerticalInput != verticalInput;
+        var hasVerticalInputChanged = newVerticalInput != VerticalInput;
         if (hasHorizontalInputChanged || hasVerticalInputChanged)
         {
             CmdSetInput(newHorizontalInput, newVerticalInput);
         }
     }
 
+    [Client]
+     void CalculateAngle()
+    {
+        Vector3 pos = Unit.transform.position - _mouseWorldPosition;
+        var angle = -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90;
+        CmdSetAngle(angle);
+    }
+
+
+    [Client]
+    void InputPressingFire1()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            CmdSetFire1(true);
+        }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            CmdSetFire1(false);
+        }
+    }
+
     [Command]
     void CmdSetInput(float horizontal, float vertical)
     {
-        horizontalInput = horizontal;
-        verticalInput = vertical;
+        HorizontalInput = horizontal;
+        VerticalInput = vertical;
+    }
+
+    [Command]
+    void CmdSetAngle(float angle)
+    {
+        Angle = angle;
+    }
+
+    [Command]
+    void CmdSetFire1(bool isPressingFire1)
+    {
+        IsPressingFire1 = isPressingFire1;
     }
 
     [Server]
     void ControlUnit()
     {
         if (!_unitController) return;
-        _unitController.horizontalInput = horizontalInput;
-        _unitController.verticalInput = verticalInput;
-        _unitController.angle = angle;
+        _unitController.horizontalInput = HorizontalInput;
+        _unitController.verticalInput = VerticalInput;
+        _unitController.angle = Angle;
 
         
-        if (isPressingFire1)
+        if (IsPressingFire1)
         {
             _unitController.Attack();
         }
