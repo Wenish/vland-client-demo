@@ -12,11 +12,11 @@ public class UnitController : NetworkBehaviour
     public float verticalInput = 0f;
     [SyncVar]
     public float angle = 0f;
-    [SyncVar]
+    [SyncVar(hook = nameof(HookOnHealthChanged))]
     public int health = 100;
     [SyncVar]
     public int maxHealth = 100;
-    [SyncVar]
+    [SyncVar(hook = nameof(HookOnShieldChanged))]
     public int shield = 50;
     [SyncVar]
     public int maxShield = 50;
@@ -34,7 +34,9 @@ public class UnitController : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        health = maxHealth;
+        if (isServer) {
+            health = maxHealth;
+        }
         unitRigidbody = GetComponent<Rigidbody>();
         RaiseHealthChangeEvent();
         RaiseShieldChangeEvent();
@@ -87,6 +89,7 @@ public class UnitController : NetworkBehaviour
         transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
     }
 
+    [Server]
     public void TakeDamage(int damage)
     {
         RaiseOnTakeDamageEvent();
@@ -117,7 +120,6 @@ public class UnitController : NetworkBehaviour
         {
             Die();
         }
-        RaiseHealthChangeEvent();
     }
 
     public void Attack() {
@@ -130,7 +132,6 @@ public class UnitController : NetworkBehaviour
         unitRigidbody.detectCollisions = true;
         // Increase the health by the heal amount
         health = Mathf.Min(health + amount, maxHealth);
-        RaiseHealthChangeEvent();
     }
 
     // Shield the unit
@@ -145,6 +146,16 @@ public class UnitController : NetworkBehaviour
     {
         unitRigidbody.detectCollisions = false;
         RaiseOnDiedEvent();
+    }
+
+    void HookOnHealthChanged(int oldValue, int newValue)
+    {
+        RaiseHealthChangeEvent();
+    }
+
+    void HookOnShieldChanged(int oldValue, int newValue)
+    {
+        RaiseShieldChangeEvent();
     }
 
     private void RaiseHealthChangeEvent()
