@@ -3,7 +3,7 @@ name: Build Unity Project
 on:
   push:
     branches:
-      - main
+      - '*'
 
 jobs:
   buildForAllSupportedPlatforms:
