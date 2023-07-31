@@ -21,17 +21,19 @@ public class PlayerController : NetworkBehaviour
 
     private ControllerCamera _controllerCamera;
     private Vector3 _mouseWorldPosition;
-    
+
     Plane _plane;
     Camera _cameraMain;
     // Start is called before the first frame update
     void Start()
     {
-        if (isServer) {
+        if (isServer)
+        {
             SpawnPlayerUnit();
         }
 
-        if (isLocalPlayer) {
+        if (isLocalPlayer)
+        {
             _controllerCamera = Camera.main.GetComponent<ControllerCamera>();
             SetCameraTargetToPlayerUnit();
             _plane = new Plane(Vector3.up, 0);
@@ -48,15 +50,18 @@ public class PlayerController : NetworkBehaviour
             InputAxis();
             InputPressingFire1();
             CalculateAngle();
+            WeaponSwitch();
         }
 
-        if(isServer) {
+        if (isServer)
+        {
             ControlUnit();
         }
     }
 
     [Server]
-    void SpawnPlayerUnit() {
+    void SpawnPlayerUnit()
+    {
         var unit = NetworkManager.Instantiate(CustomNetworkManager.singleton.spawnPrefabs[0]);
         NetworkServer.Spawn(unit);
         Unit = unit;
@@ -64,7 +69,21 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Client]
-    void SetCameraTargetToPlayerUnit() {
+    void WeaponSwitch()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            UnitEquipSword();
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            UnitEquipBow();
+        }
+    }
+
+    [Client]
+    void SetCameraTargetToPlayerUnit()
+    {
         _controllerCamera.CameraTarget = Unit.transform;
     }
 
@@ -93,7 +112,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Client]
-     void CalculateAngle()
+    void CalculateAngle()
     {
         Vector3 pos = Unit.transform.position - _mouseWorldPosition;
         var angle = -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90;
@@ -133,6 +152,24 @@ public class PlayerController : NetworkBehaviour
         IsPressingFire1 = isPressingFire1;
     }
 
+    [Command]
+    void UnitEquipSword()
+    {
+        if (!_unitController) return;
+        WeaponMelee weaponMelee = _unitController.GetComponent<WeaponMelee>();
+        if (!weaponMelee) return;
+        _unitController.weapon = weaponMelee;
+    }
+
+    [Command]
+    void UnitEquipBow()
+    {
+        if (!_unitController) return;
+        WeaponRanged weaponRanged = _unitController.GetComponent<WeaponRanged>();
+        if (!weaponRanged) return;
+        _unitController.weapon = weaponRanged;
+    }
+
     [Server]
     void ControlUnit()
     {
@@ -141,7 +178,7 @@ public class PlayerController : NetworkBehaviour
         _unitController.verticalInput = VerticalInput;
         _unitController.angle = Angle;
 
-        
+
         if (IsPressingFire1)
         {
             _unitController.Attack();
