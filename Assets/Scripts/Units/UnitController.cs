@@ -127,6 +127,7 @@ public class UnitController : NetworkBehaviour
     }
 
     // Heal the unit
+    [Server]
     public void Heal(int amount)
     {
         unitRigidbody.detectCollisions = true;
@@ -135,11 +136,11 @@ public class UnitController : NetworkBehaviour
     }
 
     // Shield the unit
+    [Server]
     public void Shield(int amount)
     {
         // Increase the shield by the shield amount
         shield = Mathf.Min(shield + amount, maxShield);
-        RaiseShieldChangeEvent();
     }
 
     private void Die()
@@ -168,6 +169,7 @@ public class UnitController : NetworkBehaviour
         OnShieldChange((current: shield, max: maxShield));
     }
 
+    [ClientRpc]
     public void RaiseOnAttackStartEvent()
     {
         OnAttackStart(this);
