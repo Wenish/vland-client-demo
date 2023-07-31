@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class UnitAnimationController : MonoBehaviour
+public class UnitAnimationController : NetworkBehaviour
 {
     public float maxSpeed = 5f;
     UnitController unitController;
@@ -19,6 +20,13 @@ public class UnitAnimationController : MonoBehaviour
 
     void Update()
     {
+        if (!isClient) return;
+        
+        HandleMovementAnimation();
+    }
+
+    [Client]
+    private void HandleMovementAnimation () {
         float horizontal = unitController.horizontalInput;
         float vertical = unitController.verticalInput;
         Vector3 movement = new Vector3(horizontal, 0f, vertical);

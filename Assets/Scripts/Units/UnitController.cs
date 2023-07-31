@@ -1,22 +1,29 @@
 using System;
+using Mirror;
 using UnityEngine;
 
-public class UnitController : MonoBehaviour
+public class UnitController : NetworkBehaviour
 {
 
     Rigidbody unitRigidbody;
+    [SyncVar]
     public float horizontalInput = 0f;
+    [SyncVar]
     public float verticalInput = 0f;
+    [SyncVar]
     public float angle = 0f;
 
+    [SyncVar]
     public int health = 100;
+    [SyncVar]
     public int maxHealth = 100;
+    [SyncVar]
     public int shield = 50;
+    [SyncVar]
     public int maxShield = 50;
+    [SyncVar]
     public float moveSpeed = 5f;
-
     public bool isDead => health <= 0;
-
     public Weapon weapon;
 
     public event Action<(int current, int max)> OnHealthChange = delegate {};
@@ -36,8 +43,10 @@ public class UnitController : MonoBehaviour
 
     void FixedUpdate()
     {
-        MovePlayer();
-        RotatePlayer();
+        if (isServer) {
+            MovePlayer();
+            RotatePlayer();
+        }
     }
 
     // Update is called once per frame
@@ -53,7 +62,8 @@ public class UnitController : MonoBehaviour
             Shield(maxShield);
         }
     }
-
+    
+    [Server]
     private void MovePlayer()
     {
         if(isDead) {
@@ -69,6 +79,7 @@ public class UnitController : MonoBehaviour
         unitRigidbody.velocity = moveDirection;
     }
 
+    [Server]
     private void RotatePlayer()
     {
         if(isDead) return;
