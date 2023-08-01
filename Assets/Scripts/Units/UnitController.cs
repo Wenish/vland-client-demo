@@ -124,6 +124,8 @@ public class UnitController : NetworkBehaviour
 
     [Server]
     public void Attack() {
+        if (isDead) return;
+        
         weapon.Attack(this);
     }
 

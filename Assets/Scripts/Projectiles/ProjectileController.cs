@@ -18,6 +18,8 @@ public class ProjectileController : NetworkBehaviour
     public float range;
 
     private Vector3 spawn;
+
+    private bool hasCollidedWithUnit;
     
 
     // Called when the projectile is spawned
@@ -61,7 +63,10 @@ public class ProjectileController : NetworkBehaviour
     [Server]
     void CollisionEnter(Collision collision)
     {
+        if (hasCollidedWithUnit) return;
+
         ProjectileController projectileController = collision.collider.GetComponent<ProjectileController>();
+
         if (projectileController != null) return;
 
         // Get the unit controller component of the collided game object
@@ -70,6 +75,7 @@ public class ProjectileController : NetworkBehaviour
         // If the collided game object has a unit controller, deal damage to the unit
         if (unit != null && unit != shooter)
         {
+            hasCollidedWithUnit = true;
             unit.TakeDamage(damage);
         }
 
