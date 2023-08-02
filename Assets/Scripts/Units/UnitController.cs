@@ -32,6 +32,7 @@ public class UnitController : NetworkBehaviour
     public event Action<UnitController> OnAttackStart = delegate {};
     public event Action<UnitController> OnTakeDamage = delegate {};
     public event Action OnDied = delegate {};
+    public event Action OnRevive = delegate {};
 
     // Start is called before the first frame update
     void Start()
@@ -103,11 +104,9 @@ public class UnitController : NetworkBehaviour
             {
                 damage = -shield;
                 shield = 0;
-                RaiseShieldChangeEvent();
             }
             else
             {
-                RaiseShieldChangeEvent();
                 return;
             }
         }
@@ -135,7 +134,10 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void Heal(int amount)
     {
-        unitRigidbody.detectCollisions = true;
+        if (health == 0)
+        {
+            Revive();
+        }
         // Increase the health by the heal amount
         health = Mathf.Min(health + amount, maxHealth);
     }
@@ -152,6 +154,12 @@ public class UnitController : NetworkBehaviour
     {
         unitRigidbody.detectCollisions = false;
         RaiseOnDiedEvent();
+    }
+
+    private void Revive()
+    {
+        unitRigidbody.detectCollisions = true;
+        RaiseOnReviveEvent();
     }
 
     void HookOnHealthChanged(int oldValue, int newValue)
@@ -188,6 +196,11 @@ public class UnitController : NetworkBehaviour
     private void RaiseOnDiedEvent()
     {
         OnDied();
+    }
+
+    private void RaiseOnReviveEvent()
+    {
+        OnRevive();
     }
 
     [ClientRpc]
