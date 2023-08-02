@@ -71,11 +71,11 @@ public class PlayerController : NetworkBehaviour
     [Client]
     void WeaponSwitch()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             UnitEquipSword();
         }
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             UnitEquipBow();
         }

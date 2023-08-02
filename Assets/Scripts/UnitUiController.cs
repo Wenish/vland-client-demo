@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitGuiController : MonoBehaviour
+public class UnitUiController : MonoBehaviour
 {
     public GameObject HealthAndShieldBar;
     public GameObject FloorCircle;
