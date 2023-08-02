@@ -22,6 +22,8 @@ public class UnitController : NetworkBehaviour
     public int maxShield = 50;
     [SyncVar]
     public float moveSpeed = 5f;
+    [SyncVar(hook = nameof(HookOnRaceChanged))]
+    public Race Race = Race.Ninja;
     public bool isDead => health <= 0;
     public Weapon weapon;
 
@@ -162,6 +164,11 @@ public class UnitController : NetworkBehaviour
         RaiseShieldChangeEvent();
     }
 
+    void HookOnRaceChanged(Race oldValue, Race newValue)
+    {
+        Debug.Log(newValue);
+    }
+
     private void RaiseHealthChangeEvent()
     {
         OnHealthChange((current: health, max: maxHealth));
@@ -188,4 +195,12 @@ public class UnitController : NetworkBehaviour
     {
         OnTakeDamage(this);
     }
+}
+
+public enum Race
+{
+    Ninja,
+    Grunt,
+    Warrior,
+    Sensei
 }
