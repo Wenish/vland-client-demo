@@ -29,7 +29,7 @@ public class ProjectileController : NetworkBehaviour
     }
 
     // Called every frame
-    void Update()
+    void FixedUpdate()
     {
         if (isServer) {
             MoveProjectile();
@@ -40,7 +40,7 @@ public class ProjectileController : NetworkBehaviour
     void MoveProjectile()
     {
         // Move the projectile
-        transform.position += transform.forward * speed * Time.deltaTime;
+        transform.position += transform.forward * speed * Time.fixedDeltaTime;
 
         var distanceTravelled = Vector3.Distance(spawn, transform.position);
 

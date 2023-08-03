@@ -61,7 +61,6 @@ public class WeaponMelee : Weapon
             // (gewichtung * distance.normalize^2) + ((1 - gewichtung) * angle.normalized^2)
             float weighting = 0.5f;
             float bestScore = (weighting * 1) + ((1 - weighting) * 1);
-            Debug.Log(bestScore);
             foreach (UnitController enemy in enemiesHit)
             {
                 
