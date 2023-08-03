@@ -9,7 +9,6 @@ public class WeaponMelee : Weapon
     private int numRays = 21;
     protected override void PerformAttack(UnitController unit)
     {
-        Debug.Log("PerformAttack Weapon");
         // Get the position and rotation of the unit
         Vector3 unitPosition = unit.transform.position + Vector3.up;
         Quaternion unitRotation = unit.transform.rotation;
