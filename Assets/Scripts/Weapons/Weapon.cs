@@ -23,6 +23,8 @@ public abstract class Weapon : MonoBehaviour
     // 0 - 1
     public float moveSpeedPercentWhileAttacking = 0.5f;
 
+    public bool IsAttacking = false;
+
     
 
     public enum WeaponType
@@ -34,13 +36,12 @@ public abstract class Weapon : MonoBehaviour
     }
 
     // Called when the attack button is pressed
-    public async void Attack(UnitController attacker)
+    public async Task Attack(UnitController attacker)
     {
+        if (IsAttacking) return;
         // Check if the attack is on cooldown
-        if (attackCooldown > 0.0f)
-        {
-            return;
-        }
+        if (attackCooldown > 0.0f) return;
+        IsAttacking = true;
         attacker.RaiseOnAttackStartEvent();
         var attackerMoveSpeed = attacker.moveSpeed;
         attacker.moveSpeed = attacker.moveSpeed * moveSpeedPercentWhileAttacking;
@@ -53,6 +54,8 @@ public abstract class Weapon : MonoBehaviour
         // Perform the attack
         PerformAttack(attacker);
         attacker.moveSpeed = attackerMoveSpeed;
+    
+        IsAttacking = false;
     }
 
     // Called every frame

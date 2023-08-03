@@ -34,7 +34,6 @@ public class WeaponMelee : Weapon
                 UnitController enemy = hit.collider.GetComponent<UnitController>();
                 if (enemy != null && !enemy.isDead)
                 {
-                    Debug.Log(enemy.isDead);
                     enemiesHit.Add(enemy);
                 }
             }
