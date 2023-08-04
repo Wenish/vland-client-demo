@@ -184,6 +184,14 @@ public class UnitController : NetworkBehaviour
 
     void HookOnHealthChanged(int oldValue, int newValue)
     {
+        if (newValue <= 0)
+        {
+            Die();
+        }
+        if(oldValue == 0 && newValue > 0)
+        {
+            Revive();
+        }
         RaiseHealthChangeEvent();
     }
     void HookOnMaxHealthChanged(int oldValue, int newValue)

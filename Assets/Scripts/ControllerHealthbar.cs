@@ -13,6 +13,8 @@ public class ControllerHealthbar : MonoBehaviour
     private void HandleOnHealthChange((int current, int max) health)
     {
         slider.maxValue = health.max;
+
+        if (!gameObject.activeInHierarchy) return;
         StartCoroutine(ChangeHealth(health.current));
     }
 

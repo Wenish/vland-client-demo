@@ -14,6 +14,8 @@ public class ControllerShield : MonoBehaviour
     private void HandleOnShieldChange((int current, int max) shield)
     {
         slider.maxValue = shield.max;
+        
+        if (!gameObject.activeInHierarchy) return;
         StartCoroutine(ChangeShield(shield.current));
     }
 
