@@ -3,10 +3,13 @@ using UnityEngine;
 
 public class WeaponMelee : Weapon
 {
+    public Mode mode = Mode.Linear;
     [SerializeField]
     private float coneAngleRadians = 90f;
     [SerializeField]
     private int numRays = 21;
+    [SerializeField]
+    private float Weighting = 0.5f;
     protected override void PerformAttack(UnitController unit)
     {
         // Get the position and rotation of the unit
@@ -43,34 +46,14 @@ public class WeaponMelee : Weapon
         if (enemiesHit.Count > 1)
         {
             UnitController closestEnemy = enemiesHit[0];
-            /*
-            float closestAngle = Vector3.Angle(unitRotation * Vector3.forward, closestEnemy.transform.position - unitPosition);
+            float bestScore = 1;
             foreach (UnitController enemy in enemiesHit)
             {
-                // (gewichtung * distance.normalize^2) + ((1 - gewichtung) * angle.normalized^2)
-                float angle = Vector3.Angle(unitRotation * Vector3.forward, enemy.transform.position - unitPosition);
-                Debug.Log(angle);
-                if (angle < closestAngle)
+                float score = calcScore(Weighting, unit.transform, enemy.transform.position, mode);
+                if (score < bestScore)
                 {
                     closestEnemy = enemy;
-                    closestAngle = angle;
-                }
-            }
-            */
-
-            // (gewichtung * distance.normalize^2) + ((1 - gewichtung) * angle.normalized^2)
-            float weighting = 0.5f;
-            float bestScore = (weighting * 1) + ((1 - weighting) * 1);
-            foreach (UnitController enemy in enemiesHit)
-            {
-                
-                float angleNormalized = Mathf.Clamp(Vector3.Angle(unitRotation * Vector3.forward, enemy.transform.position - unitPosition), 0, coneAngleRadians) / coneAngleRadians;
-                float distanceNormalized = Mathf.Clamp(Vector3.Distance(unitPosition, enemy.transform.position), 0, attackRange) / attackRange;
-                float scrore = (weighting * distanceNormalized) + ((1 - weighting) * angleNormalized);
-                if (scrore < bestScore)
-                {
-                    closestEnemy = enemy;
-                    bestScore = scrore;
+                    bestScore = score;
                 }
             }
 
@@ -82,6 +65,27 @@ public class WeaponMelee : Weapon
         {
             enemiesHit[0].TakeDamage(attackPower);
         }
+    }
+    
+    public enum Mode {
+        Quadratic,
+        Linear
+    }
+
+    private float calcScore(float weighting, Transform unit, Vector3 target, Mode mode)
+    {
+        float angleNormalized = Mathf.Clamp(Vector3.Angle(unit.rotation * Vector3.forward, target - unit.position), 0, coneAngleRadians) / coneAngleRadians;
+        float distanceNormalized = Mathf.Clamp(Vector3.Distance(unit.position, target), 0, attackRange) / attackRange;
+        if (mode == Mode.Linear) {
+            float score = (weighting * distanceNormalized) + ((1 - weighting) * angleNormalized);
+            return score;
+        }
+
+        if (mode == Mode.Quadratic) {
+            float score = (weighting * distanceNormalized * distanceNormalized) + ((1 - weighting) * angleNormalized * angleNormalized);
+            return score;
+        }
+        return -1;
     }
 
     void OnDrawGizmos()
