@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5017836846480081700}
   - component: {fileID: 6877446575877977791}
   - component: {fileID: 7215417975964783873}
-  - component: {fileID: 1638437205425263740}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -144,20 +143,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fieldOfView: 60
   aspectRatio: 1.7777778
---- !u!114 &1638437205425263740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4236097134555561656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c71cb45c8ba53c7428f9c8e226309def, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fieldOfView: 60
-  aspectRatio: 1.7777778
 --- !u!1 &5913976703155713801
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,7 +220,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 23
+    m_Bits: 159
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
