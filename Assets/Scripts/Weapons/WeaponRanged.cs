@@ -22,9 +22,9 @@ public class WeaponRanged : Weapon
 
         // Calculate the position to spawn the projectile
         Vector3 spawnPosition = attackerPosition + attackerRotation * Vector3.forward * spawnDistance;
-
+        var prefabArrow = CustomNetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Arrow");
         // Instantiate the projectile
-        GameObject projectileObject = NetworkManager.Instantiate(CustomNetworkManager.singleton.spawnPrefabs[1], spawnPosition + Vector3.up, attackerRotation);
+        GameObject projectileObject = NetworkManager.Instantiate(prefabArrow, spawnPosition + Vector3.up, attackerRotation);
         NetworkServer.Spawn(projectileObject);
 
         // Get the projectile component of the spawned projectile

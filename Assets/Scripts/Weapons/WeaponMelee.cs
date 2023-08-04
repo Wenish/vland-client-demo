@@ -32,7 +32,7 @@ public class WeaponMelee : Weapon
             {
                 // If the raycast hits an enemy, add the enemy to the list
                 UnitController enemy = hit.collider.GetComponent<UnitController>();
-                if (enemy != null && !enemy.isDead)
+                if (enemy != null && !enemy.IsDead)
                 {
                     enemiesHit.Add(enemy);
                 }

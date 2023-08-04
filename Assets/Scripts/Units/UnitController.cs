@@ -24,7 +24,7 @@ public class UnitController : NetworkBehaviour
     public float moveSpeed = 5f;
     [SyncVar(hook = nameof(HookOnRaceChanged))]
     public Race Race = Race.Ninja;
-    public bool isDead => health <= 0;
+    public bool IsDead => health <= 0;
     public Weapon weapon;
 
     public event Action<(int current, int max)> OnHealthChange = delegate {};
@@ -70,7 +70,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     private void MovePlayer()
     {
-        if(isDead) {
+        if(IsDead) {
             unitRigidbody.velocity = Vector3.zero;
             return;
         };
@@ -86,7 +86,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     private void RotatePlayer()
     {
-        if(isDead) return;
+        if(IsDead) return;
 
         float lerpedAngle = Mathf.LerpAngle(transform.rotation.eulerAngles.y, angle, Time.deltaTime * 10);
         transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
@@ -125,8 +125,8 @@ public class UnitController : NetworkBehaviour
 
     [Server]
     public void Attack() {
-        if (isDead) return;
-        
+        if (IsDead) return;
+
         weapon.Attack(this);
     }
 
