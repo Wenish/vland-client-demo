@@ -961,6 +961,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HealthAndShieldBar: {fileID: 502557276}
+  Healthbar: {fileID: 1415595216}
+  Shieldbar: {fileID: 4410055455225218899}
   FloorCircle: {fileID: 4946681874364406955}
 --- !u!1 &4410055455225218899
 GameObject:

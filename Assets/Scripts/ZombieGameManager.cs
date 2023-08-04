@@ -17,7 +17,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         if(isServer)
         {
-            Quaternion spawnRotation = Quaternion.Euler(0f, 45f, 0f);
+            Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
             SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
             SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
             SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
@@ -76,10 +76,9 @@ public class ZombieGameManager : NetworkBehaviour
         var zombie = NetworkManager.Instantiate(ZombiePrefab, spawnPosition, spawnRotation);
 
         var unitController = zombie.GetComponent<UnitController>();
-        unitController.maxHealth = 100;
-        unitController.health = 100;
-        unitController.maxShield = 0;
-        unitController.shield = 0;
+        unitController.SetMaxHealth(50);
+        unitController.SetMaxShield(0);
+        unitController.angle = 180;
         NetworkServer.Spawn(zombie);
     }
 

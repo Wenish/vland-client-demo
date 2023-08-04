@@ -6,6 +6,8 @@ using UnityEngine;
 public class UnitUiController : MonoBehaviour
 {
     public GameObject HealthAndShieldBar;
+    public GameObject Healthbar;
+    public GameObject Shieldbar;
     public GameObject FloorCircle;
     UnitController _unitController;
     // Start is called before the first frame update
@@ -14,6 +16,21 @@ public class UnitUiController : MonoBehaviour
         _unitController = GetComponentInParent<UnitController>();
         _unitController.OnDied += HandleOnDied;
         _unitController.OnRevive += HandleOnRevive;
+        _unitController.OnShieldChange += HandleOnShieldChange;
+        InitUiBars();
+    }
+
+    void InitUiBars()
+    {
+        if(_unitController.maxHealth == 0)
+        {
+            DisableHealthbar();
+        }
+
+        if (_unitController.maxShield == 0)
+        {
+            DisableShieldbar();
+        }
     }
 
     private void HandleOnDied()
@@ -24,6 +41,15 @@ public class UnitUiController : MonoBehaviour
     private void HandleOnRevive()
     {
         EnableGuiElements();
+    }
+    private void HandleOnShieldChange((int current, int max) shield)
+    {
+        if (shield.max == 0)
+        {
+            DisableShieldbar();
+        } else {
+            EnableShieldbar();
+        }
     }
 
     public void EnableGuiElements()
@@ -36,5 +62,25 @@ public class UnitUiController : MonoBehaviour
     {
         HealthAndShieldBar.SetActive(false);
         FloorCircle.SetActive(false);
+    }
+
+    public void EnableHealthbar()
+    {
+        Healthbar.SetActive(true);
+    }
+
+    public void DisableHealthbar()
+    {
+        Healthbar.SetActive(false);
+    }
+
+    public void EnableShieldbar()
+    {
+        Shieldbar.SetActive(true);
+    }
+
+    public void DisableShieldbar()
+    {
+        Shieldbar.SetActive(false);
     }
 }

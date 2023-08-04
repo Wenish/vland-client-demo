@@ -14,11 +14,11 @@ public class UnitController : NetworkBehaviour
     public float angle = 0f;
     [SyncVar(hook = nameof(HookOnHealthChanged))]
     public int health = 100;
-    [SyncVar]
+    [SyncVar(hook = nameof(HookOnMaxHealthChanged))]
     public int maxHealth = 100;
     [SyncVar(hook = nameof(HookOnShieldChanged))]
     public int shield = 50;
-    [SyncVar]
+    [SyncVar(hook = nameof(HookOnMaxShieldChanged))]
     public int maxShield = 50;
     [SyncVar]
     public float moveSpeed = 5f;
@@ -64,6 +64,26 @@ public class UnitController : NetworkBehaviour
         {
             Heal(maxHealth);
             Shield(maxShield);
+        }
+    }
+
+    [Server]
+    public void SetMaxHealth(int newMaxHealth)
+    {
+        maxHealth = newMaxHealth;
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+    }
+
+    [Server]
+    public void SetMaxShield(int newMaxShield)
+    {
+        maxShield = newMaxShield;
+        if (shield > maxShield)
+        {
+            shield = maxShield;
         }
     }
     
@@ -166,8 +186,16 @@ public class UnitController : NetworkBehaviour
     {
         RaiseHealthChangeEvent();
     }
+    void HookOnMaxHealthChanged(int oldValue, int newValue)
+    {
+        RaiseHealthChangeEvent();
+    }
 
     void HookOnShieldChanged(int oldValue, int newValue)
+    {
+        RaiseShieldChangeEvent();
+    }
+    void HookOnMaxShieldChanged(int oldValue, int newValue)
     {
         RaiseShieldChangeEvent();
     }
