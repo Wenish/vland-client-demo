@@ -31,6 +31,10 @@ public class UnitUiController : MonoBehaviour
         {
             DisableShieldbar();
         }
+        if (_unitController.health == 0)
+        {
+            DisableGuiElements();
+        }
     }
 
     private void HandleOnDied()

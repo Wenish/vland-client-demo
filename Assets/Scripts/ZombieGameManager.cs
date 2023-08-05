@@ -74,11 +74,13 @@ public class ZombieGameManager : NetworkBehaviour
     void SpawnZombie(Vector3 spawnPosition, Quaternion spawnRotation)
     {
         var zombie = NetworkManager.Instantiate(ZombiePrefab, spawnPosition, spawnRotation);
+        zombie.name = "Unit (Zombie)";
 
         var unitController = zombie.GetComponent<UnitController>();
         unitController.SetMaxHealth(50);
         unitController.SetMaxShield(0);
         unitController.angle = 180;
+        zombie.AddComponent<AiZombieController>();
         NetworkServer.Spawn(zombie);
     }
 

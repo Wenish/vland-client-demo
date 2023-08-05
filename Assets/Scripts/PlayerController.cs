@@ -63,6 +63,7 @@ public class PlayerController : NetworkBehaviour
     void SpawnPlayerUnit()
     {
         var unit = NetworkManager.Instantiate(CustomNetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit"));
+        unit.name = "Unit (Player)";
         NetworkServer.Spawn(unit);
         Unit = unit;
         _unitController = Unit.GetComponent<UnitController>();
