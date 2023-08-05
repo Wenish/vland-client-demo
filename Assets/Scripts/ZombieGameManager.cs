@@ -69,7 +69,8 @@ public class ZombieGameManager : NetworkBehaviour
 
     Vector3 GetZombieSpawnPosition()
     {
-        return ZombieSpawns[0].transform.position;
+        int spawnIndex = Random.Range(0, ZombieSpawns.Length);
+        return ZombieSpawns[spawnIndex].transform.position;
     }
 
     [Server]
