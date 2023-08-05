@@ -1,61 +1,66 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class AiZombieController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public NavMeshAgent _navMeshAgent;
     public UnitController _unitController;
-    Vector3 Destination;
-    [SerializeField]
-    Vector3? _moveTarget;
+    public Vector3 Destination;
+    public Vector3 _moveTarget;
+    private NavMeshPath _path;
+    private PlayerController[] _playerControllers;
 
     void Awake()
     {
         _unitController = gameObject.GetComponent<UnitController>();
-        _navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
-        _navMeshAgent.isStopped = true; 
-        _navMeshAgent.autoBraking = false;
-        _navMeshAgent.angularSpeed = 0;
-        _navMeshAgent.speed = 0;
-        _navMeshAgent.acceleration = 0;
     }
     void Start()
     {
-        _unitController.OnDied += HandleOnDied;
-        _unitController.OnDied += HandleOnRevive;
+        _path = new NavMeshPath();
         SetDestination(Vector3.zero);
-        Destination = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
         if(_unitController.IsDead) return;
+        // TODO: dont call GetAllPlayerControllers on every update (listen on event OnPlayerAdded)
+        GetAllPlayerControllers();
+        CalcNearestPlayer();
+        CalcPathToDestination();
         SetMoveTarget();
         CalculateAngle();
         CalculateMoveInput();
     }
-    void HandleOnDied()
+
+    void GetAllPlayerControllers()
     {
-        _navMeshAgent.enabled = false;
+        _playerControllers = FindObjectsOfType<PlayerController>();
     }
-    void HandleOnRevive()
+    void CalcNearestPlayer()
     {
-        _navMeshAgent.enabled = true;
+        Vector3[] positions = _playerControllers
+            .Where(x => !x.Unit.GetComponent<UnitController>().IsDead)
+            .Select(x => x.Unit.transform.position)
+            .ToArray();
+        var nearestPlayerPosition = GetNearestPlayerPosition(positions, _unitController.transform.position);
+        SetDestination(nearestPlayerPosition);
     }
     public void SetDestination(Vector3 destination)
     {
-        _navMeshAgent.SetDestination(destination);
+        Destination = destination;
+    }
+
+    void CalcPathToDestination()
+    {
+        NavMesh.CalculatePath(transform.position, Destination, 1, _path);
     }
 
     void SetMoveTarget()
     {
-        if (_navMeshAgent.hasPath && _navMeshAgent.path.corners.Length > 0) {
-            var nextCorner = _navMeshAgent.path.corners[1];
+        if (_path.corners.Length > 0) {
+            var nextCorner = _path.corners[1];
             _moveTarget = new Vector3(nextCorner.x, 0, nextCorner.z);
-        } else {
-            _moveTarget = null;
         }
     }
 
@@ -63,7 +68,7 @@ public class AiZombieController : MonoBehaviour
     {
         if (_moveTarget == null) return;
 
-        Vector3 pos = (Vector3)(_unitController.transform.position - _moveTarget);
+        var pos = _unitController.transform.position - _moveTarget;
         var angle = -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90;
         _unitController.angle = angle;
     }
@@ -75,14 +80,14 @@ public class AiZombieController : MonoBehaviour
             return;
         };
         
-        float distance = Vector3.Distance(_unitController.transform.position, _navMeshAgent.destination);
+        float distance = GetPathDistance(_path);
 
         if (distance < 1f) {
             StopMoveInput();
             return;
         }
 
-        Vector3 direction = (Vector3)(_moveTarget - _unitController.transform.position);
+        Vector3 direction = _moveTarget - _unitController.transform.position;
         direction.y = 0f;
         direction.Normalize();
         _unitController.horizontalInput = direction.x;
@@ -93,5 +98,43 @@ public class AiZombieController : MonoBehaviour
     {
         _unitController.horizontalInput = 0;
         _unitController.verticalInput = 0;
+    }
+
+    private float GetPathDistance(NavMeshPath path)
+    {
+        if (path != null && path.corners.Length > 1)
+        {
+            float distance = 0f;
+            for (int i = 1; i < path.corners.Length; i++)
+            {
+                distance += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+            }
+            return distance;
+        }
+        return 0f; // If the path is null or has no corners, return 0 distance.
+    }
+
+    private Vector3 GetNearestPlayerPosition(Vector3[] playerPositions, Vector3 referencePosition)
+    {
+        if (playerPositions == null || playerPositions.Length == 0)
+        {
+            Debug.LogWarning("Player positions array is null or empty.");
+            return Vector3.zero;
+        }
+
+        Vector3 nearestPlayerPosition = playerPositions[0];
+        float nearestDistanceSqr = Vector3.SqrMagnitude(nearestPlayerPosition - referencePosition);
+
+        for (int i = 1; i < playerPositions.Length; i++)
+        {
+            float distanceSqr = Vector3.SqrMagnitude(playerPositions[i] - referencePosition);
+            if (distanceSqr < nearestDistanceSqr)
+            {
+                nearestDistanceSqr = distanceSqr;
+                nearestPlayerPosition = playerPositions[i];
+            }
+        }
+
+        return nearestPlayerPosition;
     }
 }

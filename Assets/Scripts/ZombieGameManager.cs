@@ -17,12 +17,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         if(isServer)
         {
-            Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
+            SpawnWave();
         }
     }
 
@@ -30,6 +25,29 @@ public class ZombieGameManager : NetworkBehaviour
     void Update()
     {
         
+    }
+
+    [Server]
+    void SpawnWave()
+    {
+
+        Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
+        SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
+        SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
     }
 
     [Server]
