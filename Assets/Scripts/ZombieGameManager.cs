@@ -51,7 +51,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         await Task.Delay(timeBetweenWaves);
         currentWave++;
-        OnNewWaveStarted(currentWave);
+        RasiseOnNewWaveStartedEvent();
         var zombiesToSpawnThisWave = zombiesPerWaveMultiplier * currentWave;
         Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
         for (int i = 0; i < zombiesToSpawnThisWave; i++)
@@ -111,6 +111,7 @@ public class ZombieGameManager : NetworkBehaviour
         ZombieSpawns = FindObjectsOfType<ZombieSpawnController>();
     }
 
+    [Server]
     void UnitEquipSword(UnitController unitController)
     {
         if (!unitController) return;
@@ -119,5 +120,11 @@ public class ZombieGameManager : NetworkBehaviour
         WeaponMelee weaponMelee = unitController.GetComponent<WeaponMelee>();
         if (!weaponMelee) return;
         unitController.weapon = weaponMelee;
+    }
+
+    [ClientRpc]
+    public void RasiseOnNewWaveStartedEvent()
+    {
+        OnNewWaveStarted(currentWave);
     }
 }
