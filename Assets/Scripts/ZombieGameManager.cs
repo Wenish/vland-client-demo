@@ -20,44 +20,6 @@ public class ZombieGameManager : NetworkBehaviour
             Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
             SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
             SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-            SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
             SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
             SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
             SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
@@ -73,15 +35,15 @@ public class ZombieGameManager : NetworkBehaviour
     [Server]
     void SpawnZombie(Vector3 spawnPosition, Quaternion spawnRotation)
     {
-        var zombie = NetworkManager.Instantiate(ZombiePrefab, spawnPosition, spawnRotation);
+        var zombie = NetworkManager.Instantiate(ZombiePrefab, new Vector3(spawnPosition.x, 0, spawnPosition.z), spawnRotation);
         zombie.name = "Unit (Zombie)";
 
         var unitController = zombie.GetComponent<UnitController>();
         unitController.SetMaxHealth(50);
         unitController.SetMaxShield(0);
-        unitController.angle = 180;
-        zombie.AddComponent<AiZombieController>();
+        unitController.moveSpeed = 3;
         NetworkServer.Spawn(zombie);
+        zombie.AddComponent<AiZombieController>();
     }
 
     void GetAllZombieSpawnInScene()
