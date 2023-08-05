@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using Mirror;
 using UnityEngine;
 
 public class ZombieGameManager : NetworkBehaviour
 {
+    public static ZombieGameManager Singleton { get; private set;}
     public GameObject ZombiePrefab;
     public ZombieSpawnController[] ZombieSpawns;
 
@@ -22,8 +22,11 @@ public class ZombieGameManager : NetworkBehaviour
     [SerializeField]
     private bool isSpawingWave = false;
     // Start is called before the first frame update
+
+    public event Action<int> OnNewWaveStarted = delegate {};
     void Awake()
     {
+        Singleton = this;
         GetAllZombieSpawnInScene();
         ZombiePrefab = CustomNetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
     }
@@ -48,6 +51,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         await Task.Delay(timeBetweenWaves);
         currentWave++;
+        OnNewWaveStarted(currentWave);
         var zombiesToSpawnThisWave = zombiesPerWaveMultiplier * currentWave;
         Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
         for (int i = 0; i < zombiesToSpawnThisWave; i++)
@@ -69,7 +73,7 @@ public class ZombieGameManager : NetworkBehaviour
 
     Vector3 GetZombieSpawnPosition()
     {
-        int spawnIndex = Random.Range(0, ZombieSpawns.Length);
+        int spawnIndex = UnityEngine.Random.Range(0, ZombieSpawns.Length);
         return ZombieSpawns[spawnIndex].transform.position;
     }
 

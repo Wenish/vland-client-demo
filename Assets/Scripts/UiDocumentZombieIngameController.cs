@@ -10,18 +10,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
-
         _labelWave = _uiDocument.rootVisualElement.Q<Label>(name: "labelWave");
     }
-    // Start is called before the first frame update
     void Start()
     {
-        // _labelWave.text = "Hallo";
+        ZombieGameManager.Singleton.OnNewWaveStarted += HandleOnNewWaveStarted;
     }
 
-    // Update is called once per frame
-    void Update()
+    void HandleOnNewWaveStarted(int wave)
     {
-        
+        _labelWave.text = wave.ToString();
     }
 }
