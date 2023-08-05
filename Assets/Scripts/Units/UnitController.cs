@@ -13,7 +13,7 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public float angle = 0f;
     [SyncVar(hook = nameof(HookOnHealthChanged))]
-    public int health = 100;
+    public int Health = 100;
     [SyncVar(hook = nameof(HookOnMaxHealthChanged))]
     public int maxHealth = 100;
     [SyncVar(hook = nameof(HookOnShieldChanged))]
@@ -24,7 +24,7 @@ public class UnitController : NetworkBehaviour
     public float moveSpeed = 5f;
     [SyncVar(hook = nameof(HookOnRaceChanged))]
     public Race Race = Race.Ninja;
-    public bool IsDead => health <= 0;
+    public bool IsDead => Health <= 0;
     public Weapon weapon;
 
     public event Action<(int current, int max)> OnHealthChange = delegate {};
@@ -38,7 +38,7 @@ public class UnitController : NetworkBehaviour
     void Start()
     {
         if (isServer) {
-            health = maxHealth;
+            Health = maxHealth;
         }
         unitRigidbody = GetComponent<Rigidbody>();
         RaiseHealthChangeEvent();
@@ -71,9 +71,9 @@ public class UnitController : NetworkBehaviour
     public void SetMaxHealth(int newMaxHealth)
     {
         maxHealth = newMaxHealth;
-        if (health > maxHealth)
+        if (Health > maxHealth)
         {
-            health = maxHealth;
+            Health = maxHealth;
         }
     }
 
@@ -132,15 +132,9 @@ public class UnitController : NetworkBehaviour
         }
 
         // Reduce the health points by the remaining damage
-        health -= damage;
+        Health -= damage;
 
-        health = Mathf.Clamp(health, 0, maxHealth);
-
-        // Check if the unit is dead
-        if (health <= 0)
-        {
-            Die();
-        }
+        Health = Mathf.Clamp(Health, 0, maxHealth);
     }
 
     [Server]
@@ -154,12 +148,12 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void Heal(int amount)
     {
-        if (health == 0)
+        if (Health == 0)
         {
             Revive();
         }
         // Increase the health by the heal amount
-        health = Mathf.Min(health + amount, maxHealth);
+        Health = Mathf.Min(Health + amount, maxHealth);
     }
 
     // Shield the unit
@@ -184,7 +178,7 @@ public class UnitController : NetworkBehaviour
 
     void HookOnHealthChanged(int oldValue, int newValue)
     {
-        if (newValue <= 0)
+        if (oldValue > 0 && newValue <= 0)
         {
             Die();
         }
@@ -215,7 +209,7 @@ public class UnitController : NetworkBehaviour
 
     private void RaiseHealthChangeEvent()
     {
-        OnHealthChange((current: health, max: maxHealth));
+        OnHealthChange((current: Health, max: maxHealth));
     }
 
     private void RaiseShieldChangeEvent()

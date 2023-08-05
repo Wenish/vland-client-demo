@@ -31,7 +31,7 @@ public class UnitUiController : MonoBehaviour
         {
             DisableShieldbar();
         }
-        if (_unitController.health == 0)
+        if (_unitController.Health == 0)
         {
             DisableGuiElements();
         }

@@ -42,6 +42,7 @@ public class AiZombieController : MonoBehaviour
     void CalcNearestPlayer()
     {
         var playerUnits = _playerControllers
+            .Where(x => x.Unit.GetComponent<UnitController>())
             .Where(x => !x.Unit.GetComponent<UnitController>().IsDead)
             .Select(x => x.Unit.GetComponent<UnitController>())
             .ToArray();
@@ -107,7 +108,7 @@ public class AiZombieController : MonoBehaviour
 
     void CalcShouldAttack()
     {
-        if (_targetPlayer.IsDead) return;
+        if (_targetPlayer && _targetPlayer.IsDead) return;
 
         var distance = Vector3.Distance(_unitController.transform.position, Destination);
         if (distance < _unitController.weapon.attackRange) {

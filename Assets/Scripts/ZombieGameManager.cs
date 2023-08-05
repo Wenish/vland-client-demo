@@ -1,41 +1,75 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Mirror;
 using UnityEngine;
 
 public class ZombieGameManager : NetworkBehaviour
 {
-    public ZombieSpawnController[] ZombieSpawns;
     public GameObject ZombiePrefab;
+    public ZombieSpawnController[] ZombieSpawns;
+
+    [SyncVar]
+    public int currentWave = 0;
+
+    public int timeBetweenWaves = 10000;
+    public int timeBetweenSpawns = 500;
+    public int maxZombiesAlive = 5;
+    public int zombiesPerWaveMultiplier = 5;
+
+    [SerializeField]
+    private int zombiesAlive = 0;
+    [SerializeField]
+    private bool isSpawingWave = false;
     // Start is called before the first frame update
     void Awake()
     {
         GetAllZombieSpawnInScene();
         ZombiePrefab = CustomNetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
     }
-    void Start()
-    {
-        if(isServer)
-        {
-            SpawnWave();
-        }
-    }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (!isServer) return;
+        if (isSpawingWave) return;
+
+        if (zombiesAlive == 0)
+        {
+            isSpawingWave = true;
+            _ = SpawnWave();
+        }
+
+
     }
 
     [Server]
-    void SpawnWave()
+    async Task SpawnWave()
     {
-
+        await Task.Delay(timeBetweenWaves);
+        currentWave++;
+        var zombiesToSpawnThisWave = zombiesPerWaveMultiplier * currentWave;
         Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
-        SpawnZombie(ZombieSpawns[0].transform.position, spawnRotation);
-        SpawnZombie(ZombieSpawns[1].transform.position, spawnRotation);
-        SpawnZombie(ZombieSpawns[2].transform.position, spawnRotation);
-        SpawnZombie(ZombieSpawns[3].transform.position, spawnRotation);
+        for (int i = 0; i < zombiesToSpawnThisWave; i++)
+        {
+            if (zombiesAlive < maxZombiesAlive)
+            {
+                zombiesAlive++;
+                SpawnZombie(GetZombieSpawnPosition(), spawnRotation);
+            }
+            else
+            {
+                i--;
+            }
+            await Task.Delay(timeBetweenSpawns);
+        }
+
+        isSpawingWave = false;
+    }
+
+    Vector3 GetZombieSpawnPosition()
+    {
+        return ZombieSpawns[0].transform.position;
     }
 
     [Server]
@@ -45,6 +79,12 @@ public class ZombieGameManager : NetworkBehaviour
         zombie.name = "Unit (Zombie)";
 
         var unitController = zombie.GetComponent<UnitController>();
+        unitController.OnDied += async () => {
+            zombiesAlive--;
+            // Destroy the zombie
+            await Task.Delay(5000);
+            NetworkServer.Destroy(zombie);
+        };
         unitController.SetMaxHealth(50);
         unitController.SetMaxShield(0);
         unitController.moveSpeed = 3;
