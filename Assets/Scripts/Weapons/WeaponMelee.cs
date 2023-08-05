@@ -4,12 +4,9 @@ using UnityEngine;
 public class WeaponMelee : Weapon
 {
     public Mode mode = Mode.Linear;
-    [SerializeField]
-    private float coneAngleRadians = 90f;
-    [SerializeField]
-    private int numRays = 21;
-    [SerializeField]
-    private float Weighting = 0.5f;
+    public float coneAngleRadians = 90f;
+    public int numRays = 21;
+    public float Weighting = 0.5f;
     protected override void PerformAttack(UnitController unit)
     {
         // Get the position and rotation of the unit

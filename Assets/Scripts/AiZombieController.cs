@@ -9,6 +9,7 @@ public class AiZombieController : MonoBehaviour
     public Vector3 _moveTarget;
     private NavMeshPath _path;
     private PlayerController[] _playerControllers;
+    private UnitController _targetPlayer;
 
     void Awake()
     {
@@ -31,6 +32,7 @@ public class AiZombieController : MonoBehaviour
         SetMoveTarget();
         CalculateAngle();
         CalculateMoveInput();
+        CalcShouldAttack();
     }
 
     void GetAllPlayerControllers()
@@ -39,12 +41,15 @@ public class AiZombieController : MonoBehaviour
     }
     void CalcNearestPlayer()
     {
-        Vector3[] positions = _playerControllers
+        var playerUnits = _playerControllers
             .Where(x => !x.Unit.GetComponent<UnitController>().IsDead)
-            .Select(x => x.Unit.transform.position)
+            .Select(x => x.Unit.GetComponent<UnitController>())
             .ToArray();
-        var nearestPlayerPosition = GetNearestPlayerPosition(positions, _unitController.transform.position);
-        SetDestination(nearestPlayerPosition);
+        if (playerUnits.Length == 0) return;
+        
+        var nearestPlayer = GetNearestPlayerPosition(playerUnits, _unitController.transform.position);
+        SetDestination(nearestPlayer.transform.position);
+        _targetPlayer = nearestPlayer;
     }
     public void SetDestination(Vector3 destination)
     {
@@ -82,7 +87,7 @@ public class AiZombieController : MonoBehaviour
         
         float distance = GetPathDistance(_path);
 
-        if (distance < 1f) {
+        if (distance < 1.1f) {
             StopMoveInput();
             return;
         }
@@ -100,6 +105,16 @@ public class AiZombieController : MonoBehaviour
         _unitController.verticalInput = 0;
     }
 
+    void CalcShouldAttack()
+    {
+        if (_targetPlayer.IsDead) return;
+
+        var distance = Vector3.Distance(_unitController.transform.position, Destination);
+        if (distance < _unitController.weapon.attackRange) {
+            _unitController.Attack();
+        }
+    }
+
     private float GetPathDistance(NavMeshPath path)
     {
         if (path != null && path.corners.Length > 1)
@@ -114,27 +129,26 @@ public class AiZombieController : MonoBehaviour
         return 0f; // If the path is null or has no corners, return 0 distance.
     }
 
-    private Vector3 GetNearestPlayerPosition(Vector3[] playerPositions, Vector3 referencePosition)
+    private UnitController GetNearestPlayerPosition(UnitController[] playerUnits, Vector3 referencePosition)
     {
-        if (playerPositions == null || playerPositions.Length == 0)
+        if (playerUnits == null || playerUnits.Length == 0)
         {
             Debug.LogWarning("Player positions array is null or empty.");
-            return Vector3.zero;
         }
 
-        Vector3 nearestPlayerPosition = playerPositions[0];
-        float nearestDistanceSqr = Vector3.SqrMagnitude(nearestPlayerPosition - referencePosition);
+        UnitController nearestUnit = playerUnits[0];
+        float nearestDistanceSqr = Vector3.SqrMagnitude(nearestUnit.transform.position - referencePosition);
 
-        for (int i = 1; i < playerPositions.Length; i++)
+        for (int i = 1; i < playerUnits.Length; i++)
         {
-            float distanceSqr = Vector3.SqrMagnitude(playerPositions[i] - referencePosition);
+            float distanceSqr = Vector3.SqrMagnitude(playerUnits[i].transform.position - referencePosition);
             if (distanceSqr < nearestDistanceSqr)
             {
                 nearestDistanceSqr = distanceSqr;
-                nearestPlayerPosition = playerPositions[i];
+                nearestUnit = playerUnits[i];
             }
         }
 
-        return nearestPlayerPosition;
+        return nearestUnit;
     }
 }
