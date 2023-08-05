@@ -9,7 +9,7 @@ public class ZombieGameManager : NetworkBehaviour
     public GameObject ZombiePrefab;
     public ZombieSpawnController[] ZombieSpawns;
 
-    [SyncVar]
+    [SyncVar(hook =  nameof(HookOnCurrentWaveChanged))]
     public int currentWave = 0;
 
     public int timeBetweenWaves = 10000;
@@ -51,7 +51,6 @@ public class ZombieGameManager : NetworkBehaviour
     {
         await Task.Delay(timeBetweenWaves);
         currentWave++;
-        RasiseOnNewWaveStartedEvent();
         var zombiesToSpawnThisWave = zombiesPerWaveMultiplier * currentWave;
         Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
         for (int i = 0; i < zombiesToSpawnThisWave; i++)
@@ -69,6 +68,11 @@ public class ZombieGameManager : NetworkBehaviour
         }
 
         isSpawingWave = false;
+    }
+
+    void HookOnCurrentWaveChanged(int oldValue, int newValue)
+    {
+        RasiseOnNewWaveStartedEvent();
     }
 
     Vector3 GetZombieSpawnPosition()
@@ -121,8 +125,7 @@ public class ZombieGameManager : NetworkBehaviour
         if (!weaponMelee) return;
         unitController.weapon = weaponMelee;
     }
-
-    [ClientRpc]
+    
     public void RasiseOnNewWaveStartedEvent()
     {
         OnNewWaveStarted(currentWave);

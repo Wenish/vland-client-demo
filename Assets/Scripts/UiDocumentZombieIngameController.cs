@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class UiDocumentZombieIngameController : MonoBehaviour
 {
+    public ZombieGameManager ZombieGameManager;
     private UIDocument _uiDocument;
     private Label _labelWave;
     void Awake()
@@ -14,7 +13,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     }
     void Start()
     {
-        ZombieGameManager.Singleton.OnNewWaveStarted += HandleOnNewWaveStarted;
+        var currentWave = ZombieGameManager.currentWave;
+        if (currentWave > 0)
+        {
+            _labelWave.text = ZombieGameManager.currentWave.ToString();
+        } else
+        {
+            _labelWave.text = "";
+        }
+        ZombieGameManager.OnNewWaveStarted += HandleOnNewWaveStarted;
     }
 
     void HandleOnNewWaveStarted(int wave)
