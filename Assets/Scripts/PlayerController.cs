@@ -32,6 +32,7 @@ public class PlayerController : NetworkBehaviour
         if (isServer)
         {
             SpawnPlayerUnit();
+            UnitController.OnKill += HandleUnitOnKill;
         }
 
         if (isLocalPlayer)
@@ -43,13 +44,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    void OnEnable()
-    {
-        if (!isServer) return;
-        UnitController.OnKill += HandleUnitOnKill;
-    }
-
-    void OnDisable()
+    void OnDestroy()
     {
         if (!isServer) return;
         UnitController.OnKill -= HandleUnitOnKill;
