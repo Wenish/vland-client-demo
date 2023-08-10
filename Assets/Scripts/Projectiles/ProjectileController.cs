@@ -76,7 +76,7 @@ public class ProjectileController : NetworkBehaviour
         if (unit != null && unit != shooter)
         {
             hasCollidedWithUnit = true;
-            unit.TakeDamage(damage);
+            unit.TakeDamage(damage, shooter);
         }
 
 

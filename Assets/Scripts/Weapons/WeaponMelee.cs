@@ -53,14 +53,14 @@ public class WeaponMelee : Weapon
                     bestScore = score;
                 }
             }
-
             // Deal damage to the closest enemy
-            closestEnemy.TakeDamage(attackPower);
+            closestEnemy.TakeDamage(attackPower, unit);
         }
         // If only one enemy was hit, deal damage to that enemy
         else if (enemiesHit.Count == 1)
         {
-            enemiesHit[0].TakeDamage(attackPower);
+            var enemy = enemiesHit[0];
+            enemy.TakeDamage(attackPower, unit);
         }
     }
     

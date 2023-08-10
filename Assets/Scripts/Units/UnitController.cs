@@ -33,6 +33,7 @@ public class UnitController : NetworkBehaviour
     public event Action<UnitController> OnTakeDamage = delegate {};
     public event Action OnDied = delegate {};
     public event Action OnRevive = delegate {};
+    public static event Action<(UnitController killer, UnitController victim)> OnKill = delegate {};
 
     // Start is called before the first frame update
     void Start()
@@ -58,7 +59,7 @@ public class UnitController : NetworkBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            TakeDamage(20);
+            TakeDamage(20, this);
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -113,7 +114,7 @@ public class UnitController : NetworkBehaviour
     }
 
     [Server]
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, UnitController attacker)
     {
         RaiseOnTakeDamageEvent();
         // If the unit has a shield, reduce the shield points first
@@ -135,6 +136,11 @@ public class UnitController : NetworkBehaviour
         Health -= damage;
 
         Health = Mathf.Clamp(Health, 0, maxHealth);
+
+        if (Health <= 0)
+        {
+            RaiseOnKillEvent(attacker, this);
+        }
     }
 
     [Server]
@@ -231,6 +237,11 @@ public class UnitController : NetworkBehaviour
     private void RaiseOnReviveEvent()
     {
         OnRevive();
+    }
+
+    private void RaiseOnKillEvent(UnitController killer, UnitController victim)
+    {
+        OnKill((killer, victim));
     }
 
     [ClientRpc]
