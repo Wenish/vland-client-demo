@@ -45,11 +45,13 @@ public class PlayerController : NetworkBehaviour
 
     void OnEnable()
     {
+        if (!isServer) return;
         UnitController.OnKill += HandleUnitOnKill;
     }
 
     void OnDisable()
     {
+        if (!isServer) return;
         UnitController.OnKill -= HandleUnitOnKill;
     }
 
@@ -71,6 +73,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    [Server]
     void HandleUnitOnKill((UnitController killer, UnitController victim) payload) 
     {
         var isThisPlayerTheKiller = payload.killer == _unitController;
