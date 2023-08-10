@@ -29,9 +29,6 @@ public class ZombieGameManager : NetworkBehaviour
         Singleton = this;
         GetAllZombieSpawnInScene();
         ZombiePrefab = CustomNetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
-        UnitController.OnKill += ((UnitController killer, UnitController victim) payload) => {
-            Debug.Log("Unit killed");
-        };
     }
 
     // Update is called once per frame

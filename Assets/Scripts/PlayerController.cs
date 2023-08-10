@@ -16,6 +16,8 @@ public class PlayerController : NetworkBehaviour
     public float Angle = 0f;
     [SyncVar]
     public bool IsPressingFire1 = false;
+    [SyncVar]
+    public int money = 0;
 
     private UnitController _unitController;
 
@@ -41,6 +43,16 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        UnitController.OnKill += HandleUnitOnKill;
+    }
+
+    void OnDisable()
+    {
+        UnitController.OnKill -= HandleUnitOnKill;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -58,6 +70,14 @@ public class PlayerController : NetworkBehaviour
             ControlUnit();
         }
     }
+
+    void HandleUnitOnKill((UnitController killer, UnitController victim) payload) 
+    {
+        var isThisPlayerTheKiller = payload.killer == _unitController;
+        if(!isThisPlayerTheKiller) return;
+
+        money += 100;
+    } 
 
     [Server]
     void SpawnPlayerUnit()

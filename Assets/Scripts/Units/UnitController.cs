@@ -147,7 +147,7 @@ public class UnitController : NetworkBehaviour
     public void Attack() {
         if (IsDead) return;
 
-        weapon.Attack(this);
+        _ = weapon.Attack(this);
     }
 
     // Heal the unit
