@@ -94,7 +94,7 @@ public class ZombieGameManager : NetworkBehaviour
             await Task.Delay(5000);
             NetworkServer.Destroy(zombie);
         };
-        unitController.SetMaxHealth(50);
+        unitController.SetMaxHealth(25);
         unitController.SetMaxShield(0);
         unitController.moveSpeed = 3;
         UnitEquipSword(unitController);

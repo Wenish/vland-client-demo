@@ -565,7 +565,7 @@ MonoBehaviour:
   horizontalInput: 0
   verticalInput: 0
   angle: 0
-  health: 100
+  Health: 100
   maxHealth: 100
   shield: 50
   maxShield: 50
@@ -592,8 +592,10 @@ MonoBehaviour:
   attackCooldown: 0
   moveSpeedPercentWhileAttacking: 0.8
   IsAttacking: 0
+  mode: 1
   coneAngleRadians: 90
   numRays: 20
+  Weighting: 0.5
 --- !u!114 &947192566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,7 +614,7 @@ MonoBehaviour:
   attackTime: 0.5
   attackSpeed: 0.3
   attackCooldown: 0
-  moveSpeedPercentWhileAttacking: 0.1
+  moveSpeedPercentWhileAttacking: 0.3
   IsAttacking: 0
   projectile: {fileID: 11400000, guid: 196370f6a0a8f4846a3a154ca9f64484, type: 2}
   projectileSpeed: 22
