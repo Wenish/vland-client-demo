@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Game.Scripts.Controllers;
+using MyGame.Events;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -33,6 +34,7 @@ public class PlayerController : NetworkBehaviour
         {
             SpawnPlayerUnit();
             UnitController.OnKill += HandleUnitOnKill;
+            EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
         }
 
         if (isLocalPlayer)
@@ -66,6 +68,14 @@ public class PlayerController : NetworkBehaviour
         {
             ControlUnit();
         }
+    }
+
+    [Server]
+    public void OnWaveStartedHealPlayerUnitFull(WaveStartedEvent waveStartedEvent)
+    {
+        if (!_unitController) return;
+        _unitController.Heal(_unitController.maxHealth);
+        _unitController.Shield(_unitController.maxShield);
     }
 
     [Server]

@@ -1,4 +1,7 @@
 {
     "omnisharp.useModernNet": false,
-    "dotnet.defaultSolution": "vland-client-demo.sln"
+    "dotnet.defaultSolution": "vland-client-demo.sln",
+    "files.exclude": {
+        "**/*.meta": true
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Mirror;
+using MyGame.Events;
 using UnityEngine;
 
 public class ZombieGameManager : NetworkBehaviour
@@ -42,8 +43,6 @@ public class ZombieGameManager : NetworkBehaviour
             isSpawingWave = true;
             _ = SpawnWave();
         }
-
-
     }
 
     [Server]
@@ -129,5 +128,6 @@ public class ZombieGameManager : NetworkBehaviour
     public void RasiseOnNewWaveStartedEvent()
     {
         OnNewWaveStarted(currentWave);
+        EventManager.Instance.Publish(new WaveStartedEvent(currentWave, zombiesPerWaveMultiplier * currentWave));
     }
 }
