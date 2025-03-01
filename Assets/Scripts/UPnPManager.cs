@@ -1,29 +1,28 @@
 using System;
 using System.Threading.Tasks;
-using Open.Nat;  // NuGet Package
+using UnityEngine;
+using Open.Nat;  // Open.NAT importieren
 
-public class UPnPManager
+public class UPnPManager : MonoBehaviour
 {
-    /*
-    public static async Task<bool> OpenPort(int port)
+    private async void Start()
     {
-        /
+        await OpenPort(7777);
+    }
+
+    private async Task OpenPort(int port)
+    {
         try
         {
             var discoverer = new NatDiscoverer();
             var device = await discoverer.DiscoverDeviceAsync();
-
-            // Port Forwarding aktivieren
             await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game"));
 
-            Console.WriteLine($"Port {port} wurde erfolgreich geöffnet.");
-            return true;
+            Debug.Log($"✅ UPnP: Port {port} erfolgreich geöffnet!");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"UPnP fehlgeschlagen: {ex.Message}");
-            return false;
+            Debug.LogError($"❌ UPnP fehlgeschlagen: {ex.Message}");
         }
     }
-    */
 }

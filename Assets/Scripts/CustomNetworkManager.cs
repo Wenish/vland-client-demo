@@ -5,6 +5,7 @@ using Mirror;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Net;
+using Open.Nat;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -13,6 +14,8 @@ using System.Net;
 
 public class CustomNetworkManager : NetworkManager
 {
+    private int gamePort = 7777;
+    private bool upnpSuccess = false;
     // Overrides the base singleton so we don't
     // have to cast to this type everywhere.
     public static new CustomNetworkManager singleton { get; private set; }
@@ -228,8 +231,12 @@ public class CustomNetworkManager : NetworkManager
     /// This is invoked when a server is started - including when a host is started.
     /// <para>StartServer has multiple signatures, but they all cause this hook to be called.</para>
     /// </summary>
-    public override void OnStartServer() {
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
         StartCoroutine(RegisterLobby());
+        Debug.Log("Server startet... Versuche UPnP...");
+        OpenUPnPPort(gamePort);
     }
 
     /// <summary>
@@ -245,7 +252,15 @@ public class CustomNetworkManager : NetworkManager
     /// <summary>
     /// This is called when a server is stopped - including when a host is stopped.
     /// </summary>
-    public override void OnStopServer() { }
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        if (upnpSuccess)
+        {
+            Debug.Log("Schließe UPnP Port...");
+            CloseUPnPPort(gamePort);
+        }
+    }
 
     /// <summary>
     /// This is called when a client is stopped.
@@ -294,5 +309,39 @@ public class CustomNetworkManager : NetworkManager
         public string name;
     }
 
+    // UPnP Port öffnen
+    private async void OpenUPnPPort(int port)
+    {
+        try
+        {
+            var discoverer = new NatDiscoverer();
+            var device = await discoverer.DiscoverDeviceAsync();
+            await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game"));
+
+            Debug.Log($"✅ UPnP: Port {port} wurde geöffnet.");
+            upnpSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"❌ UPnP fehlgeschlagen: {ex.Message}");
+            upnpSuccess = false;
+        }
+    }
+    // UPnP Port schließen
+    private async void CloseUPnPPort(int port)
+    {
+        try
+        {
+            var discoverer = new NatDiscoverer();
+            var device = await discoverer.DiscoverDeviceAsync();
+            await device.DeletePortMapAsync(new Mapping(Protocol.Udp, port, port));
+
+            Debug.Log($"🚪 UPnP: Port {port} wurde geschlossen.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"❌ Fehler beim Schließen des Ports: {ex.Message}");
+        }
+    }
 }
 
