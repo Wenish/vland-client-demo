@@ -93,7 +93,7 @@ public class UnitController : NetworkBehaviour
     private void MovePlayer()
     {
         if(IsDead) {
-            unitRigidbody.velocity = Vector3.zero;
+            unitRigidbody.linearVelocity = Vector3.zero;
             return;
         };
 
@@ -102,7 +102,7 @@ public class UnitController : NetworkBehaviour
         inputs.z = verticalInput;
         inputs = Vector3.ClampMagnitude(inputs, 1f);
         Vector3 moveDirection = inputs * moveSpeed;
-        unitRigidbody.velocity = moveDirection;
+        unitRigidbody.linearVelocity = moveDirection;
     }
 
     [Server]

@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
+using System.Collections;
+using UnityEngine.Networking;
+using System.Net;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -225,7 +228,9 @@ public class CustomNetworkManager : NetworkManager
     /// This is invoked when a server is started - including when a host is started.
     /// <para>StartServer has multiple signatures, but they all cause this hook to be called.</para>
     /// </summary>
-    public override void OnStartServer() { }
+    public override void OnStartServer() {
+        StartCoroutine(RegisterLobby());
+    }
 
     /// <summary>
     /// This is invoked when the client is started.
@@ -248,4 +253,46 @@ public class CustomNetworkManager : NetworkManager
     public override void OnStopClient() { }
 
     #endregion
+
+    IEnumerator RegisterLobby()
+    {
+        string ip = NetworkManager.singleton.networkAddress;
+        int port = 7777;
+        string name = "Lobby " + UnityEngine.Random.Range(1000, 9999);
+
+        LobbyData data = new LobbyData
+        {
+            ip = ip,
+            port = port,
+            name = name
+        };
+
+        string jsonData = JsonUtility.ToJson(data);
+
+        UnityWebRequest request = new UnityWebRequest("https://lobby-browser.pibern.ch/lobbies", "POST");
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error: " + request.error);
+        }
+        else
+        {
+            Debug.Log("Lobby registered successfully");
+        }
+    }
+
+    private class LobbyData
+    {
+        public string ip;
+        public int port;
+        public string name;
+    }
+
 }
+

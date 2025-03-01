@@ -111,7 +111,7 @@ public class ZombieGameManager : NetworkBehaviour
 
     void GetAllZombieSpawnInScene()
     {
-        ZombieSpawns = FindObjectsOfType<ZombieSpawnController>();
+        ZombieSpawns = FindObjectsByType<ZombieSpawnController>(FindObjectsSortMode.None);
     }
 
     [Server]
