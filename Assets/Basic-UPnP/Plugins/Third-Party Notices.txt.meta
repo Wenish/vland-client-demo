@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 96db3e0dff8ec1d498bf5e523228e15c
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 220149
+  packageName: Basic UPnP
+  packageVersion: 1.0
+  assetPath: Assets/Basic-UPnP/Plugins/Third-Party Notices.txt
+  uploadId: 508538

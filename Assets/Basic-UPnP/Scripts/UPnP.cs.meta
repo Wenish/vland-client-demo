@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 1c613a568c9043c4ab675d843219cfdd
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 220149
+  packageName: Basic UPnP
+  packageVersion: 1.0
+  assetPath: Assets/Basic-UPnP/Scripts/UPnP.cs
+  uploadId: 508538
