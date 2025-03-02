@@ -316,9 +316,15 @@ public class CustomNetworkManager : NetworkManager
         {
             var discoverer = new NatDiscoverer();
             var device = await discoverer.DiscoverDeviceAsync();
-            await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game"));
 
-            Debug.Log($"✅ UPnP: Port {port} wurde geöffnet.");
+            // 🔹 UDP Port öffnen
+            await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game UDP"));
+            Debug.Log($"✅ UPnP: UDP Port {port} wurde geöffnet.");
+
+            // 🔹 TCP Port öffnen
+            await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, port, port, "Mirror Game TCP"));
+            Debug.Log($"✅ UPnP: TCP Port {port} wurde geöffnet.");
+
             upnpSuccess = true;
         }
         catch (Exception ex)
@@ -334,9 +340,14 @@ public class CustomNetworkManager : NetworkManager
         {
             var discoverer = new NatDiscoverer();
             var device = await discoverer.DiscoverDeviceAsync();
-            await device.DeletePortMapAsync(new Mapping(Protocol.Udp, port, port));
 
-            Debug.Log($"🚪 UPnP: Port {port} wurde geschlossen.");
+            // 🔹 UDP Port schließen
+            await device.DeletePortMapAsync(new Mapping(Protocol.Udp, port, port));
+            Debug.Log($"🚪 UPnP: UDP Port {port} wurde geschlossen.");
+
+            // 🔹 TCP Port schließen
+            await device.DeletePortMapAsync(new Mapping(Protocol.Tcp, port, port));
+            Debug.Log($"🚪 UPnP: TCP Port {port} wurde geschlossen.");
         }
         catch (Exception ex)
         {
