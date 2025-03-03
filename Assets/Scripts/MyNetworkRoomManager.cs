@@ -206,13 +206,11 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
     IEnumerator RegisterLobby()
     {
-        string ip = NetworkManager.singleton.networkAddress;
         int port = 7777;
         string name = "Lobby " + UnityEngine.Random.Range(1000, 9999);
 
         LobbyData data = new LobbyData
         {
-            ip = ip,
             port = port,
             name = name
         };
