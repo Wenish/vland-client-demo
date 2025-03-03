@@ -6,7 +6,7 @@ using ParrelSync;
 public class CloneManager : MonoBehaviour
 {
     public bool isAutoStart;
-    public CustomNetworkManager _networkManager;
+    public Mirror.NetworkManager _networkManager;
     // Start is called before the first frame update
     void Start()
     {
