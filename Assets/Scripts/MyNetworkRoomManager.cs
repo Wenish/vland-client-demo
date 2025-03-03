@@ -1,5 +1,9 @@
 using UnityEngine;
 using Mirror;
+using System.Collections;
+using Open.Nat;
+using System;
+using UnityEngine.Networking;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-room-manager
@@ -26,17 +30,28 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// <summary>
     /// This is called on the server when the server is started - including when a host is started.
     /// </summary>
-    public override void OnRoomStartServer() { }
+    public override void OnRoomStartServer() {
+        base.OnRoomStartServer();
+        StartCoroutine(RegisterLobby());
+        OpenUPnPPort(gamePort);
+    }
 
     /// <summary>
     /// This is called on the server when the server is stopped - including when a host is stopped.
     /// </summary>
-    public override void OnRoomStopServer() { }
+    public override void OnRoomStopServer() {
+        base.OnRoomStopServer();
+        if (upnpSuccess)
+        {
+            Debug.Log("Schliesse UPnP Port...");
+            CloseUPnPPort(gamePort);
+        }
+    }
 
     /// <summary>
     /// This is called on the host when a host is started.
     /// </summary>
-    public override void OnRoomStartHost() { }
+    public override void OnRoomStartHost() {}
 
     /// <summary>
     /// This is called on the host when the host is stopped.
@@ -53,7 +68,15 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// This is called on the server when a client disconnects.
     /// </summary>
     /// <param name="conn">The connection that disconnected.</param>
-    public override void OnRoomServerDisconnect(NetworkConnectionToClient conn) { }
+    public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
+    {
+        base.OnRoomServerDisconnect(conn);
+        if (Utils.IsSceneActive(GameplayScene)) {
+            GameObject player = conn.identity.gameObject;
+            PlayerController playerController = player.GetComponent<PlayerController>();
+            NetworkServer.Destroy(playerController.Unit);
+        };
+    }
 
     /// <summary>
     /// This is called on the server when a networked scene finishes loading.
@@ -180,4 +203,90 @@ public class MyNetworkRoomManager : NetworkRoomManager
     }
 
     #endregion
+
+    IEnumerator RegisterLobby()
+    {
+        string ip = NetworkManager.singleton.networkAddress;
+        int port = 7777;
+        string name = "Lobby " + UnityEngine.Random.Range(1000, 9999);
+
+        LobbyData data = new LobbyData
+        {
+            ip = ip,
+            port = port,
+            name = name
+        };
+
+        string jsonData = JsonUtility.ToJson(data);
+
+        UnityWebRequest request = new UnityWebRequest("https://lobby-browser.pibern.ch/lobbies", "POST");
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error: " + request.error);
+        }
+        else
+        {
+            Debug.Log("Lobby registered successfully");
+        }
+    }
+
+    private class LobbyData
+    {
+        public string ip;
+        public int port;
+        public string name;
+    }
+
+    // UPnP Port öffnen
+    private async void OpenUPnPPort(int port)
+    {
+        try
+        {
+            var discoverer = new NatDiscoverer();
+            var device = await discoverer.DiscoverDeviceAsync();
+
+            // 🔹 UDP Port öffnen
+            await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game UDP"));
+            Debug.Log($"✅ UPnP: UDP Port {port} wurde geöffnet.");
+
+            // 🔹 TCP Port öffnen
+            await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, port, port, "Mirror Game TCP"));
+            Debug.Log($"✅ UPnP: TCP Port {port} wurde geöffnet.");
+
+            upnpSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"❌ UPnP fehlgeschlagen: {ex.Message}");
+            upnpSuccess = false;
+        }
+    }
+    // UPnP Port schließen
+    private async void CloseUPnPPort(int port)
+    {
+        try
+        {
+            var discoverer = new NatDiscoverer();
+            var device = await discoverer.DiscoverDeviceAsync();
+
+            // 🔹 UDP Port schließen
+            await device.DeletePortMapAsync(new Mapping(Protocol.Udp, port, port));
+            Debug.Log($"🚪 UPnP: UDP Port {port} wurde geschlossen.");
+
+            // 🔹 TCP Port schließen
+            await device.DeletePortMapAsync(new Mapping(Protocol.Tcp, port, port));
+            Debug.Log($"🚪 UPnP: TCP Port {port} wurde geschlossen.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"❌ Fehler beim Schließen des Ports: {ex.Message}");
+        }
+    }
 }

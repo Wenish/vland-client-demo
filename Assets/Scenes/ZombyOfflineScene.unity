@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2742432ab670524896d1b439085b23b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isAutoStart: 1
+  isAutoStart: 0
   _networkManager: {fileID: 1778131126}
 --- !u!4 &1643533860
 Transform:
