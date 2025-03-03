@@ -29,7 +29,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         Singleton = this;
         GetAllZombieSpawnInScene();
-        ZombiePrefab = CustomNetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
+        ZombiePrefab = MyNetworkRoomManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
     }
 
     // Update is called once per frame
