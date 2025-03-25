@@ -3,39 +3,48 @@ using TMPro;
 
 public class FloatingDamageText : MonoBehaviour
 {
-    public float moveSpeed = 1f;
-    public float lifetime = 1.5f;
+    private Camera cameraToLookAt;
+    public float moveSpeed = 10f;
+    public float lifetime = .5f;
     public float fadeSpeed = 2f;
     
     private TextMeshPro textMesh;
     private Color textColor;
-    private Transform target;
     private Vector3 offset;
 
     private void Awake()
     {
+        cameraToLookAt = Camera.main;
         textMesh = GetComponent<TextMeshPro>();
         textColor = textMesh.color;
     }
 
-    public void Initialize(int damage, Transform followTarget, Vector3 worldOffset)
+    void LateUpdate()
+    {
+        LookAtCamera();
+        float distance = Vector3.Distance(transform.position, cameraToLookAt.transform.position);
+        transform.localScale = Vector3.one * distance * 0.1f; // Adjust the multiplier as needed
+    }
+
+    public void Initialize(int damage, Vector3 worldOffset, Color color)
     {
         textMesh.text = damage.ToString();
-        target = followTarget;
         offset = worldOffset;
-        // Destroy(gameObject, lifetime); // Destroy after lifetime
+        transform.position += offset;
+        textColor = color;
+        textMesh.color = textColor;
+        Destroy(gameObject, lifetime);
     }
 
     private void Update()
     {
-        if (target != null)
-        {
-            transform.position = target.position + offset;
-        }
-
         // Move upwards and fade out
         transform.position += new Vector3(0, moveSpeed * Time.deltaTime, 0);
         textColor.a -= fadeSpeed * Time.deltaTime;
-        textMesh.color = textColor;
+    }
+    
+    private void LookAtCamera()
+    {
+        transform.LookAt(transform.position + cameraToLookAt.transform.rotation * Vector3.forward, cameraToLookAt.transform.rotation * Vector3.up);
     }
 }

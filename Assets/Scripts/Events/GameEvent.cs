@@ -39,5 +39,13 @@ namespace MyGame.Events
         }
     }
 
-    
+    public class MyPlayerUnitSpawnedEvent : GameEvent
+    {
+        public UnitController PlayerCharacter { get; }
+
+        public MyPlayerUnitSpawnedEvent(UnitController playerCharacter)
+        {
+            PlayerCharacter = playerCharacter;
+        }
+    }
 }

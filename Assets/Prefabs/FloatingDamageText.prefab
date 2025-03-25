@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 3028259500584410929}
   - component: {fileID: 8777221734313735918}
   - component: {fileID: 8812606366663885347}
-  - component: {fileID: 1170099164720725714}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: FloatingDamageText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -131,8 +130,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 4
-  m_fontSizeBase: 4
+  m_fontSize: 3.8
+  m_fontSizeBase: 3.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -191,25 +190,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1
-  lifetime: 1.5
+  lifetime: 0.5
   fadeSpeed: 2
---- !u!114 &1170099164720725714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7533594239420699139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c627da6f802fe944a11631b2d12d178, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unit: {fileID: 0}
-  distanceFromCamera: 1
-  scaleMax: {x: 0.01, y: 0.01, z: 0.01}
-  scaleMin: {x: 0.005, y: 0.005, z: 0.005}
-  positionMax: {x: 0, y: 1, z: 0}
-  positionMin: {x: 0, y: 2, z: 0}
-  Zoom: 1
-  SpeedScale: 0.2
