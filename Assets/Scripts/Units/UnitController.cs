@@ -148,7 +148,6 @@ public class UnitController : NetworkBehaviour
     [ClientRpc]
     public void RpcOnTakenDamage(int damage, UnitController attacker)
     {
-        Debug.Log("Unit took damage");
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
     }
 
@@ -171,6 +170,14 @@ public class UnitController : NetworkBehaviour
         }
         // Increase the health by the heal amount
         Health = Mathf.Min(Health + amount, maxHealth);
+
+        RpcOnHeal(amount);
+    }
+
+    [ClientRpc]
+    public void RpcOnHeal(int amount)
+    {
+        EventManager.Instance.Publish(new UnitHealedEvent(this, amount));
     }
 
     // Shield the unit
@@ -179,6 +186,13 @@ public class UnitController : NetworkBehaviour
     {
         // Increase the shield by the shield amount
         shield = Mathf.Min(shield + amount, maxShield);
+        RpcOnShield(amount);
+    }
+
+    [ClientRpc]
+    public void RpcOnShield(int amount)
+    {
+        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount));
     }
 
     private void Die()

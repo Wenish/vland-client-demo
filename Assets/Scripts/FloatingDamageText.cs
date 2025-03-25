@@ -4,7 +4,7 @@ using TMPro;
 public class FloatingDamageText : MonoBehaviour
 {
     private Camera cameraToLookAt;
-    public float moveSpeed = 10f;
+    public float moveSpeed = 1f;
     public float lifetime = .5f;
     public float fadeSpeed = 2f;
     
@@ -26,13 +26,14 @@ public class FloatingDamageText : MonoBehaviour
         transform.localScale = Vector3.one * distance * 0.1f; // Adjust the multiplier as needed
     }
 
-    public void Initialize(int damage, Vector3 worldOffset, Color color)
+    public void Initialize(string text, Vector3 worldOffset, Color color)
     {
-        textMesh.text = damage.ToString();
+        textMesh.text = text;
         offset = worldOffset;
         transform.position += offset;
         textColor = color;
         textMesh.color = textColor;
+        moveSpeed = Random.Range(1f, 1.4f); // Set a random move speed between 0.5 and 2
         Destroy(gameObject, lifetime);
     }
 
