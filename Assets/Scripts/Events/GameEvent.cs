@@ -39,6 +39,30 @@ namespace MyGame.Events
         }
     }
 
+    public class UnitHealedEvent : GameEvent
+    {
+        public UnitController Unit { get; }
+        public int HealAmount { get; }
+
+        public UnitHealedEvent(UnitController unit, int healAmount)
+        {
+            Unit = unit;
+            HealAmount = healAmount;
+        }
+    }
+
+    public class UnitShieldedEvent : GameEvent
+    {
+        public UnitController Unit { get; }
+        public int ShieldAmount { get; }
+
+        public UnitShieldedEvent(UnitController unit, int shieldAmount)
+        {
+            Unit = unit;
+            ShieldAmount = shieldAmount;
+        }
+    }
+
     public class MyPlayerUnitSpawnedEvent : GameEvent
     {
         public UnitController PlayerCharacter { get; }

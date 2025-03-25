@@ -9,27 +9,53 @@ public class FloatingDamageTextManager : MonoBehaviour
 
     public UnitController myPlayerUnitController;
 
+    private Color greenColor = new Color(0f / 255f, 201f / 255f, 81f / 255f);
+    private Color blueColor = new Color(0f / 255f, 166f / 255f, 244f / 255f);
+    private Color orangeColor = new Color(255f / 255f, 105f / 255f, 0f / 255f);
+
     void OnEnable()
     {
         EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
+        EventManager.Instance.Subscribe<UnitHealedEvent>(OnUnitHealed);
+        EventManager.Instance.Subscribe<UnitShieldedEvent>(OnUnitShielded);
         EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
     }
 
     void OnDisable()
     {
         EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
+        EventManager.Instance.Unsubscribe<UnitHealedEvent>(OnUnitHealed);
+        EventManager.Instance.Unsubscribe<UnitShieldedEvent>(OnUnitShielded);
         EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
     }
 
     public void OnUnitDamaged(UnitDamagedEvent unitDamagedEvent)
     {
-        Debug.Log("Unit damaged event received");
         var hasMyUnitMadeTheDamage = unitDamagedEvent.Attacker == myPlayerUnitController;
         var hasMyUnitReceivedTheDamage = unitDamagedEvent.Unit == myPlayerUnitController;
-        Color color = hasMyUnitReceivedTheDamage ? Color.red : Color.white;
         if (hasMyUnitMadeTheDamage || hasMyUnitReceivedTheDamage)
         {
-            SpawnDamageText(unitDamagedEvent.DamageAmount, unitDamagedEvent.Unit.transform, color);
+            SpawnDamageText(unitDamagedEvent.DamageAmount.ToString(), unitDamagedEvent.Unit.transform, orangeColor);
+        }
+    }
+
+    public void OnUnitHealed(UnitHealedEvent unitHealedEvent)
+    {
+        var hasMyUnitedReceivedTheHeal = unitHealedEvent.Unit == myPlayerUnitController;
+        if (hasMyUnitedReceivedTheHeal)
+        {
+            var text = $"+{unitHealedEvent.HealAmount}";
+            SpawnDamageText(text, unitHealedEvent.Unit.transform, greenColor);
+        }
+    }
+
+    public void OnUnitShielded(UnitShieldedEvent unitShieldedEvent)
+    {
+        var hasMyUnitedReceivedTheShield = unitShieldedEvent.Unit == myPlayerUnitController;
+        if (hasMyUnitedReceivedTheShield)
+        {
+            var text = $"+{unitShieldedEvent.ShieldAmount}";
+            SpawnDamageText(text, unitShieldedEvent.Unit.transform, blueColor);
         }
     }
 
@@ -39,9 +65,11 @@ public class FloatingDamageTextManager : MonoBehaviour
     }
 
 
-    public void SpawnDamageText(int damage, Transform textSpawnPoint, Color color)
+    public void SpawnDamageText(string text, Transform textSpawnPoint, Color color)
     {
-        GameObject damageText = Instantiate(damageTextPrefab, textSpawnPoint.position, Quaternion.identity);
-        damageText.GetComponent<FloatingDamageText>().Initialize(damage, textOffset, color);
+        Vector3 spawnPosition = textSpawnPoint.position + new Vector3(Random.Range(-1, 1), 0, 0);
+        GameObject damageText = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity);
+        Vector3 randomOffset = textOffset + new Vector3(0, Random.Range(-1f, 0.5f), 0);
+        damageText.GetComponent<FloatingDamageText>().Initialize(text, randomOffset, color);
     }
 }
