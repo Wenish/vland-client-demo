@@ -118,6 +118,7 @@ public class UnitController : NetworkBehaviour
     public void TakeDamage(int damage, UnitController attacker)
     {
         RaiseOnTakeDamageEvent();
+        RpcOnTakenDamage(damage, attacker);
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
         {
@@ -143,6 +144,15 @@ public class UnitController : NetworkBehaviour
             RaiseOnKillEvent(attacker, this);
         }
     }
+
+    [ClientRpc]
+    public void RpcOnTakenDamage(int damage, UnitController attacker)
+    {
+        Debug.Log("Unit took damage");
+        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
+    }
+
+
 
     [Server]
     public void Attack() {
