@@ -43,9 +43,10 @@ public class PlayerController : NetworkBehaviour
             SetCameraTargetToPlayerUnit();
             _plane = new Plane(Vector3.up, 0);
             _cameraMain = Camera.main;
+            var unitController = Unit.GetComponent<UnitController>();
+            EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(unitController));
         }
     }
-
     void OnDestroy()
     {
         if (!isServer) return;
