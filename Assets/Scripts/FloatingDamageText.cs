@@ -26,9 +26,10 @@ public class FloatingDamageText : MonoBehaviour
         transform.localScale = Vector3.one * distance * 0.1f; // Adjust the multiplier as needed
     }
 
-    public void Initialize(string text, Vector3 worldOffset, Color color)
+    public void Initialize(string text, Vector3 worldOffset, Color color, float fontSize)
     {
         textMesh.text = text;
+        textMesh.fontSize = fontSize;
         offset = worldOffset;
         transform.position += offset;
         textColor = color;
