@@ -142,6 +142,7 @@ public class UnitController : NetworkBehaviour
         if (Health <= 0)
         {
             RaiseOnKillEvent(attacker, this);
+            EventManager.Instance.Publish(new UnitDiedEvent(this, attacker));   
         }
     }
 
