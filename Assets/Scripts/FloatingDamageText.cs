@@ -41,7 +41,10 @@ public class FloatingDamageText : MonoBehaviour
     private void Update()
     {
         // Move upwards and fade out
-        transform.position += new Vector3(0, moveSpeed * Time.deltaTime, 0);
+        Vector3 direction = transform.position - cameraToLookAt.transform.position;
+        direction.y = 0; // Ignore vertical movement for left/right calculation
+        float horizontalDirection = Vector3.Dot(cameraToLookAt.transform.right, direction.normalized);
+        transform.position += new Vector3(horizontalDirection * moveSpeed * Time.deltaTime, moveSpeed * Time.deltaTime, 0);
         textColor.a -= fadeSpeed * Time.deltaTime;
     }
     
