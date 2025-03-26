@@ -1,4 +1,4 @@
-using UnityEngine;
+#nullable enable
 
 namespace MyGame.Events
 {
@@ -60,6 +60,18 @@ namespace MyGame.Events
         {
             Unit = unit;
             ShieldAmount = shieldAmount;
+        }
+    }
+
+    public class UnitDiedEvent : GameEvent
+    {
+        public UnitController Unit { get; }
+        public UnitController? Killer { get; }
+
+        public UnitDiedEvent(UnitController unit, UnitController? killer = null)
+        {
+            Unit = unit;
+            Killer = killer;
         }
     }
 

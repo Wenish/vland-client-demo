@@ -20,16 +20,30 @@ public class ProjectileController : NetworkBehaviour
     private Vector3 spawn;
 
     private bool hasCollidedWithUnit;
+
+
+    Rigidbody rb;
     
 
     // Called when the projectile is spawned
     void OnEnable()
     {
+        rb = GetComponent<Rigidbody>();
         spawn = transform.position;
+        if(isServer) {
+            ApplyForce();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if(isServer) {
+            ApplyForce();
+        }
     }
 
     // Called every frame
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (isServer) {
             MoveProjectile();
@@ -37,10 +51,19 @@ public class ProjectileController : NetworkBehaviour
     }
 
     [Server]
+    void ApplyForce()
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = transform.forward * speed;
+        }
+    }
+
+    [Server]
     void MoveProjectile()
     {
         // Move the projectile
-        transform.position += transform.forward * speed * Time.fixedDeltaTime;
+        // transform.position += transform.forward * speed * Time.fixedDeltaTime;
 
         var distanceTravelled = Vector3.Distance(spawn, transform.position);
 
