@@ -97,14 +97,22 @@ public class ProjectileController : NetworkBehaviour
 
         UnitController unit = other.GetComponent<UnitController>();
 
-        if (unit != null && unit != shooter)
+        var isShooter = unit == shooter;
+
+        if (unit != null && !isShooter && !HasMaxHitCountReached())
         {
             hitCount++;
             unit.TakeDamage(damage, shooter);
         }
-        if (hitCount >= maxHits)
+        
+        if (HasMaxHitCountReached())
         {
             NetworkServer.Destroy(gameObject);
         }
+    }
+
+    bool HasMaxHitCountReached()
+    {
+        return hitCount >= maxHits;
     }
 }
