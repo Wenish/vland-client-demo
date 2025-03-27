@@ -17,9 +17,11 @@ public class ProjectileController : NetworkBehaviour
 
     public float range;
 
-    private Vector3 spawn;
+    public int maxHits = 1;
 
-    private bool hasCollidedWithUnit;
+    private int hitCount = 0;
+
+    private Vector3 spawn;
 
 
     Rigidbody rb;
@@ -46,7 +48,7 @@ public class ProjectileController : NetworkBehaviour
     void LateUpdate()
     {
         if (isServer) {
-            MoveProjectile();
+            CheckProjectileTravel();
         }
     }
 
@@ -60,7 +62,7 @@ public class ProjectileController : NetworkBehaviour
     }
 
     [Server]
-    void MoveProjectile()
+    void CheckProjectileTravel()
     {
         // Move the projectile
         // transform.position += transform.forward * speed * Time.fixedDeltaTime;
@@ -74,36 +76,35 @@ public class ProjectileController : NetworkBehaviour
         }
     }
 
-    // Called when the projectile collides with another collider
-    void OnCollisionEnter(Collision collision)
+
+    void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Projectile Trigger Enter");
+        Debug.Log(other.gameObject.name);
         if (isServer)
         {
-            CollisionEnter(collision);
+            TriggerEnter(other);
         }
     }
 
     [Server]
-    void CollisionEnter(Collision collision)
-    {
-        if (hasCollidedWithUnit) return;
-
-        ProjectileController projectileController = collision.collider.GetComponent<ProjectileController>();
-
-        if (projectileController != null) return;
-
-        // Get the unit controller component of the collided game object
-        UnitController unit = collision.collider.GetComponent<UnitController>();
-
-        // If the collided game object has a unit controller, deal damage to the unit
-        if (unit != null && unit != shooter)
+    void TriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag("Wall"))
         {
-            hasCollidedWithUnit = true;
-            unit.TakeDamage(damage, shooter);
+            NetworkServer.Destroy(gameObject);
+            return;
         }
 
+        UnitController unit = other.GetComponent<UnitController>();
 
-        // Destroy the projectile
-        NetworkServer.Destroy(gameObject);
+        if (unit != null && unit != shooter)
+        {
+            hitCount++;
+            unit.TakeDamage(damage, shooter);
+        }
+        if (hitCount >= maxHits)
+        {
+            NetworkServer.Destroy(gameObject);
+        }
     }
 }

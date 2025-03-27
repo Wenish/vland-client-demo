@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 384637090}
   - component: {fileID: 384637092}
   - component: {fileID: 384637091}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LightingFx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4969,7 +4969,7 @@ GameObject:
   - component: {fileID: 2649799684166538073}
   - component: {fileID: 5154916980072432605}
   - component: {fileID: -5544415194795067568}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5036,7 +5036,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -5064,6 +5064,7 @@ MonoBehaviour:
   speed: 0
   damage: 0
   range: 0
+  maxHits: 2
 --- !u!114 &2649799684166538073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5131,7 +5132,7 @@ GameObject:
   - component: {fileID: 6329509823503232216}
   - component: {fileID: 3649787271080069120}
   - component: {fileID: 1620182030}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5252,7 +5253,7 @@ GameObject:
   - component: {fileID: 2798204354631723863}
   - component: {fileID: 4061355861352366660}
   - component: {fileID: 4702223102314602835}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5398,6 +5399,10 @@ PrefabInstance:
     - target: {fileID: 1872917160544930657, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
       propertyPath: m_Name
       value: Arrow_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1872917160544930657, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2673443856417873534, guid: f3bd82d9c77367d4c970a9795c4f15c7, type: 3}
       propertyPath: m_Mesh

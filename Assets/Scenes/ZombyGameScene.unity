@@ -761,6 +761,10 @@ PrefabInstance:
       value: SM_Env_Wall_04 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1395,6 +1399,10 @@ PrefabInstance:
       value: SM_Env_Wall_04
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1570,6 +1578,10 @@ PrefabInstance:
     - target: {fileID: 8601734405583095360, guid: a1d84125f8cd19645b3cb6e9acfc2381, type: 3}
       propertyPath: m_Name
       value: Door
+      objectReference: {fileID: 0}
+    - target: {fileID: 8601734405583095360, guid: a1d84125f8cd19645b3cb6e9acfc2381, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1950,6 +1962,10 @@ PrefabInstance:
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_02 (14)
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2661,6 +2677,10 @@ PrefabInstance:
       value: SM_Env_Pillar_Square_01
       objectReference: {fileID: 0}
     - target: {fileID: 177812, guid: 16cb051a8191e0649bc4c655ac511479, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 177812, guid: 16cb051a8191e0649bc4c655ac511479, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -2883,6 +2903,10 @@ PrefabInstance:
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Crate_Wood_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3111,6 +3135,10 @@ PrefabInstance:
     - target: {fileID: 115082, guid: 9f9c8059e0040c544bd1bf5c4f50c6d3, type: 3}
       propertyPath: m_Name
       value: SM_Env_Statue_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 115082, guid: 9f9c8059e0040c544bd1bf5c4f50c6d3, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 115082, guid: 9f9c8059e0040c544bd1bf5c4f50c6d3, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3603,6 +3631,10 @@ PrefabInstance:
       value: SM_Env_Portcullis_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 118258, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 118258, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -4028,7 +4060,7 @@ GameObject:
   - component: {fileID: 486061783}
   m_Layer: 0
   m_Name: Walls
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -4180,6 +4212,10 @@ PrefabInstance:
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4586,6 +4622,10 @@ PrefabInstance:
       value: SM_Env_Pillar_Square_03 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -4950,6 +4990,10 @@ PrefabInstance:
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5623,6 +5667,10 @@ PrefabInstance:
       value: SM_Env_Pillar_Square_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 177812, guid: 16cb051a8191e0649bc4c655ac511479, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 177812, guid: 16cb051a8191e0649bc4c655ac511479, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5972,6 +6020,10 @@ PrefabInstance:
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_01 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6375,6 +6427,10 @@ PrefabInstance:
       value: SM_Prop_Crate_Wood_02 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -6485,6 +6541,10 @@ PrefabInstance:
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7130,6 +7190,10 @@ PrefabInstance:
       value: SM_Env_Railing_01 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7398,6 +7462,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (15)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7532,6 +7600,10 @@ PrefabInstance:
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_Name
       value: SM_Env_Pillar_Square_03 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7702,6 +7774,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7770,6 +7846,10 @@ PrefabInstance:
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7906,6 +7986,10 @@ PrefabInstance:
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_Name
       value: SM_Env_Wall_04 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8242,6 +8326,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -8508,6 +8596,10 @@ PrefabInstance:
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8844,6 +8936,10 @@ PrefabInstance:
       value: SM_Env_Pillar_Square_03 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -9078,6 +9174,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (5)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -9146,6 +9246,10 @@ PrefabInstance:
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Crate_Wood_02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9381,6 +9485,10 @@ PrefabInstance:
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_Name
       value: SM_Env_Pillar_Square_03 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9747,6 +9855,10 @@ PrefabInstance:
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_Name
       value: SM_Env_Pillar_Square_03 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -10252,6 +10364,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (8)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10493,6 +10609,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8601734405583095360, guid: a1d84125f8cd19645b3cb6e9acfc2381, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10582,6 +10702,10 @@ PrefabInstance:
       value: SM_Env_Railing_01 (5)
       objectReference: {fileID: 0}
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10650,6 +10774,10 @@ PrefabInstance:
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Crate_Wood_02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 152086, guid: f5d18f98ce863ec418f3683ffd58ad85, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -10818,6 +10946,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (17)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10931,6 +11063,10 @@ PrefabInstance:
     - target: {fileID: 8601734405583095360, guid: a1d84125f8cd19645b3cb6e9acfc2381, type: 3}
       propertyPath: m_Name
       value: Door (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8601734405583095360, guid: a1d84125f8cd19645b3cb6e9acfc2381, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11161,6 +11297,10 @@ PrefabInstance:
       value: SM_Env_Wall_04 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -11368,6 +11508,10 @@ PrefabInstance:
       value: SM_Env_Wall_04 (5)
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -11500,6 +11644,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (11)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -11568,6 +11716,10 @@ PrefabInstance:
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_02 (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -11704,7 +11856,7 @@ GameObject:
   - component: {fileID: 1522637038}
   m_Layer: 0
   m_Name: Doors
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11934,6 +12086,10 @@ PrefabInstance:
     - target: {fileID: 153488, guid: c3160889564a0d74d98f510aa33dc187, type: 3}
       propertyPath: m_Name
       value: SM_Env_Door_Large_Frame_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 153488, guid: c3160889564a0d74d98f510aa33dc187, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 153488, guid: c3160889564a0d74d98f510aa33dc187, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12300,7 +12456,7 @@ GameObject:
   - component: {fileID: 1662032422}
   m_Layer: 0
   m_Name: Pillers
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -12830,6 +12986,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (13)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -13165,6 +13325,10 @@ PrefabInstance:
       value: SM_Env_Wall_04 (7)
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -13432,6 +13596,10 @@ PrefabInstance:
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_Name
       value: SM_Env_Pillar_Square_03 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 194992, guid: 52301af46bf2aca4cba80ecf307a7777, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14031,6 +14199,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (12)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -14295,6 +14467,10 @@ PrefabInstance:
       value: SM_Env_Wall_04 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 140754, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -14363,6 +14539,10 @@ PrefabInstance:
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_02 (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14911,6 +15091,10 @@ PrefabInstance:
       value: SM_Env_Railing_02 (16)
       objectReference: {fileID: 0}
     - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 156666, guid: 1884091fd87919148948d7d0c96d74fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -15310,6 +15494,10 @@ PrefabInstance:
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_Name
       value: SM_Env_Railing_01 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 158776, guid: 26a1b369e86eb634bb274007abffe446, type: 3}
       propertyPath: m_StaticEditorFlags
