@@ -84,4 +84,30 @@ namespace MyGame.Events
             PlayerCharacter = playerCharacter;
         }
     }
+
+    public class UnitDroppedGoldEvent : GameEvent
+    {
+        public UnitController Unit { get; }
+        public int GoldAmount { get; }
+
+        public UnitController? Killer { get; }
+        public UnitDroppedGoldEvent(UnitController unit, int goldAmount, UnitController? killer = null)
+        {
+            Unit = unit;
+            GoldAmount = goldAmount;
+            Killer = killer;
+        }
+    }
+
+    public class PlayerReceivedGoldEvent : GameEvent
+    {
+        public UnitController Player { get; }
+        public int GoldAmount { get; }
+
+        public PlayerReceivedGoldEvent(UnitController player, int goldAmount)
+        {
+            Player = player;
+            GoldAmount = goldAmount;
+        }
+    }
 }
