@@ -32,16 +32,16 @@ public class ZombieGameManager : NetworkBehaviour
         ZombiePrefab = MyNetworkRoomManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
     }
 
-    void OnEnable()
+    void Start()
     {
         if (!isServer) return;
-        EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);   
+        EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (!isServer) return;
-        EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);   
+        EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
     }
 
 

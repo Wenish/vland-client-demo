@@ -79,8 +79,6 @@ public class ProjectileController : NetworkBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Projectile Trigger Enter");
-        Debug.Log(other.gameObject.name);
         if (isServer)
         {
             TriggerEnter(other);
