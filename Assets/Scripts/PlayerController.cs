@@ -96,6 +96,7 @@ public class PlayerController : NetworkBehaviour
         NetworkServer.Spawn(unit);
         Unit = unit;
         _unitController = Unit.GetComponent<UnitController>();
+        _unitController.unitType = UnitType.Player;
     }
 
     [Client]

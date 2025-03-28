@@ -32,6 +32,17 @@ public class ZombieGameManager : NetworkBehaviour
         ZombiePrefab = MyNetworkRoomManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
     }
 
+    void OnEnable()
+    {
+        EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);   
+    }
+
+    void OnDisable()
+    {
+        EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);   
+    }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -93,6 +104,7 @@ public class ZombieGameManager : NetworkBehaviour
             await Task.Delay(5000);
             NetworkServer.Destroy(zombie);
         };
+        unitController.unitType = UnitType.Zombie;
         unitController.SetMaxHealth(25);
         unitController.SetMaxShield(0);
         unitController.moveSpeed = 3;
@@ -129,5 +141,40 @@ public class ZombieGameManager : NetworkBehaviour
     {
         OnNewWaveStarted(currentWave);
         EventManager.Instance.Publish(new WaveStartedEvent(currentWave, zombiesPerWaveMultiplier * currentWave));
+    }
+
+    [Server]
+    public void OnUnitDied(UnitDiedEvent unitDiedEvent)
+    {
+        var hasZombieDied = unitDiedEvent.Unit.unitType == UnitType.Zombie;
+        if (!hasZombieDied) return;
+
+        ZombieDropGold(unitDiedEvent.Unit, unitDiedEvent.Killer);
+    }
+
+    [Server]
+    public void ZombieDropGold(UnitController zombie, UnitController killer)
+    {
+        if (killer == null) return;
+        if (killer.unitType != UnitType.Player) return;
+        int amount = 10;
+        EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
+        RpcZombieDroppedGold(amount, zombie, killer);
+        EventManager.Instance.Publish(new PlayerReceivedGoldEvent(killer, amount));
+        RpcPlayerReceivedGold(amount, killer);
+    }
+
+    [ClientRpc]
+    public void RpcZombieDroppedGold(int amount, UnitController zombie, UnitController killer)
+    {
+        if (isServer) return;
+        EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
+    }
+
+    [ClientRpc]
+    public void RpcPlayerReceivedGold(int amount, UnitController player)
+    {
+        if (isServer) return;
+        EventManager.Instance.Publish(new PlayerReceivedGoldEvent(player, amount));
     }
 }

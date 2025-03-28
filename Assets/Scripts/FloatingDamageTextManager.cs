@@ -22,7 +22,7 @@ public class FloatingDamageTextManager : MonoBehaviour
         EventManager.Instance.Subscribe<UnitHealedEvent>(OnUnitHealed);
         EventManager.Instance.Subscribe<UnitShieldedEvent>(OnUnitShielded);
         EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-        EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
+        EventManager.Instance.Subscribe<UnitDroppedGoldEvent>(OnUnitDroppedGold);
     }
 
     void OnDisable()
@@ -31,7 +31,7 @@ public class FloatingDamageTextManager : MonoBehaviour
         EventManager.Instance.Unsubscribe<UnitHealedEvent>(OnUnitHealed);
         EventManager.Instance.Unsubscribe<UnitShieldedEvent>(OnUnitShielded);
         EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-        EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
+        EventManager.Instance.Unsubscribe<UnitDroppedGoldEvent>(OnUnitDroppedGold);
     }
 
     public void OnUnitDamaged(UnitDamagedEvent unitDamagedEvent)
@@ -64,12 +64,12 @@ public class FloatingDamageTextManager : MonoBehaviour
         }
     }
 
-    public void OnUnitDied(UnitDiedEvent unitDiedEvent)
+    public void OnUnitDroppedGold(UnitDroppedGoldEvent unitDroppedGoldEvent)
     {
-        var hasMyUnitedKilledTheUnit = unitDiedEvent.Killer == myPlayerUnitController;
+        var hasMyUnitedKilledTheUnit = unitDroppedGoldEvent.Killer == myPlayerUnitController;
         if (hasMyUnitedKilledTheUnit)
         {
-            SpawnDamageText("+14 <sprite name=\"gold_coin\">", 14, unitDiedEvent.Unit.transform, yellowColor);
+            SpawnDamageText($"+{unitDroppedGoldEvent.GoldAmount}<sprite name=\"gold_coin\">", unitDroppedGoldEvent.GoldAmount, unitDroppedGoldEvent.Unit.transform, yellowColor);
         }
     }
 

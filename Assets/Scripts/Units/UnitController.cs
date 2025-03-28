@@ -27,7 +27,7 @@ public class UnitController : NetworkBehaviour
     public Race Race = Race.Ninja;
     public bool IsDead => Health <= 0;
     public Weapon weapon;
-
+    public UnitType unitType;
     public event Action<(int current, int max)> OnHealthChange = delegate {};
     public event Action<(int current, int max)> OnShieldChange = delegate {};
     public event Action<UnitController> OnAttackStart = delegate {};
@@ -58,6 +58,7 @@ public class UnitController : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isServer) return;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(20, this);
@@ -118,7 +119,7 @@ public class UnitController : NetworkBehaviour
     public void TakeDamage(int damage, UnitController attacker)
     {
         RaiseOnTakeDamageEvent();
-        RpcOnTakenDamage(damage, attacker);
+        OnTakeDamageEvent(damage, attacker);
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
         {
@@ -142,17 +143,37 @@ public class UnitController : NetworkBehaviour
         if (Health <= 0)
         {
             RaiseOnKillEvent(attacker, this);
-            EventManager.Instance.Publish(new UnitDiedEvent(this, attacker));   
+            OnKillEvent(attacker);
         }
+    }
+
+    [Server]
+    public void OnKillEvent(UnitController killer)
+    {
+        EventManager.Instance.Publish(new UnitDiedEvent(this, killer));
+        RpcOnKill(this, killer);
+    }
+
+    [ClientRpc]
+    public void RpcOnKill(UnitController victim, UnitController killer)
+    {
+        if (isServer) return;
+        EventManager.Instance.Publish(new UnitDiedEvent(victim, killer));
+    }
+
+    [Server]
+    public void OnTakeDamageEvent(int damage, UnitController attacker)
+    {
+        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
+        RpcOnTakenDamage(damage, attacker);
     }
 
     [ClientRpc]
     public void RpcOnTakenDamage(int damage, UnitController attacker)
     {
+        if(isServer) return;
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
     }
-
-
 
     [Server]
     public void Attack() {
@@ -283,4 +304,10 @@ public enum Race
     Grunt,
     Warrior,
     Sensei
+}
+
+public enum UnitType : byte
+{
+    Player,
+    Zombie,
 }
