@@ -169,7 +169,6 @@ public class ZombieGameManager : NetworkBehaviour
     [ClientRpc]
     public void RpcZombieDroppedGold(int amount, UnitController zombie, UnitController killer)
     {
-        Debug.Log($"is on server {isServer}");
         if (isServer) return;
         EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
     }
