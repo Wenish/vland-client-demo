@@ -34,11 +34,13 @@ public class ZombieGameManager : NetworkBehaviour
 
     void OnEnable()
     {
+        if (!isServer) return;
         EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);   
     }
 
     void OnDisable()
     {
+        if (!isServer) return;
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);   
     }
 
