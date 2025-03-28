@@ -14,6 +14,7 @@ public class FloatingDamageTextManager : MonoBehaviour
     private Color greenColor = new Color(0f / 255f, 201f / 255f, 81f / 255f);
     private Color blueColor = new Color(0f / 255f, 166f / 255f, 244f / 255f);
     private Color orangeColor = new Color(255f / 255f, 105f / 255f, 0f / 255f);
+    private Color yellowColor = new Color(253f / 255f, 199f / 255f, 0f / 255f);
 
     void OnEnable()
     {
@@ -21,6 +22,7 @@ public class FloatingDamageTextManager : MonoBehaviour
         EventManager.Instance.Subscribe<UnitHealedEvent>(OnUnitHealed);
         EventManager.Instance.Subscribe<UnitShieldedEvent>(OnUnitShielded);
         EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
     }
 
     void OnDisable()
@@ -29,6 +31,7 @@ public class FloatingDamageTextManager : MonoBehaviour
         EventManager.Instance.Unsubscribe<UnitHealedEvent>(OnUnitHealed);
         EventManager.Instance.Unsubscribe<UnitShieldedEvent>(OnUnitShielded);
         EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
     }
 
     public void OnUnitDamaged(UnitDamagedEvent unitDamagedEvent)
@@ -58,6 +61,15 @@ public class FloatingDamageTextManager : MonoBehaviour
         {
             var text = $"+{unitShieldedEvent.ShieldAmount}";
             SpawnDamageText(text, unitShieldedEvent.ShieldAmount, unitShieldedEvent.Unit.transform, blueColor);
+        }
+    }
+
+    public void OnUnitDied(UnitDiedEvent unitDiedEvent)
+    {
+        var hasMyUnitedKilledTheUnit = unitDiedEvent.Killer == myPlayerUnitController;
+        if (hasMyUnitedKilledTheUnit)
+        {
+            SpawnDamageText("+14 <sprite name=\"gold_coin\">", 14, unitDiedEvent.Unit.transform, yellowColor);
         }
     }
 
