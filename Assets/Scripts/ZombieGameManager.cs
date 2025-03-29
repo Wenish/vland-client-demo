@@ -162,7 +162,7 @@ public class ZombieGameManager : NetworkBehaviour
         int amount = 10;
         EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
         RpcZombieDroppedGold(amount, zombie, killer);
-        EventManager.Instance.Publish(new PlayerReceivedGoldEvent(killer, amount));
+        EventManager.Instance.Publish(new PlayerReceivesGoldEvent(killer, amount));
         RpcPlayerReceivedGold(amount, killer);
     }
 
@@ -177,6 +177,6 @@ public class ZombieGameManager : NetworkBehaviour
     public void RpcPlayerReceivedGold(int amount, UnitController player)
     {
         if (isServer) return;
-        EventManager.Instance.Publish(new PlayerReceivedGoldEvent(player, amount));
+        EventManager.Instance.Publish(new PlayerReceivesGoldEvent(player, amount));
     }
 }

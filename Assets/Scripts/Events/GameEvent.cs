@@ -99,12 +99,12 @@ namespace MyGame.Events
         }
     }
 
-    public class PlayerReceivedGoldEvent : GameEvent
+    public class PlayerReceivesGoldEvent : GameEvent
     {
         public UnitController Player { get; }
         public int GoldAmount { get; }
 
-        public PlayerReceivedGoldEvent(UnitController player, int goldAmount)
+        public PlayerReceivesGoldEvent(UnitController player, int goldAmount)
         {
             Player = player;
             GoldAmount = goldAmount;

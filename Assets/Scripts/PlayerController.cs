@@ -17,13 +17,14 @@ public class PlayerController : NetworkBehaviour
     public float Angle = 0f;
     [SyncVar]
     public bool IsPressingFire1 = false;
-    [SyncVar]
-    public int money = 0;
 
     private UnitController _unitController;
 
     private ControllerCamera _controllerCamera;
     private Vector3 _mouseWorldPosition;
+
+    [SyncVar]
+    public int Gold = 0;
 
     Plane _plane;
     Camera _cameraMain;
@@ -33,8 +34,8 @@ public class PlayerController : NetworkBehaviour
         if (isServer)
         {
             SpawnPlayerUnit();
-            UnitController.OnKill += HandleUnitOnKill;
             EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
+            EventManager.Instance.Subscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
         }
 
         if (isLocalPlayer)
@@ -47,10 +48,14 @@ public class PlayerController : NetworkBehaviour
             EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(unitController));
         }
     }
-    void OnDestroy()
+
+    private void OnDestroy()
     {
-        if (!isServer) return;
-        UnitController.OnKill -= HandleUnitOnKill;
+        if (isServer)
+        {
+            EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
+            EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
+        }
     }
 
     // Update is called once per frame
@@ -72,21 +77,23 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Server]
+    public void OnPlayerReceivesGold(PlayerReceivesGoldEvent playerReceivesGoldEvent)
+    {
+        if (!_unitController) return;
+        var hasThisPlayerReceivedGold = playerReceivesGoldEvent.Player == _unitController;
+        if (hasThisPlayerReceivedGold)
+        {
+            Gold += playerReceivesGoldEvent.GoldAmount;
+        }
+    }
+
+    [Server]
     public void OnWaveStartedHealPlayerUnitFull(WaveStartedEvent waveStartedEvent)
     {
         if (!_unitController) return;
         _unitController.Heal(_unitController.maxHealth);
         _unitController.Shield(_unitController.maxShield);
     }
-
-    [Server]
-    void HandleUnitOnKill((UnitController killer, UnitController victim) payload) 
-    {
-        var isThisPlayerTheKiller = payload.killer == _unitController;
-        if(!isThisPlayerTheKiller) return;
-
-        money += 100;
-    } 
 
     [Server]
     void SpawnPlayerUnit()
@@ -218,5 +225,22 @@ public class PlayerController : NetworkBehaviour
         {
             _unitController.Attack();
         }
+    }
+
+    [Server]
+    public void AddGold(int amount)
+    {
+        Gold += amount;
+    }
+
+    [Server]
+    public bool SpendGold(int amount)
+    {
+        if (Gold >= amount)
+        {
+            Gold -= amount;
+            return true;
+        }
+        return false;
     }
 }
