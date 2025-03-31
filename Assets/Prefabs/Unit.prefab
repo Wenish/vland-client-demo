@@ -572,6 +572,7 @@ MonoBehaviour:
   moveSpeed: 5
   Race: 0
   weapon: {fileID: 947192566}
+  unitType: 0
 --- !u!114 &8405535932912576057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -618,7 +619,7 @@ MonoBehaviour:
   IsAttacking: 0
   projectile: {fileID: 11400000, guid: 196370f6a0a8f4846a3a154ca9f64484, type: 2}
   projectileSpeed: 22
-  spawnDistance: 1.2
+  spawnDistance: 1
 --- !u!114 &-3108773104642818051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1407,6 +1408,10 @@ PrefabInstance:
     - target: {fileID: 145326, guid: 91a56ed4bbd7cea42b402e691f87d555, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 145326, guid: 91a56ed4bbd7cea42b402e691f87d555, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 145586, guid: 91a56ed4bbd7cea42b402e691f87d555, type: 3}
       propertyPath: m_Layer
