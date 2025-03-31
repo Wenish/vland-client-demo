@@ -23,8 +23,13 @@ public class PlayerController : NetworkBehaviour
     private ControllerCamera _controllerCamera;
     private Vector3 _mouseWorldPosition;
 
-    [SyncVar]
+    [SyncVar(hook = nameof(OnGoldChanged))]
     public int Gold = 0;
+
+    private void OnGoldChanged(int oldValue, int newValue)
+    {
+        EventManager.Instance.Publish(new PlayerGoldChangedEvent(this, oldValue, newValue));
+    }
 
     Plane _plane;
     Camera _cameraMain;
