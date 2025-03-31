@@ -36,12 +36,14 @@ public class ZombieGameManager : NetworkBehaviour
     {
         if (!isServer) return;
         EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
+        EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
     }
 
     void OnDestroy()
     {
         if (!isServer) return;
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
+        EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
     }
 
 
@@ -128,6 +130,7 @@ public class ZombieGameManager : NetworkBehaviour
         ZombieSpawns = FindObjectsByType<ZombieSpawnController>(FindObjectsSortMode.None);
     }
 
+
     [Server]
     void UnitEquipSword(UnitController unitController)
     {
@@ -146,20 +149,30 @@ public class ZombieGameManager : NetworkBehaviour
     }
 
     [Server]
+    void OnUnitDamagedEvent(UnitDamagedEvent unitDamagedEvent)
+    {
+        var hasZombieTakenDamage = unitDamagedEvent.Unit.unitType == UnitType.Zombie;
+        if (!hasZombieTakenDamage) return;
+        var hasPlayerAttacked = unitDamagedEvent.Attacker.unitType == UnitType.Player;
+        if (!hasPlayerAttacked) return;
+
+        ZombieDropGold(unitDamagedEvent.Unit, unitDamagedEvent.Attacker, 1);
+    }
+
+    [Server]
     public void OnUnitDied(UnitDiedEvent unitDiedEvent)
     {
         var hasZombieDied = unitDiedEvent.Unit.unitType == UnitType.Zombie;
         if (!hasZombieDied) return;
 
-        ZombieDropGold(unitDiedEvent.Unit, unitDiedEvent.Killer);
+        ZombieDropGold(unitDiedEvent.Unit, unitDiedEvent.Killer, 10);
     }
 
     [Server]
-    public void ZombieDropGold(UnitController zombie, UnitController killer)
+    public void ZombieDropGold(UnitController zombie, UnitController killer, int amount)
     {
         if (killer == null) return;
         if (killer.unitType != UnitType.Player) return;
-        int amount = 10;
         EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
         RpcZombieDroppedGold(amount, zombie, killer);
         EventManager.Instance.Publish(new PlayerReceivesGoldEvent(killer, amount));
