@@ -88,12 +88,18 @@ namespace Mirror
         // extra function so we can use it for both cases:
         //   NetworkClient global timeline insertions & adjustments via Insert<T>.
         //   NetworkBehaviour local insertion without any time adjustments.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool InsertIfNotExists<T>(
             SortedList<double, T> buffer, // snapshot buffer
+            int bufferLimit,              // don't grow infinitely
             T snapshot)                   // the newly received snapshot
             where T : Snapshot
         {
+            // slow clients may not be able to process incoming snapshots fast enough.
+            // infinitely growing snapshots would make it even worse.
+            // for example, run NetworkRigidbodyBenchmark while deep profiling client.
+            // the client just grows and reallocates the buffer forever.
+            if (buffer.Count >= bufferLimit) return false;
+
             // SortedList does not allow duplicates.
             // we don't need to check ContainsKey (which is expensive).
             // simply add and compare count before/after for the return value.
@@ -136,6 +142,7 @@ namespace Mirror
         // adds / inserts it to the list & initializes local time if needed.
         public static void InsertAndAdjust<T>(
             SortedList<double, T> buffer,                 // snapshot buffer
+            int bufferLimit,                              // don't grow infinitely
             T snapshot,                                   // the newly received snapshot
             ref double localTimeline,                     // local interpolation time based on server time
             ref double localTimescale,                    // timeline multiplier to apply catchup / slowdown over time
@@ -167,7 +174,7 @@ namespace Mirror
             // note that insert may be called twice for the same key.
             // by default, this would throw.
             // need to handle it silently.
-            if (InsertIfNotExists(buffer, snapshot))
+            if (InsertIfNotExists(buffer, bufferLimit, snapshot))
             {
                 // dynamic buffer adjustment needs delivery interval jitter
                 if (buffer.Count >= 2)
@@ -257,7 +264,7 @@ namespace Mirror
         // make sure to only call this is we have > 0 snapshots.
         public static void Sample<T>(
             SortedList<double, T> buffer, // snapshot buffer
-            double localTimeline,         // local interpolation time based on server time
+            double localTimeline,         // local interpolation time based on server time. this is basically remoteTime-bufferTime.
             out int from,                 // the snapshot <= time
             out int to,                   // the snapshot >= time
             out double t)                 // interpolation factor
@@ -329,7 +336,7 @@ namespace Mirror
         //   besides, passing "Func Interpolate" would allocate anyway.
         public static void StepInterpolation<T>(
             SortedList<double, T> buffer, // snapshot buffer
-            double localTimeline,         // local interpolation time based on server time
+            double localTimeline,         // local interpolation time based on server time. this is basically remoteTime-bufferTime.
             out T fromSnapshot,           // we interpolate 'from' this snapshot
             out T toSnapshot,             // 'to' this snapshot
             out double t)                 // at ratio 't' [0,1]

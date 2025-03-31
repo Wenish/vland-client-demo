@@ -85,9 +85,10 @@ namespace Mirror.Discovery
                 transport = Transport.active;
 
             // Server mode? then start advertising
-#if UNITY_SERVER
-            AdvertiseServer();
-#endif
+            if (Utils.IsHeadless())
+            {
+                AdvertiseServer();
+            }
         }
 
         public static long RandomLong()
@@ -168,6 +169,8 @@ namespace Mirror.Discovery
                 EnableBroadcast = true,
                 MulticastLoopback = false
             };
+
+            //Debug.Log($"Discovery: Advertising Server {Dns.GetHostName()}");
 
             // listen for client pings
             _ = ServerListenAsync();
@@ -417,6 +420,7 @@ namespace Mirror.Discovery
 
                     ArraySegment<byte> data = writer.ToArraySegment();
 
+                    //Debug.Log($"Discovery: Sending BroadcastDiscoveryRequest {request}");
                     clientUdpClient.SendAsync(data.Array, data.Count, endPoint);
                 }
                 catch (Exception)
