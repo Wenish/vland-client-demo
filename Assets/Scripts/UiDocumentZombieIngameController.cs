@@ -42,7 +42,6 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     void OnWaveStartedEvent(WaveStartedEvent waveStartedEvent)
     {
-        Debug.Log($"Wave {waveStartedEvent.WaveNumber} started with {waveStartedEvent.TotalZombies} zombies.");
         _labelWave.text = waveStartedEvent.WaveNumber.ToString();
         _labelRoundStarted.text = $"Round\n{waveStartedEvent.WaveNumber}";
         _labelRoundStarted.style.opacity = 1f;
