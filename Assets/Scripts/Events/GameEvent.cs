@@ -110,4 +110,18 @@ namespace MyGame.Events
             GoldAmount = goldAmount;
         }
     }
+
+    public class PlayerGoldChangedEvent : GameEvent
+    {
+        public PlayerController Player { get; }
+        public int OldGoldAmount { get; }
+        public int NewGoldAmount { get; }
+
+        public PlayerGoldChangedEvent(PlayerController player, int oldGoldAmount, int newGoldAmount)
+        {
+            Player = player;
+            OldGoldAmount = oldGoldAmount;
+            NewGoldAmount = newGoldAmount;
+        }
+    }
 }

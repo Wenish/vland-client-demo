@@ -8,23 +8,36 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private UIDocument _uiDocument;
     private Label _labelWave;
     private Label _labelRoundStarted;
+    private Label _labelGold;
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
         _labelWave = _uiDocument.rootVisualElement.Q<Label>(name: "labelWave");
         _labelRoundStarted = _uiDocument.rootVisualElement.Q<Label>(name: "labelRoundStarted");
+        _labelGold = _uiDocument.rootVisualElement.Q<Label>(name: "labelGold");
         _labelWave.text = "";
         _labelRoundStarted.text = "";
+        _labelGold.text = "Gold: 0";
     }
 
     void Start()
     {
         EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        EventManager.Instance.Subscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
     }
 
     void OnDestroy()
     {
         EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        EventManager.Instance.Unsubscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
+    }
+
+    void OnPlayerGoldChangedEvent(PlayerGoldChangedEvent playerGoldChangedEvent)
+    {
+        var isLocalPlayer = playerGoldChangedEvent.Player.isLocalPlayer;
+        if(!isLocalPlayer) return; // Ignore if not local player
+
+        StartCoroutine(CountUpGoldCoroutine(int.Parse(_labelGold.text.Replace("Gold: ", "")), playerGoldChangedEvent.NewGoldAmount));
     }
 
     void OnWaveStartedEvent(WaveStartedEvent waveStartedEvent)
@@ -65,5 +78,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             yield return null;
         }
         textLabel.style.opacity = endAlpha;
+    }
+
+    private IEnumerator CountUpGoldCoroutine(int currentGold, int targetGold)
+    {
+        while (currentGold < targetGold)
+        {
+            currentGold++;
+            _labelGold.text = $"Gold: {currentGold}";
+            yield return new WaitForSeconds(0.05f); // Adjust the delay as needed
+        }
     }
 }

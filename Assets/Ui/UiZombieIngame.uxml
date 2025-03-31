@@ -1,8 +1,14 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-basis: 50%; align-items: center; justify-content: center;">
-        <ui:Label text="Round 1" name="labelRoundStarted" style="white-space: nowrap; -unity-text-align: upper-center; font-size: 70px; -unity-font-style: bold; color: rgb(255, 255, 255);" />
+        <ui:Label text="Round&#10;1" name="labelRoundStarted" style="white-space: nowrap; -unity-text-align: upper-center; font-size: 70px; -unity-font-style: bold; color: rgb(255, 255, 255);" />
     </ui:VisualElement>
-    <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: column-reverse; flex-basis: 50%;">
-        <ui:Label tabindex="-1" text="1" display-tooltip-when-elided="true" name="labelWave" style="-unity-font-style: bold-and-italic; font-size: 72px; padding-left: 12px; padding-bottom: 8px; color: rgb(106, 0, 0);" />
+    <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; flex-basis: 50%;">
+        <ui:VisualElement style="flex-grow: 1; flex-basis: auto; flex-direction: column-reverse;">
+            <ui:Label tabindex="-1" text="1" display-tooltip-when-elided="true" name="labelWave" style="-unity-font-style: bold-and-italic; font-size: 72px; padding-left: 12px; padding-bottom: 8px; color: rgb(106, 0, 0);" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; flex-basis: auto; align-items: center; justify-content: space-between; flex-direction: column-reverse;">
+            <ui:Label text="Gold: 0" name="labelGold" style="background-color: rgba(0, 0, 0, 0.78); background-image: none; color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 16px; overflow: visible; -unity-text-align: upper-left; text-overflow: clip; white-space: nowrap; flex-wrap: nowrap; display: flex; opacity: 1; margin-top: 0; margin-right: 0; margin-bottom: 20px; margin-left: 0; padding-right: 4px; padding-left: 4px; padding-top: 2px; padding-bottom: 2px; width: auto; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;" />
     </ui:VisualElement>
 </ui:UXML>
