@@ -417,14 +417,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
-  autoStartServerBuild: 1
-  autoConnectClientBuild: 0
-  sendRate: 30
+  headlessStartMode: 0
+  editorAutoStart: 0
+  sendRate: 60
   offlineScene: Assets/Scenes/ZombyOfflineScene.unity
   onlineScene: Assets/Scenes/ZombyRoomScene.unity
+  offlineSceneLoadDelay: 0
   transport: {fileID: 1778131127}
   networkAddress: localhost
   maxConnections: 8
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 1125180839234756980, guid: 091ae9dabfc84df42b7b179c3709bff0, type: 3}
   autoCreatePlayer: 1
@@ -432,8 +435,10 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 321437018096114333, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
   - {fileID: 5955218331064883768, guid: 69dd6695268b6dc4e827b0145ac565d7, type: 3}
+  exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
+    bufferLimit: 32
     catchupNegativeThreshold: -1
     catchupPositiveThreshold: 1
     catchupSpeed: 0.019999999552965164
@@ -442,6 +447,8 @@ MonoBehaviour:
     dynamicAdjustment: 1
     dynamicAdjustmentTolerance: 1
     deliveryTimeEmaDuration: 2
+  evaluationMethod: 0
+  evaluationInterval: 3
   timeInterpolationGui: 0
   showRoomGUI: 1
   minPlayers: 1
@@ -449,7 +456,6 @@ MonoBehaviour:
   RoomScene: Assets/Scenes/ZombyRoomScene.unity
   GameplayScene: Assets/Scenes/ZombyGameScene.unity
   _allPlayersReady: 0
-  roomSlots: []
   clientIndex: 0
 --- !u!114 &1778131127
 MonoBehaviour:
