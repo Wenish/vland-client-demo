@@ -98,9 +98,12 @@ public class ZombieGameManager : NetworkBehaviour
     [Server]
     void SpawnZombie(Vector3 spawnPosition, Quaternion spawnRotation)
     {
-        var zombie = NetworkManager.Instantiate(ZombiePrefab, new Vector3(spawnPosition.x, 0, spawnPosition.z), spawnRotation);
-        zombie.name = "Unit (Zombie)";
-
+        var zombie = UnitSpawner.Instance.SpawnUnit("zombie", spawnPosition, spawnRotation);
+        if (zombie == null)
+        {
+            Debug.LogError("Failed to spawn zombie.");
+            return;
+        }
         var unitController = zombie.GetComponent<UnitController>();
         unitController.OnDied += async () => {
             zombiesAlive--;
@@ -108,12 +111,7 @@ public class ZombieGameManager : NetworkBehaviour
             await Task.Delay(5000);
             NetworkServer.Destroy(zombie);
         };
-        unitController.unitType = UnitType.Zombie;
-        unitController.SetMaxHealth(25);
-        unitController.SetMaxShield(0);
-        unitController.moveSpeed = 3;
         UnitEquipSword(unitController);
-        NetworkServer.Spawn(zombie);
         zombie.AddComponent<AiZombieController>();
         var weaponMelee = zombie.GetComponent<WeaponMelee>();
         weaponMelee.attackPower = 40;
