@@ -5,8 +5,12 @@ using UnityEngine;
 
 public class UnitController : NetworkBehaviour
 {
-
-    Rigidbody unitRigidbody;
+    [SyncVar]
+    public UnitType unitType;
+    [SyncVar]
+    public int team;
+    [SyncVar]
+    public string unitName;
     [SyncVar]
     public float horizontalInput = 0f;
     [SyncVar]
@@ -27,7 +31,8 @@ public class UnitController : NetworkBehaviour
     public Race Race = Race.Ninja;
     public bool IsDead => Health <= 0;
     public Weapon weapon;
-    public UnitType unitType;
+    private Rigidbody unitRigidbody;
+
     public event Action<(int current, int max)> OnHealthChange = delegate {};
     public event Action<(int current, int max)> OnShieldChange = delegate {};
     public event Action<UnitController> OnAttackStart = delegate {};

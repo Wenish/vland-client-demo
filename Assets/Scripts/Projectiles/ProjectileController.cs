@@ -95,9 +95,12 @@ public class ProjectileController : NetworkBehaviour
 
         UnitController unit = other.GetComponent<UnitController>();
 
-        var isShooter = unit == shooter;
+        if (unit == null) return;
 
-        if (unit != null && !isShooter && !HasMaxHitCountReached())
+        var isShooter = unit == shooter;
+        var isSameTeam = unit.team == shooter.team;
+
+        if (!isShooter && !isSameTeam && !HasMaxHitCountReached())
         {
             hitCount++;
             unit.TakeDamage(damage, shooter);
