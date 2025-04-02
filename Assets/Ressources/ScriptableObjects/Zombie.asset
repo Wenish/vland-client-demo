@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: zombie
   unitType: 1
-  team: 2
+  team: 0
   health: 25
   maxHealth: 25
   shield: 0
