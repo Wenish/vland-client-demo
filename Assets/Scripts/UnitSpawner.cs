@@ -35,7 +35,7 @@ public class UnitSpawner : NetworkBehaviour
 
         if (unitController != null)
         {
-            unitController.Health = unitData.health;
+            unitController.health = unitData.health;
             unitController.maxHealth = unitData.maxHealth;
             unitController.shield = unitData.shield;
             unitController.maxShield = unitData.maxShield;

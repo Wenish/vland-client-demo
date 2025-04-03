@@ -7,29 +7,41 @@ public class UnitController : NetworkBehaviour
 {
     [SyncVar]
     public UnitType unitType;
+
     [SyncVar]
     public int team;
+
     [SyncVar]
     public string unitName;
+
     [SyncVar]
     public float horizontalInput = 0f;
+
     [SyncVar]
     public float verticalInput = 0f;
+
     [SyncVar]
     public float angle = 0f;
+
     [SyncVar(hook = nameof(HookOnHealthChanged))]
-    public int Health = 100;
+    public int health = 100;
+
     [SyncVar(hook = nameof(HookOnMaxHealthChanged))]
     public int maxHealth = 100;
+
     [SyncVar(hook = nameof(HookOnShieldChanged))]
     public int shield = 50;
+
     [SyncVar(hook = nameof(HookOnMaxShieldChanged))]
     public int maxShield = 50;
+
     [SyncVar]
     public float moveSpeed = 5f;
+
     [SyncVar(hook = nameof(HookOnRaceChanged))]
     public Race Race = Race.Ninja;
-    public bool IsDead => Health <= 0;
+
+    public bool IsDead => health <= 0;
     public Weapon weapon;
     private Rigidbody unitRigidbody;
 
@@ -39,13 +51,12 @@ public class UnitController : NetworkBehaviour
     public event Action<UnitController> OnTakeDamage = delegate {};
     public event Action OnDied = delegate {};
     public event Action OnRevive = delegate {};
-    public static event Action<(UnitController killer, UnitController victim)> OnKill = delegate {};
 
     // Start is called before the first frame update
     void Start()
     {
         if (isServer) {
-            Health = maxHealth;
+            health = maxHealth;
         }
         unitRigidbody = GetComponent<Rigidbody>();
         RaiseHealthChangeEvent();
@@ -79,9 +90,9 @@ public class UnitController : NetworkBehaviour
     public void SetMaxHealth(int newMaxHealth)
     {
         maxHealth = newMaxHealth;
-        if (Health > maxHealth)
+        if (health > maxHealth)
         {
-            Health = maxHealth;
+            health = maxHealth;
         }
     }
 
@@ -123,7 +134,6 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void TakeDamage(int damage, UnitController attacker)
     {
-        RaiseOnTakeDamageEvent();
         OnTakeDamageEvent(damage, attacker);
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
@@ -141,13 +151,12 @@ public class UnitController : NetworkBehaviour
         }
 
         // Reduce the health points by the remaining damage
-        Health -= damage;
+        var newHealth = health - damage;
 
-        Health = Mathf.Clamp(Health, 0, maxHealth);
+        health = Mathf.Clamp(newHealth, 0, maxHealth);
 
-        if (Health <= 0)
+        if (health <= 0)
         {
-            RaiseOnKillEvent(attacker, this);
             OnKillEvent(attacker);
         }
     }
@@ -170,6 +179,7 @@ public class UnitController : NetworkBehaviour
     public void OnTakeDamageEvent(int damage, UnitController attacker)
     {
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
+        OnTakeDamage(this);
         RpcOnTakenDamage(damage, attacker);
     }
 
@@ -177,6 +187,7 @@ public class UnitController : NetworkBehaviour
     public void RpcOnTakenDamage(int damage, UnitController attacker)
     {
         if(isServer) return;
+        OnTakeDamage(this);
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
     }
 
@@ -191,12 +202,12 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void Heal(int amount)
     {
-        if (Health == 0)
+        if (health == 0)
         {
             Revive();
         }
         // Increase the health by the heal amount
-        Health = Mathf.Min(Health + amount, maxHealth);
+        health = Mathf.Min(health + amount, maxHealth);
 
         RpcOnHeal(amount);
     }
@@ -267,7 +278,7 @@ public class UnitController : NetworkBehaviour
 
     private void RaiseHealthChangeEvent()
     {
-        OnHealthChange((current: Health, max: maxHealth));
+        OnHealthChange((current: health, max: maxHealth));
     }
 
     private void RaiseShieldChangeEvent()
@@ -289,17 +300,6 @@ public class UnitController : NetworkBehaviour
     private void RaiseOnReviveEvent()
     {
         OnRevive();
-    }
-
-    private void RaiseOnKillEvent(UnitController killer, UnitController victim)
-    {
-        OnKill((killer, victim));
-    }
-
-    [ClientRpc]
-    private void RaiseOnTakeDamageEvent()
-    {
-        OnTakeDamage(this);
     }
 }
 

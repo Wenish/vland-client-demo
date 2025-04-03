@@ -30,12 +30,9 @@ public class UnitAnimationController : NetworkBehaviour
 
     void Update()
     {
-        if (!isClient) return;
-        
         HandleMovementAnimation();
     }
 
-    [Client]
     private void HandleMovementAnimation () {
         float horizontal = unitController.horizontalInput;
         float vertical = unitController.verticalInput;
