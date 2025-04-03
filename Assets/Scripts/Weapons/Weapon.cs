@@ -29,6 +29,8 @@ public abstract class Weapon : NetworkBehaviour
     // Time when the last attack occurred
     public double lastAttackTime = -Mathf.Infinity;
 
+    public bool isAttackOnCooldown => NetworkTime.time - lastAttackTime < attackCooldown;
+
     public enum WeaponType
     {
         Sword,
@@ -44,7 +46,7 @@ public abstract class Weapon : NetworkBehaviour
         if (IsAttacking) return;
 
         // Check if enough time has passed since the last attack
-        if (NetworkTime.time - lastAttackTime < attackCooldown) return;
+        if (isAttackOnCooldown) return;
 
         IsAttacking = true;
         attacker.RaiseOnAttackStartEvent();

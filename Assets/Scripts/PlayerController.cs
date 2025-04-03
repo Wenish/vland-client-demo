@@ -196,7 +196,7 @@ public class PlayerController : NetworkBehaviour
     void UnitEquipSword()
     {
         if (!_unitController) return;
-        if (_unitController.weapon.attackCooldown > 0) return;
+        if (_unitController.weapon.isAttackOnCooldown) return;
 
         WeaponMelee weaponMelee = _unitController.GetComponent<WeaponMelee>();
         if (!weaponMelee) return;
@@ -207,7 +207,7 @@ public class PlayerController : NetworkBehaviour
     void UnitEquipBow()
     {
         if (!_unitController) return;
-        if (_unitController.weapon.attackCooldown > 0) return;
+        if (_unitController.weapon.isAttackOnCooldown) return;
         
         WeaponRanged weaponRanged = _unitController.GetComponent<WeaponRanged>();
         if (!weaponRanged) return;
