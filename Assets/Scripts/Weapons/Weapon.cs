@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
+using Mirror;
 using UnityEngine;
 
-public abstract class Weapon : MonoBehaviour
+public abstract class Weapon : NetworkBehaviour
 {
     // The weapon type (e.g. sword, daggers, bow, gun)
     public WeaponType weaponType;
@@ -17,7 +18,7 @@ public abstract class Weapon : MonoBehaviour
     // The attack speed of the weapon
     public float attackSpeed = 1.0f;
 
-    // The time until the next attack can be performed
+    // The cooldown period (time between attacks)
     public float attackCooldown = 0.0f;
 
     // 0 - 1
@@ -25,7 +26,8 @@ public abstract class Weapon : MonoBehaviour
 
     public bool IsAttacking = false;
 
-    
+    // Time when the last attack occurred
+    public double lastAttackTime = -Mathf.Infinity;
 
     public enum WeaponType
     {
@@ -36,17 +38,23 @@ public abstract class Weapon : MonoBehaviour
     }
 
     // Called when the attack button is pressed
+    [Server]
     public async Task Attack(UnitController attacker)
     {
         if (IsAttacking) return;
-        // Check if the attack is on cooldown
-        if (attackCooldown > 0.0f) return;
+
+        // Check if enough time has passed since the last attack
+        if (NetworkTime.time - lastAttackTime < attackCooldown) return;
+
         IsAttacking = true;
         attacker.RaiseOnAttackStartEvent();
         var attackerMoveSpeed = attacker.moveSpeed;
         attacker.moveSpeed = attacker.moveSpeed * moveSpeedPercentWhileAttacking;
 
-        // Set the attack cooldown
+        // Set the time of the last attack
+        lastAttackTime = NetworkTime.time;
+
+        // Perform the attack cooldown calculation
         attackCooldown = attackTime + attackSpeed;
         var delay = attackTime * 1000;
         await Task.Delay((int)delay);
@@ -61,8 +69,9 @@ public abstract class Weapon : MonoBehaviour
     // Called every frame
     void Update()
     {
-        // Reduce the attack cooldown
-        attackCooldown = Mathf.Max(0.0f, attackCooldown - Time.deltaTime);
+        if (!isServer) return;
+
+        // Optionally, you could update the cooldown here too if you want visual feedback
     }
 
     // Perform the attack

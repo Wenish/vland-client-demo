@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class WeaponMelee : Weapon
@@ -7,6 +8,8 @@ public class WeaponMelee : Weapon
     public float coneAngleRadians = 90f;
     public int numRays = 21;
     public float Weighting = 0.5f;
+
+    [Server]
     protected override void PerformAttack(UnitController unit)
     {
         // Get the position and rotation of the unit

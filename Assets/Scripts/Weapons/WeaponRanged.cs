@@ -14,6 +14,7 @@ public class WeaponRanged : Weapon
     // The distance to spawn the projectile in front of the shooter
     public float spawnDistance = 1f;
 
+    [Server]
     protected override void PerformAttack(UnitController attacker)
     {
         // Get the position and rotation of the attacker
