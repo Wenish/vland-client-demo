@@ -562,6 +562,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  unitType: 0
+  team: 0
+  unitName: 
   horizontalInput: 0
   verticalInput: 0
   angle: 0
@@ -572,7 +575,6 @@ MonoBehaviour:
   moveSpeed: 5
   Race: 0
   weapon: {fileID: 947192566}
-  unitType: 0
 --- !u!114 &8405535932912576057
 MonoBehaviour:
   m_ObjectHideFlags: 0
