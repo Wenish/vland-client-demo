@@ -17,6 +17,7 @@ public class ZombieGameManager : NetworkBehaviour
     public int timeBetweenSpawns = 500;
     public int maxZombiesAlive = 5;
     public int zombiesPerWaveMultiplier = 5;
+    public bool isGamePaused = false;
 
     [SerializeField]
     private int zombiesAlive = 0;
@@ -52,6 +53,8 @@ public class ZombieGameManager : NetworkBehaviour
     {
         if (!isServer) return;
         if (isSpawingWave) return;
+        if (isGamePaused) return;
+
 
         if (zombiesAlive == 0)
         {
