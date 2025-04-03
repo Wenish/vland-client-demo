@@ -16,6 +16,16 @@ public class UnitAnimationController : NetworkBehaviour
         unitController.OnAttackStart += HandleOnAttackStartChange;
         unitController.OnHealthChange += HandleOnHealthChange;
         unitController.OnTakeDamage += HandleOnTakeDamage;
+        SetAttackTime(unitController.weapon.attackTime);
+    }
+
+    void OnDestroy()
+    {
+        if (unitController != null) {
+            unitController.OnAttackStart -= HandleOnAttackStartChange;
+            unitController.OnHealthChange -= HandleOnHealthChange;
+            unitController.OnTakeDamage -= HandleOnTakeDamage;
+        }    
     }
 
     void Update()
@@ -45,6 +55,7 @@ public class UnitAnimationController : NetworkBehaviour
     private void HandleOnAttackStartChange(UnitController unitController)
     {
         animator.SetInteger("AttackVersion", Random.Range(0, 2));
+        SetAttackTime(unitController.weapon.attackTime);
         animator.SetTrigger("Attack");
     }
 
@@ -56,5 +67,12 @@ public class UnitAnimationController : NetworkBehaviour
     private void HandleOnTakeDamage(UnitController unitController)
     {
         animator.SetTrigger("Hitted");
+    }
+
+    private void SetAttackTime(float attackTime)
+    {
+        var baseAnimationDuration = 0.8f;
+        float animationSpeed = baseAnimationDuration / attackTime;
+        animator.SetFloat("AttackTime", animationSpeed / 2f);
     }
 }
