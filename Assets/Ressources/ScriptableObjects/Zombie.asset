@@ -20,3 +20,4 @@ MonoBehaviour:
   shield: 0
   maxShield: 0
   moveSpeed: 3
+  weapon: {fileID: 11400000, guid: 5a821e469598a924a8ada0962153e09a, type: 2}

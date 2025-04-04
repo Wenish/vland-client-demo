@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbc6dfc18dc3c8f4396c30f954b5b087, type: 3}
+  m_Name: Claw
+  m_EditorClassIdentifier: 
+  weaponName: claw
+  weaponType: 0
+  attackPower: 40
+  attackRange: 1.5
+  attackTime: 0.1
+  attackSpeed: 0.4
+  moveSpeedPercentWhileAttacking: 0.8
+  mode: 0
+  coneAngleRadians: 75
+  numRays: 15
+  weighting: 0.5

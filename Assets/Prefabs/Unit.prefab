@@ -466,6 +466,7 @@ GameObject:
   - component: {fileID: 5838834780239747934}
   - component: {fileID: 5679917720207950704}
   - component: {fileID: 795324802}
+  - component: {fileID: -6987186403959014264}
   - component: {fileID: 8405535932912576057}
   - component: {fileID: 947192566}
   - component: {fileID: -3108773104642818051}
@@ -573,8 +574,28 @@ MonoBehaviour:
   shield: 50
   maxShield: 50
   moveSpeed: 5
+  weaponName: 
+  currentWeapon: {fileID: 0}
   Race: 0
   weapon: {fileID: 947192566}
+--- !u!114 &-6987186403959014264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90642bf59de53114fadac02f29420538, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  weaponData: {fileID: 0}
+  lastAttackTime: -Infinity
+  isAttacking: 0
 --- !u!114 &8405535932912576057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -595,7 +616,6 @@ MonoBehaviour:
   attackRange: 3
   attackTime: 0.4
   attackSpeed: 0.3
-  attackCooldown: 0
   moveSpeedPercentWhileAttacking: 0.8
   IsAttacking: 0
   lastAttackTime: -Infinity
@@ -623,7 +643,6 @@ MonoBehaviour:
   attackRange: 12
   attackTime: 0.5
   attackSpeed: 0.3
-  attackCooldown: 0
   moveSpeedPercentWhileAttacking: 0.3
   IsAttacking: 0
   lastAttackTime: -Infinity

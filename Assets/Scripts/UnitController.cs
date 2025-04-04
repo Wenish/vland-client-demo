@@ -38,8 +38,31 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public float moveSpeed = 5f;
 
-    [SyncVar(hook = nameof(HookOnRaceChanged))]
-    public Race Race = Race.Ninja;
+    [SyncVar(hook = nameof(OnWeaponNameChanged))]
+    public string weaponName;
+    public WeaponData currentWeapon;
+    public WeaponController weaponController;
+
+    private void OnWeaponNameChanged(string oldWeaponName, string newWeaponName)
+    {
+        SetWeaponData(newWeaponName);
+    }
+
+    private void SetWeaponData(string weaponName) {
+        WeaponData weaponData = WeaponManager.Instance.weaponDatabase.GetWeaponByName(weaponName);
+        if (weaponData == null) {
+            Debug.LogError($"Weapon {weaponName} not found in database.");
+            return;
+        }
+        currentWeapon = weaponData;
+        weaponController.weaponData = weaponData;
+    }
+
+    [Server]
+    public void EquipWeapon(string weaponName) {
+        this.weaponName = weaponName;
+        SetWeaponData(weaponName);
+    }
 
     public bool IsDead => health <= 0;
     public Weapon weapon;
@@ -52,6 +75,10 @@ public class UnitController : NetworkBehaviour
     public event Action OnDied = delegate {};
     public event Action OnRevive = delegate {};
 
+    void Awake()
+    {
+        weaponController = GetComponent<WeaponController>();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -192,10 +219,11 @@ public class UnitController : NetworkBehaviour
     }
 
     [Server]
-    public void Attack() {
+    public void Attack()
+    {
+        Debug.Log($"Attacking with weapon: {currentWeapon.weaponName}");
         if (IsDead) return;
-
-        _ = weapon.Attack(this);
+        _ = weaponController.Attack(this);
     }
 
     // Heal the unit
@@ -271,11 +299,6 @@ public class UnitController : NetworkBehaviour
         RaiseShieldChangeEvent();
     }
 
-    void HookOnRaceChanged(Race oldValue, Race newValue)
-    {
-        Debug.Log(newValue);
-    }
-
     private void RaiseHealthChangeEvent()
     {
         OnHealthChange((current: health, max: maxHealth));
@@ -301,14 +324,6 @@ public class UnitController : NetworkBehaviour
     {
         OnRevive();
     }
-}
-
-public enum Race
-{
-    Ninja,
-    Grunt,
-    Warrior,
-    Sensei
 }
 
 public enum UnitType : byte

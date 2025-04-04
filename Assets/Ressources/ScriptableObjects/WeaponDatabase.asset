@@ -9,15 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f8c54470ddbb8a4eb4cc39c24fd33d8, type: 3}
-  m_Name: Player
+  m_Script: {fileID: 11500000, guid: 13b2efbfa9cd5a24e90ea06ad6d1b3b4, type: 3}
+  m_Name: WeaponDatabase
   m_EditorClassIdentifier: 
-  unitName: player
-  unitType: 0
-  team: 1
-  health: 100
-  maxHealth: 100
-  shield: 50
-  maxShield: 50
-  moveSpeed: 5
-  weapon: {fileID: 11400000, guid: c8313ed289195d541a854ac0e7c818f8, type: 2}
+  allWeapons:
+  - {fileID: 11400000, guid: c8313ed289195d541a854ac0e7c818f8, type: 2}
+  - {fileID: 11400000, guid: 5a821e469598a924a8ada0962153e09a, type: 2}
