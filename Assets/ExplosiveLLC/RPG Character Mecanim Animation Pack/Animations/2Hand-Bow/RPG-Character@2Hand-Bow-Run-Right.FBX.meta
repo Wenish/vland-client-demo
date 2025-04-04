@@ -1,92 +1,92 @@
 fileFormatVersion: 2
-guid: 67e46c627b0dc094981ffd97753ea72a
+guid: d07386db9932b2343a9cf98951edcf74
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
   - first:
       1: 100000
-    second: B_L_Hand
-  - first:
-      1: 100002
-    second: B_L_Forearm
-  - first:
-      1: 100004
-    second: B_L_UpperArm
-  - first:
-      1: 100006
-    second: B_Spine1
-  - first:
-      1: 100008
-    second: B_R_Foot
-  - first:
-      1: 100010
-    second: B_Prop1
-  - first:
-      1: 100012
-    second: PositionLocator
-  - first:
-      1: 100014
-    second: Mesh_Soldier_A
-  - first:
-      1: 100016
     second: //RootNode
   - first:
-      1: 100018
-    second: B_R_Hand
+      1: 100002
+    second: B_Prop1
   - first:
-      1: 100020
-    second: B_R_Forearm
+      1: 100004
+    second: B_L_Hand
   - first:
-      1: 100022
-    second: B_R_UpperArm
+      1: 100006
+    second: B_L_Forearm
   - first:
-      1: 100024
+      1: 100008
+    second: B_L_UpperArm
+  - first:
+      1: 100010
     second: B_Head
   - first:
-      1: 100026
-    second: B_L_Thigh
-  - first:
-      1: 100028
-    second: B_L_Calf
-  - first:
-      1: 100030
-    second: B_L_Finger1
-  - first:
-      1: 100032
-    second: B_L_Foot
-  - first:
-      1: 100034
-    second: B_R_Calf
-  - first:
-      1: 100036
-    second: B_Spine
-  - first:
-      1: 100038
-    second: B_Pelvis
-  - first:
-      1: 100040
+      1: 100012
     second: B_L_Finger11
   - first:
-      1: 100042
+      1: 100014
+    second: B_L_Finger1
+  - first:
+      1: 100016
     second: B_L_Finger01
   - first:
-      1: 100044
+      1: 100018
     second: B_L_Finger0
   - first:
-      1: 100046
-    second: B_R_Finger0
+      1: 100020
+    second: B_R_Foot
   - first:
-      1: 100048
-    second: B_R_Finger1
+      1: 100022
+    second: B_R_Hand
   - first:
-      1: 100050
-    second: B_R_Finger01
+      1: 100024
+    second: B_R_Forearm
   - first:
-      1: 100052
+      1: 100026
+    second: B_R_UpperArm
+  - first:
+      1: 100028
+    second: B_R_Calf
+  - first:
+      1: 100030
     second: B_R_Finger11
   - first:
-      1: 100054
+      1: 100032
+    second: B_R_Finger1
+  - first:
+      1: 100034
+    second: B_R_Finger01
+  - first:
+      1: 100036
+    second: B_R_Finger0
+  - first:
+      1: 100038
     second: B_R_Thigh
+  - first:
+      1: 100040
+    second: B_L_Foot
+  - first:
+      1: 100042
+    second: B_Spine1
+  - first:
+      1: 100044
+    second: B_Spine
+  - first:
+      1: 100046
+    second: B_Pelvis
+  - first:
+      1: 100048
+    second: PositionLocator
+  - first:
+      1: 100050
+    second: Mesh_Soldier_A
+  - first:
+      1: 100052
+    second: B_L_Calf
+  - first:
+      1: 100054
+    second: B_L_Thigh
   - first:
       1: 100056
     second: AK47
@@ -317,91 +317,97 @@ ModelImporter:
     second: RPG-Character-Mesh
   - first:
       1: 100208
+    second: Crossbow
+  - first:
+      1: 100210
+    second: Bow
+  - first:
+      1: 100212
     second: Exporter
   - first:
       4: 400000
-    second: B_L_Hand
-  - first:
-      4: 400002
-    second: B_L_Forearm
-  - first:
-      4: 400004
-    second: B_L_UpperArm
-  - first:
-      4: 400006
-    second: B_Spine1
-  - first:
-      4: 400008
-    second: B_R_Foot
-  - first:
-      4: 400010
-    second: B_Prop1
-  - first:
-      4: 400012
-    second: PositionLocator
-  - first:
-      4: 400014
-    second: Mesh_Soldier_A
-  - first:
-      4: 400016
     second: //RootNode
   - first:
-      4: 400018
-    second: B_R_Hand
+      4: 400002
+    second: B_Prop1
   - first:
-      4: 400020
-    second: B_R_Forearm
+      4: 400004
+    second: B_L_Hand
   - first:
-      4: 400022
-    second: B_R_UpperArm
+      4: 400006
+    second: B_L_Forearm
   - first:
-      4: 400024
+      4: 400008
+    second: B_L_UpperArm
+  - first:
+      4: 400010
     second: B_Head
   - first:
-      4: 400026
-    second: B_L_Thigh
-  - first:
-      4: 400028
-    second: B_L_Calf
-  - first:
-      4: 400030
-    second: B_L_Finger1
-  - first:
-      4: 400032
-    second: B_L_Foot
-  - first:
-      4: 400034
-    second: B_R_Calf
-  - first:
-      4: 400036
-    second: B_Spine
-  - first:
-      4: 400038
-    second: B_Pelvis
-  - first:
-      4: 400040
+      4: 400012
     second: B_L_Finger11
   - first:
-      4: 400042
+      4: 400014
+    second: B_L_Finger1
+  - first:
+      4: 400016
     second: B_L_Finger01
   - first:
-      4: 400044
+      4: 400018
     second: B_L_Finger0
   - first:
-      4: 400046
-    second: B_R_Finger0
+      4: 400020
+    second: B_R_Foot
   - first:
-      4: 400048
-    second: B_R_Finger1
+      4: 400022
+    second: B_R_Hand
   - first:
-      4: 400050
-    second: B_R_Finger01
+      4: 400024
+    second: B_R_Forearm
   - first:
-      4: 400052
+      4: 400026
+    second: B_R_UpperArm
+  - first:
+      4: 400028
+    second: B_R_Calf
+  - first:
+      4: 400030
     second: B_R_Finger11
   - first:
-      4: 400054
+      4: 400032
+    second: B_R_Finger1
+  - first:
+      4: 400034
+    second: B_R_Finger01
+  - first:
+      4: 400036
+    second: B_R_Finger0
+  - first:
+      4: 400038
     second: B_R_Thigh
+  - first:
+      4: 400040
+    second: B_L_Foot
+  - first:
+      4: 400042
+    second: B_Spine1
+  - first:
+      4: 400044
+    second: B_Spine
+  - first:
+      4: 400046
+    second: B_Pelvis
+  - first:
+      4: 400048
+    second: PositionLocator
+  - first:
+      4: 400050
+    second: Mesh_Soldier_A
+  - first:
+      4: 400052
+    second: B_L_Calf
+  - first:
+      4: 400054
+    second: B_L_Thigh
   - first:
       4: 400056
     second: AK47
@@ -632,6 +638,12 @@ ModelImporter:
     second: RPG-Character-Mesh
   - first:
       4: 400208
+    second: Crossbow
+  - first:
+      4: 400210
+    second: Bow
+  - first:
+      4: 400212
     second: Exporter
   - first:
       23: 2300000
@@ -649,6 +661,12 @@ ModelImporter:
       23: 2300008
     second: USP
   - first:
+      23: 2300010
+    second: Crossbow
+  - first:
+      23: 2300012
+    second: Bow
+  - first:
       33: 3300000
     second: Mesh_Soldier_A
   - first:
@@ -663,6 +681,12 @@ ModelImporter:
   - first:
       33: 3300008
     second: USP
+  - first:
+      33: 3300010
+    second: Crossbow
+  - first:
+      33: 3300012
+    second: Bow
   - first:
       43: 4300000
     second: Mesh_Soldier_A
@@ -685,8 +709,14 @@ ModelImporter:
       43: 4300012
     second: RPG-Character-Mesh
   - first:
+      43: 4300014
+    second: Crossbow
+  - first:
+      43: 4300016
+    second: Bow
+  - first:
       74: 7400000
-    second: Unarmed-Run-Forward-Left
+    second: 2Hand-Bow-Run-Right
   - first:
       95: 9500000
     second: //RootNode
@@ -722,7 +752,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -731,7 +761,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Unarmed-Run-Forward-Left
+      name: 2Hand-Bow-Run-Right
       takeName: Take 001
       internalID: 7400000
       firstFrame: 0
@@ -739,7 +769,7 @@ ModelImporter:
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
-      cycleOffset: 0
+      cycleOffset: 0.5
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
@@ -755,14 +785,14 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.35228273
+      - time: 0.339838
         functionName: FootR
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.8434462
+      - time: 0.8434459
         functionName: FootL
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -771,7 +801,7 @@ ModelImporter:
         messageOptions: 0
       transformMask: []
       maskType: 3
-      maskSource: {fileID: 101100000, guid: 3e4e408fdcc93ee468a1275b69104d63, type: 2}
+      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
       additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
@@ -807,7 +837,7 @@ ModelImporter:
     normalImportMode: 2
     tangentImportMode: 2
     normalCalculationMode: 0
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 2
     normalSmoothingSource: 0
   referencedClips: []
@@ -1533,6 +1563,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 63772
   packageName: RPG Character Mecanim Animation Pack
-  packageVersion: 
-  assetPath: Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward-Left.FBX
-  uploadId: 0
+  packageVersion: 7.1.0
+  assetPath: Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Right.FBX
+  uploadId: 643108

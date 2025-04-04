@@ -136,7 +136,7 @@ public class ZombieGameManager : NetworkBehaviour
     void UnitEquipSword(UnitController unitController)
     {
         if (!unitController) return;
-        if (unitController.weapon.attackCooldown > 0) return;
+        if (unitController.weapon.isAttackOnCooldown) return;
 
         WeaponMelee weaponMelee = unitController.GetComponent<WeaponMelee>();
         if (!weaponMelee) return;

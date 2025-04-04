@@ -19,7 +19,7 @@ public abstract class Weapon : NetworkBehaviour
     public float attackSpeed = 1.0f;
 
     // The cooldown period (time between attacks)
-    public float attackCooldown = 0.0f;
+    public float attackCooldown() => attackTime + attackSpeed;
 
     // 0 - 1
     public float moveSpeedPercentWhileAttacking = 0.5f;
@@ -29,7 +29,7 @@ public abstract class Weapon : NetworkBehaviour
     // Time when the last attack occurred
     public double lastAttackTime = -Mathf.Infinity;
 
-    public bool isAttackOnCooldown => NetworkTime.time - lastAttackTime < attackCooldown;
+    public bool isAttackOnCooldown => NetworkTime.time - lastAttackTime < attackCooldown();
 
     public enum WeaponType
     {
@@ -56,8 +56,6 @@ public abstract class Weapon : NetworkBehaviour
         // Set the time of the last attack
         lastAttackTime = NetworkTime.time;
 
-        // Perform the attack cooldown calculation
-        attackCooldown = attackTime + attackSpeed;
         var delay = attackTime * 1000;
         await Task.Delay((int)delay);
 
