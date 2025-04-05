@@ -65,7 +65,6 @@ public class UnitController : NetworkBehaviour
     }
 
     public bool IsDead => health <= 0;
-    public Weapon weapon;
     private Rigidbody unitRigidbody;
 
     public event Action<(int current, int max)> OnHealthChange = delegate {};

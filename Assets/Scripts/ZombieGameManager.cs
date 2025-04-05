@@ -114,33 +114,12 @@ public class ZombieGameManager : NetworkBehaviour
             await Task.Delay(5000);
             NetworkServer.Destroy(zombie);
         };
-        UnitEquipSword(unitController);
         zombie.AddComponent<AiZombieController>();
-        var weaponMelee = zombie.GetComponent<WeaponMelee>();
-        weaponMelee.attackPower = 40;
-        weaponMelee.attackRange = 1.5f;
-        weaponMelee.moveSpeedPercentWhileAttacking = 0.8f;
-        weaponMelee.attackTime = 0.1f;
-        weaponMelee.attackSpeed = 0.4f;
-        weaponMelee.coneAngleRadians = 75;
-        weaponMelee.numRays = 15;
     }
 
     void GetAllZombieSpawnInScene()
     {
         ZombieSpawns = FindObjectsByType<ZombieSpawnController>(FindObjectsSortMode.None);
-    }
-
-
-    [Server]
-    void UnitEquipSword(UnitController unitController)
-    {
-        if (!unitController) return;
-        if (unitController.weapon.isAttackOnCooldown) return;
-
-        WeaponMelee weaponMelee = unitController.GetComponent<WeaponMelee>();
-        if (!weaponMelee) return;
-        unitController.weapon = weaponMelee;
     }
     
     public void RasiseOnNewWaveStartedEvent()

@@ -111,7 +111,7 @@ public class AiZombieController : MonoBehaviour
         if (_targetPlayer && _targetPlayer.IsDead) return;
 
         var distance = Vector3.Distance(_unitController.transform.position, Destination);
-        if (distance < _unitController.weapon.attackRange) {
+        if (distance < _unitController.currentWeapon.attackRange) {
             _unitController.Attack();
         }
     }
