@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-[CreateAssetMenu(fileName = "NewWeaponMeele", menuName = "Game/Weapon/Melee")]
-public class WeaponMeeleData : WeaponData
+[CreateAssetMenu(fileName = "NewWeaponMelee", menuName = "Game/Weapon/Melee")]
+public class WeaponMeleeData : WeaponData
 {
     [Header("Meele Specific")]
     public Mode mode = Mode.Linear;

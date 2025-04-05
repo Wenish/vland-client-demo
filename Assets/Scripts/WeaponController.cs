@@ -20,8 +20,6 @@ public class WeaponController : NetworkBehaviour
             Debug.LogError("Weapon data is not assigned.");
             return;
         };
-
-        Debug.Log($"Attacker: {attacker.unitName} is attacking with weapon: {weaponData.weaponName}");
         
         if (isAttacking || IsAttackOnCooldown) return;
 

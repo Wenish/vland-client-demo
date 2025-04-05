@@ -3,9 +3,6 @@ using Mirror;
 
 public class ProjectileController : NetworkBehaviour
 {
-    // The projectile scriptable object
-    public Projectile projectile;
-
     // The unit that shot the projectile
     public UnitController shooter;
 

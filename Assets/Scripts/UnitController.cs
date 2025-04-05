@@ -221,7 +221,6 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void Attack()
     {
-        Debug.Log($"Attacking with weapon: {currentWeapon.weaponName}");
         if (IsDead) return;
         _ = weaponController.Attack(this);
     }

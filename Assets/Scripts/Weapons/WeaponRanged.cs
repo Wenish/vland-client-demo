@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class WeaponRanged : Weapon
 {
-    // The projectile scriptable object
-    public Projectile projectile;
 
     // The speed of the projectile
     public float projectileSpeed = 10.0f;

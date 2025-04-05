@@ -469,6 +469,7 @@ GameObject:
   - component: {fileID: -6987186403959014264}
   - component: {fileID: 8405535932912576057}
   - component: {fileID: 947192566}
+  - component: {fileID: 3010265075052333281}
   - component: {fileID: -3108773104642818051}
   - component: {fileID: -135528591289134065}
   - component: {fileID: -8639825436896791559}
@@ -575,8 +576,8 @@ MonoBehaviour:
   maxShield: 50
   moveSpeed: 5
   weaponName: 
-  currentWeapon: {fileID: 0}
-  Race: 0
+  currentWeapon: {fileID: 11400000, guid: 5a821e469598a924a8ada0962153e09a, type: 2}
+  weaponController: {fileID: 0}
   weapon: {fileID: 947192566}
 --- !u!114 &-6987186403959014264
 MonoBehaviour:
@@ -646,9 +647,20 @@ MonoBehaviour:
   moveSpeedPercentWhileAttacking: 0.3
   IsAttacking: 0
   lastAttackTime: -Infinity
-  projectile: {fileID: 11400000, guid: 196370f6a0a8f4846a3a154ca9f64484, type: 2}
   projectileSpeed: 22
   spawnDistance: 1
+--- !u!114 &3010265075052333281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dec34add1ed3104483ec20e6c9975ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-3108773104642818051
 MonoBehaviour:
   m_ObjectHideFlags: 0
