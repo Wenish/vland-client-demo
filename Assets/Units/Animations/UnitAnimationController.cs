@@ -16,7 +16,10 @@ public class UnitAnimationController : NetworkBehaviour
         unitController.OnAttackStart += HandleOnAttackStartChange;
         unitController.OnHealthChange += HandleOnHealthChange;
         unitController.OnTakeDamage += HandleOnTakeDamage;
-        SetAttackTime(unitController.weapon.attackTime);
+        if (unitController.currentWeapon != null) {
+            SetAttackTime(unitController.currentWeapon.attackTime);
+        }
+        animator.SetInteger("Health", unitController.health);
     }
 
     void OnDestroy()
