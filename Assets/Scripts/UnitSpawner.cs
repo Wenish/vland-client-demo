@@ -43,6 +43,8 @@ public class UnitSpawner : NetworkBehaviour
             unitController.team = unitData.team;
             unitController.unitType = unitData.unitType;
             unitController.unitName = unitData.unitName;
+            unitController.weaponName = unitData.weapon.weaponName;
+            unitController.currentWeapon = unitData.weapon;
         }
 
         NetworkServer.Spawn(unitInstance);

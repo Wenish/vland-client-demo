@@ -9,15 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f8c54470ddbb8a4eb4cc39c24fd33d8, type: 3}
-  m_Name: Player
+  m_Script: {fileID: 11500000, guid: 8f8db645a8b361944bd8c8281b17710d, type: 3}
+  m_Name: Arrow
   m_EditorClassIdentifier: 
-  unitName: player
-  unitType: 0
-  team: 1
-  health: 100
-  maxHealth: 100
-  shield: 50
-  maxShield: 50
-  moveSpeed: 5
-  weapon: {fileID: 11400000, guid: c8313ed289195d541a854ac0e7c818f8, type: 2}
+  prefab: {fileID: 5955218331064883768, guid: 69dd6695268b6dc4e827b0145ac565d7, type: 3}
+  maxHits: 2

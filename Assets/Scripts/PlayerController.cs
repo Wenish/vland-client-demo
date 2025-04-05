@@ -201,6 +201,7 @@ public class PlayerController : NetworkBehaviour
         WeaponMelee weaponMelee = _unitController.GetComponent<WeaponMelee>();
         if (!weaponMelee) return;
         _unitController.weapon = weaponMelee;
+        _unitController.EquipWeapon("sword");
     }
 
     [Command]
@@ -212,6 +213,7 @@ public class PlayerController : NetworkBehaviour
         WeaponRanged weaponRanged = _unitController.GetComponent<WeaponRanged>();
         if (!weaponRanged) return;
         _unitController.weapon = weaponRanged;
+        _unitController.EquipWeapon("shortBow");
     }
 
     [Server]
