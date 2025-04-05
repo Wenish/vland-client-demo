@@ -201,7 +201,7 @@ public class PlayerController : NetworkBehaviour
         WeaponMelee weaponMelee = _unitController.GetComponent<WeaponMelee>();
         if (!weaponMelee) return;
         _unitController.weapon = weaponMelee;
-        _unitController.EquipWeapon("claw");
+        _unitController.EquipWeapon("sword");
     }
 
     [Command]
