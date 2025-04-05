@@ -13,8 +13,6 @@ public class WeaponRangedData : WeaponData
 
     public override void PerformAttack(UnitController attacker)
     {
-        Debug.Log("Performing ranged attack with " + weaponName);
-
         // Get the position and rotation of the attacker
         Vector3 attackerPosition = attacker.transform.position;
         Quaternion attackerRotation = attacker.transform.rotation;

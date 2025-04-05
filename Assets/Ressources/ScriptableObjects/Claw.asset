@@ -16,7 +16,7 @@ MonoBehaviour:
   weaponType: 0
   attackPower: 40
   attackRange: 1.5
-  attackTime: 0.1
+  attackTime: 0.2
   attackSpeed: 0.4
   moveSpeedPercentWhileAttacking: 0.8
   mode: 0

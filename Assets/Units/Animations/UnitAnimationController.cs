@@ -51,9 +51,12 @@ public class UnitAnimationController : NetworkBehaviour
 
     private void HandleOnAttackStartChange(UnitController unitController)
     {
+        if (unitController.currentWeapon != null) {
+            SetAttackTime(unitController.currentWeapon.attackTime);
+        }
         animator.SetInteger("AttackVersion", Random.Range(0, 2));
-        SetAttackTime(unitController.weapon.attackTime);
         animator.SetTrigger("Attack");
+        
     }
 
     private void HandleOnHealthChange((int current, int max) health)
