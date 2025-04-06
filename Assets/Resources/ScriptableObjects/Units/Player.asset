@@ -21,4 +21,4 @@ MonoBehaviour:
   maxShield: 50
   moveSpeed: 5
   weapon: {fileID: 11400000, guid: c8313ed289195d541a854ac0e7c818f8, type: 2}
-  modelData: {fileID: 11400000, guid: a3f4d6ab735ff504596c56b77d84e23c, type: 2}
+  modelData: {fileID: 11400000, guid: c8ded03887d54f0488b0aa25162938c0, type: 2}
