@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 812f2cd37fa510d44b9f9fea481de77d
+guid: 2d6e375e31aea654e85d4afd5cc38682
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
@@ -317,6 +317,12 @@ ModelImporter:
     second: RPG-Character-Mesh
   - first:
       1: 100208
+    second: Pistol
+  - first:
+      1: 100210
+    second: Rifle
+  - first:
+      1: 100212
     second: Exporter
   - first:
       4: 400000
@@ -632,6 +638,12 @@ ModelImporter:
     second: RPG-Character-Mesh
   - first:
       4: 400208
+    second: Pistol
+  - first:
+      4: 400210
+    second: Rifle
+  - first:
+      4: 400212
     second: Exporter
   - first:
       23: 2300000
@@ -649,6 +661,12 @@ ModelImporter:
       23: 2300008
     second: USP
   - first:
+      23: 2300010
+    second: Pistol
+  - first:
+      23: 2300012
+    second: Rifle
+  - first:
       33: 3300000
     second: Mesh_Soldier_A
   - first:
@@ -663,6 +681,12 @@ ModelImporter:
   - first:
       33: 3300008
     second: USP
+  - first:
+      33: 3300010
+    second: Pistol
+  - first:
+      33: 3300012
+    second: Rifle
   - first:
       43: 4300000
     second: Mesh_Soldier_A
@@ -685,8 +709,14 @@ ModelImporter:
       43: 4300012
     second: RPG-Character-Mesh
   - first:
+      43: 4300014
+    second: Rifle
+  - first:
+      43: 4300016
+    second: Pistol
+  - first:
       74: 7400000
-    second: Unarmed-Sprint
+    second: 2Hand-Shooting-Run-Backward-Right
   - first:
       95: 9500000
     second: //RootNode
@@ -717,12 +747,10 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'B_Spine' has translation animation that
-      will be discarded.\n"
-    animationRetargetingWarnings: 
-    animationDoRetargetingWarnings: 0
+    animationImportWarnings: 
+    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n"
+    animationDoRetargetingWarnings: 1
     importAnimatedCustomProperties: 0
     importConstraints: 0
     animationCompression: 3
@@ -734,15 +762,15 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Unarmed-Sprint
+      name: 2Hand-Shooting-Run-Backward-Right
       takeName: Take 001
       internalID: 7400000
       firstFrame: 0
-      lastFrame: 18
+      lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
-      cycleOffset: 0
+      cycleOffset: 0.5
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
@@ -758,15 +786,15 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.35228273
-        functionName: FootR
+      - time: 0.33365247
+        functionName: FootL
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.8434462
-        functionName: FootL
+      - time: 0.8195875
+        functionName: FootR
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -774,7 +802,7 @@ ModelImporter:
         messageOptions: 0
       transformMask: []
       maskType: 3
-      maskSource: {fileID: 101100000, guid: 3e4e408fdcc93ee468a1275b69104d63, type: 2}
+      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
       additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
@@ -810,7 +838,7 @@ ModelImporter:
     normalImportMode: 2
     tangentImportMode: 2
     normalCalculationMode: 0
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 2
     normalSmoothingSource: 0
   referencedClips: []
@@ -1536,6 +1564,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 63772
   packageName: RPG Character Mecanim Animation Pack
-  packageVersion: 
-  assetPath: Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Sprint.FBX
-  uploadId: 0
+  packageVersion: 7.1.0
+  assetPath: Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Backward-Right.FBX
+  uploadId: 643108
