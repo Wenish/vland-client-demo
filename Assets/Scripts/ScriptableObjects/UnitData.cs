@@ -16,4 +16,7 @@ public class UnitData : ScriptableObject
 
     [Header("Weapon")]
     public WeaponData weapon;
+
+    [Header("Model")]
+    public ModelData modelData;
 }
