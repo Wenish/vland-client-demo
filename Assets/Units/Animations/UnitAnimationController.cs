@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class UnitAnimationController : NetworkBehaviour
+public class UnitAnimationController : MonoBehaviour
 {
     public float maxSpeed = 5f;
     UnitController unitController;

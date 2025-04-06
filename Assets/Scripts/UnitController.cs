@@ -1,6 +1,7 @@
 using System;
 using Mirror;
 using MyGame.Events;
+using Palmmedia.ReportGenerator.Core.Reporting.Builders.Rendering;
 using UnityEngine;
 
 public class UnitController : NetworkBehaviour
@@ -45,11 +46,12 @@ public class UnitController : NetworkBehaviour
 
     private void OnWeaponNameChanged(string oldWeaponName, string newWeaponName)
     {
+        if (isServer) return;
         SetWeaponData(newWeaponName);
     }
 
     private void SetWeaponData(string weaponName) {
-        WeaponData weaponData = WeaponManager.Instance.weaponDatabase.GetWeaponByName(weaponName);
+        WeaponData weaponData = DatabaseManager.Instance.weaponDatabase.GetWeaponByName(weaponName);
         if (weaponData == null) {
             Debug.LogError($"Weapon {weaponName} not found in database.");
             return;
@@ -62,6 +64,36 @@ public class UnitController : NetworkBehaviour
     public void EquipWeapon(string weaponName) {
         this.weaponName = weaponName;
         SetWeaponData(weaponName);
+    }
+
+    [SyncVar(hook = nameof(OnModelNameChanged))]
+    public string modelName;
+    public ModelData modelData;
+    public GameObject modelInstance;
+
+    public void OnModelNameChanged(string oldModelName, string newModelName)
+    {
+        if (isServer) return;
+        SetModelData(newModelName);
+    }
+
+    private void SetModelData(string modelName) {
+        ModelData modelData = DatabaseManager.Instance.modelDatabase.GetModelByName(modelName);
+        if (modelData == null) {
+            Debug.LogError($"Model {modelName} not found in database.");
+            return;
+        }
+        this.modelData = modelData;
+        if (modelInstance != null) {
+            Destroy(modelInstance);
+        }
+        modelInstance = Instantiate(modelData.prefab, transform.position, transform.rotation, transform);
+    }
+
+    [Server]
+    public void EquipModel(string modelName) {
+        this.modelName = modelName;
+        SetModelData(modelName);
     }
 
     public bool IsDead => health <= 0;
