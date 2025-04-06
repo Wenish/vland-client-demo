@@ -114,6 +114,9 @@ public class ZombieGameManager : NetworkBehaviour
             await Task.Delay(5000);
             NetworkServer.Destroy(zombie);
         };
+        
+        unitController.moveSpeed = Mathf.Max(0, unitController.moveSpeed + UnityEngine.Random.Range(-1.5f, 0.5f));
+        
         zombie.AddComponent<AiZombieController>();
     }
 
