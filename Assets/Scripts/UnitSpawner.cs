@@ -44,7 +44,7 @@ public class UnitSpawner : NetworkBehaviour
             unitController.unitName = unitData.unitName;
             unitController.weaponName = unitData.weapon.weaponName;
             unitController.currentWeapon = unitData.weapon;
-            unitController.EquipModel("zombie"); // Example model name, replace with actual model name
+            unitController.EquipModel(unitData.modelData.modelName);
         }
 
         NetworkServer.Spawn(unitInstance);
