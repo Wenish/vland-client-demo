@@ -18,11 +18,12 @@ public abstract class WeaponData : ScriptableObject
 }
 
 
-public enum WeaponType
+public enum WeaponType : byte
 {
     Unarmed,
     Sword,
     Daggers,
     Bow,
-    Gun
+    Gun,
+    Pistols
 }
