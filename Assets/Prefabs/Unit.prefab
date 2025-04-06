@@ -576,6 +576,9 @@ MonoBehaviour:
   weaponName: 
   currentWeapon: {fileID: 0}
   weaponController: {fileID: 0}
+  modelName: 
+  modelData: {fileID: 0}
+  modelInstance: {fileID: 2013287724315923245}
 --- !u!114 &-6987186403959014264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1630,9 +1633,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b42e6faa98812b47817a019274253e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
   maxSpeed: 5
 --- !u!4 &2013287724316127925 stripped
 Transform:

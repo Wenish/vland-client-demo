@@ -1,10 +1,12 @@
 using UnityEngine;
 
-public class WeaponManager : MonoBehaviour
+public class DatabaseManager : MonoBehaviour
 {
-    public static WeaponManager Instance { get; private set; }
-
+    public static DatabaseManager Instance { get; private set; }
+    
     public WeaponDatabase weaponDatabase;
+    public ModelDatabase modelDatabase;
+    public UnitDatabase unitDatabase;
 
     private void Awake()
     {

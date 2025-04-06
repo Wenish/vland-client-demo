@@ -4,7 +4,6 @@ using UnityEngine;
 public class UnitSpawner : NetworkBehaviour
 {
     public static UnitSpawner Instance { get; private set; }
-    public UnitDatabase unitDatabase;
     public GameObject unitPrefab;
 
     private void Awake()
@@ -22,7 +21,7 @@ public class UnitSpawner : NetworkBehaviour
     [Server]
     public GameObject SpawnUnit(string unitName, Vector3 position, Quaternion rotation)
     {
-        UnitData unitData = unitDatabase.GetUnitByName(unitName);
+        UnitData unitData = DatabaseManager.Instance.unitDatabase.GetUnitByName(unitName);
         if (unitData == null)
         {
             Debug.LogError($"Unit {unitName} not found in database.");
@@ -45,6 +44,7 @@ public class UnitSpawner : NetworkBehaviour
             unitController.unitName = unitData.unitName;
             unitController.weaponName = unitData.weapon.weaponName;
             unitController.currentWeapon = unitData.weapon;
+            unitController.EquipModel("zombie"); // Example model name, replace with actual model name
         }
 
         NetworkServer.Spawn(unitInstance);
