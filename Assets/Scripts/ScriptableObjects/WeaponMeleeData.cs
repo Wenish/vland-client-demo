@@ -7,6 +7,7 @@ public class WeaponMeleeData : WeaponData
 {
     [Header("Meele Specific")]
     public Mode mode = Mode.Linear;
+    public float maxHits = 1;
     public float coneAngleRadians = 90f;
     public int numRays = 21;
     public float weighting = 0.5f;
@@ -16,11 +17,11 @@ public class WeaponMeleeData : WeaponData
         Vector3 unitPosition = attacker.transform.position + Vector3.up;
         Quaternion unitRotation = attacker.transform.rotation;
 
-        
+
         // List to store the enemies hit by the attack cone
         List<UnitController> enemiesHit = new List<UnitController>();
 
-                // Cast rays in a cone shape to detect enemies
+        // Cast rays in a cone shape to detect enemies
         for (int i = 0; i < numRays; i++)
         {
             // Calculate the angle of the current ray
@@ -37,33 +38,39 @@ public class WeaponMeleeData : WeaponData
                 UnitController enemy = hit.collider.GetComponent<UnitController>();
                 if (enemy != null && !enemy.IsDead && enemy.team != attacker.team)
                 {
-                    enemiesHit.Add(enemy);
+                    if (!enemiesHit.Contains(enemy))
+                    {
+                        enemiesHit.Add(enemy);
+                    }
                 }
             }
         }
 
-                // If multiple enemies were hit, choose the one that is most in the center of the cone
+        // If only one enemy was hit, deal damage to that enemy
+
+
         if (enemiesHit.Count > 1)
         {
-            UnitController closestEnemy = enemiesHit[0];
-            float bestScore = 1;
-            foreach (UnitController enemy in enemiesHit)
+            // Sort enemies by their score
+            enemiesHit.Sort((a, b) =>
             {
-                float score = calcScore(weighting, attacker.transform, enemy.transform.position, mode);
-                if (score < bestScore)
-                {
-                    closestEnemy = enemy;
-                    bestScore = score;
-                }
+                float scoreA = calcScore(weighting, attacker.transform, a.transform.position, mode);
+                float scoreB = calcScore(weighting, attacker.transform, b.transform.position, mode);
+                return scoreA.CompareTo(scoreB);
+            });
+
+            // Hit as many enemies as maxHits
+            for (int i = 0; i < Mathf.Min(maxHits, enemiesHit.Count); i++)
+            {
+                enemiesHit[i].TakeDamage(attackPower, attacker);
             }
-            // Deal damage to the closest enemy
-            closestEnemy.TakeDamage(attackPower, attacker);
+
         }
-        // If only one enemy was hit, deal damage to that enemy
         else if (enemiesHit.Count == 1)
         {
             var enemy = enemiesHit[0];
             enemy.TakeDamage(attackPower, attacker);
+            return;
         }
     }
 
@@ -73,12 +80,14 @@ public class WeaponMeleeData : WeaponData
     {
         float angleNormalized = Mathf.Clamp(Vector3.Angle(unit.rotation * Vector3.forward, target - unit.position), 0, coneAngleRadians) / coneAngleRadians;
         float distanceNormalized = Mathf.Clamp(Vector3.Distance(unit.position, target), 0, attackRange) / attackRange;
-        if (mode == Mode.Linear) {
+        if (mode == Mode.Linear)
+        {
             float score = (weighting * distanceNormalized) + ((1 - weighting) * angleNormalized);
             return score;
         }
 
-        if (mode == Mode.Quadratic) {
+        if (mode == Mode.Quadratic)
+        {
             float score = (weighting * distanceNormalized * distanceNormalized) + ((1 - weighting) * angleNormalized * angleNormalized);
             return score;
         }
