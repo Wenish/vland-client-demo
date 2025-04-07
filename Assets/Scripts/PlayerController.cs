@@ -113,11 +113,15 @@ public class PlayerController : NetworkBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            UnitEquipSword();
+            UnitEquipWeapon("sword");
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            UnitEquipBow();
+            UnitEquipWeapon("shortBow");
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            UnitEquipWeapon("daggers");
         }
     }
 
@@ -193,7 +197,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    void UnitEquipSword()
+    void UnitEquipWeapon(string weaponName)
     {
         if (!_unitController) return;
 
@@ -201,19 +205,7 @@ public class PlayerController : NetworkBehaviour
         if (!weaponController) return;
         if (weaponController.IsAttackOnCooldown) return;
 
-        _unitController.EquipWeapon("sword");
-    }
-
-    [Command]
-    void UnitEquipBow()
-    {
-        if (!_unitController) return;
-
-        WeaponController weaponController = _unitController.GetComponent<WeaponController>();
-        if (!weaponController) return;
-        if (weaponController.IsAttackOnCooldown) return;
-        
-        _unitController.EquipWeapon("shortBow");
+        _unitController.EquipWeapon(weaponName);
     }
 
     [Server]
