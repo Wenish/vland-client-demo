@@ -119,7 +119,7 @@ public class PlayerController : NetworkBehaviour
         {
             UnitEquipWeapon("shortBow");
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             UnitEquipWeapon("daggers");
         }
