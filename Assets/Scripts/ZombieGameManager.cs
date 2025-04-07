@@ -115,7 +115,7 @@ public class ZombieGameManager : NetworkBehaviour
             NetworkServer.Destroy(zombie);
         };
         
-        unitController.moveSpeed = Mathf.Max(0, unitController.moveSpeed + UnityEngine.Random.Range(-1.5f, 0.5f));
+        unitController.moveSpeed = Mathf.Max(0, unitController.moveSpeed + UnityEngine.Random.Range(-0.5f, 0.5f));
         
         zombie.AddComponent<AiZombieController>();
     }
