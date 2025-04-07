@@ -14,4 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modelName: ninja
   prefab: {fileID: 7864191341164438517, guid: 77e9b286b9e83f742818912e7ac6c447, type: 3}
-  baseAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
+  defaultAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
+  weaponAnimationOverrides:
+  - weaponType: 3
+    animationSet: {fileID: 11400000, guid: 051281fdff18e4b1abcd3fa9dbb3efe1, type: 2}
+  - weaponType: 1
+    animationSet: {fileID: 11400000, guid: a1e66d9cbcbde4be8813018f9d2392fe, type: 2}
+  - weaponType: 2
+    animationSet: {fileID: 11400000, guid: 0cdf72966701f493db7202ae92a01dfa, type: 2}
+  - weaponType: 4
+    animationSet: {fileID: 11400000, guid: d4424c69e2fe34c6ebd3e664c1b1733a, type: 2}

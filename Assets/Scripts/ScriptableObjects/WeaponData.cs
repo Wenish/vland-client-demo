@@ -12,9 +12,6 @@ public abstract class WeaponData : ScriptableObject
     public float attackSpeed = 1.0f;
     public float moveSpeedPercentWhileAttacking = 0.5f;
 
-    [Header("Animation")]
-    public AnimationSetData animationSet;
-
     public float AttackCooldown => attackTime + attackSpeed;
 
     public abstract void PerformAttack(UnitController attacker);
