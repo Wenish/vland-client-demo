@@ -16,10 +16,9 @@ public class UnitAnimationController : MonoBehaviour
         unitController.OnAttackStart += HandleOnAttackStartChange;
         unitController.OnHealthChange += HandleOnHealthChange;
         unitController.OnTakeDamage += HandleOnTakeDamage;
-        if (unitController.currentWeapon != null) {
-            SetAttackTime(unitController.currentWeapon.attackTime);
-        }
-        animator.SetInteger("Health", unitController.health);
+        unitController.OnWeaponChange += HandleOnWeaponChange;
+
+        SelectAnimator(unitController);
     }
 
     void OnDestroy()
@@ -28,6 +27,7 @@ public class UnitAnimationController : MonoBehaviour
             unitController.OnAttackStart -= HandleOnAttackStartChange;
             unitController.OnHealthChange -= HandleOnHealthChange;
             unitController.OnTakeDamage -= HandleOnTakeDamage;
+            unitController.OnWeaponChange -= HandleOnWeaponChange;
         }    
     }
 
@@ -77,5 +77,24 @@ public class UnitAnimationController : MonoBehaviour
         var baseAnimationDuration = 0.8f;
         float animationSpeed = baseAnimationDuration / attackTime;
         animator.SetFloat("AttackTime", animationSpeed / 2f);
+    }
+
+    private void HandleOnWeaponChange(UnitController unitController)
+    {
+        SelectAnimator(unitController);
+    }
+
+    private void SelectAnimator(UnitController unitController) {
+        if (unitController.currentWeapon != null && unitController.currentWeapon.animationSet != null) {
+            animator.runtimeAnimatorController = unitController.currentWeapon.animationSet.animatorController;
+        } else {
+            animator.runtimeAnimatorController = unitController.modelData.baseAnimationSet.animatorController;
+        }
+        
+        animator.SetInteger("Health", unitController.health);
+
+        if (unitController.currentWeapon != null) {
+            SetAttackTime(unitController.currentWeapon.attackTime);
+        }
     }
 }

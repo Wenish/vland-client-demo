@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modelName: ninja
   prefab: {fileID: 7864191341164438517, guid: 77e9b286b9e83f742818912e7ac6c447, type: 3}
+  baseAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
