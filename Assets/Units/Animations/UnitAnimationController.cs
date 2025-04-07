@@ -85,12 +85,11 @@ public class UnitAnimationController : MonoBehaviour
     }
 
     private void SelectAnimator(UnitController unitController) {
-        if (unitController.currentWeapon != null && unitController.currentWeapon.animationSet != null) {
-            animator.runtimeAnimatorController = unitController.currentWeapon.animationSet.animatorController;
-        } else {
-            animator.runtimeAnimatorController = unitController.modelData.baseAnimationSet.animatorController;
+
+        if( unitController.modelData != null) {
+            animator.runtimeAnimatorController = unitController.modelData.GetAnimationSetForWeapon(unitController.currentWeapon.weaponType).animatorController;
         }
-        
+
         animator.SetInteger("Health", unitController.health);
 
         if (unitController.currentWeapon != null) {

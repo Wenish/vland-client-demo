@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: Daggers
   m_EditorClassIdentifier: 
   weaponName: daggers
-  weaponType: 0
+  weaponType: 2
   attackPower: 70
   attackRange: 3
   attackTime: 0.4
   attackSpeed: 0.2
   moveSpeedPercentWhileAttacking: 0.9
-  animationSet: {fileID: 11400000, guid: 0cdf72966701f493db7202ae92a01dfa, type: 2}
   mode: 0
   maxHits: 3
   coneAngleRadians: 80

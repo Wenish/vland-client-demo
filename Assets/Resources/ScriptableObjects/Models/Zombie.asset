@@ -15,3 +15,5 @@ MonoBehaviour:
   modelName: zombie
   prefab: {fileID: 8460791704541548606, guid: 30891c519904b1c48a5db81c103a32a3, type: 3}
   baseAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
+  defaultAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
+  weaponAnimationOverrides: []
