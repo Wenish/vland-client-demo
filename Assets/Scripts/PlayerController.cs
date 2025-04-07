@@ -123,6 +123,10 @@ public class PlayerController : NetworkBehaviour
         {
             UnitEquipWeapon("daggers");
         }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            UnitEquipWeapon("gun");
+        }
     }
 
     [Client]

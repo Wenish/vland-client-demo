@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f46262310475b148b4e64d453494e78, type: 3}
+  m_Name: Gun
+  m_EditorClassIdentifier: 
+  weaponName: gun
+  weaponType: 4
+  attackPower: 50
+  attackRange: 20
+  attackTime: 0.5
+  attackSpeed: 1
+  moveSpeedPercentWhileAttacking: 0
+  animationSet: {fileID: 11400000, guid: d4424c69e2fe34c6ebd3e664c1b1733a, type: 2}
+  projectileSpeed: 30
+  spawnDistance: 1
+  projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
