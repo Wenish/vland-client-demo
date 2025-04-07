@@ -42,6 +42,7 @@ public class UnitController : NetworkBehaviour
     public string weaponName;
     public WeaponData currentWeapon;
     public WeaponController weaponController;
+    public event Action<UnitController> OnWeaponChange = delegate {};
 
     private void OnWeaponNameChanged(string oldWeaponName, string newWeaponName)
     {
@@ -57,6 +58,7 @@ public class UnitController : NetworkBehaviour
         }
         currentWeapon = weaponData;
         weaponController.weaponData = weaponData;
+        OnWeaponChange(this);
     }
 
     [Server]

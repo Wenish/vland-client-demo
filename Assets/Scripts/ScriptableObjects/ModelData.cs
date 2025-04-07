@@ -5,4 +5,5 @@ public class ModelData : ScriptableObject
 {
     public string modelName;
     public GameObject prefab;
+    public AnimationSetData baseAnimationSet;
 }
