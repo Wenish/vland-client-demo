@@ -16,10 +16,9 @@ MonoBehaviour:
   weaponType: 4
   attackPower: 50
   attackRange: 20
-  attackTime: 0.5
+  attackTime: 0.4
   attackSpeed: 1
   moveSpeedPercentWhileAttacking: 0
-  animationSet: {fileID: 11400000, guid: d4424c69e2fe34c6ebd3e664c1b1733a, type: 2}
   projectileSpeed: 30
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}

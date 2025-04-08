@@ -17,7 +17,7 @@ MonoBehaviour:
   attackPower: 70
   attackRange: 3
   attackTime: 0.4
-  attackSpeed: 0.2
+  attackSpeed: 0.6
   moveSpeedPercentWhileAttacking: 0.9
   mode: 0
   maxHits: 3
