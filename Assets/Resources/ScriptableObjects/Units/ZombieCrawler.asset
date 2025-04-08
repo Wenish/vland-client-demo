@@ -15,8 +15,8 @@ MonoBehaviour:
   unitName: zombieCrawler
   unitType: 1
   team: 0
-  health: 100
-  maxHealth: 100
+  health: 10
+  maxHealth: 10
   shield: 0
   maxShield: 0
   moveSpeed: 4
