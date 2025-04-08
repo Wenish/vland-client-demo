@@ -10,11 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 6496390728467142541}
   - component: {fileID: 5279127205050908276}
+  - component: {fileID: 9068612318099258619}
   - component: {fileID: 2125118232643204031}
   - component: {fileID: 4911740606334818530}
   m_Layer: 7
   m_Name: Gate
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -52,6 +53,27 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!65 &9068612318099258619
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8601734405583095360}
+  m_Material: {fileID: 13400000, guid: b51b3fa882ad33c418f2d263eacfa5d3, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.520672, y: 5.668949, z: 0.30012512}
+  m_Center: {x: 0.0000019073486, y: -0.00000023841858, z: 0}
 --- !u!114 &2125118232643204031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,10 +89,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  gateCollider: {fileID: 2180324783455790628}
+  gateCollider: {fileID: 9068612318099258619}
   navMeshObstacle: {fileID: 5279127205050908276}
   gateObject: {fileID: 4528512425038108271}
-  isOpen: 0
+  moveDuration: 1
 --- !u!114 &4911740606334818530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,7 +132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 118258, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
       propertyPath: m_TagString
-      value: Wall
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 444462, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -156,10 +178,7 @@ PrefabInstance:
     - {fileID: 64878848138180596, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 118258, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2180324783455790628}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
 --- !u!4 &4528512425037779891 stripped
 Transform:
@@ -171,27 +190,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 118258, guid: aca4ccbc35f59c14ba44dd41bf29f94d, type: 3}
   m_PrefabInstance: {fileID: 4528512425038125981}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &2180324783455790628
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528512425038108271}
-  m_Material: {fileID: 13400000, guid: b51b3fa882ad33c418f2d263eacfa5d3, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 4.520672, y: 5.668949, z: 0.30012512}
-  m_Center: {x: 0.0000019073486, y: -0.00000023841858, z: 0}
 --- !u!1001 &6245633440788493024
 PrefabInstance:
   m_ObjectHideFlags: 0
