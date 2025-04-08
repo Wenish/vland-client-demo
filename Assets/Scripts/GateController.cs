@@ -16,6 +16,7 @@ public class GateController : NetworkBehaviour
     [SerializeField]
     private float moveDuration = 1f;
 
+    [SerializeField]
     [SyncVar(hook = nameof(OnIsOpenChanged))]
     private bool isOpen = false;
     public bool IsOpen => isOpen;
@@ -31,6 +32,9 @@ public class GateController : NetworkBehaviour
         // Calculate the open position by subtracting the gate's height in the local Y axis
         float height = gateObject.GetComponent<Renderer>().bounds.size.y;
         openPosition = closedPosition - new Vector3(0, height, 0);
+        
+        // Set the initial state of the gate
+        ChangeGateState();
     }
 
     private void Update()
@@ -51,33 +55,36 @@ public class GateController : NetworkBehaviour
     public void OpenGate()
     {
         if (isOpen) return;
-        ChangeGateState(true);
+        isOpen = true;
+        ChangeGateState();
     }
 
     [Server]
     public void CloseGate()
     {
         if (!isOpen) return;
-        ChangeGateState(false);
+        isOpen = false;
+        ChangeGateState();
     }
 
-    [Server]
-    private void ChangeGateState(bool isOpen)
+    private void ChangeGateState()
     {
-        this.isOpen = isOpen;
         gateCollider.enabled = !isOpen;
         navMeshObstacle.enabled = !isOpen;
-    }
 
-    private void OnIsOpenChanged(bool oldValue, bool newValue)
-    {
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
         }
 
-        Vector3 targetPosition = newValue ? openPosition : closedPosition;
+        Vector3 targetPosition = isOpen ? openPosition : closedPosition;
         moveCoroutine = StartCoroutine(MoveGate(targetPosition));
+    }
+
+    private void OnIsOpenChanged(bool oldValue, bool newValue)
+    {
+        if (isServer) return;
+        ChangeGateState();
     }
 
     private System.Collections.IEnumerator MoveGate(Vector3 targetPosition)
