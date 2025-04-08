@@ -17,9 +17,8 @@ MonoBehaviour:
   attackPower: 15
   attackRange: 12
   attackTime: 0.4
-  attackSpeed: 0.4
+  attackSpeed: 0.6
   moveSpeedPercentWhileAttacking: 0.5
-  animationSet: {fileID: 11400000, guid: 051281fdff18e4b1abcd3fa9dbb3efe1, type: 2}
   projectileSpeed: 22
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}

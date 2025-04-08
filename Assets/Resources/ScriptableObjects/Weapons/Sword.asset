@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: sword
   weaponType: 1
-  attackPower: 38
+  attackPower: 25
   attackRange: 3
   attackTime: 0.4
-  attackSpeed: 0.3
+  attackSpeed: 0.8
   moveSpeedPercentWhileAttacking: 0.8
-  animationSet: {fileID: 11400000, guid: a1e66d9cbcbde4be8813018f9d2392fe, type: 2}
   mode: 0
+  maxHits: 5
   coneAngleRadians: 90
   numRays: 20
   weighting: 0.5
