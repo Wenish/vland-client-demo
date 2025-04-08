@@ -9,6 +9,8 @@
         <ui:VisualElement style="flex-grow: 1; flex-basis: auto; align-items: center; justify-content: space-between; flex-direction: column-reverse;">
             <ui:Label text="Gold: 0" name="labelGold" style="background-color: rgba(0, 0, 0, 0.78); background-image: none; color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 16px; overflow: visible; -unity-text-align: upper-left; text-overflow: clip; white-space: nowrap; flex-wrap: nowrap; display: flex; opacity: 1; margin-top: 0; margin-right: 0; margin-bottom: 20px; margin-left: 0; padding-right: 4px; padding-left: 4px; padding-top: 2px; padding-bottom: 2px; width: auto; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;" />
         </ui:VisualElement>
-        <ui:VisualElement style="flex-grow: 1; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;" />
+        <ui:VisualElement style="flex-grow: 1; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; align-items: flex-end; justify-content: flex-end; align-self: stretch; flex-direction: column; padding-left: 4px;">
+            <ui:Label text="Controls&#10;- Movement: W, A, S, D&#10;- Bow: Q&#10;- Sword: E&#10;- Daggers: F&#10;- Gun: G" style="-unity-text-align: middle-left; white-space: nowrap; text-overflow: clip; padding-right: 4px; padding-bottom: 20px;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
