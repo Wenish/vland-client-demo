@@ -31,10 +31,9 @@ public class WeaponMeleeData : WeaponData
             Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * unitRotation * Vector3.forward;
 
             // Use a raycast to detect if there is an enemy within the attack range and in the direction of the attack
-            RaycastHit hit;
-            if (Physics.Raycast(unitPosition, direction, out hit, attackRange))
+            RaycastHit[] hits = Physics.RaycastAll(unitPosition, direction, attackRange);
+            foreach (var hit in hits)
             {
-                // If the raycast hits an enemy, add the enemy to the list
                 UnitController enemy = hit.collider.GetComponent<UnitController>();
                 if (enemy != null && !enemy.IsDead && enemy.team != attacker.team)
                 {
