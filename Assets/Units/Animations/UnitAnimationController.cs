@@ -65,6 +65,10 @@ public class UnitAnimationController : MonoBehaviour
     private void HandleOnHealthChange((int current, int max) health)
     {
         animator.SetInteger("Health", health.current);
+
+        if (health.current <= 0) {
+            animator.SetFloat("DeadSpeedMultiplier", 1f + Random.Range(-0.3f, 0.2f));
+        }
     }
 
     private void HandleOnTakeDamage(UnitController unitController)
