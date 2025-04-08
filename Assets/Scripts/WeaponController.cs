@@ -33,6 +33,8 @@ public class WeaponController : NetworkBehaviour
         var delay = weaponData.attackTime * 1000;
         await Task.Delay((int)delay);
 
+        if (attacker == null || attacker.IsDead) return;
+        
         weaponData.PerformAttack(attacker);
         attacker.moveSpeed = originalSpeed;
         isAttacking = false;
