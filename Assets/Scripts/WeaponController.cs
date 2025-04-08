@@ -16,11 +16,13 @@ public class WeaponController : NetworkBehaviour
     [Server]
     public async Task Attack(UnitController attacker)
     {
-        if (weaponData == null) {
+        if (weaponData == null)
+        {
             Debug.LogError("Weapon data is not assigned.");
             return;
-        };
-        
+        }
+        ;
+
         if (isAttacking || IsAttackOnCooldown) return;
 
         isAttacking = true;
@@ -33,8 +35,15 @@ public class WeaponController : NetworkBehaviour
         var delay = weaponData.attackTime * 1000;
         await Task.Delay((int)delay);
 
-        if (attacker == null || attacker.IsDead) return;
-        
+        if (attacker == null) return;
+
+        if (attacker.IsDead)
+        {
+            attacker.moveSpeed = originalSpeed;
+            isAttacking = false;
+            return;
+        }
+
         weaponData.PerformAttack(attacker);
         attacker.moveSpeed = originalSpeed;
         isAttacking = false;
