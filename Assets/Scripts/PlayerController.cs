@@ -31,6 +31,9 @@ public class PlayerController : NetworkBehaviour
         EventManager.Instance.Publish(new PlayerGoldChangedEvent(this, oldValue, newValue));
     }
 
+    [SerializeField]
+    public InteractionZone _interactionZone { get; private set; }
+
     Plane _plane;
     Camera _cameraMain;
     // Start is called before the first frame update
@@ -50,8 +53,11 @@ public class PlayerController : NetworkBehaviour
             _plane = new Plane(Vector3.up, 0);
             _cameraMain = Camera.main;
             var unitController = Unit.GetComponent<UnitController>();
+            _unitController = unitController;
             EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(unitController));
         }
+        EventManager.Instance.Subscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
+        EventManager.Instance.Subscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
     }
 
     private void OnDestroy()
@@ -61,6 +67,8 @@ public class PlayerController : NetworkBehaviour
             EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
             EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
         }
+        EventManager.Instance.Unsubscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
+        EventManager.Instance.Unsubscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
     }
 
     // Update is called once per frame
@@ -73,6 +81,10 @@ public class PlayerController : NetworkBehaviour
             InputPressingFire1();
             CalculateAngle();
             WeaponSwitch();
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                CmdInteract();
+            }
         }
 
         if (isServer)
@@ -242,5 +254,39 @@ public class PlayerController : NetworkBehaviour
             return true;
         }
         return false;
+    }
+
+    void OnUnitEnteredInteractionZone(UnitEnteredInteractionZone unitEnteredInteractionZone)
+    {
+        var hasThisPlayerEnteredInteractionZone = unitEnteredInteractionZone.Unit == _unitController;
+        if (hasThisPlayerEnteredInteractionZone)
+        {
+            _interactionZone = unitEnteredInteractionZone.Zone;
+        }
+    }
+
+    void OnUnitExitedInteractionZone(UnitExitedInteractionZone unitExitedInteractionZone)
+    {
+        var hasThisPlayerExitedInteractionZone = unitExitedInteractionZone.Unit == _unitController;
+        if (hasThisPlayerExitedInteractionZone)
+        {
+            _interactionZone = null;
+        }
+    }
+
+    [Command]
+    public void CmdInteract()
+    {
+        if (_interactionZone == null) return;
+
+        switch (_interactionZone.interactionType)
+        {
+            case InteractionType.OpenGate:
+                Debug.Log("Open Gate");
+                break;
+            case InteractionType.BuyWeapon:
+                Debug.Log("Buy Weapon");
+                break;
+        }
     }
 }
