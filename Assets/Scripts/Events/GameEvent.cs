@@ -124,4 +124,28 @@ namespace MyGame.Events
             NewGoldAmount = newGoldAmount;
         }
     }
+
+    public class UnitEnteredInteractionZone : GameEvent
+    {
+        public UnitController Unit { get; }
+        public InteractionZone Zone { get; }
+
+        public UnitEnteredInteractionZone(UnitController unit, InteractionZone zone)
+        {
+            Unit = unit;
+            Zone = zone;
+        }
+    }
+    
+    public class UnitExitedInteractionZone : GameEvent
+    {
+        public UnitController Unit { get; }
+        public InteractionZone Zone { get; }
+
+        public UnitExitedInteractionZone(UnitController unit, InteractionZone zone)
+        {
+            Unit = unit;
+            Zone = zone;
+        }
+    }
 }
