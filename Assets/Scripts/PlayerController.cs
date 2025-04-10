@@ -283,6 +283,7 @@ public class PlayerController : NetworkBehaviour
         {
             case InteractionType.OpenGate:
                 Debug.Log("Open Gate");
+                EventManager.Instance.Publish(new OpenGateEvent(_interactionZone.interactionId));
                 break;
             case InteractionType.BuyWeapon:
                 Debug.Log("Buy Weapon");

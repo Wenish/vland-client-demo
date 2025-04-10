@@ -1,9 +1,12 @@
 using Mirror;
+using MyGame.Events;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class GateController : NetworkBehaviour
 {
+    public int gateId;
+
     [SerializeField]
     private Collider gateCollider;
 
@@ -32,9 +35,15 @@ public class GateController : NetworkBehaviour
         // Calculate the open position by subtracting the gate's height in the local Y axis
         float height = gateObject.GetComponent<Renderer>().bounds.size.y;
         openPosition = closedPosition - new Vector3(0, height, 0);
-        
+
         // Set the initial state of the gate
         ChangeGateState();
+
+        if (isServer)
+        {
+            EventManager.Instance.Subscribe<OpenGateEvent>(OnOpenGateEvent);
+            EventManager.Instance.Subscribe<CloseGateEvent>(OnCloseGateEvent);
+        }
     }
 
     private void Update()
@@ -101,6 +110,21 @@ public class GateController : NetworkBehaviour
 
         gateObject.transform.position = targetPosition;
         moveCoroutine = null;
+    }
+
+    public void OnOpenGateEvent(OpenGateEvent openGateEvent)
+    {
+        if (openGateEvent.GateId == gateId)
+        {
+            OpenGate();
+        }
+    }
+    public void OnCloseGateEvent(CloseGateEvent closeGateEvent)
+    {
+        if (closeGateEvent.GateId == gateId)
+        {
+            CloseGate();
+        }
     }
 
 #if UNITY_EDITOR

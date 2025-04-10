@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class InteractionZone : MonoBehaviour
 {
-    public string interactionId;
+    public int interactionId;
     public InteractionType interactionType;
     public int goldCost = 0;
 

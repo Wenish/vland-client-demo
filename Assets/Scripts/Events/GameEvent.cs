@@ -148,4 +148,22 @@ namespace MyGame.Events
             Zone = zone;
         }
     }
+
+    public class OpenGateEvent : GameEvent
+    {
+        public int GateId { get; }
+        public OpenGateEvent(int gateId)
+        {
+            GateId = gateId;
+        }
+    }
+
+    public class CloseGateEvent : GameEvent
+    {
+        public int GateId { get; }
+        public CloseGateEvent(int gateId)
+        {
+            GateId = gateId;
+        }
+    }
 }
