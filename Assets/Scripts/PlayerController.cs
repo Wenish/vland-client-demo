@@ -81,7 +81,7 @@ public class PlayerController : NetworkBehaviour
             InputPressingFire1();
             CalculateAngle();
             WeaponSwitch();
-            if (Input.GetKeyDown(KeyCode.V))
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 CmdInteract();
             }
@@ -131,11 +131,11 @@ public class PlayerController : NetworkBehaviour
         {
             UnitEquipWeapon("shortBow");
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             UnitEquipWeapon("daggers");
         }
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.V))
         {
             UnitEquipWeapon("gun");
         }
