@@ -100,7 +100,7 @@ public class PlayerController : NetworkBehaviour
         var hasThisPlayerReceivedGold = playerReceivesGoldEvent.Player == _unitController;
         if (hasThisPlayerReceivedGold)
         {
-            Gold += playerReceivesGoldEvent.GoldAmount;
+            AddGold(playerReceivesGoldEvent.GoldAmount);
         }
     }
 
@@ -278,6 +278,14 @@ public class PlayerController : NetworkBehaviour
     public void CmdInteract()
     {
         if (_interactionZone == null) return;
+
+        var canAffordInteraction = SpendGold(_interactionZone.goldCost);
+
+        if (!canAffordInteraction)
+        {
+            Debug.Log("Not enough gold");
+            return;
+        }
 
         switch (_interactionZone.interactionType)
         {

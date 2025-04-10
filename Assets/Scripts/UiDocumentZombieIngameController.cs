@@ -9,6 +9,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelWave;
     private Label _labelRoundStarted;
     private Label _labelGold;
+    private Coroutine _goldCoroutine;
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
@@ -31,13 +32,20 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
         EventManager.Instance.Unsubscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
     }
-
     void OnPlayerGoldChangedEvent(PlayerGoldChangedEvent playerGoldChangedEvent)
     {
         var isLocalPlayer = playerGoldChangedEvent.Player.isLocalPlayer;
-        if(!isLocalPlayer) return; // Ignore if not local player
+        if (!isLocalPlayer) return; // Ignore if not local player
 
-        StartCoroutine(CountUpGoldCoroutine(int.Parse(_labelGold.text.Replace("Gold: ", "")), playerGoldChangedEvent.NewGoldAmount));
+        int currentGold = int.Parse(_labelGold.text.Replace("Gold: ", ""));
+        int targetGold = playerGoldChangedEvent.NewGoldAmount;
+
+        if (_goldCoroutine != null)
+        {
+            StopCoroutine(_goldCoroutine);
+        }
+
+        _goldCoroutine = StartCoroutine(CountGoldCoroutine(currentGold, targetGold));
     }
 
     void OnWaveStartedEvent(WaveStartedEvent waveStartedEvent)
@@ -79,11 +87,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         textLabel.style.opacity = endAlpha;
     }
 
-    private IEnumerator CountUpGoldCoroutine(int currentGold, int targetGold)
+    private IEnumerator CountGoldCoroutine(int currentGold, int targetGold)
     {
-        while (currentGold < targetGold)
+        while (currentGold != targetGold)
         {
-            currentGold++;
+            if (currentGold < targetGold)
+                currentGold++;
+            else
+                currentGold--;
+
             _labelGold.text = $"Gold: {currentGold}";
             yield return new WaitForSeconds(0.05f); // Adjust the delay as needed
         }
