@@ -88,16 +88,28 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     }
 
     private IEnumerator CountGoldCoroutine(int currentGold, int targetGold)
-    {
-        while (currentGold != targetGold)
-        {
-            if (currentGold < targetGold)
-                currentGold++;
-            else
-                currentGold--;
+{
+    float duration = 1f;
+    float elapsed = 0f;
+    float startGold = currentGold;
+    float endGold = targetGold;
 
-            _labelGold.text = $"Gold: {currentGold}";
-            yield return new WaitForSeconds(0.05f); // Adjust the delay as needed
-        }
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(elapsed / duration);
+
+        // Smoothstep easing
+        t = t * t * (3f - 2f * t);
+
+        float currentGoldF = Mathf.Lerp(startGold, endGold, t);
+        int displayGold = Mathf.RoundToInt(currentGoldF);
+        _labelGold.text = $"Gold: {displayGold}";
+
+        yield return null; // Wait one frame
     }
+
+    // Ensure final value is exactly correct
+    _labelGold.text = $"Gold: {targetGold}";
+}
 }
