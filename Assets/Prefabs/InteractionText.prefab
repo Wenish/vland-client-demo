@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8962625542899568797}
   - component: {fileID: 2515399311541376955}
   - component: {fileID: -6678965979453176902}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: InteractionText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,9 +80,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -1596275993
+  m_SortingLayer: -1
+  m_SortingOrder: 10
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8962625542899568797
 MonoBehaviour:
