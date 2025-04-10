@@ -12514,6 +12514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactTextPrefab: {fileID: 8424199647160286875, guid: 1a20aabae83c442369844a14b6a0ccd5, type: 3}
+  textOffset: {x: 0, y: 3, z: 0}
   myPlayerUnitController: {fileID: 0}
 --- !u!1 &1653050009
 GameObject:
