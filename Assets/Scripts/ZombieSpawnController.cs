@@ -5,6 +5,8 @@ using UnityEngine;
 public class ZombieSpawnController : MonoBehaviour
 {
     public bool isActive = false;
+    public int spawnGroupId = 0;
+
     // Start is called before the first frame update
     void Start()
     {
