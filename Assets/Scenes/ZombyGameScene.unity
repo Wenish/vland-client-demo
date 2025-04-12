@@ -152,6 +152,7 @@ Transform:
   - {fileID: 1942798456}
   - {fileID: 1486329567}
   - {fileID: 1095516604}
+  - {fileID: 1450433403}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2342493
@@ -3003,6 +3004,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1239304}
     m_Modifications:
+    - target: {fileID: 214666152996457870, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: isActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1861838897007135731, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
       propertyPath: m_Name
       value: SpawnZombie
@@ -8491,6 +8496,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1239304}
     m_Modifications:
+    - target: {fileID: 214666152996457870, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: isActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1861838897007135731, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
       propertyPath: m_Name
       value: SpawnZombie (3)
@@ -11422,6 +11431,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 467220, guid: e73dff4b52d607f4ca11b85eca8f146b, type: 3}
   m_PrefabInstance: {fileID: 1447253830}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1450433402
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1239304}
+    m_Modifications:
+    - target: {fileID: 1861838897007135731, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_Name
+      value: SpawnZombie (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 25.91
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+--- !u!4 &1450433403 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4367079237206763030, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+  m_PrefabInstance: {fileID: 1450433402}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1452443643
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11641,6 +11712,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1239304}
     m_Modifications:
+    - target: {fileID: 214666152996457870, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: isActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1861838897007135731, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
       propertyPath: m_Name
       value: SpawnZombie (2)
@@ -14515,6 +14590,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1239304}
     m_Modifications:
+    - target: {fileID: 214666152996457870, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
+      propertyPath: isActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1861838897007135731, guid: a6872c8fb686cbd41a4f1ca1d2ad637e, type: 3}
       propertyPath: m_Name
       value: SpawnZombie (1)
