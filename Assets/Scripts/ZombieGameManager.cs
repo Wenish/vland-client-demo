@@ -94,8 +94,14 @@ public class ZombieGameManager : NetworkBehaviour
 
     Vector3 GetZombieSpawnPosition()
     {
-        int spawnIndex = UnityEngine.Random.Range(0, ZombieSpawns.Length);
-        return ZombieSpawns[spawnIndex].transform.position;
+        var activeSpawns = Array.FindAll(ZombieSpawns, spawn => spawn.isActive);
+        if (activeSpawns.Length == 0)
+        {
+            Debug.LogError("No active zombie spawns available.");
+            return Vector3.zero;
+        }
+        int spawnIndex = UnityEngine.Random.Range(0, activeSpawns.Length);
+        return activeSpawns[spawnIndex].transform.position;
     }
 
     [Server]
