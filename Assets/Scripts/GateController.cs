@@ -81,6 +81,13 @@ public class GateController : NetworkBehaviour
         gateCollider.enabled = !isOpen;
         navMeshObstacle.enabled = !isOpen;
 
+        if (isOpen) {
+            EventManager.Instance.Publish(new OpenedGateEvent(gateId));
+        } else {
+            EventManager.Instance.Publish(new ClosedGateEvent(gateId));
+        }
+
+
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
