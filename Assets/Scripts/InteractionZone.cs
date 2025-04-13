@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MyGame.Events;
 using UnityEngine;
 
@@ -7,10 +8,13 @@ public class InteractionZone : MonoBehaviour
     public InteractionType interactionType;
     public int goldCost = 0;
 
+    private HashSet<UnitController> unitsInZone = new HashSet<UnitController>();
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<UnitController>(out var unit))
         {
+            unitsInZone.Add(unit);
             EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
         }
     }
@@ -19,8 +23,18 @@ public class InteractionZone : MonoBehaviour
     {
         if (other.TryGetComponent<UnitController>(out var unit))
         {
+            unitsInZone.Remove(unit);
             EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
         }
+    }
+
+    void OnDisable()
+    {
+        foreach (var unit in unitsInZone)
+        {
+            EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
+        }
+        unitsInZone.Clear();
     }
 
     private void OnDrawGizmos()
