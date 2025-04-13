@@ -166,4 +166,22 @@ namespace MyGame.Events
             GateId = gateId;
         }
     }
+
+    public class OpenedGateEvent : GameEvent
+    {
+        public int GateId { get; }
+        public OpenedGateEvent(int gateId)
+        {
+            GateId = gateId;
+        }
+    }
+    
+    public class ClosedGateEvent : GameEvent
+    {
+        public int GateId { get; }
+        public ClosedGateEvent(int gateId)
+        {
+            GateId = gateId;
+        }
+    }
 }
