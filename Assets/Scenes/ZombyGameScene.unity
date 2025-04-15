@@ -2561,7 +2561,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 100
+      value: 1250
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -5940,7 +5940,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 10
+      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -9489,6 +9489,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 538374348}
     m_Modifications:
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: goldCost
+      value: 750
+      objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
       value: 1
@@ -14996,7 +15000,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 100
+      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -15948,7 +15952,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 10000
+      value: 50000
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -23440,7 +23444,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 100
+      value: 1250
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
