@@ -184,4 +184,15 @@ namespace MyGame.Events
             GateId = gateId;
         }
     }
+
+    public class BuyWeaponEvent : GameEvent
+    {
+        public int WeaponId { get; }
+        public PlayerController Buyer { get; }
+        public BuyWeaponEvent(int weaponId, PlayerController buyer)
+        {
+            WeaponId = weaponId;
+            Buyer = buyer;
+        }
+    }
 }

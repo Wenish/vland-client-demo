@@ -123,6 +123,7 @@ public class PlayerController : NetworkBehaviour
     [Client]
     void WeaponSwitch()
     {
+        /*
         if (Input.GetKeyDown(KeyCode.E))
         {
             UnitEquipWeapon("sword");
@@ -139,6 +140,7 @@ public class PlayerController : NetworkBehaviour
         {
             UnitEquipWeapon("gun");
         }
+        */
     }
 
     [Client]
@@ -295,6 +297,7 @@ public class PlayerController : NetworkBehaviour
                 break;
             case InteractionType.BuyWeapon:
                 Debug.Log("Buy Weapon");
+                EventManager.Instance.Publish(new BuyWeaponEvent(_interactionZone.interactionId, this));
                 break;
         }
     }
