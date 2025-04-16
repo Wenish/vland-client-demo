@@ -81,6 +81,7 @@ public class PlayerController : NetworkBehaviour
             InputPressingFire1();
             CalculateAngle();
             WeaponSwitch();
+            InputWorldPing();
             if (Input.GetKeyDown(KeyCode.F))
             {
                 CmdInteract();
@@ -185,13 +186,22 @@ public class PlayerController : NetworkBehaviour
     [Client]
     void InputPressingFire1()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt) && Input.GetButtonDown("Fire1"))
         {
             CmdSetFire1(true);
         }
         if (Input.GetButtonUp("Fire1"))
         {
             CmdSetFire1(false);
+        }
+    }
+
+    [Client]
+    void InputWorldPing()
+    {
+        if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            CmdWorldPing(_mouseWorldPosition);
         }
     }
 
@@ -212,18 +222,6 @@ public class PlayerController : NetworkBehaviour
     void CmdSetFire1(bool isPressingFire1)
     {
         IsPressingFire1 = isPressingFire1;
-    }
-
-    [Command]
-    void UnitEquipWeapon(string weaponName)
-    {
-        if (!_unitController) return;
-
-        WeaponController weaponController = _unitController.GetComponent<WeaponController>();
-        if (!weaponController) return;
-        if (weaponController.IsAttackOnCooldown) return;
-
-        _unitController.EquipWeapon(weaponName);
     }
 
     [Server]
@@ -300,5 +298,19 @@ public class PlayerController : NetworkBehaviour
                 EventManager.Instance.Publish(new BuyWeaponEvent(_interactionZone.interactionId, this));
                 break;
         }
+    }
+
+    [Command]
+    public void CmdWorldPing(Vector3 position)
+    {
+        RpcWorldPing(position);
+        EventManager.Instance.Publish(new WorldPingEvent(position));
+    }
+
+    [ClientRpc]
+    void RpcWorldPing(Vector3 position)
+    {
+        if (isServer) return;
+        EventManager.Instance.Publish(new WorldPingEvent(position));
     }
 }

@@ -1,5 +1,7 @@
 #nullable enable
 
+using UnityEngine;
+
 namespace MyGame.Events
 {
     /// <summary>
@@ -193,6 +195,16 @@ namespace MyGame.Events
         {
             WeaponId = weaponId;
             Buyer = buyer;
+        }
+    }
+
+    public class WorldPingEvent : GameEvent
+    {
+        public Vector3 Position { get; }
+
+        public WorldPingEvent(Vector3 position)
+        {
+            Position = position;
         }
     }
 }
