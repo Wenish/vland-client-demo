@@ -182,18 +182,29 @@ public class PlayerController : NetworkBehaviour
         CmdSetAngle(angle);
     }
 
-
+    private Coroutine _delaySendSetFire1InputCoroutine;
+    
     [Client]
     void InputPressingFire1()
     {
         if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt) && Input.GetButtonDown("Fire1"))
         {
+            if (_delaySendSetFire1InputCoroutine != null)
+            {
+                StopCoroutine(_delaySendSetFire1InputCoroutine);
+            }
             CmdSetFire1(true);
         }
         if (Input.GetButtonUp("Fire1"))
         {
-            CmdSetFire1(false);
+            _delaySendSetFire1InputCoroutine = StartCoroutine(DelaySendSetFire1Input(0.3f, false));
         }
+    }
+
+    private IEnumerator DelaySendSetFire1Input(float delay, bool isPressingFire1)
+    {
+        yield return new WaitForSeconds(delay);
+        CmdSetFire1(isPressingFire1);
     }
 
     [Client]
