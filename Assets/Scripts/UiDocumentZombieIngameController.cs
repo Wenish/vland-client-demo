@@ -10,6 +10,12 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelRoundStarted;
     private Label _labelGold;
     private Coroutine _goldCoroutine;
+    private AbilityCooldownElement _baseAttack;
+
+    [SerializeField]
+    private UnitController myPlayerUnitController;
+    private WeaponController _myPlayerUnitWeaponController;
+
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
@@ -19,19 +25,39 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _labelWave.text = "";
         _labelRoundStarted.text = "";
         _labelGold.text = "Gold: 0";
+        _baseAttack = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "baseAttack");
+        _baseAttack.CooldownRemaining = 0f;
+        _baseAttack.CooldownProgress = 0f;
     }
 
     void Start()
     {
+        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
         EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedEvent);
         EventManager.Instance.Subscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
     }
 
     void OnDestroy()
     {
+        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
         EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
         EventManager.Instance.Unsubscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
     }
+
+    void Update()
+    {
+        SyncAttackCooldown();
+    }
+
+    void SyncAttackCooldown()
+    {
+        if (myPlayerUnitController == null) return;
+        if (_myPlayerUnitWeaponController == null) return;
+
+        _baseAttack.CooldownRemaining = _myPlayerUnitWeaponController.AttackCooldownRemaining;
+        _baseAttack.CooldownProgress = _myPlayerUnitWeaponController.AttackCooldownProgress;
+    }
+
     void OnPlayerGoldChangedEvent(PlayerGoldChangedEvent playerGoldChangedEvent)
     {
         var isLocalPlayer = playerGoldChangedEvent.Player.isLocalPlayer;
@@ -88,28 +114,34 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     }
 
     private IEnumerator CountGoldCoroutine(int currentGold, int targetGold)
-{
-    float duration = 1f;
-    float elapsed = 0f;
-    float startGold = currentGold;
-    float endGold = targetGold;
-
-    while (elapsed < duration)
     {
-        elapsed += Time.deltaTime;
-        float t = Mathf.Clamp01(elapsed / duration);
+        float duration = 1f;
+        float elapsed = 0f;
+        float startGold = currentGold;
+        float endGold = targetGold;
 
-        // Smoothstep easing
-        t = t * t * (3f - 2f * t);
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
 
-        float currentGoldF = Mathf.Lerp(startGold, endGold, t);
-        int displayGold = Mathf.RoundToInt(currentGoldF);
-        _labelGold.text = $"Gold: {displayGold}";
+            // Smoothstep easing
+            t = t * t * (3f - 2f * t);
 
-        yield return null; // Wait one frame
+            float currentGoldF = Mathf.Lerp(startGold, endGold, t);
+            int displayGold = Mathf.RoundToInt(currentGoldF);
+            _labelGold.text = $"Gold: {displayGold}";
+
+            yield return null; // Wait one frame
+        }
+
+        // Ensure final value is exactly correct
+        _labelGold.text = $"Gold: {targetGold}";
     }
 
-    // Ensure final value is exactly correct
-    _labelGold.text = $"Gold: {targetGold}";
-}
+    private void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
+    {
+        myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
+        _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
+    }
 }

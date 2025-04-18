@@ -6,12 +6,21 @@ public class WeaponController : NetworkBehaviour
 {
     public WeaponData weaponData;
 
-    [SerializeField]
+    [SerializeField, SyncVar]
     private double lastAttackTime = -Mathf.Infinity;
     [SerializeField]
     private bool isAttacking;
 
     public bool IsAttackOnCooldown => NetworkTime.time - lastAttackTime < weaponData.AttackCooldown;
+
+    public float AttackCooldownRemaining { get; private set; } = 0;
+    public float AttackCooldownProgress { get; private set; } = 0;
+
+    void Update()
+    {
+        AttackCooldownRemaining = weaponData.AttackCooldown - (float)(NetworkTime.time - lastAttackTime);
+        AttackCooldownProgress = (AttackCooldownRemaining / weaponData.AttackCooldown) * 100f;
+    }
 
     [Server]
     public async Task Attack(UnitController attacker)
@@ -20,8 +29,7 @@ public class WeaponController : NetworkBehaviour
         {
             Debug.LogError("Weapon data is not assigned.");
             return;
-        }
-        ;
+        };
 
         if (isAttacking || IsAttackOnCooldown) return;
 
