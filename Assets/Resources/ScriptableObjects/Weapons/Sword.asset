@@ -19,6 +19,7 @@ MonoBehaviour:
   attackTime: 0.4
   attackSpeed: 0.8
   moveSpeedPercentWhileAttacking: 0.8
+  iconTexture: {fileID: 2800000, guid: fa0c47ba7d6e44ecabea895caf7b3660, type: 3}
   mode: 0
   maxHits: 5
   coneAngleRadians: 90

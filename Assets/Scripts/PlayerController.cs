@@ -54,7 +54,7 @@ public class PlayerController : NetworkBehaviour
             _cameraMain = Camera.main;
             var unitController = Unit.GetComponent<UnitController>();
             _unitController = unitController;
-            EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(unitController));
+            EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(this, unitController));
         }
         EventManager.Instance.Subscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
         EventManager.Instance.Subscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);

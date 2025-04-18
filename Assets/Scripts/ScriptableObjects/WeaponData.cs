@@ -12,6 +12,9 @@ public abstract class WeaponData : ScriptableObject
     public float attackSpeed = 1.0f;
     public float moveSpeedPercentWhileAttacking = 0.5f;
 
+    [Header("UI")]
+    public Texture2D iconTexture;
+
     public float AttackCooldown => attackTime + attackSpeed;
 
     public abstract void PerformAttack(UnitController attacker);
