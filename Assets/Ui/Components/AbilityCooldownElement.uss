@@ -4,6 +4,18 @@
     height: 48px;
     border-radius: 3%;
     background-color: rgba(0, 0, 0, 0.2);
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
 
 .ability-icon {
@@ -13,12 +25,21 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
+.icon-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+    padding: 0;
+}
+
 .cooldown-overlay {
     position: absolute;
     bottom: 0;
     width: 100%;
     height: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 89, 138, 0.78);
     margin: 0;
     padding: 0;
 }

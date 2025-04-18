@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 public partial class AbilityCooldownElement : VisualElement
 {
     private Image _iconImage;
+    private VisualElement _iconOverlay;
     private VisualElement _cooldownOverlay;
     private Label _cooldownLabel;
 
@@ -38,6 +39,7 @@ public partial class AbilityCooldownElement : VisualElement
         {
             _cooldownProgress = Mathf.Clamp(value, 0f, 100f);
             _cooldownOverlay.style.height = Length.Percent(_cooldownProgress);
+            _iconOverlay.style.visibility = _cooldownProgress > 0f ? Visibility.Visible : Visibility.Hidden;
             // MarkDirtyRepaint();
         }
     }
@@ -63,6 +65,10 @@ public partial class AbilityCooldownElement : VisualElement
         _iconImage = new Image { name = "Icon" };
         _iconImage.AddToClassList("ability-icon");
         Add(_iconImage);
+
+        _iconOverlay = new VisualElement { name = "IconOverlay" };
+        _iconOverlay.AddToClassList("icon-overlay");
+        Add(_iconOverlay);
 
         _cooldownOverlay = new VisualElement { name = "CooldownOverlay" };
         _cooldownOverlay.AddToClassList("cooldown-overlay");
