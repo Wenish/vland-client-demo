@@ -13,7 +13,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private AbilityCooldownElement _baseAttack;
 
     [SerializeField]
-    private UnitController myPlayerUnitController;
+    private UnitController _myPlayerUnitController;
     private WeaponController _myPlayerUnitWeaponController;
 
     void Awake()
@@ -51,7 +51,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     void SyncAttackCooldown()
     {
-        if (myPlayerUnitController == null) return;
+        if (_myPlayerUnitController == null) return;
         if (_myPlayerUnitWeaponController == null) return;
 
         _baseAttack.CooldownRemaining = _myPlayerUnitWeaponController.AttackCooldownRemaining;
@@ -63,15 +63,21 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         var isLocalPlayer = playerGoldChangedEvent.Player.isLocalPlayer;
         if (!isLocalPlayer) return; // Ignore if not local player
 
-        int currentGold = int.Parse(_labelGold.text.Replace("Gold: ", ""));
-        int targetGold = playerGoldChangedEvent.NewGoldAmount;
+        SetGoldText(playerGoldChangedEvent.NewGoldAmount);
+    }
 
+    void SetGoldText(int gold)
+    {
+        int currentGold = int.Parse(_labelGold.text.Replace("Gold: ", ""));
+        if (currentGold != gold)
+        {
+            _labelGold.text = $"Gold: {gold}";
+        }
         if (_goldCoroutine != null)
         {
             StopCoroutine(_goldCoroutine);
         }
-
-        _goldCoroutine = StartCoroutine(CountGoldCoroutine(currentGold, targetGold));
+        _goldCoroutine = StartCoroutine(CountGoldCoroutine(currentGold, gold));
     }
 
     void OnWaveStartedEvent(WaveStartedEvent waveStartedEvent)
@@ -141,7 +147,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     private void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
     {
-        myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
+        _myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
         _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
+        SetGoldText(myPlayerUnitSpawnedEvent.Player.Gold);
+        OnWeaponChange(_myPlayerUnitController);
+        _myPlayerUnitController.OnWeaponChange += OnWeaponChange;
+    }
+
+    private void OnWeaponChange(UnitController unitController)
+    {
+        _baseAttack.IconTexture = _myPlayerUnitWeaponController.weaponData.iconTexture;
     }
 }

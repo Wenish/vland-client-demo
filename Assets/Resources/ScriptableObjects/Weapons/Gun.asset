@@ -19,6 +19,7 @@ MonoBehaviour:
   attackTime: 0.4
   attackSpeed: 1
   moveSpeedPercentWhileAttacking: 0
+  iconTexture: {fileID: 2800000, guid: a75d106bee05f484d878ccfbbe052cd4, type: 3}
   projectileSpeed: 30
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
