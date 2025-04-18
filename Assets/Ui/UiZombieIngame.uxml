@@ -1,15 +1,19 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/Components/AbilityCooldownElement.uss?fileID=7433441132597879392&amp;guid=23cbcf49461e14045b9699d942f91a5e&amp;type=3#AbilityCooldownElement" />
     <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-basis: 50%; align-items: center; justify-content: center;">
         <ui:Label text="Round&#10;1" name="labelRoundStarted" style="white-space: nowrap; -unity-text-align: upper-center; font-size: 70px; -unity-font-style: bold; color: rgb(255, 255, 255);" />
     </ui:VisualElement>
     <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; flex-basis: 50%;">
-        <ui:VisualElement style="flex-grow: 1; flex-basis: auto; flex-direction: column-reverse;">
+        <ui:VisualElement style="flex-grow: 2; flex-basis: 20%; flex-direction: column-reverse;">
             <ui:Label tabindex="-1" text="1" display-tooltip-when-elided="true" name="labelWave" style="-unity-font-style: bold-and-italic; font-size: 72px; padding-left: 12px; padding-bottom: 8px; color: rgb(106, 0, 0);" />
         </ui:VisualElement>
-        <ui:VisualElement style="flex-grow: 1; flex-basis: auto; align-items: center; justify-content: space-between; flex-direction: column-reverse;">
-            <ui:Label text="Gold: 0" name="labelGold" style="background-color: rgba(0, 0, 0, 0.78); background-image: none; color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 16px; overflow: visible; -unity-text-align: upper-left; text-overflow: clip; white-space: nowrap; flex-wrap: nowrap; display: flex; opacity: 1; margin-top: 0; margin-right: 0; margin-bottom: 20px; margin-left: 0; padding-right: 4px; padding-left: 4px; padding-top: 2px; padding-bottom: 2px; width: auto; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;" />
+        <ui:VisualElement style="flex-grow: 4; flex-basis: 60%; align-items: flex-end; justify-content: space-between; flex-direction: row;">
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: center; padding-bottom: 20px; align-self: flex-end; align-content: center; flex-wrap: nowrap;">
+                <AbilityCooldownElement name="baseAttack" icon-texture="project://database/Assets/Art/Skills/attack.jpg?fileID=2800000&amp;guid=fa0c47ba7d6e44ecabea895caf7b3660&amp;type=3#attack" cooldown-progress="48.1" cooldown-remaining="43.3" enabled="true" style="background-color: rgba(204, 34, 34, 0.06); margin-top: 6px; margin-right: 6px; margin-bottom: 6px; margin-left: 6px;" />
+                <ui:Label text="Gold: 0" name="labelGold" style="background-color: rgba(0, 0, 0, 0.78); background-image: none; color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 16px; overflow: visible; -unity-text-align: upper-left; text-overflow: clip; white-space: nowrap; flex-wrap: nowrap; display: flex; opacity: 1; margin-top: 6px; margin-right: 6px; margin-bottom: 6px; margin-left: 6px; padding-right: 4px; padding-left: 4px; padding-top: 2px; padding-bottom: 2px; width: auto; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;" />
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement style="flex-grow: 1; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; align-items: flex-end; justify-content: flex-end; align-self: stretch; flex-direction: column; padding-left: 4px;">
+        <ui:VisualElement style="flex-grow: 1; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; align-items: flex-end; justify-content: flex-end; align-self: stretch; flex-direction: column; padding-left: 4px; flex-basis: 20%;">
             <ui:Label text="Controls&#10;- Movement: W, A, S, D&#10;- Interact: F&#10;- Attack: L Mouse&#10;- Ping: Alt + L Mouse" style="-unity-text-align: middle-left; white-space: nowrap; text-overflow: clip; padding-right: 4px; padding-bottom: 20px;" />
         </ui:VisualElement>
     </ui:VisualElement>
