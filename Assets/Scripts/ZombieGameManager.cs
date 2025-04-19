@@ -124,7 +124,9 @@ public class ZombieGameManager : NetworkBehaviour
         };
         
         unitController.moveSpeed = Mathf.Max(0, unitController.moveSpeed + UnityEngine.Random.Range(-0.5f, 0.5f));
-        var newMaxHealth = Mathf.Clamp(unitController.maxHealth + ((currentWave - 1) * 2), 1, 1000);
+        var newMaxHealth = unitController.maxHealth;
+        // newMaxHealth += Mathf.Clamp(currentWave * 2, 0, 100);
+
         unitController.maxHealth = newMaxHealth;
         unitController.health = newMaxHealth;
         
