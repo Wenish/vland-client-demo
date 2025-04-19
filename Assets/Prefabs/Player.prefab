@@ -53,7 +53,7 @@ MonoBehaviour:
   VerticalInput: 0
   Angle: 0
   IsPressingFire1: 0
-  Gold: 10000
+  Gold: 0
 --- !u!114 &8901443433731581867
 MonoBehaviour:
   m_ObjectHideFlags: 0
