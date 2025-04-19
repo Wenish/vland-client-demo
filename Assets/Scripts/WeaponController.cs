@@ -13,14 +13,8 @@ public class WeaponController : NetworkBehaviour
 
     public bool IsAttackOnCooldown => NetworkTime.time - lastAttackTime < weaponData.AttackCooldown;
 
-    public float AttackCooldownRemaining { get; private set; } = 0;
-    public float AttackCooldownProgress { get; private set; } = 0;
-
-    void Update()
-    {
-        AttackCooldownRemaining = weaponData.AttackCooldown - (float)(NetworkTime.time - lastAttackTime);
-        AttackCooldownProgress = (AttackCooldownRemaining / weaponData.AttackCooldown) * 100f;
-    }
+    public float AttackCooldownRemaining => weaponData.AttackCooldown - (float)(NetworkTime.time - lastAttackTime);
+    public float AttackCooldownProgress => (AttackCooldownRemaining / weaponData.AttackCooldown) * 100f;
 
     [Server]
     public async Task Attack(UnitController attacker)
