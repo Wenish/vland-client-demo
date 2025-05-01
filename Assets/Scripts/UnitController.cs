@@ -106,10 +106,12 @@ public class UnitController : NetworkBehaviour
     public event Action<UnitController> OnTakeDamage = delegate {};
     public event Action OnDied = delegate {};
     public event Action OnRevive = delegate {};
+    private UnitMediator unitMediator;
 
     void Awake()
     {
         weaponController = GetComponent<WeaponController>();
+        unitMediator = GetComponent<UnitMediator>();
     }
     // Start is called before the first frame update
     void Start()
@@ -120,6 +122,21 @@ public class UnitController : NetworkBehaviour
         unitRigidbody = GetComponent<Rigidbody>();
         RaiseHealthChangeEvent();
         RaiseShieldChangeEvent();
+        /*
+        // Example of how to add a buff
+        var buff = new BuffHeal(5, 1f, 5);
+        var modifier = new StatModifier();
+        modifier.ModifierType = ModifierType.Flat;
+        modifier.Type = StatType.Health;
+        modifier.Value = 200;
+        var modifier2 = new StatModifier();
+        modifier2.ModifierType = ModifierType.Percent;
+        modifier2.Type = StatType.MovementSpeed;
+        modifier2.Value = 0.5f;
+        buff.Modifiers.Add(modifier);
+        buff.Modifiers.Add(modifier2);
+        unitMediator.AddBuff(buff);
+        */
     }
 
     void FixedUpdate()
