@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using Game.Scripts.Controllers;
 using MyGame.Events;
+using System;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -109,8 +110,15 @@ public class PlayerController : NetworkBehaviour
     public void OnWaveStartedHealPlayerUnitFull(WaveStartedEvent waveStartedEvent)
     {
         if (!_unitController) return;
-        _unitController.Heal(_unitController.maxHealth);
+        var healAmount = Mathf.Clamp(_unitController.maxHealth / 2 - _unitController.health, 0, _unitController.maxHealth / 2);
+        _unitController.Heal(healAmount);
         _unitController.Shield(_unitController.maxShield);
+
+        var buffHealAmount = _unitController.maxHealth - _unitController.health;
+        if (buffHealAmount <= 0) return;
+        var buff = new BuffHeal(5, 0.5f, buffHealAmount / 10);
+        _unitController.unitMediator.AddBuff(buff);
+
     }
 
     [Server]
