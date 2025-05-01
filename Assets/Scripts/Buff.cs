@@ -22,9 +22,9 @@ public abstract class Buff
         if (IsPeriodic)
         {
             tickTimer += deltaTime;
-            if (tickTimer >= TickInterval)
+            while (tickTimer >= TickInterval)
             {
-                tickTimer = 0f;
+                tickTimer -= TickInterval;
                 OnTick(mediator);
             }
         }
