@@ -6,11 +6,13 @@ public class UnitMediator : NetworkBehaviour
 {
     public StatSystem Stats { get; private set; }
     public BuffSystem Buffs { get; private set; }
+    public SkillSystem Skills { get; private set; }
     public UnitController UnitController { get; private set; }
 
     private void Awake()
     {
         UnitController = GetComponent<UnitController>();
+        Skills = GetComponent<SkillSystem>();
         Stats = new StatSystem(this);
         Buffs = new BuffSystem(this);
 

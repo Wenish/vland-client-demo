@@ -47,3 +47,4 @@ MonoBehaviour:
   weaponDatabase: {fileID: 11400000, guid: 5e3801337f1eb39439c833591c4675b4, type: 2}
   modelDatabase: {fileID: 11400000, guid: 30635165f62967e42b0cda9f86918ffc, type: 2}
   unitDatabase: {fileID: 11400000, guid: 50c32d04de759d24ea8bc317abe54e05, type: 2}
+  skillDatabase: {fileID: 11400000, guid: 7ea5531b1547c44299318934933ca96f, type: 2}

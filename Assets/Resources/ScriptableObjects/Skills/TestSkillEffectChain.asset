@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: TestSkillEffectChain
+  m_EditorClassIdentifier: 
+  rootNodes:
+  - rid: 5250463872682033542
+  - rid: 5250463872682033646
+  references:
+    version: 2
+    RefIds:
+    - rid: 5250463872682033542
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 6fd1b714d1f6140b28430d92d004bb0d, type: 2}
+        children:
+        - rid: 5250463872682033547
+    - rid: 5250463872682033547
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 7cf625b6a6a38497183e232ddedd2578, type: 2}
+        children: []
+    - rid: 5250463872682033646
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 7cf625b6a6a38497183e232ddedd2578, type: 2}
+        children: []

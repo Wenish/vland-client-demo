@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewUnit", menuName = "Game/Unit/Unit")]
@@ -19,4 +20,9 @@ public class UnitData : ScriptableObject
 
     [Header("Model")]
     public ModelData modelData;
+
+    [Header("Skills")]
+    public List<SkillData> passiveSkills = new List<SkillData>();
+    public List<SkillData> normalSkills = new List<SkillData>();
+    public List<SkillData> ultimateSkills = new List<SkillData>();
 }

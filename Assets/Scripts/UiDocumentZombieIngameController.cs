@@ -11,10 +11,14 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelGold;
     private Coroutine _goldCoroutine;
     private AbilityCooldownElement _baseAttack;
+    private AbilityCooldownElement _skillNormal1;
 
     [SerializeField]
     private UnitController _myPlayerUnitController;
+    [SerializeField]
     private WeaponController _myPlayerUnitWeaponController;
+    [SerializeField]
+    private SkillSystem _myPlayerUnitSkillSystem;
 
     void Awake()
     {
@@ -28,6 +32,10 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _baseAttack = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "baseAttack");
         _baseAttack.CooldownRemaining = 0f;
         _baseAttack.CooldownProgress = 0f;
+        _skillNormal1 = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillNormal1");
+        _skillNormal1.CooldownRemaining = 0f;
+        _skillNormal1.CooldownProgress = 0f;
+        _skillNormal1.IconTexture = null;
     }
 
     void Start()
@@ -47,6 +55,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     void Update()
     {
         SyncAttackCooldown();
+        SyncSkillCooldown();
     }
 
     void SyncAttackCooldown()
@@ -56,6 +65,19 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
         _baseAttack.CooldownRemaining = _myPlayerUnitWeaponController.AttackCooldownRemaining;
         _baseAttack.CooldownProgress = _myPlayerUnitWeaponController.AttackCooldownProgress;
+    }
+
+    void SyncSkillCooldown()
+    {
+        if (_myPlayerUnitController == null) return;
+        if (_myPlayerUnitSkillSystem == null) return;
+        if (_myPlayerUnitSkillSystem.normalSkills.Count > 0)
+        {
+            var skill = _myPlayerUnitSkillSystem.normalSkills[0];
+            _skillNormal1.CooldownRemaining = skill.CooldownRemaining;
+            _skillNormal1.CooldownProgress = skill.CooldownProgress;
+            _skillNormal1.IconTexture = skill.skillData.iconTexture;
+        }
     }
 
     void OnPlayerGoldChangedEvent(PlayerGoldChangedEvent playerGoldChangedEvent)
@@ -149,6 +171,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         _myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
         _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
+        _myPlayerUnitSkillSystem = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<SkillSystem>();
         SetGoldText(myPlayerUnitSpawnedEvent.Player.Gold);
         OnWeaponChange(_myPlayerUnitController);
         _myPlayerUnitController.OnWeaponChange += OnWeaponChange;
