@@ -63,6 +63,7 @@ public class SkillEffectChainEditor : Editor
                 EditorGUILayout.EndHorizontal();
                 DrawNode(rootNode, 1);
                 EditorGUILayout.EndVertical();
+                GUILayout.Space(20);
             }
 
             EditorGUILayout.Space();
@@ -81,70 +82,67 @@ public class SkillEffectChainEditor : Editor
     {
         if (nodeProp == null) return;
 
-        EditorGUI.indentLevel = indent;
-
         var effectProp = nodeProp.FindPropertyRelative("effect");
-
         var childrenProp = nodeProp.FindPropertyRelative("children");
 
         EditorGUILayout.BeginVertical("box");
 
-        EditorGUILayout.LabelField(new GUIContent($"Node (Depth {indent})"), EditorStyles.boldLabel);
+        // Titel
+        EditorGUILayout.LabelField($"Node (Depth {indent})", EditorStyles.boldLabel);
+
+        // Effektfeld
         EditorGUILayout.PropertyField(effectProp, new GUIContent("Effect"));
 
-        // If the effect is a ScriptableObject reference, draw its fields
+        // Effekt-Subinspektor (wenn ScriptableObject verlinkt ist)
         var effectObject = effectProp.objectReferenceValue;
         if (effectObject != null)
         {
-            EditorGUILayout.Space(2);
             Editor editor = CreateEditor(effectObject);
             if (editor != null)
             {
                 EditorGUILayout.BeginVertical("box");
                 EditorGUILayout.LabelField("Effect Properties", EditorStyles.boldLabel);
-                editor.OnInspectorGUI(); // draws fields like healAmount
+                editor.OnInspectorGUI();
                 EditorGUILayout.EndVertical();
             }
         }
 
         EditorGUILayout.Space();
 
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(indent * 8); // visual offset
+        // Child hinzufügen Button
         if (GUILayout.Button("Add Child Node"))
         {
             childrenProp.arraySize++;
             childrenProp.GetArrayElementAtIndex(childrenProp.arraySize - 1).managedReferenceValue = new SkillEffectNodeData();
         }
-        EditorGUILayout.EndHorizontal();
 
+        // Child-Nodes anzeigen
         for (int i = 0; i < childrenProp.arraySize; i++)
         {
             var child = childrenProp.GetArrayElementAtIndex(i);
 
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Space(indent * 8); // offset per hierarchy level
             EditorGUILayout.BeginVertical("box");
 
+            // Titel und Remove-Button
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField($"→ Child {i}", EditorStyles.boldLabel);
+            string arrows = new string('→', indent);
+            EditorGUILayout.LabelField($"{arrows} Child {i}", EditorStyles.boldLabel);
             if (GUILayout.Button("Remove", GUILayout.Width(60)))
             {
                 childrenProp.DeleteArrayElementAtIndex(i);
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.EndVertical();
-                EditorGUILayout.EndHorizontal();
                 break;
             }
             EditorGUILayout.EndHorizontal();
 
-            DrawNode(child, indent + 1); // recursion
+            DrawNode(child, indent + 1); // rekursiver Aufruf
 
             EditorGUILayout.EndVertical();
-            EditorGUILayout.EndHorizontal();
         }
 
         EditorGUILayout.EndVertical();
     }
+
 
 }

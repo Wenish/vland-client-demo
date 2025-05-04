@@ -13,12 +13,18 @@ MonoBehaviour:
   m_Name: TestSkillEffectChain
   m_EditorClassIdentifier: 
   rootNodes:
-  - rid: 5250463872682033351
+  - rid: 5250463872682033542
   references:
     version: 2
     RefIds:
-    - rid: 5250463872682033351
+    - rid: 5250463872682033542
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
-        effect: {fileID: 0}
+        effect: {fileID: 11400000, guid: 6fd1b714d1f6140b28430d92d004bb0d, type: 2}
+        children:
+        - rid: 5250463872682033547
+    - rid: 5250463872682033547
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 7cf625b6a6a38497183e232ddedd2578, type: 2}
         children: []
