@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class NetworkedSkillInstance : NetworkBehaviour
 {
-    [SyncVar]
+    [SyncVar(hook = nameof(OnSkillNameChanged))]
     public string skillName;
 
     [SyncVar]
@@ -28,6 +28,15 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
 
         skillData = skillDatabase.GetSkillByName(skillName);
+    }
+
+    public void OnSkillNameChanged(string oldName, string newName)
+    {
+        if (skillDatabase == null) {
+            skillDatabase = DatabaseManager.Instance.skillDatabase;
+        }
+
+        skillData = skillDatabase.GetSkillByName(newName);
     }
 
     public bool IsOnCooldown => NetworkTime.time < lastCastTime + skillData.cooldown;

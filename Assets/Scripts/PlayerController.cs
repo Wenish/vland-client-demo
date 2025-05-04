@@ -83,6 +83,7 @@ public class PlayerController : NetworkBehaviour
             CalculateAngle();
             WeaponSwitch();
             InputWorldPing();
+            InputUseSkills();
             if (Input.GetKeyDown(KeyCode.F))
             {
                 CmdInteract();
@@ -331,5 +332,32 @@ public class PlayerController : NetworkBehaviour
     {
         if (isServer) return;
         EventManager.Instance.Publish(new WorldPingEvent(position));
+    }
+
+    [Client]
+    public void InputUseSkills() 
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            CmdUseSkill(SkillSlotType.Normal, 0);
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CmdUseSkill(SkillSlotType.Normal, 1);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            CmdUseSkill(SkillSlotType.Normal, 1);
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            CmdUseSkill(SkillSlotType.Ultimate, 1);
+        }
+    }
+
+    [Command]
+    public void CmdUseSkill(SkillSlotType slot, int index)
+    {
+        _unitController.unitMediator.Skills.CastSkill(slot, index);
     }
 }

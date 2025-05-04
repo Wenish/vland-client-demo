@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class SkillSystem : NetworkBehaviour
 {
-    public List<NetworkedSkillInstance> passiveSkills = new();
-    public List<NetworkedSkillInstance> normalSkills = new();
-    public List<NetworkedSkillInstance> ultimateSkills = new();
+    public readonly SyncList<NetworkedSkillInstance> passiveSkills = new();
+    public readonly SyncList<NetworkedSkillInstance> normalSkills = new();
+    public readonly SyncList<NetworkedSkillInstance> ultimateSkills = new();
 
     private UnitController unit;
+    [SerializeField]
+    private GameObject skillPrefab;
 
     public override void OnStartServer()
     {
         unit = GetComponent<UnitController>();
         InitializeSlots();
+    }
+
+    private void Awake()
+    {
+        skillPrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "SkillInstance");
     }
 
     [Server]
@@ -25,16 +32,23 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     public void AddSkill(SkillSlotType slotType, string skillName)
     {
-        GameObject go = new GameObject($"Skill_{skillName}");
-        go.transform.SetParent(transform);
+        if (skillPrefab == null)
+        {
+            Debug.LogError("Skill prefab not assigned!");
+            return;
+        }
 
-        // Add NetworkIdentity before spawning
-        var identity = go.AddComponent<NetworkIdentity>();
-        var netSkill = go.AddComponent<NetworkedSkillInstance>();
+        GameObject go = Instantiate(skillPrefab, unit.transform); // Parent to unit
+        var netSkill = go.GetComponent<NetworkedSkillInstance>();
 
-        NetworkServer.Spawn(go, connectionToClient);
+        if (netSkill == null)
+        {
+            Debug.LogError("Skill prefab is missing NetworkedSkillInstance component!");
+            return;
+        }
 
         netSkill.Initialize(skillName, GetComponent<UnitController>());
+        NetworkServer.Spawn(go);
 
         switch (slotType)
         {
@@ -50,15 +64,7 @@ public class SkillSystem : NetworkBehaviour
         }
     }
 
-    [Command]
-    public void CmdUseSkill(SkillSlotType slot, int index)
-    {
-        var list = GetList(slot);
-        if (index < 0 || index >= list.Count) return;
-        list[index].Cast();
-    }
-
-    private List<NetworkedSkillInstance> GetList(SkillSlotType type)
+    private SyncList<NetworkedSkillInstance> GetList(SkillSlotType type)
     {
         return type switch
         {
@@ -69,14 +75,12 @@ public class SkillSystem : NetworkBehaviour
         };
     }
 
-    private void Update()
+    [Server]
+    public void CastSkill(SkillSlotType slot, int index)
     {
-        if (!isServer) return;
-
-        if (Input.GetKeyDown(KeyCode.Q) && normalSkills.Count > 0)
-        {
-            normalSkills[0].Cast();
-        }
+        var list = GetList(slot);
+        if (index < 0 || index >= list.Count) return;
+        list[index].Cast();
     }
 }
 
