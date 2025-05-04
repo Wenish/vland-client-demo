@@ -11,14 +11,20 @@ public class SkillEffectConditionLowHealthData : SkillEffectData
         List<GameObject> result = new List<GameObject>();
         foreach (var target in targets)
         {
-            /*
-            var health = target.GetComponent<HealthComponent>();
-            if (health != null && health.CurrentHealth / health.MaxHealth < thresholdPercent)
+            var unitController = target.GetComponent<UnitController>();
+            if (unitController == null)
+            {
+                Debug.LogWarning($"Target {target.name} does not have a UnitController component.");
+                continue;
+            }
+            var health = unitController.health;
+            var maxHealth = unitController.maxHealth;
+            float healthPercent = (float)health / (float)maxHealth;
+            var isBelowThreshold = healthPercent < thresholdPercent;
+            if (isBelowThreshold)
             {
                 result.Add(target);
             }
-            */
-            result.Add(target);
         }
         return result;
     }
