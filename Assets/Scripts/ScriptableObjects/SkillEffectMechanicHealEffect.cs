@@ -8,16 +8,18 @@ public class SkillEffectMechanicHeal : SkillEffectData
 
     public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
     {
-        /*
+        Debug.Log($"Executing Heal Effect on {targets.Count} targets.");
         foreach (var target in targets)
         {
-            var health = target.GetComponent<HealthComponent>();
-            if (health != null)
+            var unitController = target.GetComponent<UnitController>();
+            if (unitController == null)
             {
-                health.Heal(healAmount);
+                Debug.LogWarning($"Target {target.name} does not have a UnitController component.");
+                continue;
             }
+            unitController.Heal(healAmount);
+            Debug.Log($"Healed {target.name} for {healAmount} health.");
         }
-        */
         return targets;
     }
 }

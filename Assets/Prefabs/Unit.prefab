@@ -467,6 +467,7 @@ GameObject:
   - component: {fileID: 5679917720207950704}
   - component: {fileID: 795324802}
   - component: {fileID: -6987186403959014264}
+  - component: {fileID: 4331653288315711781}
   - component: {fileID: 3010265075052333281}
   - component: {fileID: 4644873500728417110}
   - component: {fileID: -3108773104642818051}
@@ -579,6 +580,7 @@ MonoBehaviour:
   modelName: 
   modelData: {fileID: 0}
   modelInstance: {fileID: 0}
+  unitMediator: {fileID: 0}
 --- !u!114 &-6987186403959014264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -597,6 +599,24 @@ MonoBehaviour:
   weaponData: {fileID: 0}
   lastAttackTime: -Infinity
   isAttacking: 0
+--- !u!114 &4331653288315711781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc2133277f18e45fc99a79543e877200, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  passiveSkills: []
+  normalSkills: []
+  ultimateSkills: []
 --- !u!114 &3010265075052333281
 MonoBehaviour:
   m_ObjectHideFlags: 0
