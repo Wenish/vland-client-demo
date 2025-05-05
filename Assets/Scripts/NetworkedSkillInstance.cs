@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mirror;
 using UnityEngine;
 
@@ -50,5 +51,19 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         lastCastTime = NetworkTime.time;
         skillData.TriggerCast(unit.gameObject);
+    }
+
+    [ContextMenu("Benchmark Cast 100,000x")]
+    [Server]
+    public void BenchmarkCast()
+    {
+        if (skillData == null) return;
+        var stopwatch = Stopwatch.StartNew();
+        for (int i = 0; i < 100000; i++)
+        {
+            skillData.TriggerCast(unit.gameObject);
+        }
+        stopwatch.Stop();
+        UnityEngine.Debug.Log($"TriggerCast 100.000x: {stopwatch.ElapsedMilliseconds} ms");
     }
 }
