@@ -10,8 +10,13 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelRoundStarted;
     private Label _labelGold;
     private Coroutine _goldCoroutine;
+    private AbilityCooldownElement _skillPassive;
     private AbilityCooldownElement _baseAttack;
     private AbilityCooldownElement _skillNormal1;
+    private AbilityCooldownElement _skillNormal2;
+    private AbilityCooldownElement _skillNormal3;
+    private AbilityCooldownElement _skillUltimate;
+
 
     [SerializeField]
     private UnitController _myPlayerUnitController;
@@ -29,6 +34,10 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _labelWave.text = "";
         _labelRoundStarted.text = "";
         _labelGold.text = "Gold: 0";
+        _skillPassive = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillPassive");
+        _skillPassive.CooldownRemaining = 0f;
+        _skillPassive.CooldownProgress = 0f;
+        _skillPassive.IconTexture = null;
         _baseAttack = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "baseAttack");
         _baseAttack.CooldownRemaining = 0f;
         _baseAttack.CooldownProgress = 0f;
@@ -36,6 +45,18 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _skillNormal1.CooldownRemaining = 0f;
         _skillNormal1.CooldownProgress = 0f;
         _skillNormal1.IconTexture = null;
+        _skillNormal2 = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillNormal2");
+        _skillNormal2.CooldownRemaining = 0f;
+        _skillNormal2.CooldownProgress = 0f;
+        _skillNormal2.IconTexture = null;
+        _skillNormal3 = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillNormal3");
+        _skillNormal3.CooldownRemaining = 0f;
+        _skillNormal3.CooldownProgress = 0f;
+        _skillNormal3.IconTexture = null;
+        _skillUltimate = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillUltimate");
+        _skillUltimate.CooldownRemaining = 0f;
+        _skillUltimate.CooldownProgress = 0f;
+        _skillUltimate.IconTexture = null;
     }
 
     void Start()
@@ -71,13 +92,46 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         if (_myPlayerUnitController == null) return;
         if (_myPlayerUnitSkillSystem == null) return;
-        if (_myPlayerUnitSkillSystem.normalSkills.Count > 0)
+        var skillPassive = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Passive, 0);
+        if (skillPassive != null)
         {
-            var skill = _myPlayerUnitSkillSystem.normalSkills[0];
-            _skillNormal1.CooldownRemaining = skill.CooldownRemaining;
-            _skillNormal1.CooldownProgress = skill.CooldownProgress;
-            _skillNormal1.IconTexture = skill.skillData.iconTexture;
+            _skillPassive.CooldownRemaining = skillPassive.CooldownRemaining;
+            _skillPassive.CooldownProgress = skillPassive.CooldownProgress;
+            _skillPassive.IconTexture = skillPassive.skillData.iconTexture;
         }
+
+        var skill1 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 0);
+        if (skill1 != null)
+        {
+            _skillNormal1.CooldownRemaining = skill1.CooldownRemaining;
+            _skillNormal1.CooldownProgress = skill1.CooldownProgress;
+            _skillNormal1.IconTexture = skill1.skillData.iconTexture;
+        }
+
+        var skill2 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 1);
+        if (skill2 != null)
+        {
+            _skillNormal2.CooldownRemaining = skill2.CooldownRemaining;
+            _skillNormal2.CooldownProgress = skill2.CooldownProgress;
+            _skillNormal2.IconTexture = skill2.skillData.iconTexture;
+        }
+
+        var skill3 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 2);
+        if (skill3 != null)
+        {
+            _skillNormal3.CooldownRemaining = skill3.CooldownRemaining;
+            _skillNormal3.CooldownProgress = skill3.CooldownProgress;
+            _skillNormal3.IconTexture = skill3.skillData.iconTexture;
+        }
+
+        var skillUltimate = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Ultimate, 0);
+        if (skillUltimate != null)
+        {
+            _skillUltimate.CooldownRemaining = skillUltimate.CooldownRemaining;
+            _skillUltimate.CooldownProgress = skillUltimate.CooldownProgress;
+            _skillUltimate.IconTexture = skillUltimate.skillData.iconTexture;
+        }
+
     }
 
     void OnPlayerGoldChangedEvent(PlayerGoldChangedEvent playerGoldChangedEvent)

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: IceBlastSkillEffectChain
+  m_EditorClassIdentifier: 
+  rootNodes:
+  - rid: 5250463939730342002
+  references:
+    version: 2
+    RefIds:
+    - rid: 5250463939730342002
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: f6db72ab086e3447eb33a0bdd2b2f1a0, type: 2}
+        children:
+        - rid: 5250463939730342015
+    - rid: 5250463939730342015
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 5c4ffd98e94074aa5a09a5c8ac9682b8, type: 2}
+        children: []
