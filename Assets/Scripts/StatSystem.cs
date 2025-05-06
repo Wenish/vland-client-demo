@@ -18,6 +18,19 @@ public class StatSystem
         baseStats[StatType.Shield] = this.mediator.UnitController.maxShield;
     }
 
+    public void SetBaseStat(StatType stat, float value)
+    {
+        if (baseStats.ContainsKey(stat))
+        {
+            baseStats[stat] = value;
+            OnStatChanged?.Invoke(stat);
+        }
+        else
+        {
+            throw new ArgumentException($"Stat {stat} does not exist.");
+        }
+    }
+
     public void ApplyModifier(StatModifier mod)
     {
         modifiers.Add(mod);
