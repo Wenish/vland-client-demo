@@ -29,25 +29,31 @@ public class WeaponController : NetworkBehaviour
 
         isAttacking = true;
         attacker.RaiseOnAttackStartEvent();
-        var originalSpeed = attacker.moveSpeed;
-        attacker.moveSpeed = attacker.moveSpeed * weaponData.moveSpeedPercentWhileAttacking;
 
         lastAttackTime = NetworkTime.time;
 
         var delay = weaponData.attackTime * 1000;
+        StatModifier moveSpeedModifier = new StatModifier() {
+            Type = StatType.MovementSpeed,
+            ModifierType = ModifierType.Percent,
+            Value = weaponData.moveSpeedPercentWhileAttacking - 1,
+        };
+        attacker.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
+        /*
+        BuffStat buffStat = new BuffStat(weaponData.attackTime, StatType.MovementSpeed, ModifierType.Percent, weaponData.moveSpeedPercentWhileAttacking - 1);
+        attacker.unitMediator.AddBuff(buffStat);
+        */
         await Task.Delay((int)delay);
 
         if (attacker == null) return;
-
+        attacker.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
         if (attacker.IsDead)
         {
-            attacker.moveSpeed = originalSpeed;
             isAttacking = false;
             return;
         }
 
         weaponData.PerformAttack(attacker);
-        attacker.moveSpeed = originalSpeed;
         isAttacking = false;
     }
 }

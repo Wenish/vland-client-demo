@@ -8,6 +8,6 @@ public class SkillDatabase : ScriptableObject
 
     public SkillData GetSkillByName(string name)
     {
-        return allSkills.Find(skill => skill.name == name);
+        return allSkills.Find(skill => skill.skillName == name);
     }
 }

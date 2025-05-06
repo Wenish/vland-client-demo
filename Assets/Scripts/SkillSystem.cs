@@ -26,7 +26,9 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     private void InitializeSlots()
     {
-        AddSkill(SkillSlotType.Normal, "TestSkill");
+        AddSkill(SkillSlotType.Normal, "ConeOfCold");
+        AddSkill(SkillSlotType.Normal, "IceBlast");
+        AddSkill(SkillSlotType.Normal, "Dash");
     }
 
     [Server]
@@ -73,6 +75,13 @@ public class SkillSystem : NetworkBehaviour
             SkillSlotType.Ultimate => ultimateSkills,
             _ => null,
         };
+    }
+
+    public NetworkedSkillInstance GetSkill(SkillSlotType slot, int index)
+    {
+        var list = GetList(slot);
+        if (index < 0 || index >= list.Count) return null;
+        return list[index];
     }
 
     [Server]

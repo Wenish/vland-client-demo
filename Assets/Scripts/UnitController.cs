@@ -175,11 +175,13 @@ public class UnitController : NetworkBehaviour
             return;
         };
 
+        var currentMoveSpeed = unitMediator.Stats.GetStat(StatType.MovementSpeed);
+
         Vector3 inputs = Vector3.zero;
         inputs.x = horizontalInput;
         inputs.z = verticalInput;
         inputs = Vector3.ClampMagnitude(inputs, 1f);
-        Vector3 moveDirection = inputs * moveSpeed;
+        Vector3 moveDirection = inputs * currentMoveSpeed;
         unitRigidbody.linearVelocity = moveDirection;
     }
 

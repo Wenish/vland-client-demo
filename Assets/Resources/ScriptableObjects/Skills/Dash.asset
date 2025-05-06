@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: Dash
+  m_EditorClassIdentifier: 
+  skillName: Dash
+  skillType: 0
+  description: 
+  cooldown: 15
+  castCost: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: adce09b56039448579341867168dde6b, type: 2}
+  iconTexture: {fileID: 2800000, guid: 4fada10d27084470295f5d73a6440516, type: 3}

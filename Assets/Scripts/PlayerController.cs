@@ -347,7 +347,7 @@ public class PlayerController : NetworkBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            CmdUseSkill(SkillSlotType.Normal, 1);
+            CmdUseSkill(SkillSlotType.Normal, 2);
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
