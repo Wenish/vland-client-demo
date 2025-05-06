@@ -29,6 +29,7 @@ public class SkillSystem : NetworkBehaviour
         AddSkill(SkillSlotType.Normal, "ConeOfCold");
         AddSkill(SkillSlotType.Normal, "IceBlast");
         AddSkill(SkillSlotType.Normal, "Dash");
+        AddSkill(SkillSlotType.Ultimate, "TestSkill");
     }
 
     [Server]

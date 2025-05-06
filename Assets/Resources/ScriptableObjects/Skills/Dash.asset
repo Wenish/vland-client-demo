@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Dash
   skillType: 0
   description: 
-  cooldown: 15
+  cooldown: 8
   castCost: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: adce09b56039448579341867168dde6b, type: 2}
