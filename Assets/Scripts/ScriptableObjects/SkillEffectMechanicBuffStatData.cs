@@ -2,14 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/BuffStat")]
-public class SkillEffectMechanicBuffStatData : SkillEffectData
+public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
 {
 
     public StatType StatType;
     public ModifierType ModifierType;
     public float Value;
     public float duration = 5f;
-    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
+
+    public override List<UnitController> DoMechanic(UnitController caster, List<UnitController> targets)
     {
         foreach (var target in targets)
         {
