@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
-  m_Name: DashCastSkillEffectChain
+  m_Name: SwiftnessCastSkillEffectChain
   m_EditorClassIdentifier: 
   rootNodes:
   - rid: 5250463939730342064

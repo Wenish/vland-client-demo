@@ -5,12 +5,6 @@ public enum StatType
     Shield,
 }
 
-public enum ModifierType
-{
-    Flat,
-    Percent
-}
-
 [System.Serializable]
 public class StatModifier
 {
