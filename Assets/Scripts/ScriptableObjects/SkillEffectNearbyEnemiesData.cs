@@ -6,15 +6,21 @@ public class SkillEffektNearbyEnemiesData : SkillEffectData
 {
     public float range = 5f;
 
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
-        List<GameObject> result = new List<GameObject>();
+        List<UnitController> result = new List<UnitController>();
         Collider[] hits = Physics.OverlapSphere(caster.transform.position, range);
         foreach (var hit in hits)
         {
             if (hit.gameObject.CompareTag("Enemy"))
             {
-                result.Add(hit.gameObject);
+                var unitController = hit.GetComponent<UnitController>();
+                if (unitController == null)
+                {
+                    Debug.LogWarning($"Hit object {hit.name} does not have a UnitController component.");
+                    continue;
+                }
+                result.Add(unitController);
             }
         }
         return result;

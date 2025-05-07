@@ -8,16 +8,12 @@ public class SkillEffectTargetCone : SkillEffectData
     public float angle = 45f;
     public LayerMask unitLayer;
 
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
-        List<GameObject> result = new List<GameObject>();
+        List<UnitController> result = new List<UnitController>();
 
-        if (caster == null) return result;
 
-        var casterUnit = caster.GetComponent<UnitController>();
-        if (casterUnit == null) return result;
-
-        int casterTeam = casterUnit.team;
+        int casterTeam = caster.team;
         Vector3 casterPosition = caster.transform.position;
         Vector3 forward = caster.transform.forward;
 
@@ -40,7 +36,7 @@ public class SkillEffectTargetCone : SkillEffectData
             float angleToTarget = Vector3.Angle(forward, directionToTarget);
             if (angleToTarget <= angle * 0.5f)
             {
-                result.Add(unit.gameObject);
+                result.Add(unit);
             }
         }
 
@@ -48,7 +44,7 @@ public class SkillEffectTargetCone : SkillEffectData
         SkillEffectTargetConeDebugDrawer drawer = caster.GetComponent<SkillEffectTargetConeDebugDrawer>();
         if (drawer == null)
         {
-            drawer = caster.AddComponent<SkillEffectTargetConeDebugDrawer>();
+            drawer = caster.gameObject.AddComponent<SkillEffectTargetConeDebugDrawer>();
         }
 
         drawer.origin = casterPosition;

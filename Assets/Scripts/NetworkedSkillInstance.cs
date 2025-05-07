@@ -50,7 +50,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         if (IsOnCooldown || skillData == null) return;
 
         lastCastTime = NetworkTime.time;
-        skillData.TriggerCast(unit.gameObject);
+        skillData.TriggerCast(unit);
     }
 
     [ContextMenu("Benchmark Cast 100,000x")]
@@ -61,7 +61,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         var stopwatch = Stopwatch.StartNew();
         for (int i = 0; i < 100000; i++)
         {
-            skillData.TriggerCast(unit.gameObject);
+            skillData.TriggerCast(unit);
         }
         stopwatch.Stop();
         UnityEngine.Debug.Log($"TriggerCast 100.000x: {stopwatch.ElapsedMilliseconds} ms");

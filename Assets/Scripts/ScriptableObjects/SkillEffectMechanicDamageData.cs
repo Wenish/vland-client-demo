@@ -7,19 +7,12 @@ public class SkillEffectMechanicDamageData : SkillEffectData
     public int amount = 20;
 
     
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
-        var casterUnit = caster.GetComponent<UnitController>();
         Debug.Log($"Executing Damage Effect on {targets.Count} targets.");
         foreach (var target in targets)
         {
-            var unitController = target.GetComponent<UnitController>();
-            if (unitController == null)
-            {
-                Debug.LogWarning($"Target {target.name} does not have a UnitController component.");
-                continue;
-            }
-            unitController.TakeDamage(amount, casterUnit);
+            target.TakeDamage(amount, caster);
             Debug.Log($"Damaged {target.name} for {amount} health.");
         }
         return targets;

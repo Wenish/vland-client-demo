@@ -7,7 +7,7 @@ public class SkillEffectChainData : ScriptableObject
     [SerializeReference]
     public List<SkillEffectNodeData> rootNodes = new(); 
 
-    public void Execute(GameObject caster, List<GameObject> targets)
+    public void Execute(UnitController caster, List<UnitController> targets)
     {
         foreach (var rootNode in rootNodes)
         {

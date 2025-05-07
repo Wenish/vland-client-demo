@@ -9,14 +9,10 @@ public class SkillEffectTargetLinear : SkillEffectData
     public LayerMask unitLayer;
 
 
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
-        List<GameObject> result = new List<GameObject>();
+        List<UnitController> result = new List<UnitController>();
 
-        if (caster == null) return result;
-
-        UnitController casterController = caster.GetComponent<UnitController>();
-        if (casterController == null) return result;
 
         Vector3 origin = caster.transform.position + Vector3.up;
         Vector3 direction = caster.transform.forward;
@@ -28,13 +24,13 @@ public class SkillEffectTargetLinear : SkillEffectData
             UnitController targetController = hit.collider.GetComponentInParent<UnitController>();
 
             if (targetController != null &&
-                targetController != casterController &&
+                targetController != caster &&
                 !targetController.IsDead &&
-                targetController.team != casterController.team)
+                targetController.team != caster.team)
             {
-                if (!result.Contains(targetController.gameObject))
+                if (!result.Contains(targetController))
                 {
-                    result.Add(targetController.gameObject);
+                    result.Add(targetController);
                 }
             }
         }
@@ -43,7 +39,7 @@ public class SkillEffectTargetLinear : SkillEffectData
         SkillEffectTargetLinearDebugDrawer drawer = caster.GetComponent<SkillEffectTargetLinearDebugDrawer>();
         if (drawer == null)
         {
-            drawer = caster.AddComponent<SkillEffectTargetLinearDebugDrawer>();
+            drawer = caster.gameObject.AddComponent<SkillEffectTargetLinearDebugDrawer>();
         }
 
         drawer.origin = origin;
