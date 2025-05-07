@@ -6,18 +6,12 @@ public class SkillEffectMechanicHeal : SkillEffectData
 {
     public int healAmount = 20;
 
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
         Debug.Log($"Executing Heal Effect on {targets.Count} targets.");
         foreach (var target in targets)
         {
-            var unitController = target.GetComponent<UnitController>();
-            if (unitController == null)
-            {
-                Debug.LogWarning($"Target {target.name} does not have a UnitController component.");
-                continue;
-            }
-            unitController.Heal(healAmount);
+            target.Heal(healAmount);
             Debug.Log($"Healed {target.name} for {healAmount} health.");
         }
         return targets;

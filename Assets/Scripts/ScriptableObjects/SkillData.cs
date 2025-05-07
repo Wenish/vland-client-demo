@@ -18,14 +18,14 @@ public class SkillData : ScriptableObject
     [Header("UI")]
     public Texture2D iconTexture;
 
-    public void TriggerInit(GameObject caster)
+    public void TriggerInit(UnitController caster)
     {
-        initTrigger?.Execute(caster, new List<GameObject> { caster });
+        initTrigger?.Execute(caster, new List<UnitController> { caster });
     }
 
-    public void TriggerCast(GameObject caster)
+    public void TriggerCast(UnitController caster)
     {
-        castTrigger?.Execute(caster, new List<GameObject> { caster });
+        castTrigger?.Execute(caster, new List<UnitController> { caster });
     }
 }
 

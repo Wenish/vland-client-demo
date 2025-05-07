@@ -6,19 +6,13 @@ public class SkillEffectConditionLowHealthData : SkillEffectData
 {
     public float thresholdPercent = 0.5f;
 
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
-        List<GameObject> result = new List<GameObject>();
+        List<UnitController> result = new List<UnitController>();
         foreach (var target in targets)
         {
-            var unitController = target.GetComponent<UnitController>();
-            if (unitController == null)
-            {
-                Debug.LogWarning($"Target {target.name} does not have a UnitController component.");
-                continue;
-            }
-            var health = unitController.health;
-            var maxHealth = unitController.maxHealth;
+            var health = target.health;
+            var maxHealth = target.maxHealth;
             float healthPercent = (float)health / (float)maxHealth;
             var isBelowThreshold = healthPercent < thresholdPercent;
             if (isBelowThreshold)

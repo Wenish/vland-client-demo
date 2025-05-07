@@ -9,17 +9,11 @@ public class SkillEffectMechanicBuffStatData : SkillEffectData
     public ModifierType ModifierType;
     public float Value;
     public float duration = 5f;
-    public override List<GameObject> Execute(GameObject caster, List<GameObject> targets)
+    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
     {
         foreach (var target in targets)
         {
-            var unitController = target.GetComponent<UnitController>();
-            if (unitController == null)
-            {
-                Debug.LogWarning($"Target {target.name} does not have a UnitController component.");
-                continue;
-            }
-            UnitMediator mediator = unitController.unitMediator;
+            UnitMediator mediator = target.unitMediator;
             if (mediator == null)
             {
                 Debug.LogWarning($"Target {target.name} does not have a UnitMediator component.");

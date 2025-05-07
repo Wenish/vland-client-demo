@@ -11,11 +11,11 @@ public class SkillEffectNodeData
     [SerializeReference]
     public List<SkillEffectNodeData> children = new List<SkillEffectNodeData>();
 
-    public void Execute(GameObject caster, List<GameObject> targets)
+    public void Execute(UnitController caster, List<UnitController> targets)
     {
         if (effect == null) return;
 
-        List<GameObject> nextTargets = effect.Execute(caster, targets);
+        List<UnitController> nextTargets = effect.Execute(caster, targets);
         foreach (var child in children)
         {
             child.Execute(caster, nextTargets);
