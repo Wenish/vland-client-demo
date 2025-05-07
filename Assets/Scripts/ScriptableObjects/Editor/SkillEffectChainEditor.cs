@@ -6,9 +6,6 @@ public class SkillEffectChainEditor : Editor
 {
     private SerializedProperty rootNodesProp;
 
-    private void OnEnable()
-    {
-    }
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
@@ -52,17 +49,8 @@ public class SkillEffectChainEditor : Editor
                     continue;
                 }
 
-                EditorGUILayout.BeginVertical("box");
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"Root Node {i}", EditorStyles.boldLabel);
-                if (GUILayout.Button("Remove", GUILayout.Width(60)))
-                {
-                    rootNodesProp.DeleteArrayElementAtIndex(i);
-                    break;
-                }
-                EditorGUILayout.EndHorizontal();
-                DrawNode(rootNode, 1);
-                EditorGUILayout.EndVertical();
+                // Draw root node without indent
+                DrawNode(rootNode, 0);
                 GUILayout.Space(20);
             }
 
@@ -78,6 +66,7 @@ public class SkillEffectChainEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
     }
+
     private void DrawNode(SerializedProperty nodeProp, int indent)
     {
         if (nodeProp == null) return;
@@ -85,64 +74,115 @@ public class SkillEffectChainEditor : Editor
         var effectProp = nodeProp.FindPropertyRelative("effect");
         var childrenProp = nodeProp.FindPropertyRelative("children");
 
+        // Determine background color based on effect type
+        Color originalBg = GUI.backgroundColor;
+        Object effectObject = effectProp.objectReferenceValue;
+        string effectType = effectObject != null ? GetEffectType(effectObject) : null;
+        if (effectType != null)
+        {
+            switch (effectType)
+            {
+                case nameof(SkillEffectType.Mechanic):
+                    GUI.backgroundColor = new Color(0.8f, 0f, 0.8f); // Purple
+                    break;
+                case nameof(SkillEffectType.Condition):
+                    GUI.backgroundColor = new Color(0f, 0f, 1f); // Blue
+                    break;
+                case nameof(SkillEffectType.Target):
+                    GUI.backgroundColor = new Color(0f, 1f, 0f); // Green
+                    break;
+            }
+        }
+
+        // Begin indent horizontal group
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(indent * 15); // indent per level
         EditorGUILayout.BeginVertical("box");
+        GUILayout.Space(4);
+        // Reset background for content
+        GUI.backgroundColor = originalBg;
 
-        // Titel
-        EditorGUILayout.LabelField($"Node (Depth {indent})", EditorStyles.boldLabel);
+        // Header with effect type
+        EditorGUILayout.BeginHorizontal();
+        string arrows = indent > 0 ? new string('→', indent) + " " : string.Empty;
+        string displayEffectType = effectType != null ? $" - {effectType}" : string.Empty;
+        GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel)
+        {
+            fontSize = 14,
+            normal = { textColor = Color.white }
+        };
+        EditorGUILayout.LabelField($"{arrows}Node (Depth {indent}){displayEffectType}", headerStyle);
+        if (GUILayout.Button("Remove", GUILayout.Width(60)))
+        {
+            // Remove this node from parent array
+            string path = nodeProp.propertyPath;
+            if (path.Contains("Array.data"))
+            {
+                string parentPath = path.Substring(0, path.LastIndexOf('.'));
+                var parentArray = nodeProp.serializedObject.FindProperty(parentPath);
+                int index = int.Parse(path.Substring(path.LastIndexOf('[') + 1, path.LastIndexOf(']') - path.LastIndexOf('[') - 1));
+                parentArray.DeleteArrayElementAtIndex(index);
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+            GUI.backgroundColor = originalBg;
+            return;
+        }
+        EditorGUILayout.EndHorizontal();
 
-        // Effektfeld
+        // Effect field
         EditorGUILayout.PropertyField(effectProp, new GUIContent("Effect"));
 
-        // Effekt-Subinspektor (wenn ScriptableObject verlinkt ist)
-        var effectObject = effectProp.objectReferenceValue;
+        // Effect sub-inspector
         if (effectObject != null)
         {
-            Editor editor = CreateEditor(effectObject);
-            if (editor != null)
-            {
-                EditorGUILayout.BeginVertical("box");
-                EditorGUILayout.LabelField("Effect Properties", EditorStyles.boldLabel);
-                editor.OnInspectorGUI();
-                EditorGUILayout.EndVertical();
-            }
+            InspectorTitlebar(true, effectObject);
         }
 
         EditorGUILayout.Space();
 
-        // Child hinzufügen Button
+        // Children button
         if (GUILayout.Button("Add Child Node"))
         {
             childrenProp.arraySize++;
             childrenProp.GetArrayElementAtIndex(childrenProp.arraySize - 1).managedReferenceValue = new SkillEffectNodeData();
         }
 
-        // Child-Nodes anzeigen
+        // Draw children
         for (int i = 0; i < childrenProp.arraySize; i++)
         {
             var child = childrenProp.GetArrayElementAtIndex(i);
-
-            EditorGUILayout.BeginVertical("box");
-
-            // Titel und Remove-Button
-            EditorGUILayout.BeginHorizontal();
-            string arrows = new string('→', indent);
-            EditorGUILayout.LabelField($"{arrows} Child {i}", EditorStyles.boldLabel);
-            if (GUILayout.Button("Remove", GUILayout.Width(60)))
-            {
-                childrenProp.DeleteArrayElementAtIndex(i);
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.EndVertical();
-                break;
-            }
-            EditorGUILayout.EndHorizontal();
-
-            DrawNode(child, indent + 1); // rekursiver Aufruf
-
-            EditorGUILayout.EndVertical();
+            DrawNode(child, indent + 1);
+            GUILayout.Space(5);
         }
 
+        // End groups
         EditorGUILayout.EndVertical();
+        EditorGUILayout.EndHorizontal();
+        GUI.backgroundColor = originalBg;
     }
 
+    private string GetEffectType(Object effectObject)
+    {
+        var effectTypeProperty = effectObject.GetType().GetProperty("EffectType");
+        if (effectTypeProperty != null)
+        {
+            var value = effectTypeProperty.GetValue(effectObject);
+            return value != null ? value.ToString() : null;
+        }
+        return null;
+    }
 
+    private void InspectorTitlebar(bool expanded, Object target)
+    {
+        Editor editor = CreateEditor(target);
+        if (editor != null)
+        {
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.LabelField("Effect Properties", EditorStyles.boldLabel);
+            editor.OnInspectorGUI();
+            EditorGUILayout.EndVertical();
+        }
+    }
 }
