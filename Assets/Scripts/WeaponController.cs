@@ -39,10 +39,6 @@ public class WeaponController : NetworkBehaviour
             Value = weaponData.moveSpeedPercentWhileAttacking - 1,
         };
         attacker.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
-        /*
-        BuffStat buffStat = new BuffStat(weaponData.attackTime, StatType.MovementSpeed, ModifierType.Percent, weaponData.moveSpeedPercentWhileAttacking - 1);
-        attacker.unitMediator.AddBuff(buffStat);
-        */
         await Task.Delay((int)delay);
 
         if (attacker == null) return;

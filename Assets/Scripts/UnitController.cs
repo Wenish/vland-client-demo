@@ -265,7 +265,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void Heal(int amount)
     {
-        if (health == 0)
+        if (health == 0 && amount > 0)
         {
             Revive();
         }

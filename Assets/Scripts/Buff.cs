@@ -1,34 +1,32 @@
-using System.Collections.Generic;
+using System;
 
 public abstract class Buff
 {
-    public string BuffId;
-    public float Duration;
-    protected float elapsedTime;
+    public string BuffId { get; }
+    public float Duration { get; }
+    public bool IsUnique { get; }
 
-    public List<StatModifier> Modifiers = new();
-    public bool IsPeriodic;
-    public float TickInterval;
-    private float tickTimer;
+    private float _elapsed;
+
+    protected Buff(string buffId, float duration, bool isUnique = false)
+    {
+        if (string.IsNullOrWhiteSpace(buffId))
+            throw new ArgumentException("Buff must have a non-empty Id.", nameof(buffId));
+
+        BuffId = buffId;
+        Duration = duration;
+        IsUnique = isUnique;
+    }
 
     public virtual void OnApply(UnitMediator mediator) { }
+
     public virtual void OnRemove(UnitMediator mediator) { }
-    public virtual void OnTick(UnitMediator mediator) { }
 
-    public bool Update(float deltaTime, UnitMediator mediator)
+    public virtual bool Update(float deltaTime, UnitMediator mediator)
     {
-        elapsedTime += deltaTime;
-
-        if (IsPeriodic)
-        {
-            tickTimer += deltaTime;
-            while (tickTimer >= TickInterval)
-            {
-                tickTimer -= TickInterval;
-                OnTick(mediator);
-            }
-        }
-
-        return elapsedTime >= Duration;
+        _elapsed += deltaTime;
+        if (_elapsed >= Duration)
+            return true;
+        return false;
     }
 }
