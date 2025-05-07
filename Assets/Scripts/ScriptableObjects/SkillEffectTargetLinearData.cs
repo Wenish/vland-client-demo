@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewSkillEffect", menuName = "Game/Skills/Effects/Target/Linear")]
-public class SkillEffectTargetLinear : SkillEffectData
+public class SkillEffectTargetLinear : SkillEffectTarget
 {
     public float range = 5f;
     public float width = 1f;
     public LayerMask unitLayer;
 
 
-    public override List<UnitController> Execute(UnitController caster, List<UnitController> targets)
+    public override List<UnitController> GetTargets(UnitController caster, List<UnitController> targets)
     {
         List<UnitController> result = new List<UnitController>();
 
