@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -16,11 +17,23 @@ public class SkillSystem : NetworkBehaviour
     {
         unit = GetComponent<UnitController>();
         InitializeSlots();
+        unit.OnRevive += OnUnitRevive;
     }
 
     private void Awake()
     {
         skillPrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "SkillInstance");
+        if (skillPrefab == null)
+        {
+            Debug.LogError("Skill prefab not assigned!");
+            return;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (!isServer) return;
+        unit.OnRevive -= OnUnitRevive;
     }
 
     [Server]
@@ -65,6 +78,8 @@ public class SkillSystem : NetworkBehaviour
                 ultimateSkills.Add(netSkill);
                 break;
         }
+
+        netSkill.skillData.TriggerInit(unit);
     }
 
     private SyncList<NetworkedSkillInstance> GetList(SkillSlotType type)
@@ -97,6 +112,15 @@ public class SkillSystem : NetworkBehaviour
         var list = GetList(slot);
         if (index < 0 || index >= list.Count) return;
         list[index].Cast();
+    }
+
+    [Server]
+    public void OnUnitRevive()
+    {
+        foreach (var skill in passiveSkills.Concat(normalSkills).Concat(ultimateSkills))
+        {
+            skill.skillData.TriggerInit(unit);
+        }
     }
 }
 
