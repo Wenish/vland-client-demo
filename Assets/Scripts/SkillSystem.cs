@@ -29,7 +29,7 @@ public class SkillSystem : NetworkBehaviour
         AddSkill(SkillSlotType.Normal, "ConeOfCold");
         AddSkill(SkillSlotType.Normal, "IceBlast");
         AddSkill(SkillSlotType.Normal, "Swiftness");
-        AddSkill(SkillSlotType.Ultimate, "TestSkill");
+        AddSkill(SkillSlotType.Ultimate, "HealingLeaf");
     }
 
     [Server]
