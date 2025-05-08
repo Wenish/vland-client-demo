@@ -11,14 +11,14 @@ public class SkillEffectNodeData
     [SerializeReference]
     public List<SkillEffectNodeData> children = new List<SkillEffectNodeData>();
 
-    public void Execute(UnitController caster, List<UnitController> targets)
+    public void Execute(CastContext castContext, List<UnitController> targets)
     {
         if (effect == null) return;
 
-        List<UnitController> nextTargets = effect.Execute(caster, targets);
+        List<UnitController> nextTargets = effect.Execute(castContext, targets);
         foreach (var child in children)
         {
-            child.Execute(caster, nextTargets);
+            child.Execute(castContext, nextTargets);
         }
     }
 }

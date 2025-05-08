@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public abstract class Buff
 {
@@ -6,6 +7,7 @@ public abstract class Buff
     public float Duration { get; }
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
+    public event Action OnRemoved = delegate {};
 
     private float _elapsed;
 
@@ -26,7 +28,9 @@ public abstract class Buff
 
     public virtual void OnApply(UnitMediator mediator) { }
 
-    public virtual void OnRemove(UnitMediator mediator) { }
+    public virtual void OnRemove(UnitMediator mediator) {
+        OnRemoved();
+    }
 
     public virtual bool Update(float deltaTime, UnitMediator mediator)
     {

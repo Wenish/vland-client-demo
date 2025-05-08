@@ -11,7 +11,7 @@ public class SkillEffectMechanicHealOverTime : SkillEffectMechanic
     public  float tickInterval;
     public UniqueMode uniqueMode = UniqueMode.None;
 
-    public override List<UnitController> DoMechanic(UnitController caster, List<UnitController> targets)
+    public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
         Debug.Log($"Executing Heal Over Time Effect on {targets.Count} targets.");
         foreach (var target in targets)
@@ -30,10 +30,9 @@ public class SkillEffectMechanicHealOverTime : SkillEffectMechanic
                 healAmount,
                 modifierType,
                 uniqueMode,
-                caster.unitMediator
+                castContext.caster.unitMediator
             );
-
-            mediator.AddBuff(buff);
+            castContext.skillInstance.ManageBuff(mediator, buff, true);
             Debug.Log($"Applied Heal Over Time to {target.name}: {healAmount} every {tickInterval} seconds.");
         }
         return targets;

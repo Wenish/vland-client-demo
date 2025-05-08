@@ -5,7 +5,7 @@ public class SkillEffectConditionLowHealthData : SkillEffectCondition
 {
     public float thresholdPercent = 0.5f;
 
-    public override bool IsConditionMet(UnitController caster, UnitController target)
+    public override bool IsConditionMet(CastContext castContext, UnitController target)
     {
         var health = target.health;
         var maxHealth = target.maxHealth;

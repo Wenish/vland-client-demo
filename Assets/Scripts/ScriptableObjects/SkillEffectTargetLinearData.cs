@@ -9,13 +9,13 @@ public class SkillEffectTargetLinear : SkillEffectTarget
     public LayerMask unitLayer;
 
 
-    public override List<UnitController> GetTargets(UnitController caster, List<UnitController> targets)
+    public override List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
     {
         List<UnitController> result = new List<UnitController>();
 
 
-        Vector3 origin = caster.transform.position + Vector3.up;
-        Vector3 direction = caster.transform.forward;
+        Vector3 origin = castContext.caster.transform.position + Vector3.up;
+        Vector3 direction = castContext.caster.transform.forward;
 
         RaycastHit[] hits = Physics.SphereCastAll(origin, width / 2f, direction, range, unitLayer);
 
@@ -24,9 +24,9 @@ public class SkillEffectTargetLinear : SkillEffectTarget
             UnitController targetController = hit.collider.GetComponentInParent<UnitController>();
 
             if (targetController != null &&
-                targetController != caster &&
+                targetController != castContext.caster &&
                 !targetController.IsDead &&
-                targetController.team != caster.team)
+                targetController.team != castContext.caster.team)
             {
                 if (!result.Contains(targetController))
                 {
@@ -36,10 +36,10 @@ public class SkillEffectTargetLinear : SkillEffectTarget
         }
 
 #if UNITY_EDITOR
-        SkillEffectTargetLinearDebugDrawer drawer = caster.GetComponent<SkillEffectTargetLinearDebugDrawer>();
+        SkillEffectTargetLinearDebugDrawer drawer = castContext.caster.GetComponent<SkillEffectTargetLinearDebugDrawer>();
         if (drawer == null)
         {
-            drawer = caster.gameObject.AddComponent<SkillEffectTargetLinearDebugDrawer>();
+            drawer = castContext.caster.gameObject.AddComponent<SkillEffectTargetLinearDebugDrawer>();
         }
 
         drawer.origin = origin;
