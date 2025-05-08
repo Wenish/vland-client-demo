@@ -4,48 +4,50 @@ using UnityEngine;
 
 public class BuffSystem
 {
-    private readonly UnitMediator _mediator;
+    private readonly UnitMediator _target;
     private readonly List<Buff> _active = new();
 
-    public BuffSystem(UnitMediator mediator)
+    public BuffSystem(UnitMediator target)
     {
-        _mediator = mediator;
+        _target = target;
     }
 
     public void AddBuff(Buff buff)
     {
-        if (buff.IsUnique)
+        // 1) Global uniqueness?
+        if (buff.UniqueMode == UniqueMode.Global)
         {
-            // find and remove any existing buff with the same Id
-            var existing = _active.FirstOrDefault(b => b.BuffId == buff.BuffId);
-            if (existing != null)
-            {
-                Debug.Log($"Overwriting unique buff {buff.BuffId} on {_mediator.UnitController.name}");
-                RemoveBuff(existing);
-            }
+            foreach (var old in _active.Where(b => b.BuffId == buff.BuffId).ToList())
+                RemoveBuff(old);
+        }
+        // 2) Per-caster uniqueness?
+        else if (buff.UniqueMode == UniqueMode.PerCaster)
+        {
+            var old = _active
+                .FirstOrDefault(b => b.BuffId == buff.BuffId
+                                  && b.Caster == buff.Caster);
+            if (old != null)
+                RemoveBuff(old);
         }
 
+        // 3) Now add the new one
         _active.Add(buff);
-        Debug.Log($"Buff {buff.BuffId} applied to {_mediator.UnitController.name}");
-        buff.OnApply(_mediator);
+        buff.OnApply(_target);
+        Debug.Log($"Buff {buff.BuffId} applied to {_target.UnitController.name}");
     }
 
     public void RemoveBuff(Buff buff)
-    {
+    {   
         if (_active.Remove(buff))
         {
-            Debug.Log($"Buff {buff.BuffId} removed from {_mediator.UnitController.name}");
-            buff.OnRemove(_mediator);
-        }
-        else
-        {
-            Debug.LogWarning($"Tried to remove buff {buff.BuffId}, but it wasn’t active.");
+            buff.OnRemove(_target);
+            Debug.Log($"Buff {buff.BuffId} removed from {_target.UnitController.name}");
         }
     }
 
     public void Update(float deltaTime)
     {
-        if (_mediator.UnitController.IsDead)
+        if (_target.UnitController.IsDead)
         {
             // clear all buffs if dead
             foreach (var b in _active.ToList())
@@ -56,7 +58,7 @@ public class BuffSystem
         for (int i = _active.Count - 1; i >= 0; i--)
         {
             var b = _active[i];
-            if (b.Update(deltaTime, _mediator))
+            if (b.Update(deltaTime, _target))
                 RemoveBuff(b);
         }
     }

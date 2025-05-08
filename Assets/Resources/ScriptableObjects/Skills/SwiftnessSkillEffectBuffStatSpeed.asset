@@ -17,4 +17,4 @@ MonoBehaviour:
   ModifierType: 1
   Value: 0.5
   duration: 3
-  isUnique: 1
+  uniqueMode: 1

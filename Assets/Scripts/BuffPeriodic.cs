@@ -8,8 +8,9 @@ public abstract class PeriodicBuff : Buff
         string buffId,
         float duration,
         float tickInterval,
-        bool isUnique = false
-    ) : base(buffId, duration, isUnique)
+        UniqueMode     uniqueMode   = UniqueMode.None,
+        UnitMediator   caster       = null
+    ) : base(buffId, duration, uniqueMode, caster)
     {
         if (tickInterval <= 0f)
             throw new ArgumentException("Tick interval must be > 0.", nameof(tickInterval));
