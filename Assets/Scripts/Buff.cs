@@ -7,7 +7,7 @@ public abstract class Buff
     public float Duration { get; }
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
-    public event Action OnRemoved = delegate {};
+    public event Action OnRemoved;
 
     private float _elapsed;
 
@@ -29,7 +29,7 @@ public abstract class Buff
     public virtual void OnApply(UnitMediator mediator) { }
 
     public virtual void OnRemove(UnitMediator mediator) {
-        OnRemoved();
+        OnRemoved?.Invoke();
     }
 
     public virtual bool Update(float deltaTime, UnitMediator mediator)
