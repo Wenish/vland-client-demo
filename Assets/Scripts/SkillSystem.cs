@@ -43,6 +43,7 @@ public class SkillSystem : NetworkBehaviour
         AddSkill(SkillSlotType.Normal, "IceBlast");
         AddSkill(SkillSlotType.Normal, "Swiftness");
         AddSkill(SkillSlotType.Ultimate, "HealingLeaf");
+        RemoveSkill(SkillSlotType.Ultimate, 0);
     }
 
     [Server]
@@ -80,6 +81,21 @@ public class SkillSystem : NetworkBehaviour
         }
 
         netSkill.skillData.TriggerInit(unit);
+    }
+
+    [Server]
+    public void RemoveSkill(SkillSlotType slotType, int index)
+    {
+        var list = GetList(slotType);
+        if (index < 0 || index >= list.Count) return;
+
+        var skillToRemove = list[index];
+        list.RemoveAt(index);
+
+        if (skillToRemove != null && skillToRemove.gameObject != null)
+        {
+            NetworkServer.Destroy(skillToRemove.gameObject);
+        }
     }
 
     private SyncList<NetworkedSkillInstance> GetList(SkillSlotType type)
