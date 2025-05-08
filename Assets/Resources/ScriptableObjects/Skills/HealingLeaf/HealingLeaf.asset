@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: HealingLeaf
+  m_EditorClassIdentifier: 
+  skillName: HealingLeaf
+  skillType: 0
+  description: 
+  cooldown: 3
+  castCost: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: f1709d739b738412eab25f42b4d50ab6, type: 2}
+  iconTexture: {fileID: 2800000, guid: bfb9910e2b4ec4e16859c5854f07dac0, type: 3}
