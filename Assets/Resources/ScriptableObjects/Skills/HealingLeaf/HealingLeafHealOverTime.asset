@@ -15,6 +15,6 @@ MonoBehaviour:
   buffId: HealingLeaf
   modifierType: 0
   healAmount: 15
-  duration: Infinity
+  duration: 9
   tickInterval: 3
   uniqueMode: 2
