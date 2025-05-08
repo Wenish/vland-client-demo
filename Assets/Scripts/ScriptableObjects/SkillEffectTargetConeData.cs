@@ -8,21 +8,21 @@ public class SkillEffectTargetCone : SkillEffectTarget
     public float angle = 45f;
     public LayerMask unitLayer;
 
-    public override List<UnitController> GetTargets(UnitController caster, List<UnitController> targets)
+    public override List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
     {
         List<UnitController> result = new List<UnitController>();
 
 
-        int casterTeam = caster.team;
-        Vector3 casterPosition = caster.transform.position;
-        Vector3 forward = caster.transform.forward;
+        int casterTeam = castContext.caster.team;
+        Vector3 casterPosition = castContext.caster.transform.position;
+        Vector3 forward = castContext.caster.transform.forward;
 
         // Get all colliders in range
         Collider[] hits = Physics.OverlapSphere(casterPosition, range, unitLayer);
         foreach (var hit in hits)
         {
             GameObject obj = hit.gameObject;
-            if (obj == caster) continue;
+            if (obj == castContext.caster) continue;
 
             UnitController unit = obj.GetComponent<UnitController>();
             if (unit == null) continue;
@@ -41,10 +41,10 @@ public class SkillEffectTargetCone : SkillEffectTarget
         }
 
 #if UNITY_EDITOR
-        SkillEffectTargetConeDebugDrawer drawer = caster.GetComponent<SkillEffectTargetConeDebugDrawer>();
+        SkillEffectTargetConeDebugDrawer drawer = castContext.caster.GetComponent<SkillEffectTargetConeDebugDrawer>();
         if (drawer == null)
         {
-            drawer = caster.gameObject.AddComponent<SkillEffectTargetConeDebugDrawer>();
+            drawer = castContext.caster.gameObject.AddComponent<SkillEffectTargetConeDebugDrawer>();
         }
 
         drawer.origin = casterPosition;

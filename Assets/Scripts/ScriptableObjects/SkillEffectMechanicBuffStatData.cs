@@ -11,7 +11,7 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
     public float duration = 5f;
     public UniqueMode uniqueMode = UniqueMode.None;
 
-    public override List<UnitController> DoMechanic(UnitController caster, List<UnitController> targets)
+    public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
         foreach (var target in targets)
         {
@@ -21,7 +21,6 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
                 Debug.LogWarning($"Target {target.name} does not have a UnitMediator component.");
                 continue;
             }
-
             var listStatModifiers = new List<StatModifier>
             {
                 new StatModifier() {
@@ -31,8 +30,8 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
                 }
             };
 
-            BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, caster.unitMediator);
-            mediator.AddBuff(buff);
+            BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, castContext.caster.unitMediator);
+            castContext.skillInstance.ManageBuff(mediator, buff, true);
             Debug.Log($"Applied BuffStat to {target.name}: {StatType}, {ModifierType}, {Value}");
         }
         return targets;

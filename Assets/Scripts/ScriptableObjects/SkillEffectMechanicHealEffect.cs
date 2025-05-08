@@ -6,7 +6,7 @@ public class SkillEffectMechanicHeal : SkillEffectMechanic
 {
     public int healAmount = 20;
 
-    public override List<UnitController> DoMechanic(UnitController caster, List<UnitController> targets)
+    public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
         Debug.Log($"Executing Heal Effect on {targets.Count} targets.");
         foreach (var target in targets)
