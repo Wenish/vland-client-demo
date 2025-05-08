@@ -39,11 +39,12 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     private void InitializeSlots()
     {
+        //AddSkill(SkillSlotType.Passive, "HealingLeaf");
         AddSkill(SkillSlotType.Normal, "ConeOfCold");
         AddSkill(SkillSlotType.Normal, "IceBlast");
         AddSkill(SkillSlotType.Normal, "Swiftness");
         AddSkill(SkillSlotType.Ultimate, "HealingLeaf");
-        RemoveSkill(SkillSlotType.Ultimate, 0);
+        //RemoveSkill(SkillSlotType.Passive, 0);
     }
 
     [Server]
@@ -96,6 +97,8 @@ public class SkillSystem : NetworkBehaviour
         {
             NetworkServer.Destroy(skillToRemove.gameObject);
         }
+        Debug.Log($"Removed skill {skillToRemove.skillName} from {unit.name}");
+        Debug.Log($"{ultimateSkills.Count} ultimate skills found.");
     }
 
     private SyncList<NetworkedSkillInstance> GetList(SkillSlotType type)
@@ -133,7 +136,15 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     public void OnUnitRevive()
     {
-        foreach (var skill in passiveSkills.Concat(normalSkills).Concat(ultimateSkills))
+        foreach (var skill in passiveSkills)
+        {
+            skill.skillData.TriggerInit(unit);
+        }
+        foreach (var skill in normalSkills)
+        {
+            skill.skillData.TriggerInit(unit);
+        }
+        foreach (var skill in ultimateSkills)
         {
             skill.skillData.TriggerInit(unit);
         }

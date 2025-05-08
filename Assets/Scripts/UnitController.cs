@@ -221,6 +221,7 @@ public class UnitController : NetworkBehaviour
         if (health <= 0)
         {
             OnKillEvent(attacker);
+            Die();
         }
     }
 
@@ -312,11 +313,11 @@ public class UnitController : NetworkBehaviour
 
     void HookOnHealthChanged(int oldValue, int newValue)
     {
-        if (oldValue > 0 && newValue <= 0)
+        if (!isServer && oldValue > 0 && newValue <= 0)
         {
             Die();
         }
-        if(oldValue == 0 && newValue > 0)
+        if(!isServer && oldValue == 0 && newValue > 0)
         {
             Revive();
         }
