@@ -4,8 +4,13 @@ public class BuffStat : Buff
 {
     private readonly List<StatModifier> _mods;
 
-    public BuffStat(string buffId, float duration, bool isUnique, List<StatModifier> mods)
-        : base(buffId, duration, isUnique)
+    public BuffStat(
+        string buffId,
+        float duration,
+        List<StatModifier> mods,
+        UniqueMode           uniqueMode = UniqueMode.None,
+        UnitMediator         caster     = null)
+        : base(buffId, duration, uniqueMode, caster)
     {
         _mods = mods;
     }

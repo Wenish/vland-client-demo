@@ -9,7 +9,7 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
     public ModifierType ModifierType;
     public float Value;
     public float duration = 5f;
-    public bool isUnique = true;
+    public UniqueMode uniqueMode = UniqueMode.None;
 
     public override List<UnitController> DoMechanic(UnitController caster, List<UnitController> targets)
     {
@@ -31,7 +31,7 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
                 }
             };
 
-            BuffStat buff = new BuffStat(buffId, duration, isUnique, listStatModifiers);
+            BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, caster.unitMediator);
             mediator.AddBuff(buff);
             Debug.Log($"Applied BuffStat to {target.name}: {StatType}, {ModifierType}, {Value}");
         }

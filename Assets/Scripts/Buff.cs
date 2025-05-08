@@ -4,18 +4,24 @@ public abstract class Buff
 {
     public string BuffId { get; }
     public float Duration { get; }
-    public bool IsUnique { get; }
+    public UniqueMode UniqueMode { get; }
+    public UnitMediator Caster { get; }
 
     private float _elapsed;
 
-    protected Buff(string buffId, float duration, bool isUnique = false)
+    protected Buff(string buffId, float duration, UniqueMode uniqueMode = UniqueMode.None,
+        UnitMediator caster = null)
     {
         if (string.IsNullOrWhiteSpace(buffId))
             throw new ArgumentException("Buff must have a non-empty Id.", nameof(buffId));
 
+        if (uniqueMode == UniqueMode.PerCaster && caster == null)
+            throw new ArgumentException("PerCaster buffs need a non-null caster", nameof(caster));
+
         BuffId = buffId;
         Duration = duration;
-        IsUnique = isUnique;
+        UniqueMode = uniqueMode;
+        Caster     = caster;
     }
 
     public virtual void OnApply(UnitMediator mediator) { }
@@ -25,8 +31,15 @@ public abstract class Buff
     public virtual bool Update(float deltaTime, UnitMediator mediator)
     {
         _elapsed += deltaTime;
-        if (_elapsed >= Duration)
-            return true;
-        return false;
+
+        var hasDurationElapsed = _elapsed >= Duration;
+        return hasDurationElapsed;
     }
+}
+
+public enum UniqueMode
+{
+    None,
+    Global,     // only one buff.Id on the target
+    PerCaster   // only one buff.Id *from the same Caster* on the target
 }

@@ -4,21 +4,26 @@ public class BuffHealOverTime : PeriodicBuff
 {
     private readonly float _healAmount;
     private readonly ModifierType _modifierType = ModifierType.Flat;
+    private float _residual;
 
     public BuffHealOverTime(
         string buffId,
         float duration,
-        bool isUnique,
         float tickInterval,
-        float healAmount
+        float healAmount,
+        ModifierType   modifierType  = ModifierType.Flat,
+        UniqueMode     uniqueMode    = UniqueMode.None,
+        UnitMediator   caster        = null
     ) : base(
         buffId,
         duration,
         tickInterval,
-        isUnique
+        uniqueMode,
+        caster
       )
     {
         _healAmount = healAmount;
+        _modifierType   = modifierType;
     }
 
     public override void OnApply(UnitMediator mediator)
@@ -29,11 +34,10 @@ public class BuffHealOverTime : PeriodicBuff
 
     public override void OnRemove(UnitMediator mediator)
     {
-        base.OnApply(mediator);
+        base.OnRemove(mediator);
         // cleanup VFX, if any
     }
 
-    private float _residual;
 
     public override void OnTick(UnitMediator mediator)
     {
