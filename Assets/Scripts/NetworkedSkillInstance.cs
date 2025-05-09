@@ -28,7 +28,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
     public void ResolveSkillData()
     {
-        if (skillDatabase == null) {
+        if (skillDatabase == null)
+        {
             skillDatabase = DatabaseManager.Instance.skillDatabase;
         }
 
@@ -37,7 +38,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
     public void OnSkillNameChanged(string oldName, string newName)
     {
-        if (skillDatabase == null) {
+        if (skillDatabase == null)
+        {
             skillDatabase = DatabaseManager.Instance.skillDatabase;
         }
 
@@ -49,7 +51,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     public float CooldownProgress => (CooldownRemaining / skillData.cooldown) * 100f;
 
     [Server]
-    public void TriggerInit() {
+    public void TriggerInit()
+    {
         if (skillData == null) return;
         skillData.TriggerInit(new CastContext(unit, this));
     }
@@ -96,7 +99,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void Cleanup()
     {
-         var buffsToRemove = new List<(UnitMediator target, Buff buff)>(appliedBuffs);
+        var buffsToRemove = new List<(UnitMediator target, Buff buff)>(appliedBuffs);
 
         foreach (var (target, buff) in buffsToRemove)
         {
