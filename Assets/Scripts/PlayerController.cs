@@ -84,7 +84,7 @@ public class PlayerController : NetworkBehaviour
             WeaponSwitch();
             InputWorldPing();
             InputUseSkills();
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.C))
             {
                 CmdInteract();
             }
@@ -338,11 +338,11 @@ public class PlayerController : NetworkBehaviour
         {
             CmdUseSkill(SkillSlotType.Normal, 1);
         }
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             CmdUseSkill(SkillSlotType.Normal, 2);
         }
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             CmdUseSkill(SkillSlotType.Ultimate, 0);
         }

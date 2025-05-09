@@ -136,11 +136,11 @@ public class UnitController : NetworkBehaviour
     void Update()
     {
         if (!isServer) return;
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.O))
         {
             TakeDamage(20, this);
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             Heal(maxHealth);
             Shield(maxShield);
