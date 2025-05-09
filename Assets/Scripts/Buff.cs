@@ -23,12 +23,13 @@ public abstract class Buff
         BuffId = buffId;
         Duration = duration;
         UniqueMode = uniqueMode;
-        Caster     = caster;
+        Caster = caster;
     }
 
     public virtual void OnApply(UnitMediator mediator) { }
 
-    public virtual void OnRemove(UnitMediator mediator) {
+    public virtual void OnRemove(UnitMediator mediator)
+    {
         OnRemoved?.Invoke();
     }
 
