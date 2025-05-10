@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: IceBlast
   skillType: 0
-  description: 
+  description: Makes damage to all enemy in a line in front of you.
   cooldown: 10
   castCost: 0
   initTrigger: {fileID: 0}

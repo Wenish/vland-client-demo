@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Swiftness
   skillType: 0
-  description: 
+  description: Makes you fast.
   cooldown: 8
   castCost: 0
   initTrigger: {fileID: 0}
