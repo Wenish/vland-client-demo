@@ -98,6 +98,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillPassive.CooldownRemaining = skillPassive.CooldownRemaining;
             _skillPassive.CooldownProgress = skillPassive.CooldownProgress;
             _skillPassive.IconTexture = skillPassive.skillData.iconTexture;
+            _skillPassive.TooltipText = $"{skillPassive.skillData.skillName}\n{skillPassive.skillData.description}";
         }
 
         var skill1 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 0);
@@ -106,6 +107,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillNormal1.CooldownRemaining = skill1.CooldownRemaining;
             _skillNormal1.CooldownProgress = skill1.CooldownProgress;
             _skillNormal1.IconTexture = skill1.skillData.iconTexture;
+            _skillNormal1.TooltipText = $"{skill1.skillData.skillName}\n{skill1.skillData.description}";
         }
 
         var skill2 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 1);
@@ -114,6 +116,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillNormal2.CooldownRemaining = skill2.CooldownRemaining;
             _skillNormal2.CooldownProgress = skill2.CooldownProgress;
             _skillNormal2.IconTexture = skill2.skillData.iconTexture;
+            _skillNormal2.TooltipText = $"{skill2.skillData.skillName}\n{skill2.skillData.description}";
         }
 
         var skill3 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 2);
@@ -122,6 +125,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillNormal3.CooldownRemaining = skill3.CooldownRemaining;
             _skillNormal3.CooldownProgress = skill3.CooldownProgress;
             _skillNormal3.IconTexture = skill3.skillData.iconTexture;
+            _skillNormal3.TooltipText = $"{skill3.skillData.skillName}\n{skill3.skillData.description}";
         }
 
         var skillUltimate = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Ultimate, 0);
@@ -130,6 +134,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillUltimate.CooldownRemaining = skillUltimate.CooldownRemaining;
             _skillUltimate.CooldownProgress = skillUltimate.CooldownProgress;
             _skillUltimate.IconTexture = skillUltimate.skillData.iconTexture;
+            _skillUltimate.TooltipText = $"{skillUltimate.skillData.skillName}\n{skillUltimate.skillData.description}";
         }
 
     }

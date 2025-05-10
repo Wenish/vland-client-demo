@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: HealingLeaf
   skillType: 0
-  description: 
+  description: Heals over Time
   cooldown: 3
   castCost: 0
   initTrigger: {fileID: 0}

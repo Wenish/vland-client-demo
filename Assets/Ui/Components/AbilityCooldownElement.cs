@@ -15,7 +15,7 @@ public partial class AbilityCooldownElement : VisualElement
     [SerializeField, DontCreateProperty]
     private float _cooldownRemaining;
     [UxmlAttribute, CreateProperty]
-    public float CooldownRemaining 
+    public float CooldownRemaining
     {
         get => _cooldownRemaining;
         set
@@ -32,7 +32,7 @@ public partial class AbilityCooldownElement : VisualElement
     private float _cooldownProgress;
 
     [UxmlAttribute, CreateProperty]
-    public float CooldownProgress 
+    public float CooldownProgress
     {
         get => _cooldownProgress;
         set
@@ -47,7 +47,7 @@ public partial class AbilityCooldownElement : VisualElement
     [SerializeField, DontCreateProperty]
     private Texture2D _iconTexture;
     [UxmlAttribute, CreateProperty]
-    public Texture2D IconTexture 
+    public Texture2D IconTexture
     {
         get => _iconTexture;
         set
@@ -58,9 +58,28 @@ public partial class AbilityCooldownElement : VisualElement
         }
     }
 
+    [SerializeField, DontCreateProperty]
+    private string _tooltipText;
+    [UxmlAttribute, CreateProperty]
+    public string TooltipText
+    {
+        get => _tooltipText;
+        set => _tooltipText = value;
+    }
+
+    private Label _runtimeTooltip;
+
     public AbilityCooldownElement()
     {
         AddToClassList("ability-container");
+
+        // ensure we get pointer events even if our element has no background
+        this.pickingMode = PickingMode.Position;
+
+        // wire up hover/leave
+        RegisterCallback<PointerEnterEvent>(OnPointerEnter);
+        RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+
 
         _iconImage = new Image { name = "Icon" };
         _iconImage.AddToClassList("ability-icon");
@@ -74,7 +93,7 @@ public partial class AbilityCooldownElement : VisualElement
         _cooldownOverlay.AddToClassList("cooldown-overlay");
         Add(_cooldownOverlay);
 
-        var  cooldownLabelContainer = new VisualElement { name = "CooldownLabelContainer" };
+        var cooldownLabelContainer = new VisualElement { name = "CooldownLabelContainer" };
         cooldownLabelContainer.AddToClassList("cooldown-label-container");
         Add(cooldownLabelContainer);
 
@@ -87,5 +106,67 @@ public partial class AbilityCooldownElement : VisualElement
     public void SetIcon(Texture2D texture)
     {
         _iconImage.image = texture;
+    }
+
+    private void OnPointerEnter(PointerEnterEvent evt)
+    {
+        if (string.IsNullOrEmpty(_tooltipText))
+            return;
+
+        // create the tooltip
+        _runtimeTooltip = new Label(_tooltipText)
+        {
+            name = "runtime-tooltip",
+            style =
+            {
+                position = Position.Absolute,
+                unityTextAlign = TextAnchor.MiddleCenter,
+                paddingLeft = 4,
+                paddingRight = 4,
+                paddingTop = 2,
+                paddingBottom = 2,
+                backgroundColor = new StyleColor(Color.black),
+                color = new StyleColor(Color.white),
+                borderTopLeftRadius = 3,
+                borderTopRightRadius = 3,
+                borderBottomLeftRadius = 3,
+                borderBottomRightRadius = 3,
+            }
+        };
+
+        // add it at root so it won’t be clipped
+        panel.visualTree.Add(_runtimeTooltip);
+
+        // when its layout is known, position it
+        _runtimeTooltip.RegisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged);
+    }
+
+    private void OnTooltipGeometryChanged(GeometryChangedEvent geometryEvt)
+    {
+        // only run once
+        _runtimeTooltip.UnregisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged);
+        PositionTooltipFixed();
+    }
+
+    private void PositionTooltipFixed()
+    {
+        var root = panel.visualTree;
+        float panelW = root.layout.width;
+        float panelH = root.layout.height;
+        float tipW = _runtimeTooltip.layout.width;
+        float tipH = _runtimeTooltip.layout.height;
+
+        // center horizontally, 20px above bottom
+        _runtimeTooltip.style.left = panelW * 0.5f - tipW * 0.5f;
+        _runtimeTooltip.style.top = panelH - tipH - 100f;
+    }
+
+    private void OnPointerLeave(PointerLeaveEvent evt)
+    {
+        if (_runtimeTooltip != null)
+        {
+            panel.visualTree.Remove(_runtimeTooltip);
+            _runtimeTooltip = null;
+        }
     }
 }

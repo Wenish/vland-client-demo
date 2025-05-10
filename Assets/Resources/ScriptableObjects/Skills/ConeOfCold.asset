@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: ConeOfCold
   skillType: 0
-  description: 
+  description: Does damage to all enemy in a cone in front of you.
   cooldown: 7
   castCost: 0
   initTrigger: {fileID: 0}
