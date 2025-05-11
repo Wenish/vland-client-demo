@@ -114,25 +114,35 @@ public partial class AbilityCooldownElement : VisualElement
             return;
 
         // create the tooltip
-        _runtimeTooltip = new Label(_tooltipText)
+        _runtimeTooltip = new Label
         {
             name = "runtime-tooltip",
             style =
             {
                 position = Position.Absolute,
-                unityTextAlign = TextAnchor.MiddleCenter,
-                paddingLeft = 4,
-                paddingRight = 4,
-                paddingTop = 2,
-                paddingBottom = 2,
+                unityTextAlign = TextAnchor.UpperLeft,
+                paddingLeft = 6,
+                paddingRight = 6,
+                paddingTop = 6,
+                paddingBottom = 6,
                 backgroundColor = new StyleColor(Color.black),
                 color = new StyleColor(Color.white),
                 borderTopLeftRadius = 3,
                 borderTopRightRadius = 3,
                 borderBottomLeftRadius = 3,
                 borderBottomRightRadius = 3,
+                borderTopWidth = 2,
+                borderBottomWidth = 2,
+                borderLeftWidth = 2,
+                borderRightWidth = 2,
+                borderTopColor = new StyleColor(Color.yellow),
+                borderBottomColor = new StyleColor(Color.yellow),
+                borderLeftColor = new StyleColor(Color.yellow),
+                borderRightColor = new StyleColor(Color.yellow),
             }
         };
+        _runtimeTooltip.enableRichText = true;
+        _runtimeTooltip.text = _tooltipText;
 
         // add it at root so it won’t be clipped
         panel.visualTree.Add(_runtimeTooltip);

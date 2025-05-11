@@ -98,7 +98,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillPassive.CooldownRemaining = skillPassive.CooldownRemaining;
             _skillPassive.CooldownProgress = skillPassive.CooldownProgress;
             _skillPassive.IconTexture = skillPassive.skillData.iconTexture;
-            _skillPassive.TooltipText = $"{skillPassive.skillData.skillName}\n{skillPassive.skillData.description}";
+            _skillPassive.TooltipText = GetSkillTooltip(skillPassive.skillData);
         }
 
         var skill1 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 0);
@@ -107,7 +107,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillNormal1.CooldownRemaining = skill1.CooldownRemaining;
             _skillNormal1.CooldownProgress = skill1.CooldownProgress;
             _skillNormal1.IconTexture = skill1.skillData.iconTexture;
-            _skillNormal1.TooltipText = $"{skill1.skillData.skillName}\n{skill1.skillData.description}";
+            _skillNormal1.TooltipText = GetSkillTooltip(skill1.skillData);
         }
 
         var skill2 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 1);
@@ -116,7 +116,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillNormal2.CooldownRemaining = skill2.CooldownRemaining;
             _skillNormal2.CooldownProgress = skill2.CooldownProgress;
             _skillNormal2.IconTexture = skill2.skillData.iconTexture;
-            _skillNormal2.TooltipText = $"{skill2.skillData.skillName}\n{skill2.skillData.description}";
+            _skillNormal2.TooltipText = GetSkillTooltip(skill2.skillData);
         }
 
         var skill3 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 2);
@@ -125,7 +125,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillNormal3.CooldownRemaining = skill3.CooldownRemaining;
             _skillNormal3.CooldownProgress = skill3.CooldownProgress;
             _skillNormal3.IconTexture = skill3.skillData.iconTexture;
-            _skillNormal3.TooltipText = $"{skill3.skillData.skillName}\n{skill3.skillData.description}";
+            _skillNormal3.TooltipText = GetSkillTooltip(skill3.skillData);
         }
 
         var skillUltimate = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Ultimate, 0);
@@ -134,7 +134,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillUltimate.CooldownRemaining = skillUltimate.CooldownRemaining;
             _skillUltimate.CooldownProgress = skillUltimate.CooldownProgress;
             _skillUltimate.IconTexture = skillUltimate.skillData.iconTexture;
-            _skillUltimate.TooltipText = $"{skillUltimate.skillData.skillName}\n{skillUltimate.skillData.description}";
+            _skillUltimate.TooltipText = GetSkillTooltip(skillUltimate.skillData);
         }
 
     }
@@ -239,5 +239,26 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private void OnWeaponChange(UnitController unitController)
     {
         _baseAttack.IconTexture = _myPlayerUnitWeaponController.weaponData.iconTexture;
+        _baseAttack.TooltipText = GetWeaponTooltip(_myPlayerUnitWeaponController.weaponData);
+    }
+
+    private string GetSkillTooltip(SkillData skillData)
+    {
+        var title = $"<size=16><b>{skillData.skillName}</b></size>";
+        var type = $"Type: {skillData.skillType}";
+        var cooldown = $"Cooldown: {skillData.cooldown}s";
+        var description = $"{skillData.description}";
+
+        return $"{title}\n{type}\n{cooldown}\n{description}";
+    }
+
+    private string GetWeaponTooltip(WeaponData weaponData)
+    {
+        var title = $"<size=16><b>{weaponData.weaponName}</b></size>";
+        var type = $"Type: {weaponData.weaponType}";
+        var damage = $"Damage: {weaponData.attackPower}";
+        var range = $"Range: {weaponData.attackRange}";
+
+        return $"{title}\n{type}\n{damage}\n{range}";
     }
 }
