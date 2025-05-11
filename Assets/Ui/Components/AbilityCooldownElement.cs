@@ -10,7 +10,7 @@ public partial class AbilityCooldownElement : VisualElement
     private VisualElement _iconOverlay;
     private VisualElement _cooldownOverlay;
     private Label _cooldownLabel;
-
+    private Label _keyLabel; // displays the activation key
 
     [SerializeField, DontCreateProperty]
     private float _cooldownRemaining;
@@ -20,17 +20,16 @@ public partial class AbilityCooldownElement : VisualElement
         get => _cooldownRemaining;
         set
         {
-
             _cooldownRemaining = Math.Clamp(value, 0f, float.PositiveInfinity);
             _cooldownLabel.visible = _cooldownRemaining > 0f;
-            _cooldownLabel.text = _cooldownRemaining < 1 ? _cooldownRemaining.ToString("F1") : Mathf.FloorToInt(_cooldownRemaining).ToString();
-            // MarkDirtyRepaint();
+            _cooldownLabel.text = _cooldownRemaining < 1
+                ? _cooldownRemaining.ToString("F1")
+                : Mathf.FloorToInt(_cooldownRemaining).ToString();
         }
     }
 
     [SerializeField, DontCreateProperty]
     private float _cooldownProgress;
-
     [UxmlAttribute, CreateProperty]
     public float CooldownProgress
     {
@@ -40,7 +39,6 @@ public partial class AbilityCooldownElement : VisualElement
             _cooldownProgress = Mathf.Clamp(value, 0f, 100f);
             _cooldownOverlay.style.height = Length.Percent(_cooldownProgress);
             _iconOverlay.style.visibility = _cooldownProgress > 0f ? Visibility.Visible : Visibility.Hidden;
-            // MarkDirtyRepaint();
         }
     }
 
@@ -67,40 +65,66 @@ public partial class AbilityCooldownElement : VisualElement
         set => _tooltipText = value;
     }
 
+    [SerializeField, DontCreateProperty]
+    private string _activationKey;
+    [UxmlAttribute, CreateProperty]
+    public string ActivationKey
+    {
+        get => _activationKey;
+        set
+        {
+            _activationKey = value;
+            if (_keyLabel != null) {
+                _keyLabel.text = _activationKey;
+                _keyLabel.style.visibility = string.IsNullOrEmpty(_activationKey) ? Visibility.Hidden : Visibility.Visible;
+            }
+
+        }
+    }
+
     private Label _runtimeTooltip;
 
     public AbilityCooldownElement()
     {
         AddToClassList("ability-container");
 
-        // ensure we get pointer events even if our element has no background
+        // ensure pointer events
         this.pickingMode = PickingMode.Position;
 
-        // wire up hover/leave
+        // hover callbacks
         RegisterCallback<PointerEnterEvent>(OnPointerEnter);
         RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
 
-
+        // icon
         _iconImage = new Image { name = "Icon" };
         _iconImage.AddToClassList("ability-icon");
         Add(_iconImage);
 
+        // disabled overlay
         _iconOverlay = new VisualElement { name = "IconOverlay" };
         _iconOverlay.AddToClassList("icon-overlay");
         Add(_iconOverlay);
 
+        // cooldown fill
         _cooldownOverlay = new VisualElement { name = "CooldownOverlay" };
         _cooldownOverlay.AddToClassList("cooldown-overlay");
         Add(_cooldownOverlay);
 
+        // cooldown label container
         var cooldownLabelContainer = new VisualElement { name = "CooldownLabelContainer" };
         cooldownLabelContainer.AddToClassList("cooldown-label-container");
         Add(cooldownLabelContainer);
 
-
+        // cooldown label
         _cooldownLabel = new Label { name = "CooldownLabel" };
         _cooldownLabel.AddToClassList("cooldown-label");
         cooldownLabelContainer.Add(_cooldownLabel);
+
+        // activation key label
+        _keyLabel = new Label { name = "KeyLabel" };
+        _keyLabel.AddToClassList("key-label");
+        Add(_keyLabel);
+        _keyLabel.style.visibility = string.IsNullOrEmpty(_activationKey) ? Visibility.Hidden : Visibility.Visible;
     }
 
     public void SetIcon(Texture2D texture)
@@ -113,7 +137,6 @@ public partial class AbilityCooldownElement : VisualElement
         if (string.IsNullOrEmpty(_tooltipText))
             return;
 
-        // create the tooltip
         _runtimeTooltip = new Label
         {
             name = "runtime-tooltip",
@@ -143,17 +166,12 @@ public partial class AbilityCooldownElement : VisualElement
         };
         _runtimeTooltip.enableRichText = true;
         _runtimeTooltip.text = _tooltipText;
-
-        // add it at root so it won’t be clipped
         panel.visualTree.Add(_runtimeTooltip);
-
-        // when its layout is known, position it
         _runtimeTooltip.RegisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged);
     }
 
     private void OnTooltipGeometryChanged(GeometryChangedEvent geometryEvt)
     {
-        // only run once
         _runtimeTooltip.UnregisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged);
         PositionTooltipFixed();
     }
@@ -166,7 +184,6 @@ public partial class AbilityCooldownElement : VisualElement
         float tipW = _runtimeTooltip.layout.width;
         float tipH = _runtimeTooltip.layout.height;
 
-        // center horizontally, 20px above bottom
         _runtimeTooltip.style.left = panelW * 0.5f - tipW * 0.5f;
         _runtimeTooltip.style.top = panelH - tipH - 100f;
     }
