@@ -151,12 +151,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         // 1)  build the flat quad
         Mesh quad = MeshFactory.BuildRectangle(range, width, flipWinding: true);
 
-        // Create a simple purple material in code
-        Material mat = new Material(Shader.Find("Standard"));
-        mat.color = new Color(0.6f, 0.2f, 0.8f, 1f); // RGBA for purple
-
         // 2) Load the material (you can also cache this if you like)
-        // Material mat = Resources.Load<Material>(materialResourcePath);
+        Material mat = Resources.Load<Material>(materialResourcePath);
 
         // 3) Spawn it
         //    Center it at origin + forward * (range/2), rotate so its length aligns with `direction`
