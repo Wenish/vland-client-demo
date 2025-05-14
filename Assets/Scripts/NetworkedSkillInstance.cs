@@ -67,6 +67,17 @@ public class NetworkedSkillInstance : NetworkBehaviour
         _runningInitCoroutine = StartCoroutine(skillData.ExecuteInitCoroutine(_runningInitContext));
     }
 
+    public void CancelInit()
+    {
+        _runningInitContext?.Cancel();
+        _runningInitContext = null;
+        if (_runningInitCoroutine != null)
+        {
+            StopCoroutine(_runningInitCoroutine);
+            _runningInitCoroutine = null;
+        }
+    }
+
     private Coroutine _runningCastCoroutine;
     private CastContext _runningCastContext;
 
@@ -82,6 +93,16 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
         _runningCastContext = new CastContext(unit, this);
         _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
+    }
+    public void CancelCast()
+    {
+        _runningCastContext?.Cancel();
+        _runningCastContext = null;
+        if (_runningCastCoroutine != null)
+        {
+            StopCoroutine(_runningCastCoroutine);
+            _runningCastCoroutine = null;
+        }
     }
 
     [Server]
