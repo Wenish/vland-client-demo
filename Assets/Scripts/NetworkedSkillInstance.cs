@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Mirror;
@@ -50,12 +52,23 @@ public class NetworkedSkillInstance : NetworkBehaviour
     public float CooldownRemaining => skillData.cooldown - (float)(NetworkTime.time - lastCastTime);
     public float CooldownProgress => (CooldownRemaining / skillData.cooldown) * 100f;
 
+    private Coroutine _runningInitCoroutine;
+    private CastContext _runningInitContext;
+
     [Server]
     public void TriggerInit()
     {
         if (skillData == null) return;
-        skillData.TriggerInit(new CastContext(unit, this));
+        if (_runningInitCoroutine != null)
+        {
+            StopCoroutine(_runningInitCoroutine);
+        }
+        _runningInitContext = new CastContext(unit, this); ;
+        _runningInitCoroutine = StartCoroutine(skillData.ExecuteInitCoroutine(_runningInitContext));
     }
+
+    private Coroutine _runningCastCoroutine;
+    private CastContext _runningCastContext;
 
     [Server]
     public void Cast()
@@ -63,8 +76,12 @@ public class NetworkedSkillInstance : NetworkBehaviour
         if (IsOnCooldown || skillData == null) return;
 
         lastCastTime = NetworkTime.time;
-        CastContext castContext = new CastContext(unit, this);
-        skillData.TriggerCast(castContext);
+        if (_runningCastCoroutine != null)
+        {
+            StopCoroutine(_runningCastCoroutine);
+        }
+        _runningCastContext = new CastContext(unit, this);
+        _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
     }
 
     [Server]
@@ -109,18 +126,46 @@ public class NetworkedSkillInstance : NetworkBehaviour
         appliedBuffs.Clear();
     }
 
-    [ContextMenu("Benchmark Cast 100,000x")]
+    [ContextMenu("Benchmark Cast 10,000x (Coroutine)")]
     [Server]
     public void BenchmarkCast()
     {
-        if (skillData == null) return;
+        // turn your void into a coroutine
+        StartCoroutine(BenchmarkCastCoroutine());
+    }
+
+    private IEnumerator BenchmarkCastCoroutine()
+    {
+        if (skillData == null)
+            yield break;
+
+        int total = 10000;
+        int finished = 0;
+
+        // Stopwatch can’t start/stop inside the main thread yield,
+        // so we start it here; we’ll Stop() it after all coroutines.
         var stopwatch = Stopwatch.StartNew();
-        for (int i = 0; i < 100000; i++)
+
+        for (int i = 0; i < total; i++)
         {
-            CastContext castContext = new CastContext(unit, this);
-            skillData.TriggerCast(castContext);
+            var ctx = new CastContext(unit, this);
+            // launch each wrapped cast
+            StartCoroutine(WrapAndCount(ctx, () => finished++));
         }
+
+        // wait until every single one has fired its callback
+        yield return new WaitUntil(() => finished >= total);
+
         stopwatch.Stop();
-        UnityEngine.Debug.Log($"TriggerCast 100.000x: {stopwatch.ElapsedMilliseconds} ms");
+        UnityEngine.Debug.Log($"TriggerCast {total:N0}×: {stopwatch.ElapsedMilliseconds} ms");
+    }
+
+    // helper that runs the real cast, then fires the onDone callback
+    private IEnumerator WrapAndCount(CastContext ctx, Action onDone)
+    {
+        // run your original coroutine to completion
+        yield return skillData.ExecuteCastCoroutine(ctx);
+        // notify
+        onDone();
     }
 }

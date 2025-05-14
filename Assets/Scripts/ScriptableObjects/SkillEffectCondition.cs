@@ -1,20 +1,36 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public abstract class SkillEffectCondition : SkillEffectData
 {
     public override SkillEffectType EffectType { get; } = SkillEffectType.Condition;
-    public override List<UnitController> Execute(CastContext castContext, List<UnitController> targets) {
-        List<UnitController> result = new List<UnitController>();
+    public override IEnumerator Execute(
+            CastContext castContext,
+            List<UnitController> targets,
+            Action<List<UnitController>> onComplete
+        )
+    {
+        // Run your existing condition filter
+        var result = new List<UnitController>();
         foreach (var target in targets)
         {
-            var isConditionMet = IsConditionMet(castContext, target);
-            if (isConditionMet)
-            {
+            if (IsConditionMet(castContext, target))
                 result.Add(target);
-            }
         }
-        return result;
+
+        // Hand back the filtered list
+        onComplete(result);
+
+        // End the coroutine
+        yield break;
     }
 
-    public abstract bool IsConditionMet(CastContext castContext, UnitController target);
+    /// <summary>
+    /// Returns true if this target should pass through the condition.
+    /// </summary>
+    public abstract bool IsConditionMet(
+        CastContext castContext,
+        UnitController target
+    );
 }
