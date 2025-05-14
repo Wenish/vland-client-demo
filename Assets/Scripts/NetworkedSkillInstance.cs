@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Mirror;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkedSkillInstance : NetworkBehaviour
@@ -14,6 +15,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     public double lastCastTime = -Mathf.Infinity;
 
     public SkillData skillData;
+
+    [SyncVar, SerializeField]
     private UnitController unit;
     private SkillDatabase skillDatabase;
 
@@ -132,6 +135,37 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         appliedBuffs.Remove((mediator, buff));
         buff.OnRemoved -= () => RemoveManagedBuff(mediator, buff);
+    }
+
+    [ClientRpc(includeOwner = true)]
+    public void Rpc_SpawnLinearAreaVFX(
+    Vector3 origin,
+    Vector3 direction,
+    float range,
+    float width,
+    string materialResourcePath,
+    float duration)
+    {
+        Transform target = unit.transform;
+
+        // 1)  build the flat quad
+        Mesh quad = MeshFactory.BuildRectangle(range, width, flipWinding: true);
+
+        // Create a simple purple material in code
+        Material mat = new Material(Shader.Find("Standard"));
+        mat.color = new Color(0.6f, 0.2f, 0.8f, 1f); // RGBA for purple
+
+        // 2) Load the material (you can also cache this if you like)
+        // Material mat = Resources.Load<Material>(materialResourcePath);
+
+        // 3) Spawn it
+        //    Center it at origin + forward * (range/2), rotate so its length aligns with `direction`
+        Quaternion localRot = Quaternion.identity;
+
+        // center it at origin + forward*(range/2)
+        Vector3 localPos = Vector3.up + Vector3.forward * (range * 0.5f);
+
+         MeshVFXSpawner.Spawn(quad, mat, localPos, localRot, duration, target);
     }
 
     [Server]

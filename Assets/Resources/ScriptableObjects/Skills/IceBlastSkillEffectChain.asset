@@ -13,17 +13,29 @@ MonoBehaviour:
   m_Name: IceBlastSkillEffectChain
   m_EditorClassIdentifier: 
   rootNodes:
-  - rid: 5250463939730342002
+  - rid: 5250464128112001144
+  - rid: 5250464128112001147
   references:
     version: 2
     RefIds:
-    - rid: 5250463939730342002
+    - rid: 5250464128112001144
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 41856641b16ef43f592ed2770bb0d4e2, type: 2}
+        children: []
+    - rid: 5250464128112001147
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 608e9b2423db1411980935c3ec5bc22e, type: 2}
+        children:
+        - rid: 5250464128112001148
+    - rid: 5250464128112001148
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: f6db72ab086e3447eb33a0bdd2b2f1a0, type: 2}
         children:
-        - rid: 5250463939730342015
-    - rid: 5250463939730342015
+        - rid: 5250464128112001149
+    - rid: 5250464128112001149
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 5c4ffd98e94074aa5a09a5c8ac9682b8, type: 2}
