@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02d4628603b564108a7d43f9092f482b, type: 3}
-  m_Name: SkillEffectMechanicChannel2s
+  m_Name: SkillEffectMechanicChannel1s
   m_EditorClassIdentifier: 
-  channelDuration: 2
-  moveSpeedPercent: 0.7
+  channelDuration: 1
+  moveSpeedPercent: 0
