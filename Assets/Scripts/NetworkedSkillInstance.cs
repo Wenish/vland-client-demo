@@ -144,9 +144,9 @@ public class NetworkedSkillInstance : NetworkBehaviour
     float range,
     float width,
     string materialResourcePath,
-    float duration)
+    float duration,
+    Transform target)
     {
-        Transform target = unit.transform;
 
         // 1)  build the flat quad
         Mesh quad = MeshFactory.BuildRectangle(range, width, flipWinding: true);
@@ -165,7 +165,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         // center it at origin + forward*(range/2)
         Vector3 localPos = Vector3.up + Vector3.forward * (range * 0.5f);
 
-         MeshVFXSpawner.Spawn(quad, mat, localPos, localRot, duration, target);
+        MeshVFXSpawner.Spawn(quad, mat, localPos, localRot, duration, target);
     }
 
     [Server]
