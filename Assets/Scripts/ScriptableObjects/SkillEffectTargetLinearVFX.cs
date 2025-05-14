@@ -21,19 +21,24 @@ public class SkillEffectTargetLinearVFX : SkillEffectData
 
     public override IEnumerator Execute(CastContext ctx, List<UnitController> targets, Action<List<UnitController>> onComplete)
     {
-        // Only the server (or host) should send the RPC out
-        if (NetworkServer.active)
+        foreach (var target in targets)
         {
-            Vector3 origin    = ctx.caster.transform.position + Vector3.up * 0.01f;
-            Vector3 direction = ctx.caster.transform.forward;
+            // Only the server (or host) should send the RPC out
+            if (NetworkServer.active)
+            {
+                Vector3 origin = ctx.caster.transform.position + Vector3.up * 0.01f;
+                Vector3 direction = ctx.caster.transform.forward;
 
-            ctx.skillInstance.Rpc_SpawnLinearAreaVFX(
-                origin,
-                direction,
-                range,
-                width,
-                materialResourcePath,
-                duration);
+                ctx.skillInstance.Rpc_SpawnLinearAreaVFX(
+                    origin,
+                    direction,
+                    range,
+                    width,
+                    materialResourcePath,
+                    duration,
+                    target.transform
+                );
+            }
         }
 
         // pass the (unchanged) targets back into the pipeline
