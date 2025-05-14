@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,14 +19,24 @@ public class SkillData : ScriptableObject
     [Header("UI")]
     public Texture2D iconTexture;
 
-    public void TriggerInit(CastContext castContext)
+    public IEnumerator ExecuteInitCoroutine(CastContext castContext)
     {
-        initTrigger?.Execute(castContext, new List<UnitController> { castContext.caster });
+        if (initTrigger == null) yield break;
+
+        var targets = new List<UnitController> { castContext.caster };
+        yield return castContext.skillInstance.StartCoroutine(
+            initTrigger.ExecuteCoroutine(castContext, targets)
+        );
     }
 
-    public void TriggerCast(CastContext castContext)
+    public IEnumerator ExecuteCastCoroutine(CastContext castContext)
     {
-        castTrigger?.Execute(castContext, new List<UnitController> { castContext.caster });
+        if (castTrigger == null) yield break;
+
+        var targets = new List<UnitController> { castContext.caster };
+        yield return castContext.skillInstance.StartCoroutine(
+            castTrigger.ExecuteCoroutine(castContext, targets)
+        );
     }
 }
 
