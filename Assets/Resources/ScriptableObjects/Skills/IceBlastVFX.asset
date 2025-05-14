@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 20
   width: 2
-  materialResourcePath: Materials/VFX/LinearAreaHighlight
+  materialResourcePath: Materials/VFX/Placeholder
   duration: 1
