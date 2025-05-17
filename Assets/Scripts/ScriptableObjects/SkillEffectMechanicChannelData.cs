@@ -16,6 +16,10 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     [Range(0f, 1f)]
     public float moveSpeedPercent = 0f;
 
+    [Tooltip("Percentage (0-1) of the caster's base turn speed allowed during channel.")]
+    [Range(0f, 1f)]
+    public float turnSpeedPercent = 0f;
+
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
     public override IEnumerator Execute(
@@ -28,9 +32,16 @@ public class SkillEffectMechanicChannelData : SkillEffectData
         StatModifier moveSpeedModifier = new StatModifier() {
             Type = StatType.MovementSpeed,
             ModifierType = ModifierType.Percent,
-            Value = moveSpeedPercent - 1f
+            Value = moveSpeedPercent
         };
         caster.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
+        
+        StatModifier turnSpeedModifier = new StatModifier() {
+            Type = StatType.TurnSpeed,
+            ModifierType = ModifierType.Percent,
+            Value = turnSpeedPercent
+        };
+        caster.unitMediator.Stats.ApplyModifier(turnSpeedModifier);
 
         float elapsed = 0f;
         while (elapsed < channelDuration)
@@ -46,6 +57,7 @@ public class SkillEffectMechanicChannelData : SkillEffectData
 
         // Remove the move speed modifier
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
+        caster.unitMediator.Stats.RemoveModifier(turnSpeedModifier);
         // Hand back the same targets so the chain continues
         if (ctx.IsCancelled) yield break;
 

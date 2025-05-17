@@ -3,6 +3,7 @@ public enum StatType
     Health,
     MovementSpeed,
     Shield,
+    TurnSpeed,
 }
 
 [System.Serializable]
