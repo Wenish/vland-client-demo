@@ -36,7 +36,7 @@ public class WeaponController : NetworkBehaviour
         StatModifier moveSpeedModifier = new StatModifier() {
             Type = StatType.MovementSpeed,
             ModifierType = ModifierType.Percent,
-            Value = weaponData.moveSpeedPercentWhileAttacking - 1,
+            Value = weaponData.moveSpeedPercentWhileAttacking,
         };
         attacker.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
         await Task.Delay((int)delay);

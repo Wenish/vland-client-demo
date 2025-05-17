@@ -190,7 +190,12 @@ public class UnitController : NetworkBehaviour
     {
         if(IsDead) return;
 
-        float lerpedAngle = Mathf.LerpAngle(transform.rotation.eulerAngles.y, angle, Time.deltaTime * 10);
+        float turnSpeed = unitMediator.Stats.GetStat(StatType.TurnSpeed); // Should be in range [0,1]
+        if (turnSpeed <= 0f) return; // Do not turn if turnSpeed is 0
+
+        float currentY = transform.rotation.eulerAngles.y;
+        float targetY = angle;
+        float lerpedAngle = Mathf.LerpAngle(currentY, targetY, Time.deltaTime * 10 * turnSpeed);
         transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
     }
 

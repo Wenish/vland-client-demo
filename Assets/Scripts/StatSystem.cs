@@ -16,6 +16,7 @@ public class StatSystem
         baseStats[StatType.Health] = this.mediator.UnitController.maxHealth;
         baseStats[StatType.MovementSpeed] = this.mediator.UnitController.moveSpeed;
         baseStats[StatType.Shield] = this.mediator.UnitController.maxShield;
+        baseStats[StatType.TurnSpeed] = 1f;
     }
 
     public void SetBaseStat(StatType stat, float value)
@@ -54,7 +55,7 @@ public class StatSystem
             if (mod.ModifierType == ModifierType.Flat)
                 value += mod.Value;
             else if (mod.ModifierType == ModifierType.Percent)
-                value *= 1 + mod.Value;
+                value *= mod.Value;
         }
 
         return value;

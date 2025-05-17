@@ -33,7 +33,8 @@ public class UnitMediator : NetworkBehaviour
                 UnitController.maxShield = (int)Stats.GetStat(StatType.Shield);
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                Debug.LogWarning($"Stat {type} not handled in UnitMediator.");
+                break;
         }
     }
 

@@ -15,6 +15,6 @@ MonoBehaviour:
   buffId: Swiftness
   StatType: 1
   ModifierType: 1
-  Value: 0.5
+  Value: 1.5
   duration: 3
   uniqueMode: 1
