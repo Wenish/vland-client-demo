@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ZombyGameScene.unity
     guid: bc00c7e5e4602864692d947ff2cbf17e
+  - enabled: 1
+    path: Assets/Scenes/GameplayTrainingGrounds.unity
+    guid: c82fc1f29bd4f7046bc286acdbaf684f
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

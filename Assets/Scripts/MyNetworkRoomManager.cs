@@ -30,7 +30,8 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// <summary>
     /// This is called on the server when the server is started - including when a host is started.
     /// </summary>
-    public override void OnRoomStartServer() {
+    public override void OnRoomStartServer()
+    {
         base.OnRoomStartServer();
         StartCoroutine(RegisterLobby());
         OpenUPnPPort(gamePort);
@@ -39,7 +40,8 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// <summary>
     /// This is called on the server when the server is stopped - including when a host is stopped.
     /// </summary>
-    public override void OnRoomStopServer() {
+    public override void OnRoomStopServer()
+    {
         base.OnRoomStopServer();
         if (upnpSuccess)
         {
@@ -51,7 +53,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// <summary>
     /// This is called on the host when a host is started.
     /// </summary>
-    public override void OnRoomStartHost() {}
+    public override void OnRoomStartHost() { }
 
     /// <summary>
     /// This is called on the host when the host is stopped.
@@ -71,11 +73,12 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
     {
         base.OnRoomServerDisconnect(conn);
-        if (Utils.IsSceneActive(GameplayScene)) {
+        if (Utils.IsSceneActive(GameplayScene))
+        {
             GameObject player = conn.identity.gameObject;
             PlayerController playerController = player.GetComponent<PlayerController>();
             NetworkServer.Destroy(playerController.Unit);
-        };
+        }
     }
 
     /// <summary>
@@ -286,5 +289,19 @@ public class MyNetworkRoomManager : NetworkRoomManager
         {
             Debug.LogError($"❌ Fehler beim Schließen des Ports: {ex.Message}");
         }
+    }
+
+    [Server]
+    public void StartGameWithSelectedMap(string mapName)
+    {
+        GameplayScene = mapName;
+        ServerChangeScene(GameplayScene);
+    }
+
+    [ContextMenu("Select Gamplay Training Grounds")]
+    [Server]
+    public void SelectSampleMap()
+    {
+        StartGameWithSelectedMap("GameplayTrainingGrounds");
     }
 }
