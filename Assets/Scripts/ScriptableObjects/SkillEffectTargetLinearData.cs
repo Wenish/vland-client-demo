@@ -42,7 +42,7 @@ public class SkillEffectTargetLinear : SkillEffectTarget
             drawer = castContext.caster.gameObject.AddComponent<SkillEffectTargetLinearDebugDrawer>();
         }
 
-        drawer.origin = origin;
+        drawer.origin = origin; // Adjust to ground level
         drawer.direction = direction;
         drawer.range = range;
         drawer.width = width;
