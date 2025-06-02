@@ -10,6 +10,7 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
     [Tooltip("Same as your TargetLinear range/width")]
     public float range = 5f;
     public float width = 1f;
+    public Vector2 offset = Vector2.zero;
 
     [Tooltip("Path under Resources to your unlit transparent VFX material")]
     public string materialResourcePath = "Materials/VFX/LinearAreaHighlight";
@@ -40,7 +41,8 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
                     materialResourcePath,
                     duration,
                     target.transform,
-                    shape
+                    shape,
+                    offset
                 );
             }
         }

@@ -146,7 +146,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         string materialResourcePath,
         float duration,
         Transform target,
-        AreaVFXShape shape)
+        AreaVFXShape shape,
+        Vector2 offset)
     {
         Mesh mesh = shape switch
         {
@@ -157,8 +158,13 @@ public class NetworkedSkillInstance : NetworkBehaviour
         };
 
         Material mat = Resources.Load<Material>(materialResourcePath);
+        // Offset in the direction of 'direction' (forward) and its right vector
+        Vector3 forward = direction.normalized;
+        Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
 
-        Vector3 worldPos = origin;
+        Vector3 offsetPosition = forward * offset.y + right * offset.x;
+
+        Vector3 worldPos = origin + offsetPosition;
         if (shape == AreaVFXShape.Rectangle)
         {
             // For rectangle, center it at origin + forward * (range/2)
