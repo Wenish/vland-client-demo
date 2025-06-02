@@ -138,30 +138,45 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [ClientRpc(includeOwner = true)]
-    public void Rpc_SpawnLinearAreaVFX(
-    Vector3 origin,
-    Vector3 direction,
-    float range,
-    float width,
-    string materialResourcePath,
-    float duration,
-    Transform target)
+    public void Rpc_SpawnAreaVFX(
+        Vector3 origin,
+        Vector3 direction,
+        float range,
+        float width,
+        string materialResourcePath,
+        float duration,
+        Transform target,
+        AreaVFXShape shape)
     {
+        Mesh mesh = shape switch
+        {
+            AreaVFXShape.Rectangle => MeshFactory.BuildRectangle(range, width, flipWinding: true),
+            AreaVFXShape.Circle => MeshFactory.BuildCircle(radius: range, segments: 32),
+            AreaVFXShape.Cone => MeshFactory.BuildCone(radius: range, angleDegrees: width),
+            _ => throw new ArgumentOutOfRangeException(nameof(shape), shape, null)
+        };
 
-        // 1)  build the flat quad
-        Mesh quad = MeshFactory.BuildRectangle(range, width, flipWinding: true);
-
-        // 2) Load the material (you can also cache this if you like)
         Material mat = Resources.Load<Material>(materialResourcePath);
 
-        // 3) Spawn it
-        //    Center it at origin + forward * (range/2), rotate so its length aligns with `direction`
-        Quaternion localRot = Quaternion.identity;
+        Vector3 worldPos = origin;
+        if (shape == AreaVFXShape.Rectangle)
+        {
+            // For rectangle, center it at origin + forward * (range/2)
+            worldPos += direction.normalized * (range * 0.5f);
+        }
+        Quaternion worldRot = Quaternion.LookRotation(direction.normalized, Vector3.up * 0.01f);
 
-        // center it at origin + forward*(range/2)
-        Vector3 localPos = Vector3.up + Vector3.forward * (range * 0.5f);
+        Vector3 localPos = worldPos;
+        Quaternion localRot = worldRot;
 
-        MeshVFXSpawner.Spawn(quad, mat, localPos, localRot, duration, target);
+        if (target != null)
+        {
+            // Convert world to local
+            localPos = target.InverseTransformPoint(worldPos);
+            localRot = Quaternion.Inverse(target.rotation) * worldRot;
+        }
+
+        MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, target);
     }
 
     [Server]

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/VFX/TargetLinearArea")]
-public class SkillEffectTargetLinearVFX : SkillEffectData
+[CreateAssetMenu(menuName = "Game/Skills/Effects/VFX/TargetArea")]
+public class SkillEffectTargetAreaVFX : SkillEffectData
 {
     [Tooltip("Same as your TargetLinear range/width")]
     public float range = 5f;
@@ -17,6 +17,9 @@ public class SkillEffectTargetLinearVFX : SkillEffectData
     [Tooltip("How long the spawned mesh should live")]
     public float duration = 1f;
 
+    [Tooltip("Shape of the area VFX")]
+    public AreaVFXShape shape = AreaVFXShape.Rectangle;
+
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
     public override IEnumerator Execute(CastContext ctx, List<UnitController> targets, Action<List<UnitController>> onComplete)
@@ -26,17 +29,18 @@ public class SkillEffectTargetLinearVFX : SkillEffectData
             // Only the server (or host) should send the RPC out
             if (NetworkServer.active)
             {
-                Vector3 origin = ctx.caster.transform.position + Vector3.up * 0.01f;
-                Vector3 direction = ctx.caster.transform.forward;
-
-                ctx.skillInstance.Rpc_SpawnLinearAreaVFX(
+                Vector3 origin = target.transform.position;
+                Vector3 direction = target.transform.forward;
+            
+                ctx.skillInstance.Rpc_SpawnAreaVFX(
                     origin,
                     direction,
                     range,
                     width,
                     materialResourcePath,
                     duration,
-                    target.transform
+                    target.transform,
+                    shape
                 );
             }
         }
