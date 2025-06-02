@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 20
   width: 2
+  offset: {x: 0, y: 0}
   materialResourcePath: Materials/VFX/Placeholder
   duration: 1
   shape: 0
+  attachToTarget: 1

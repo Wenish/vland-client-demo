@@ -21,6 +21,8 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
     [Tooltip("Shape of the area VFX")]
     public AreaVFXShape shape = AreaVFXShape.Rectangle;
 
+    public bool attachToTarget = true;
+
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
     public override IEnumerator Execute(CastContext ctx, List<UnitController> targets, Action<List<UnitController>> onComplete)
@@ -32,7 +34,7 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
             {
                 Vector3 origin = target.transform.position;
                 Vector3 direction = target.transform.forward;
-            
+
                 ctx.skillInstance.Rpc_SpawnAreaVFX(
                     origin,
                     direction,
@@ -42,7 +44,8 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
                     duration,
                     target.transform,
                     shape,
-                    offset
+                    offset,
+                    attachToTarget
                 );
             }
         }

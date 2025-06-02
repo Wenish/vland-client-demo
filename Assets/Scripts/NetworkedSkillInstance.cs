@@ -147,7 +147,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         float duration,
         Transform target,
         AreaVFXShape shape,
-        Vector2 offset)
+        Vector2 offset,
+        bool attachToTarget)
     {
         Mesh mesh = shape switch
         {
@@ -175,14 +176,14 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Vector3 localPos = worldPos;
         Quaternion localRot = worldRot;
 
-        if (target != null)
+        if (attachToTarget && target != null)
         {
             // Convert world to local
             localPos = target.InverseTransformPoint(worldPos);
             localRot = Quaternion.Inverse(target.rotation) * worldRot;
         }
 
-        MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, target);
+        MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, attachToTarget ? target : null);
     }
 
     [Server]
