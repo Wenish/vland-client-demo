@@ -20,13 +20,11 @@ public static class MeshFactory
         };
 
         int[] tris = flipWinding
-            // face down: reverse winding
             ? new[] { 0, 2, 1, 2, 0, 3 }
-            // face up: normal winding
             : new[] { 0, 1, 2, 2, 3, 0 };
 
         Vector2[] uvs = {
-            new(0,0), new(1,0), new(1,1), new(0,1)
+            new(0, 0), new(1, 0), new(1, 1), new(0, 1)
         };
 
         var m = new Mesh();
@@ -42,19 +40,25 @@ public static class MeshFactory
     {
         Mesh mesh = new Mesh();
         Vector3[] vertices = new Vector3[segments + 1];
+        Vector2[] uvs = new Vector2[segments + 1];
         int[] triangles = new int[segments * 3];
 
         vertices[0] = Vector3.zero;
+        uvs[0] = new Vector2(0.5f, 0.5f);
+
         for (int i = 0; i < segments; i++)
         {
             float angle = 2 * Mathf.PI * i / segments;
-            vertices[i + 1] = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
+            float x = Mathf.Cos(angle);
+            float z = Mathf.Sin(angle);
+            vertices[i + 1] = new Vector3(x, 0, z) * radius;
+            uvs[i + 1] = new Vector2(x * 0.5f + 0.5f, z * 0.5f + 0.5f);
         }
 
         for (int i = 0; i < segments; i++)
         {
             int start = i + 1;
-            int end = i == segments - 1 ? 1 : i + 2;
+            int end = (i == segments - 1) ? 1 : i + 2;
             triangles[i * 3] = 0;
             triangles[i * 3 + 1] = end;
             triangles[i * 3 + 2] = start;
@@ -62,14 +66,13 @@ public static class MeshFactory
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+        mesh.uv = uvs;
         mesh.RecalculateNormals();
         return mesh;
     }
 
     public static Mesh BuildCone(float radius, float angleDegrees, int segments = 32)
     {
-        float angleRad = Mathf.Deg2Rad * angleDegrees;
-        float arcLength = radius * angleRad;
         return BuildSector(radius, angleDegrees, segments);
     }
 
@@ -77,14 +80,21 @@ public static class MeshFactory
     {
         Mesh mesh = new Mesh();
         float angleRad = Mathf.Deg2Rad * angleDegrees;
+
         Vector3[] vertices = new Vector3[segments + 2];
+        Vector2[] uvs = new Vector2[segments + 2];
         int[] triangles = new int[segments * 3];
 
         vertices[0] = Vector3.zero;
+        uvs[0] = new Vector2(0.5f, 0.5f);
+
         for (int i = 0; i <= segments; i++)
         {
             float angle = -angleRad / 2 + angleRad * i / segments;
-            vertices[i + 1] = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * radius;
+            float x = Mathf.Sin(angle);
+            float z = Mathf.Cos(angle);
+            vertices[i + 1] = new Vector3(x, 0, z) * radius;
+            uvs[i + 1] = new Vector2(x * 0.5f + 0.5f, z * 0.5f + 0.5f);
         }
 
         for (int i = 0; i < segments; i++)
@@ -96,8 +106,8 @@ public static class MeshFactory
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+        mesh.uv = uvs;
         mesh.RecalculateNormals();
         return mesh;
     }
-
 }
