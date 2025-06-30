@@ -8,6 +8,7 @@ public static class MeshVFXSpawner
         Vector3 position,
         Quaternion rotation,
         float duration,
+        MaterialPropertyBlock materialPropertyBlock = null,
         Transform parent = null)
     {
         var go = new GameObject("MeshVFX");
@@ -28,6 +29,8 @@ public static class MeshVFXSpawner
         mf.mesh = mesh;
         var mr = go.AddComponent<MeshRenderer>();
         mr.material = mat;
+
+        mr.SetPropertyBlock(materialPropertyBlock);
 
         Object.Destroy(go, duration);
     }
