@@ -15,7 +15,7 @@ MonoBehaviour:
   range: 20
   width: 2
   offset: {x: 0, y: 0}
-  materialResourcePath: Materials/VFX/Placeholder
+  materialResourcePath: Materials/VFX/SkillAreaRectFire
   duration: 1
   shape: 0
   attachToTarget: 1

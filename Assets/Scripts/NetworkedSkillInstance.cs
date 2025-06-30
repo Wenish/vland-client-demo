@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Mirror;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkedSkillInstance : NetworkBehaviour
@@ -152,7 +151,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         Mesh mesh = shape switch
         {
-            AreaVFXShape.Rectangle => MeshFactory.BuildRectangle(range, width, flipWinding: true),
+            AreaVFXShape.Rectangle => MeshFactory.BuildRectangle(range, width),
             AreaVFXShape.Circle => MeshFactory.BuildCircle(radius: range, segments: 32),
             AreaVFXShape.Cone => MeshFactory.BuildCone(radius: range, angleDegrees: width),
             _ => throw new ArgumentOutOfRangeException(nameof(shape), shape, null)
@@ -183,7 +182,24 @@ public class NetworkedSkillInstance : NetworkBehaviour
             localRot = Quaternion.Inverse(target.rotation) * worldRot;
         }
 
-        MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, attachToTarget ? target : null);
+        var materialPropertyBlock = new MaterialPropertyBlock();
+        switch (shape)
+        {
+            case AreaVFXShape.Rectangle:
+                materialPropertyBlock.SetFloat("_Width", width);
+                materialPropertyBlock.SetFloat("_Length", range);
+
+                break;
+            case AreaVFXShape.Circle:
+                materialPropertyBlock.SetFloat("_Radius", range);
+                break;
+            case AreaVFXShape.Cone:
+                materialPropertyBlock.SetFloat("_Radius", range);
+                materialPropertyBlock.SetFloat("_AngleDegrees", width);
+                break;
+        }
+
+        MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, materialPropertyBlock, attachToTarget ? target : null);
     }
 
     [Server]

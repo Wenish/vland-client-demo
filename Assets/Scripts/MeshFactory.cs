@@ -5,36 +5,59 @@ public static class MeshFactory
 {
     /// <summary>
     /// Builds a flat quad (XZ plane) of length `range` (Z) and width `width` (X),
-    /// centered on the local origin. If flipWinding=true, its normals face down.
+    /// centered on the local origin.
     /// </summary>
-    public static Mesh BuildRectangle(float range, float width, bool flipWinding = false)
+
+    public static Mesh BuildRectangle(float length, float width, float maxSegmentSize = 0.3f)
     {
-        float hr = range * 0.5f;
-        float hw = width * 0.5f;
+        int xSegments = Mathf.Max(1, Mathf.CeilToInt(width / maxSegmentSize));
+        int zSegments = Mathf.Max(1, Mathf.CeilToInt(length / maxSegmentSize));
 
-        Vector3[] verts = {
-            new(-hw, 0f, -hr), // 0 back-left
-            new( hw, 0f, -hr), // 1 back-right
-            new( hw, 0f,  hr), // 2 front-right
-            new(-hw, 0f,  hr), // 3 front-left
-        };
+        float halfWidth = width * 0.5f;
+        float halfLength = length * 0.5f;
 
-        int[] tris = flipWinding
-            ? new[] { 0, 2, 1, 2, 0, 3 }
-            : new[] { 0, 1, 2, 2, 3, 0 };
+        Vector3[] vertices = new Vector3[(xSegments + 1) * (zSegments + 1)];
+        Vector2[] uvs = new Vector2[vertices.Length];
+        int[] triangles = new int[xSegments * zSegments * 6];
 
-        Vector2[] uvs = {
-            new(0, 0), new(1, 0), new(1, 1), new(0, 1)
-        };
+        for (int z = 0; z <= zSegments; z++)
+        {
+            for (int x = 0; x <= xSegments; x++)
+            {
+                int i = z * (xSegments + 1) + x;
+                float xPos = Mathf.Lerp(-halfWidth, halfWidth, (float)x / xSegments);
+                float zPos = Mathf.Lerp(-halfLength, halfLength, (float)z / zSegments);
+                vertices[i] = new Vector3(xPos, 0f, zPos);
+                uvs[i] = new Vector2((float)x / xSegments, (float)z / zSegments);
+            }
+        }
 
-        var m = new Mesh();
-        m.name = "Procedural_Rectangle";
-        m.vertices = verts;
-        m.triangles = tris;
+        int tri = 0;
+        for (int z = 0; z < zSegments; z++)
+        {
+            for (int x = 0; x < xSegments; x++)
+            {
+                int i = z * (xSegments + 1) + x;
+
+                triangles[tri++] = i;
+                triangles[tri++] = i + xSegments + 1;
+                triangles[tri++] = i + 1;
+
+                triangles[tri++] = i + 1;
+                triangles[tri++] = i + xSegments + 1;
+                triangles[tri++] = i + xSegments + 2;
+            }
+        }
+
+        Mesh m = new Mesh();
+        m.name = $"GridRect_{width:F2}x{length:F2}";
+        m.vertices = vertices;
+        m.triangles = triangles;
         m.uv = uvs;
         m.RecalculateNormals();
         return m;
     }
+
 
     public static Mesh BuildCircle(float radius, int segments)
     {
