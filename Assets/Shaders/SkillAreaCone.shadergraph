@@ -1910,7 +1910,7 @@
     "m_RefNameGeneratedByDisplayName": "AngleDegrees",
     "m_DefaultReferenceName": "_AngleDegrees",
     "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
+    "m_GeneratePropertyBlock": false,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
     "m_DismissedVersion": 0,
@@ -1998,8 +1998,8 @@
     "m_ObjectId": "73db99dbb310429d9099dcf3cd2edb84",
     "m_Title": "radiusFade",
     "m_Position": {
-        "x": -1173.0001220703125,
-        "y": -508.0
+        "x": -1173.0,
+        "y": -508.0000305175781
     }
 }
 
@@ -2143,7 +2143,7 @@
     "m_Title": "angleFade",
     "m_Position": {
         "x": -1166.5,
-        "y": 190.0
+        "y": 190.00013732910157
     }
 }
 
@@ -2223,7 +2223,7 @@
     "m_Title": "distanceToCenter",
     "m_Position": {
         "x": -1418.5,
-        "y": -211.5
+        "y": -211.49993896484376
     }
 }
 
@@ -2312,7 +2312,7 @@
     "m_Title": "angleRadians",
     "m_Position": {
         "x": -1540.5,
-        "y": -25.000003814697267
+        "y": -24.99993896484375
     }
 }
 
@@ -2540,8 +2540,8 @@
     "m_ObjectId": "a877af3683db42748855e00507a54ec2",
     "m_Title": "alphaFade",
     "m_Position": {
-        "x": -879.0001220703125,
-        "y": -165.0
+        "x": -879.0,
+        "y": -164.9998779296875
     }
 }
 
@@ -2774,7 +2774,7 @@
     "m_RefNameGeneratedByDisplayName": "Radius",
     "m_DefaultReferenceName": "_Radius",
     "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
+    "m_GeneratePropertyBlock": false,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
     "m_DismissedVersion": 0,

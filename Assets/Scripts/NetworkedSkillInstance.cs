@@ -152,7 +152,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Mesh mesh = shape switch
         {
             AreaVFXShape.Rectangle => MeshFactory.BuildRectangle(range, width),
-            AreaVFXShape.Circle => MeshFactory.BuildCircle(radius: range, segments: 32),
+            AreaVFXShape.Circle => MeshFactory.BuildCircle(radius: range, segments: Mathf.Clamp(Mathf.CeilToInt(range * 16), 16, 256)),
             AreaVFXShape.Cone => MeshFactory.BuildCone(radius: range, angleDegrees: width),
             _ => throw new ArgumentOutOfRangeException(nameof(shape), shape, null)
         };
