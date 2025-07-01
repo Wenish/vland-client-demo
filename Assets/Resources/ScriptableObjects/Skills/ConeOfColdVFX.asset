@@ -15,7 +15,7 @@ MonoBehaviour:
   range: 10
   width: 35
   offset: {x: 0, y: 0}
-  materialResourcePath: Materials/VFX/LinearAreaHighlight
+  materialResourcePath: Materials/VFX/SkillAreaConeCold
   duration: 0.5
   shape: 2
   attachToTarget: 0
