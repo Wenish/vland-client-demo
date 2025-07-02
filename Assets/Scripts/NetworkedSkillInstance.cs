@@ -184,6 +184,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         var materialPropertyBlock = new MaterialPropertyBlock();
         materialPropertyBlock.SetFloat("_Duration", duration);
+        materialPropertyBlock.SetFloat("_SpawnTime", Time.time);
         switch (shape)
         {
             case AreaVFXShape.Rectangle:
