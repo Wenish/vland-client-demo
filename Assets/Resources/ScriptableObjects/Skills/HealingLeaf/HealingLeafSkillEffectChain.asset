@@ -17,8 +17,14 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 5656048446822154342
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: bc02c666c5c0a43d88c202debf9458b9, type: 2}
+        children: []
     - rid: 6751759145628336213
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 7bb4abf1ed455415e8221cfe7ba3c344, type: 2}
-        children: []
+        children:
+        - rid: 5656048446822154342
