@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ConeOfCold
   m_EditorClassIdentifier: 
   soundName: ConeOfCold
-  clip: {fileID: 8300000, guid: 4e85b7457994b0449a04abb094400f57, type: 3}
+  clip: {fileID: 8300000, guid: 6f6e566b77c17a047973a8c60db8fa75, type: 3}
   mixerGroup: {fileID: -5574617817705501464, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
   isSpatial: 1
   volume: 1
