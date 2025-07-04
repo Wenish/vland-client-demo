@@ -1,0 +1,75 @@
+using UnityEngine;
+
+public class SoundManager : MonoBehaviour
+{
+    public static SoundManager Instance;
+
+    [Header("References")]
+    [SerializeField] private GameObject audioSourcePrefab;
+    [SerializeField] private SoundDatabase soundDatabase;
+
+    private void Awake()
+    {
+        // Singleton pattern
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Persist across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Prevent duplicates
+        }
+    }
+
+    /// <summary>
+    /// Play a sound by its name as defined in the SoundDatabase.
+    /// </summary>
+    /// <param name="soundName">Name of the sound in SoundDatabase</param>
+    /// <param name="position">Optional world position (null = global 2D sound)</param>
+    public void PlaySound(string soundName, Vector3? position = null)
+    {
+        SoundData soundData = soundDatabase.GetSound(soundName);
+        if (soundData == null)
+        {
+            Debug.LogWarning($"[SoundManager] Sound '{soundName}' not found in SoundDatabase.");
+            return;
+        }
+
+        PlaySound(soundData, position);
+    }
+
+    /// <summary>
+    /// Play a SoundData object directly.
+    /// </summary>
+    /// <param name="soundData">The SoundData asset to play</param>
+    /// <param name="position">Optional world position (null = global 2D sound)</param>
+    public void PlaySound(SoundData soundData, Vector3? position = null)
+    {
+        if (soundData == null || soundData.clip == null)
+        {
+            Debug.LogWarning("[SoundManager] Invalid SoundData or missing AudioClip.");
+            return;
+        }
+
+        Vector3 spawnPosition = position ?? Vector3.zero;
+        GameObject go = Instantiate(audioSourcePrefab, spawnPosition, Quaternion.identity);
+        AudioSource source = go.GetComponent<AudioSource>();
+
+        if (source == null)
+        {
+            Debug.LogError("[SoundManager] AudioSource prefab is missing an AudioSource component.");
+            Destroy(go);
+            return;
+        }
+
+        source.clip = soundData.clip;
+        source.outputAudioMixerGroup = soundData.mixerGroup;
+        source.volume = soundData.volume;
+        source.pitch = soundData.pitch;
+        source.spatialBlend = soundData.isSpatial ? 1f : 0f;
+
+        source.Play();
+        Destroy(go, soundData.clip.length / soundData.pitch); // Cleanup
+    }
+}
