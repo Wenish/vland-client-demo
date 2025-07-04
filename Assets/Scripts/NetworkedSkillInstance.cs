@@ -232,6 +232,14 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Destroy(vfxInstance, duration);
     }
 
+    [ClientRpc(includeOwner = true)]
+    public void Rpc_PlaySound(string soundName, Vector3 position)
+    {
+        if (string.IsNullOrEmpty(soundName)) return;
+
+        SoundManager.Instance.PlaySound(soundName, position);
+    }
+
     [Server]
     public void Cleanup()
     {
