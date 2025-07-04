@@ -121,7 +121,7 @@ Material:
     - _DstBlendAlpha: 0
     - _Duration: 1
     - _EnvironmentReflections: 1
-    - _FadeInSpeed: 1
+    - _FadeInSpeed: 1.15
     - _FadeOutSpeed: 0.2
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -146,11 +146,11 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BorderColor: {r: 0.1446154, g: 0.23138462, b: 0.376, a: 0.3137255}
+    - _BorderColor: {r: 0.620194, g: 0.62556475, b: 0.7264151, a: 0.23529412}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Direction: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.22535712, g: 0.552125, b: 0.6309999, a: 0.14901961}
+    - _MainColor: {r: 0.7058824, g: 0.77736115, b: 0.9529412, a: 0.14901961}
     - _PatternTiling: {r: 2, g: 2, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
