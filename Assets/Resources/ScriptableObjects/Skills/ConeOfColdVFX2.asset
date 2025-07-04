@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
-  m_Name: TestVFXGraph
+  m_Script: {fileID: 11500000, guid: 2e8afcf9dee6b4295823b5da5f340240, type: 3}
+  m_Name: ConeOfColdVFX2
   m_EditorClassIdentifier: 
-  vfxPrefab: {fileID: 8437746579173084844, guid: d59c0be74eb0a4edbb30d686cc4c8b95, type: 3}
-  duration: 1
-  attachToTarget: 1
+  range: 10.5
+  width: 40
+  offset: {x: 0, y: 0}
+  materialResourcePath: Materials/VFX/SkillAreaConeCold2
+  duration: 0.6
+  shape: 2
+  attachToTarget: 0

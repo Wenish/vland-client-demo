@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SkillAreaConeCold
+  m_Name: SkillAreaConeColdBase
   m_Shader: {fileID: -6465566751694194690, guid: a4bd8468317964692a249e7541b7824b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -29,7 +29,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2998
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
@@ -109,7 +109,7 @@ Material:
     - _AngleDegrees: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _BorderSize: 4
+    - _BorderSize: 0.4
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -121,7 +121,7 @@ Material:
     - _DstBlendAlpha: 0
     - _Duration: 1
     - _EnvironmentReflections: 1
-    - _FadeInSpeed: 1
+    - _FadeInSpeed: 50
     - _FadeOutSpeed: 0.2
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -129,14 +129,14 @@ Material:
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
-    - _PatternStrength: 1
+    - _PatternStrength: 0
     - _QueueControl: 0
-    - _QueueOffset: 0
+    - _QueueOffset: -2
     - _Radius: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _Softness: 0.2
+    - _Softness: 0.04
     - _SpawnTime: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -146,12 +146,12 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BorderColor: {r: 1.8366362, g: 9.983764, b: 9.365777, a: 0.043137256}
+    - _BorderColor: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Direction: {r: 0, g: -2, b: 0, a: 0}
+    - _Direction: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.11654504, g: 0.7653663, b: 0.9150943, a: 0.08627451}
-    - _PatternTiling: {r: 7, g: 7, b: 0, a: 0}
+    - _MainColor: {r: 0.0034264885, g: 0.07510301, b: 0.103773594, a: 0.12941177}
+    - _PatternTiling: {r: 1, g: 1, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
