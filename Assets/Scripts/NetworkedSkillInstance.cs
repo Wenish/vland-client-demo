@@ -204,6 +204,34 @@ public class NetworkedSkillInstance : NetworkBehaviour
         MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, materialPropertyBlock, attachToTarget ? target : null);
     }
 
+    [ClientRpc(includeOwner = true)]
+    public void Rpc_SpawnVFXGraphPrefab(
+        Vector3 position,
+        Quaternion rotation,
+        float duration,
+        bool attachToTarget,
+        uint targetNetId,
+        string prefabName)
+    {
+        Transform parent = null;
+        if (attachToTarget && targetNetId != 0)
+        {
+            if (NetworkServer.spawned.TryGetValue(targetNetId, out var identity))
+                parent = identity.transform;
+        }
+
+        // Load the prefab from Resources by name
+        var prefab = Resources.Load<GameObject>("Vfx/" + prefabName);
+        if (prefab == null)
+        {
+            UnityEngine.Debug.LogWarning($"VFX Prefab '{prefabName}' not found in Resources!");
+            return;
+        }
+
+        var vfxInstance = Instantiate(prefab, position, rotation, parent);
+        Destroy(vfxInstance, duration);
+    }
+
     [Server]
     public void Cleanup()
     {
