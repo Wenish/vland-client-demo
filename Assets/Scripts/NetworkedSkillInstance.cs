@@ -233,11 +233,18 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [ClientRpc(includeOwner = true)]
-    public void Rpc_PlaySound(string soundName, Vector3 position)
+    public void Rpc_PlaySound(string soundName, Vector3 position, bool attachToTarget, uint targetNetId)
     {
         if (string.IsNullOrEmpty(soundName)) return;
 
-        SoundManager.Instance.PlaySound(soundName, position);
+        Transform parent = null;
+        if (attachToTarget && targetNetId != 0)
+        {
+            if (NetworkServer.spawned.TryGetValue(targetNetId, out var identity))
+                parent = identity.transform;
+        }
+
+        SoundManager.Instance.PlaySound(soundName, position, parent);
     }
 
     [Server]

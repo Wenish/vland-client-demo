@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VFX;
 
 [CreateAssetMenu(menuName = "Game/Skills/Effects/VFX/Graph")]
 public class SkillEffectMechanicVFXGraph : SkillEffectMechanic

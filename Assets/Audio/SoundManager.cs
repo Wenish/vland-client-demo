@@ -27,7 +27,8 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     /// <param name="soundName">Name of the sound in SoundDatabase</param>
     /// <param name="position">Optional world position (null = global 2D sound)</param>
-    public void PlaySound(string soundName, Vector3? position = null)
+    /// <param name="parent">Optional parent GameObject to attach the sound to</param>
+    public void PlaySound(string soundName, Vector3? position = null, Transform parent = null)
     {
         SoundData soundData = soundDatabase.GetSound(soundName);
         if (soundData == null)
@@ -36,7 +37,7 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        PlaySound(soundData, position);
+        PlaySound(soundData, position, parent);
     }
 
     /// <summary>
@@ -44,7 +45,8 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     /// <param name="soundData">The SoundData asset to play</param>
     /// <param name="position">Optional world position (null = global 2D sound)</param>
-    public void PlaySound(SoundData soundData, Vector3? position = null)
+    /// <param name="parent">Optional parent GameObject to attach the sound to</param>
+    public void PlaySound(SoundData soundData, Vector3? position = null, Transform parent = null)
     {
         if (soundData == null || soundData.clip == null)
         {
@@ -54,6 +56,13 @@ public class SoundManager : MonoBehaviour
 
         Vector3 spawnPosition = position ?? Vector3.zero;
         GameObject go = Instantiate(audioSourcePrefab, spawnPosition, Quaternion.identity);
+        
+        // Attach to parent if provided
+        if (parent != null)
+        {
+            go.transform.SetParent(parent);
+        }
+        
         AudioSource source = go.GetComponent<AudioSource>();
 
         if (source == null)

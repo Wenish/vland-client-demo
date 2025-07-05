@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: ConeOfColdSound
   m_EditorClassIdentifier: 
   soundData: {fileID: 11400000, guid: a3fa7e90c44187043860b3a1aed003ad, type: 2}
+  attachToTarget: 0
