@@ -7,6 +7,8 @@ public class SkillEffectMechanicSound : SkillEffectMechanic
     [Tooltip("Sound to play when the effect is executed")]
     public SoundData soundData;
 
+    public bool attachToTarget = true;
+
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
         if (soundData != null && soundData.clip != null)
@@ -17,7 +19,9 @@ public class SkillEffectMechanicSound : SkillEffectMechanic
                 {
                     castContext.skillInstance.Rpc_PlaySound(
                         soundData.soundName,
-                        target.transform.position
+                        target.transform.position,
+                        attachToTarget,
+                        target.netId
                     );
                 }
             }
