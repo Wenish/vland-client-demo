@@ -9,13 +9,27 @@ public class InteractionZone : MonoBehaviour
     public int goldCost = 0;
 
     private HashSet<UnitController> unitsInZone = new HashSet<UnitController>();
+    private Dictionary<UnitController, System.Action> deathListeners = new Dictionary<UnitController, System.Action>();
+    private Dictionary<UnitController, System.Action> reviveListeners = new Dictionary<UnitController, System.Action>();
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<UnitController>(out var unit))
         {
+            if (unitsInZone.Contains(unit)) return;
             unitsInZone.Add(unit);
-            EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
+            // Listen for death
+            System.Action onDied = () => OnUnitDiedInZone(unit);
+            unit.OnDied += onDied;
+            deathListeners[unit] = onDied;
+            // Listen for revive
+            System.Action onRevive = () => OnUnitRevivedInZone(unit);
+            unit.OnRevive += onRevive;
+            reviveListeners[unit] = onRevive;
+            if (!unit.IsDead)
+            {
+                EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
+            }
         }
     }
 
@@ -23,18 +37,58 @@ public class InteractionZone : MonoBehaviour
     {
         if (other.TryGetComponent<UnitController>(out var unit))
         {
-            unitsInZone.Remove(unit);
+            RemoveUnitFromZone(unit);
+        }
+    }
+
+    private void OnUnitDiedInZone(UnitController unit)
+    {
+        // Remove interaction ability, but keep listeners for revive
+        if (unitsInZone.Contains(unit))
+        {
             EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
+        }
+    }
+
+    private void RemoveUnitFromZone(UnitController unit)
+    {
+        Debug.Log(unit.name + " exited interaction zone " + interactionId);
+        if (unitsInZone.Remove(unit))
+        {
+            if (deathListeners.TryGetValue(unit, out var onDied))
+            {
+                unit.OnDied -= onDied;
+                deathListeners.Remove(unit);
+            }
+            if (reviveListeners.TryGetValue(unit, out var onRevive))
+            {
+                unit.OnRevive -= onRevive;
+                reviveListeners.Remove(unit);
+            }
+            EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
+        }
+    }
+
+    private void OnUnitRevivedInZone(UnitController unit)
+    {
+        Debug.Log($"Unit {unit.name} revived in interaction zone {interactionId}");
+        // Only fire if the unit is still in the zone
+        if (unitsInZone.Contains(unit))
+        {
+            Debug.Log("Fire EventManager.Instance.Publish for UnitEnteredInteractionZone");
+            EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
         }
     }
 
     void OnDisable()
     {
-        foreach (var unit in unitsInZone)
+        foreach (var unit in new List<UnitController>(unitsInZone))
         {
-            EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
+            RemoveUnitFromZone(unit);
         }
         unitsInZone.Clear();
+        deathListeners.Clear();
+        reviveListeners.Clear();
     }
 
     private void OnDrawGizmos()

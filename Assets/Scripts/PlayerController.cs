@@ -33,7 +33,9 @@ public class PlayerController : NetworkBehaviour
     }
 
     [SerializeField]
-    public InteractionZone _interactionZone { get; private set; }
+    private InteractionZone _interactionZone;
+
+    public InteractionZone InteractionZone => _interactionZone;
 
     Plane _plane;
     Camera _cameraMain;
