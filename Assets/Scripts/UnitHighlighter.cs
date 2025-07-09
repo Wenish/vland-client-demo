@@ -6,7 +6,8 @@ public class UnitHighlighter : MonoBehaviour
     private GameObject lastHighlighted;
     private Camera _mainCamera;
 
-    public Color outlineColor = Color.yellow; // Default highlight color
+    [ColorUsage(true, true)]
+    public Color outlineColor = Color.yellow; // Default highlight color (HDR supported)
     public float outlineWidth = 2f; // Default outline width
 
 
