@@ -158,6 +158,7 @@ GameObject:
   - component: {fileID: 8398633881187561724}
   - component: {fileID: 1045805171326908767}
   - component: {fileID: 6377759380832418333}
+  - component: {fileID: -8212074392146612490}
   m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -339,3 +340,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fieldOfView: 60
   aspectRatio: 1.7777778
+--- !u!114 &-8212074392146612490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5913976703155713801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff450ad2ac5f149a0838f3948d4ba23c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
