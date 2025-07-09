@@ -1899,7 +1899,6 @@ GameObject:
   - component: {fileID: 910448190289000941}
   - component: {fileID: 824979864099430176}
   - component: {fileID: 6537859271937995573}
-  - component: {fileID: 5211931589797758588}
   m_Layer: 0
   m_Name: ModelZombie
   m_TagString: Untagged
@@ -1959,24 +1958,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 3
---- !u!114 &5211931589797758588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8460791704541548606}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 0.43529412, g: 0.4117647, b: 0.22352941, a: 0.21176471}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1 &8508782532214709301
 GameObject:
   m_ObjectHideFlags: 0

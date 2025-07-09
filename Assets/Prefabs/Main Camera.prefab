@@ -355,3 +355,5 @@ MonoBehaviour:
   unitLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  outlineColor: {r: 0.471, g: 0.44554052, b: 0.24186486, a: 0.40392157}
+  outlineWidth: 2

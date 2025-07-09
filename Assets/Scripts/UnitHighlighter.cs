@@ -6,6 +6,10 @@ public class UnitHighlighter : MonoBehaviour
     private GameObject lastHighlighted;
     private Camera _mainCamera;
 
+    public Color outlineColor = Color.yellow; // Default highlight color
+    public float outlineWidth = 2f; // Default outline width
+
+
     void Awake()
     {
         _mainCamera = Camera.main;
@@ -46,9 +50,18 @@ public class UnitHighlighter : MonoBehaviour
 
     void ApplyHighlight(GameObject unit)
     {
+        var outline = unit.AddComponent<Outline>();
+
+        outline.OutlineMode = Outline.Mode.OutlineAll;
+        outline.OutlineColor = outlineColor;
+        outline.OutlineWidth = outlineWidth;
+
+        return;
+        /* 
         var outline = unit.GetComponentInChildren<Outline>();
         outline.enabled = true;
             // Set emission color to a bright color (e.g., yellow)
+            */
 
     }
 
@@ -56,12 +69,23 @@ public class UnitHighlighter : MonoBehaviour
     {
         if (lastHighlighted != null)
         {
+
+            var outline = lastHighlighted.GetComponent<Outline>();
+            if (outline != null)
+            {
+                Destroy(outline); // Remove the outline component
+                Debug.Log($"[UnitHighlighter] Removed highlight from unit: {lastHighlighted.name}");
+            }
+
+            return;
+            /* 
             var outline = lastHighlighted.GetComponentInChildren<Outline>();
             if (outline != null)
             {
                 outline.enabled = false;
                 Debug.Log($"[UnitHighlighter] Disable highlight from unit: {lastHighlighted.name}");
             }
+            */
         }
     }
 
