@@ -99,8 +99,9 @@ public class UnitController : NetworkBehaviour
 
     public bool IsDead => health <= 0;
     private Rigidbody unitRigidbody;
+    private Collider unitCollider;
 
-    public event Action<(int current, int max)> OnHealthChange = delegate {};
+    public event Action<(int current, int max)> OnHealthChange = delegate { };
     public event Action<(int current, int max)> OnShieldChange = delegate {};
     public event Action<UnitController> OnAttackStart = delegate {};
     public event Action<UnitController> OnTakeDamage = delegate {};
@@ -120,6 +121,7 @@ public class UnitController : NetworkBehaviour
             health = maxHealth;
         }
         unitRigidbody = GetComponent<Rigidbody>();
+        unitCollider = GetComponent<Collider>();
         RaiseHealthChangeEvent();
         RaiseShieldChangeEvent();
     }
@@ -202,6 +204,8 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void TakeDamage(int damage, UnitController attacker)
     {
+        if (IsDead) return;
+
         OnTakeDamageEvent(damage, attacker);
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
@@ -306,13 +310,19 @@ public class UnitController : NetworkBehaviour
 
     private void Die()
     {
-        unitRigidbody.detectCollisions = false;
+        if (unitCollider != null)
+        {
+            unitCollider.isTrigger = true;
+        }
         RaiseOnDiedEvent();
     }
 
     private void Revive()
     {
-        unitRigidbody.detectCollisions = true;
+        if (unitCollider != null)
+        {
+            unitCollider.isTrigger = false;
+        }
         RaiseOnReviveEvent();
     }
 
