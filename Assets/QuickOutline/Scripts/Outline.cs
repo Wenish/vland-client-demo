@@ -94,13 +94,17 @@ public class Outline : MonoBehaviour {
 
     // Retrieve or generate smooth normals
     LoadSmoothNormals();
+    
+    UpdateMaterialProperties();
 
     // Apply material properties immediately
     needsUpdate = true;
   }
 
-  void OnEnable() {
-    foreach (var renderer in renderers) {
+  void OnEnable()
+  {
+    foreach (var renderer in renderers)
+    {
 
       // Append outline shaders
       var materials = renderer.sharedMaterials.ToList();
@@ -110,6 +114,8 @@ public class Outline : MonoBehaviour {
 
       renderer.materials = materials.ToArray();
     }
+    
+    UpdateMaterialProperties();
   }
 
   void OnValidate() {
