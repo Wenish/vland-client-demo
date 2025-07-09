@@ -29,6 +29,11 @@ public class Outline : MonoBehaviour {
     set {
       outlineMode = value;
       needsUpdate = true;
+      // Update immediately if materials are available
+      if (outlineFillMaterial != null) {
+        UpdateMaterialProperties();
+        needsUpdate = false;
+      }
     }
   }
 
@@ -37,6 +42,11 @@ public class Outline : MonoBehaviour {
     set {
       outlineColor = value;
       needsUpdate = true;
+      // Update immediately if materials are available
+      if (outlineFillMaterial != null) {
+        UpdateMaterialProperties();
+        needsUpdate = false;
+      }
     }
   }
 
@@ -45,6 +55,11 @@ public class Outline : MonoBehaviour {
     set {
       outlineWidth = value;
       needsUpdate = true;
+      // Update immediately if materials are available
+      if (outlineFillMaterial != null) {
+        UpdateMaterialProperties();
+        needsUpdate = false;
+      }
     }
   }
 
