@@ -614,9 +614,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  passiveSkills: []
-  normalSkills: []
-  ultimateSkills: []
+  skillPrefab: {fileID: 0}
 --- !u!114 &3010265075052333281
 MonoBehaviour:
   m_ObjectHideFlags: 0
