@@ -96,8 +96,9 @@ public class ProjectileController : NetworkBehaviour
 
         var isShooter = unit == shooter;
         var isSameTeam = unit.team == shooter.team;
+        var isDead = unit.IsDead;
 
-        if (!isShooter && !isSameTeam && !HasMaxHitCountReached())
+        if (!isShooter && !isSameTeam && !isDead && !HasMaxHitCountReached())
         {
             hitCount++;
             unit.TakeDamage(damage, shooter);
