@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: a699efa2e3401394ca7e87153d3d326b
+  - enabled: 1
     path: Assets/Scenes/ZombyOfflineScene.unity
     guid: d15add554ef09734d946bb1469663208
   - enabled: 1
