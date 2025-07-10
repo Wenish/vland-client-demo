@@ -149,11 +149,6 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomServerPlayersReady()
     {
         base.OnRoomServerPlayersReady();
-
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.StopMusic();
-        }
     }
 
     /// <summary>
