@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitUiController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class UnitUiController : MonoBehaviour
     public GameObject Healthbar;
     public GameObject Shieldbar;
     public GameObject FloorCircle;
+    public Image FloorCircleImage;
     UnitController _unitController;
     // Start is called before the first frame update
     void Start()
@@ -22,7 +24,7 @@ public class UnitUiController : MonoBehaviour
 
     void InitUiBars()
     {
-        if(_unitController.maxHealth == 0)
+        if (_unitController.maxHealth == 0)
         {
             DisableHealthbar();
         }
@@ -35,6 +37,7 @@ public class UnitUiController : MonoBehaviour
         {
             DisableGuiElements();
         }
+        SetFloorCircleColorFromTeam(_unitController.team);
     }
 
     private void HandleOnDied()
@@ -51,7 +54,9 @@ public class UnitUiController : MonoBehaviour
         if (shield.max == 0)
         {
             DisableShieldbar();
-        } else {
+        }
+        else
+        {
             EnableShieldbar();
         }
     }
@@ -86,5 +91,22 @@ public class UnitUiController : MonoBehaviour
     public void DisableShieldbar()
     {
         Shieldbar.SetActive(false);
+    }
+    
+    public void SetFloorCircleColor(Color color)
+    {
+        if (FloorCircleImage != null)
+        {
+            FloorCircleImage.color = color;
+        }
+        else
+        {
+            Debug.LogWarning("[UnitUiController] SetFloorCircleColor: FloorCircleImage is null.");
+        }
+    }
+    public void SetFloorCircleColorFromTeam(int teamId)
+    {
+        Color color = TeamColorManager.Instance.GetColorForTeam(teamId);
+        SetFloorCircleColor(color);
     }
 }
