@@ -989,6 +989,7 @@ MonoBehaviour:
   Healthbar: {fileID: 1415595216}
   Shieldbar: {fileID: 4410055455225218899}
   FloorCircle: {fileID: 4946681874364406955}
+  FloorCircleImage: {fileID: 8729842602932571831}
 --- !u!1 &4410055455225218899
 GameObject:
   m_ObjectHideFlags: 0
