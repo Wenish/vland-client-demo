@@ -199,7 +199,25 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// <summary>
     /// This is called on the client when the client is finished loading a new networked scene.
     /// </summary>
-    public override void OnRoomClientSceneChanged() { }
+    public override void OnRoomClientSceneChanged()
+    {
+        base.OnRoomClientSceneChanged();
+        
+        if (AudioManager.Instance == null)
+        {
+            Debug.LogError("AudioManager instance is null. Ensure it is initialized before calling PlayMusic.");
+            return;
+        }
+        
+        if (Utils.IsSceneActive(GameplayScene))
+        {
+            AudioManager.Instance.StopMusic();
+        }
+        else
+        {
+            AudioManager.Instance.PlayMusic();
+        }
+    }
 
     #endregion
 
