@@ -24,7 +24,7 @@
 }
 
 .main-menu-button:hover, .main-menu-button:focus {
-    color: rgb(139, 255, 243);
+    color: rgb(150, 190, 186);
     font-size: 28px;
     letter-spacing: 12px;
 }
