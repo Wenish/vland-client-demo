@@ -10,26 +10,13 @@ public class UnitHighlighter : MonoBehaviour
     [ColorUsage(true, true)]
     public Color outlineColorDefault = Color.yellow; // Default highlight color
 
-    [ColorUsage(true, true)]
-    public Color outlineColorSameTeam = Color.blue;
-
-    [ColorUsage(true, true)]
-    public Color outlineColorOtherTeam = Color.red;
-
     public float outlineWidth = 2f; // Default outline width
-
-    public UnitController localUnitController; // Reference to the local unit controller
 
 
     void Awake()
     {
         _mainCamera = Camera.main;
         Debug.Log("[UnitHighlighter] Awake: Main camera assigned.");
-    }
-
-    void Start()
-    {
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
     }
 
     void Update()
@@ -70,16 +57,9 @@ public class UnitHighlighter : MonoBehaviour
 
         var hoverUnitControler = unit.GetComponent<UnitController>();
         var outlineColor = outlineColorDefault;
-        if (hoverUnitControler != null && localUnitController != null)
+        if (hoverUnitControler != null)
         {
-            if (hoverUnitControler.team == localUnitController.team)
-            {
-                outlineColor = outlineColorSameTeam; // Same team
-            }
-            else
-            {
-                outlineColor = outlineColorOtherTeam; // Different team
-            }
+            outlineColor = TeamColorManager.Instance.GetColorForTeam(hoverUnitControler.team);
         }
 
         outline.OutlineMode = Outline.Mode.OutlineAll;
@@ -89,29 +69,22 @@ public class UnitHighlighter : MonoBehaviour
 
     void RemoveHighlight()
     {
-                if (lastHighlighted != null)
-                {
+        if (lastHighlighted != null)
+        {
 
-                    var outline = lastHighlighted.GetComponent<Outline>();
-                    if (outline != null)
-                    {
-                        Destroy(outline); // Remove the outline component
-                        Debug.Log($"[UnitHighlighter] Removed highlight from unit: {lastHighlighted.name}");
-                    }
-
-                    return;
-                }
+            var outline = lastHighlighted.GetComponent<Outline>();
+            if (outline != null)
+            {
+                Destroy(outline); // Remove the outline component
+                Debug.Log($"[UnitHighlighter] Removed highlight from unit: {lastHighlighted.name}");
             }
 
-    private void OnPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
-    {
-        localUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
+            return;
+        }
     }
 
     private void OnDestroy()
     {
-        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-
         Debug.Log("[UnitHighlighter] OnDestroy: Removing highlight.");
         RemoveHighlight(); // Ensure highlight is removed when the script is destroyed
     }
