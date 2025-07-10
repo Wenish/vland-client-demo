@@ -23,7 +23,7 @@ public class TeamColorManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>
