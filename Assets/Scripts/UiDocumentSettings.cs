@@ -53,15 +53,23 @@ public class UiDocumentSettings : MonoBehaviour
     private EventCallback<ChangeEvent<int>> uiCallback;
     private EventCallback<ChangeEvent<int>> voiceCallback;
     private EventCallback<ChangeEvent<int>> ambientCallback;
+    private EventCallback<ChangeEvent<bool>> audioToggleCallback;
 
     void OnEnable()
     {
-        masterCallback = evt => audioMixer.SetFloat("MasterVolume", evt.newValue);
+        masterCallback = evt => {
+            // Only apply volume change if audio is enabled
+            if (toggleAudio != null && toggleAudio.value)
+            {
+                audioMixer.SetFloat("MasterVolume", evt.newValue);
+            }
+        };
         musicCallback = evt => audioMixer.SetFloat("MusicVolume", evt.newValue);
         sfxCallback = evt => audioMixer.SetFloat("SfxVolume", evt.newValue);
         uiCallback = evt => audioMixer.SetFloat("UiVolume", evt.newValue);
         voiceCallback = evt => audioMixer.SetFloat("VoiceVolume", evt.newValue);
         ambientCallback = evt => audioMixer.SetFloat("AmbientVolume", evt.newValue);
+        audioToggleCallback = evt => OnAudioToggleChanged(evt.newValue);
 
         RegisterSliderWithMixer(sliderAudioMaster, "MasterVolume", masterCallback);
         RegisterSliderWithMixer(sliderAudioMusic, "MusicVolume", musicCallback);
@@ -69,6 +77,9 @@ public class UiDocumentSettings : MonoBehaviour
         RegisterSliderWithMixer(silderAudioUi, "UiVolume", uiCallback);
         RegisterSliderWithMixer(sliderAudioVoice, "VoiceVolume", voiceCallback);
         RegisterSliderWithMixer(sliderAudioAmbient, "AmbientVolume", ambientCallback);
+
+        if (toggleAudio != null)
+            toggleAudio.RegisterValueChangedCallback(audioToggleCallback);
 
         if (buttonResetSettings != null)
             buttonResetSettings.clicked += OnButtonResetSettings;
@@ -82,6 +93,9 @@ public class UiDocumentSettings : MonoBehaviour
         silderAudioUi?.UnregisterValueChangedCallback(uiCallback);
         sliderAudioVoice?.UnregisterValueChangedCallback(voiceCallback);
         sliderAudioAmbient?.UnregisterValueChangedCallback(ambientCallback);
+
+        if (toggleAudio != null)
+            toggleAudio.UnregisterValueChangedCallback(audioToggleCallback);
 
         if (buttonResetSettings != null)
             buttonResetSettings.clicked -= OnButtonResetSettings;
@@ -98,9 +112,27 @@ public class UiDocumentSettings : MonoBehaviour
         slider.RegisterValueChangedCallback(callback);
     }
     
+    private void OnAudioToggleChanged(bool isEnabled)
+    {
+        if (isEnabled)
+        {
+            // Restore the master volume to the slider value
+            audioMixer.SetFloat("MasterVolume", sliderAudioMaster.value);
+        }
+        else
+        {
+            // Mute master audio completely
+            audioMixer.SetFloat("MasterVolume", -80f); // -80dB is effectively silent
+        }
+    }
+
     void OnButtonResetSettings()
     {
         Debug.Log("Reset Settings button clicked");
+        
+        // Reset audio toggle to enabled
+        if (toggleAudio != null)
+            toggleAudio.value = true;
         
         // Reset audio settings to default values
         audioMixer.SetFloat("MasterVolume", audioDefaultValue);
