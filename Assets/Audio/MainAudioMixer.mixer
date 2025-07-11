@@ -53,7 +53,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Ambiente
+  m_Name: Ambient
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: dd5b39e84573eec48a8e46a5ed0f0c22
   m_Children: []
@@ -81,7 +81,19 @@ AudioMixerController:
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
   m_UpdateMode: 0
-  m_ExposedParameters: []
+  m_ExposedParameters:
+  - guid: df7075cd758cf8d43a97015f419a1ef5
+    name: AmbientVolume
+  - guid: 5eb97667f7a97f040bd2398bdde2707e
+    name: MasterVolume
+  - guid: c2407b8980b3016488d5e19ea4a8d221
+    name: MusicVolume
+  - guid: 9929bf5b2fdfab04e901d40a38633874
+    name: SfxVolume
+  - guid: 4a21e04289985c34eac4485c4545c848
+    name: UiVolume
+  - guid: f3ac7ecf4c91dd64eb5e8a34494ab1ac
+    name: VoiceVolume
   m_AudioMixerGroupViews:
   - guids:
     - e06ae0f6eb762c74386614d5b4e0808c
@@ -144,14 +156,20 @@ AudioMixerSnapshotController:
   m_FloatValues:
     2af6b9b12f21ecd4daf823a4e58ad8bb: 0
     b8314ee10e6216c4188b16f6bae4640a: 0
+    4a21e04289985c34eac4485c4545c848: 0
     579a89639dbe057428f678fb41ed6f00: 10
     938e5593202c48b4094743867bc87d0c: 0.012
     b13dc2a3cd62a7a46b57692566972a2c: 100
+    5eb97667f7a97f040bd2398bdde2707e: 0
     0cc86ca8de6982c409153e58a9843106: -1
     166e14d828c24884688e9e60f9f1b6ef: -1.2
+    c2407b8980b3016488d5e19ea4a8d221: 0
+    9929bf5b2fdfab04e901d40a38633874: 0
     34af465da08e9764995ec91875d62b99: 1
+    df7075cd758cf8d43a97015f419a1ef5: 0
     987a6a9e0d8e10546a240558ff2c5829: 10
     ccd1612f7574667449c8ec866c50bc65: 10
+    f3ac7ecf4c91dd64eb5e8a34494ab1ac: 0
   m_TransitionOverrides: {}
 --- !u!243 &1732116053779194660
 AudioMixerGroupController:

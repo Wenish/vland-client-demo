@@ -4,7 +4,7 @@
     -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
     padding-top: 0;
     padding-right: 12px;
-    padding-bottom: 24px;
+    padding-bottom: 12px;
     padding-left: 12px;
 }
 
@@ -32,4 +32,42 @@
     border-bottom-width: 4px;
     border-left-width: 4px;
     -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.unity-base-slider .unity-base-slider__tracker {
+    background-color: rgb(47, 62, 61);
+    border-width: 0;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.unity-base-slider__fill {
+    background-color: rgb(215, 204, 172);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.unity-base-slider__dragger {
+    background-color: rgb(215, 204, 172);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.unity-base-field:focus .unity-label {
+
+    color: rgb(150, 190, 186);
 }

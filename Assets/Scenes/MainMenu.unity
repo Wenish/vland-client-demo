@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 1014084424}
   - component: {fileID: 1014084423}
   - component: {fileID: 1014084425}
+  - component: {fileID: 1014084426}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -304,6 +305,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c729be8a3be56c40893ba9116e27336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1014084426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1014084422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb8b6ccacfa7b11419ff58a692860145, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
 --- !u!1 &1961709244
 GameObject:
   m_ObjectHideFlags: 0
