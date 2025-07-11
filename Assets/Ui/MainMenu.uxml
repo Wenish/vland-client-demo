@@ -4,7 +4,7 @@
     <engine:VisualElement name="VisualElement" style="flex-grow: 1; padding-top: 64px; padding-right: 64px; padding-bottom: 64px; padding-left: 64px; max-width: 1600px; align-items: flex-start; flex-direction: column; justify-content: flex-start; align-self: center; min-width: auto; width: 100%; -unity-text-align: upper-left;">
         <engine:Label text="SHADOW  INFECTION" class="main-menu-title" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&amp;guid=d04ff877a79f3a3428c55a0b7e81074d&amp;type=3#CinzelDecorative-Bold&quot;); color: rgb(255, 255, 255); -unity-font-style: normal; -unity-text-align: lower-left;" />
         <engine:VisualElement style="flex-grow: 1;">
-            <engine:Button text="Start Game" name="ButtonStartGame" class="main-menu-button" style="-unity-text-outline-width: 0;" />
+            <engine:Button text="Play" name="ButtonStartGame" class="main-menu-button" style="-unity-text-outline-width: 0;" />
             <engine:Button text="Settings" name="ButtonSettings" class="main-menu-button" />
             <engine:Button text="Credits" name="ButtonCredits" class="main-menu-button" />
             <engine:Button text="Quit" name="ButtonQuit" class="main-menu-button" />
