@@ -3,7 +3,7 @@
     <engine:VisualElement name="PageCredits" class="page-content">
         <engine:Label text="CREDITS" class="page-title" />
         <engine:VisualElement>
-            <engine:Button text="Back" name="ButtonBackToMenu" class="main-menu-button" />
+            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>
