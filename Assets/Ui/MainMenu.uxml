@@ -1,10 +1,10 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
-    <engine:VisualElement name="VisualElement" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/ArtTemp/MainMenuRain_SplashScreen.png?fileID=2800000&amp;guid=4ea27c0e54193374aa7a156950d4f87f&amp;type=3#MainMenuRain_SplashScreen&quot;); position: absolute; width: 100%; height: 100%; top: auto; left: auto; -unity-background-scale-mode: scale-and-crop; opacity: 1; background-position-y: bottom 0;" />
-    <engine:VisualElement name="VisualElement" style="flex-grow: 1; padding-top: 64px; padding-right: 64px; padding-bottom: 64px; padding-left: 64px; max-width: 1600px; align-items: flex-start; flex-direction: column; justify-content: flex-start; align-self: center; min-width: auto; width: 100%; -unity-text-align: upper-left;">
-        <engine:Label text="SHADOW  INFECTION" class="main-menu-title" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&amp;guid=d04ff877a79f3a3428c55a0b7e81074d&amp;type=3#CinzelDecorative-Bold&quot;); color: rgb(255, 255, 255); -unity-font-style: normal; -unity-text-align: lower-left;" />
-        <engine:VisualElement style="flex-grow: 1;">
-            <engine:Button text="Play" name="ButtonStartGame" class="main-menu-button" style="-unity-text-outline-width: 0;" />
+    <engine:VisualElement name="Background" />
+    <engine:VisualElement name="MainMenu" class="page-container">
+        <engine:Label text="SHADOW  INFECTION" class="page-title" />
+        <engine:VisualElement>
+            <engine:Button text="Play" name="ButtonStartGame" class="main-menu-button" />
             <engine:Button text="Settings" name="ButtonSettings" class="main-menu-button" />
             <engine:Button text="Credits" name="ButtonCredits" class="main-menu-button" />
             <engine:Button text="Quit" name="ButtonQuit" class="main-menu-button" />

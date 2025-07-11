@@ -1,6 +1,10 @@
-.main-menu-title {
+.page-title {
     font-size: 72px;
     letter-spacing: 1px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: normal;
+    -unity-text-align: lower-left;
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
 }
 
 .main-menu-button {
@@ -33,4 +37,36 @@
     color: rgb(150, 190, 186);
     letter-spacing: 12px;
     padding-left: 20px;
+}
+
+#Background {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/ArtTemp/MainMenuRain_SplashScreen.png?fileID=2800000&guid=4ea27c0e54193374aa7a156950d4f87f&type=3#MainMenuRain_SplashScreen");
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: auto;
+    left: auto;
+    -unity-background-scale-mode: scale-and-crop;
+    opacity: 1;
+    background-position-y: bottom 0;
+}
+
+.page-container {
+    flex-grow: 1;
+    padding-top: 64px;
+    padding-right: 64px;
+    padding-bottom: 64px;
+    padding-left: 64px;
+    max-width: 1600px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-self: center;
+    min-width: auto;
+    width: 100%;
+    -unity-text-align: upper-left;
+}
+
+.main-menu-title {
 }
