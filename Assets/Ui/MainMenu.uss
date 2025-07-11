@@ -5,7 +5,7 @@
 
 .main-menu-button {
     -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
-    font-size: 24px;
+    font-size: 28px;
     color: rgb(255, 255, 255);
     background-color: rgba(255, 255, 255, 0);
     border-left-color: rgba(255, 244, 244, 0);
@@ -23,8 +23,14 @@
     transition-timing-function: ease-out;
 }
 
-.main-menu-button:hover, .main-menu-button:focus {
+.main-menu-button:hover {
     color: rgb(150, 190, 186);
-    font-size: 28px;
     letter-spacing: 12px;
+    padding-left: 20px;
+}
+
+.main-menu-button:focus {
+    color: rgb(150, 190, 186);
+    letter-spacing: 12px;
+    padding-left: 20px;
 }
