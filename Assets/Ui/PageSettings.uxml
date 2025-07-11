@@ -1,8 +1,19 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
+    <Style src="project://database/Assets/Ui/PageSettings.uss?fileID=7433441132597879392&amp;guid=c0d125950126a4907bf9909cff1baa2d&amp;type=3#PageSettings" />
     <engine:VisualElement name="PageSettings" class="page-content">
         <engine:Label text="SETTINGS" class="page-title" />
-        <engine:VisualElement>
+        <engine:VisualElement name="VisualElement" class="audio-container" style="color: rgb(255, 255, 255); align-items: stretch; flex-direction: column;">
+            <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
+                <engine:Toggle label="Audio" value="true" toggle-on-label-click="false" class="audio-checkbox" style="flex-wrap: nowrap; flex-direction: row-reverse; width: auto;" />
+            </engine:VisualElement>
+            <engine:SliderInt label="Master" value="80" high-value="100" fill="true" class="input-slider" />
+            <engine:SliderInt label="Music" value="80" high-value="100" fill="true" class="input-slider" />
+            <engine:SliderInt label="SFX" value="80" high-value="100" fill="true" inverted="false" class="input-slider" />
+            <engine:SliderInt label="UI" value="80" high-value="100" fill="true" inverted="false" class="input-slider" />
+            <engine:SliderInt label="Voice" value="80" high-value="100" fill="true" inverted="false" class="input-slider" />
+        </engine:VisualElement>
+        <engine:VisualElement name="VisualElement">
             <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" />
         </engine:VisualElement>
     </engine:VisualElement>
