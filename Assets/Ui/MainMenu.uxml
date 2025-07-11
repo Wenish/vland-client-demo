@@ -1,17 +1,12 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="PageMainMenu" src="project://database/Assets/Ui/PageMainMenu.uxml?fileID=9197481963319205126&amp;guid=541b610f67bc90242ae0232715c11568&amp;type=3#PageMainMenu" />
+    <engine:Template name="PageSettings" src="project://database/Assets/Ui/PageSettings.uxml?fileID=9197481963319205126&amp;guid=1f3aeb5b20de83a44a8466f56a4cbc9a&amp;type=3#PageSettings" />
+    <engine:Template name="PageCredits" src="project://database/Assets/Ui/PageCredits.uxml?fileID=9197481963319205126&amp;guid=60a6157fc5604904e90fe02ac4e3a839&amp;type=3#PageCredits" />
     <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
     <engine:VisualElement name="Background" />
-    <engine:VisualElement name="PageMainMenu" class="page-container">
-        <engine:Label text="SHADOW  INFECTION" class="page-title" />
-        <engine:VisualElement>
-            <engine:Button text="Play" name="ButtonStartGame" class="main-menu-button" />
-            <engine:Button text="Settings" name="ButtonSettings" class="main-menu-button" />
-            <engine:Button text="Credits" name="ButtonCredits" class="main-menu-button" />
-            <engine:Button text="Quit" name="ButtonQuit" class="main-menu-button" />
-        </engine:VisualElement>
-    </engine:VisualElement>
-    <engine:VisualElement name="PageSettings" class="page-container" style="display: none;">
-        <engine:Label text="SETTINGS" class="page-title" />
-        <engine:VisualElement />
+    <engine:VisualElement name="PageContainer" class="page-container">
+        <engine:Instance template="PageMainMenu" name="PageMainMenu" />
+        <engine:Instance template="PageSettings" name="PageSettings" style="display: none;" />
+        <engine:Instance template="PageCredits" name="PageCredits" style="display: none;" />
     </engine:VisualElement>
 </engine:UXML>

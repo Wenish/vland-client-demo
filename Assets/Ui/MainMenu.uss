@@ -70,3 +70,7 @@
 
 .main-menu-title {
 }
+
+.page-content {
+    align-items: flex-start;
+}
