@@ -6,15 +6,25 @@ public class UiDocumentMainMenu : MonoBehaviour
 {
     private UIDocument uiDocument;
 
-    /* Section Page Main Menu */
+    // Pages for the main menu
     private VisualElement pageMainMenu;
+    private VisualElement pageSettings;
+    private VisualElement pageCredits;
+
+    // Buttons for the main menu
     private Button buttonStartGame;
     private Button buttonSettings;
     private Button buttonCredits;
     private Button buttonQuit;
 
-    /* Section Page Settings */
-    private VisualElement pageSettings;
+
+    // Buttons for the settings page
+    private Button buttonSettingsBackToMenu;
+
+    // Buttons for the credits page
+    private Button buttonCreditsBackToMenu;
+
+
 
     private List<VisualElement> pages = new List<VisualElement>();
 
@@ -32,16 +42,24 @@ public class UiDocumentMainMenu : MonoBehaviour
         // Find pagees
         pageMainMenu = root.Q<VisualElement>("PageMainMenu");
         pageSettings = root.Q<VisualElement>("PageSettings");
-        
+        pageCredits = root.Q<VisualElement>("PageCredits");
+
         // Add pages to the list
         pages.Add(pageMainMenu);
         pages.Add(pageSettings);
+        pages.Add(pageCredits);
 
         // Find page main menu buttons by name
         buttonStartGame = root.Q<Button>("ButtonStartGame");
         buttonSettings = root.Q<Button>("ButtonSettings");
         buttonCredits = root.Q<Button>("ButtonCredits");
         buttonQuit = root.Q<Button>("ButtonQuit");
+
+        // Find settings page buttons by name
+        buttonSettingsBackToMenu = pageSettings.Q<Button>("ButtonBackToMenu");
+
+        // Find credits page buttons by name
+        buttonCreditsBackToMenu = pageCredits.Q<Button>("ButtonBackToMenu");
 
     }
 
@@ -55,6 +73,10 @@ public class UiDocumentMainMenu : MonoBehaviour
             buttonCredits.clicked += OnButtonCredits;
         if (buttonQuit != null)
             buttonQuit.clicked += OnButtonQuit;
+        if (buttonSettingsBackToMenu != null)
+            buttonSettingsBackToMenu.clicked += OnButtonBackToMenu;
+        if (buttonCreditsBackToMenu != null)
+            buttonCreditsBackToMenu.clicked += OnButtonBackToMenu;
     }
 
     void OnDisable()
@@ -67,6 +89,10 @@ public class UiDocumentMainMenu : MonoBehaviour
             buttonCredits.clicked -= OnButtonCredits;
         if (buttonQuit != null)
             buttonQuit.clicked -= OnButtonQuit;
+        if (buttonSettingsBackToMenu != null)
+            buttonSettingsBackToMenu.clicked -= OnButtonBackToMenu;
+        if (buttonCreditsBackToMenu != null)
+            buttonCreditsBackToMenu.clicked -= OnButtonBackToMenu;
     }
 
     void HideAllPages()
@@ -80,7 +106,8 @@ public class UiDocumentMainMenu : MonoBehaviour
     public enum MenuPage
     {
         MainMenu,
-        Settings
+        Settings,
+        Credits
     }
 
     void ShowPage(MenuPage pageType)
@@ -94,6 +121,9 @@ public class UiDocumentMainMenu : MonoBehaviour
                 break;
             case MenuPage.Settings:
                 pageToShow = pageSettings;
+                break;
+            case MenuPage.Credits:
+                pageToShow = pageCredits;
                 break;
         }
         Debug.Log($"Showing page: {pageType}");
@@ -123,6 +153,8 @@ public class UiDocumentMainMenu : MonoBehaviour
     {
         Debug.Log("Credits button clicked");
         // Add logic to show credits
+        ShowPage(MenuPage.Credits);
+        // You can also play a sound effect here if needed
     }
 
     void OnButtonQuit()
@@ -133,5 +165,12 @@ public class UiDocumentMainMenu : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    void OnButtonBackToMenu()
+    {
+        Debug.Log("Back to Main Menu button clicked");
+        // Show the main menu page
+        ShowPage(MenuPage.MainMenu);
     }
 }

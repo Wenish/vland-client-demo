@@ -1,0 +1,9 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
+    <engine:VisualElement name="PageCredits" class="page-content">
+        <engine:Label text="CREDITS" class="page-title" />
+        <engine:VisualElement>
+            <engine:Button text="Back" name="ButtonBackToMenu" class="main-menu-button" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
