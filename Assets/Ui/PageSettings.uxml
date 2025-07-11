@@ -5,15 +5,17 @@
         <engine:Label text="SETTINGS" class="page-title" />
         <engine:VisualElement name="VisualElement" class="audio-container" style="color: rgb(255, 255, 255); align-items: stretch; flex-direction: column;">
             <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
-                <engine:Toggle label="Audio" value="true" toggle-on-label-click="false" class="audio-checkbox" style="flex-wrap: nowrap; flex-direction: row-reverse; width: auto;" />
+                <engine:Toggle label="Audio" value="true" toggle-on-label-click="false" name="ToggleAudio" class="audio-checkbox" style="flex-wrap: nowrap; flex-direction: row-reverse; width: auto;" />
             </engine:VisualElement>
-            <engine:SliderInt label="Master" value="80" high-value="100" fill="true" class="input-slider" />
-            <engine:SliderInt label="Music" value="80" high-value="100" fill="true" class="input-slider" />
-            <engine:SliderInt label="SFX" value="80" high-value="100" fill="true" inverted="false" class="input-slider" />
-            <engine:SliderInt label="UI" value="80" high-value="100" fill="true" inverted="false" class="input-slider" />
-            <engine:SliderInt label="Voice" value="80" high-value="100" fill="true" inverted="false" class="input-slider" />
+            <engine:SliderInt label="Master" fill="true" high-value="20" value="0" name="SliderAudioMaster" low-value="-80" class="input-slider" />
+            <engine:SliderInt label="Music" value="0" high-value="20" fill="true" name="SliderAudioMusic" low-value="-80" class="input-slider" />
+            <engine:SliderInt label="SFX" value="0" high-value="20" fill="true" name="SliderAudioSfx" low-value="-80" class="input-slider" />
+            <engine:SliderInt label="UI" value="0" high-value="20" fill="true" name="SliderAudioUi" low-value="-80" class="input-slider" />
+            <engine:SliderInt label="Voice" value="0" high-value="20" fill="true" name="SliderAudioVoice" low-value="-80" class="input-slider" />
+            <engine:SliderInt label="Ambient" value="0" high-value="20" fill="true" name="SliderAudioAmbient" low-value="-80" class="input-slider" />
         </engine:VisualElement>
         <engine:VisualElement name="VisualElement">
+            <engine:Button text="Reset to default" name="ButtonResetSettings" class="main-menu-button" />
             <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" />
         </engine:VisualElement>
     </engine:VisualElement>
