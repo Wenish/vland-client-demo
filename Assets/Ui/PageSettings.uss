@@ -1,0 +1,35 @@
+.audio-container {
+    width: 100%;
+    max-width: 700px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    padding-top: 0;
+    padding-right: 12px;
+    padding-bottom: 24px;
+    padding-left: 12px;
+}
+
+.input-slider {
+    font-size: 28px;
+}
+
+.audio-checkbox {
+    font-size: 36px;
+}
+
+.audio-checkbox .unity-toggle__checkmark {
+    background-color: transparent;
+    border-width: 4px;
+    border-color: white;
+    margin-right: 18px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    width: 36px;
+    height: 36px;
+    border-top-width: 4px;
+    border-right-width: 4px;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
