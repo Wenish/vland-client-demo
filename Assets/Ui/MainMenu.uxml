@@ -5,8 +5,8 @@
     <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
     <engine:VisualElement name="Background" />
     <engine:VisualElement name="PageContainer" class="page-container">
-        <engine:Instance template="PageMainMenu" name="PageMainMenu" />
+        <engine:Instance template="PageMainMenu" name="PageMainMenu" style="display: flex;" />
         <engine:Instance template="PageSettings" name="PageSettings" style="display: none;" />
-        <engine:Instance template="PageCredits" name="PageCredits" style="display: none;" />
+        <engine:Instance template="PageCredits" name="PageCredits" style="display: none; width: 100%; height: 100%;" />
     </engine:VisualElement>
 </engine:UXML>
