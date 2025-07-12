@@ -9,7 +9,7 @@
 }
 
 .unity-base-field {
-    font-size: 28px;
+    font-size: 22px;
     color: rgb(255, 255, 255);
     background-color: transparent;
     border-width: 0;
@@ -27,8 +27,8 @@
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     border-top-width: 3px;
     border-right-width: 3px;
     border-bottom-width: 3px;
@@ -132,6 +132,10 @@ SliderInt .unity-base-slider__dragger {
 
     transition-duration: 0.16s;
     transition-property: border-color;
+}
+
+.unity-base-popup-field__input {
+    padding: 0 12px;
 }
 
 .unity-base-popup-field:hover .unity-base-popup-field__input {
