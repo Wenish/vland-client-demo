@@ -13,6 +13,8 @@ public class ApplicationSettings : MonoBehaviour
     public int AudioVoiceVolume { get; set; } = 100;
     public int AudioAmbientVolume { get; set; } = 100;
 
+    public bool IsWindowedFullscreenEnabled { get; set; } = true;
+
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer audioMixer; // Assign this in the inspector
 
@@ -28,12 +30,14 @@ public class ApplicationSettings : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         LoadSettings();
         ApplyAudioSettings();
+        ApplyWindowedFullscreenSettings();
     }
 
     void Start()
     {
         LoadSettings();
         ApplyAudioSettings();
+        ApplyWindowedFullscreenSettings();
     }
 
     public void SaveSettings()
@@ -45,6 +49,8 @@ public class ApplicationSettings : MonoBehaviour
         PlayerPrefs.SetInt("AudioUiVolume", AudioUiVolume);
         PlayerPrefs.SetInt("AudioVoiceVolume", AudioVoiceVolume);
         PlayerPrefs.SetInt("AudioAmbientVolume", AudioAmbientVolume);
+
+        PlayerPrefs.SetInt("WindowedFullscreenEnabled", IsWindowedFullscreenEnabled ? 1 : 0);
 
         PlayerPrefs.Save();
     }
@@ -58,6 +64,7 @@ public class ApplicationSettings : MonoBehaviour
         AudioUiVolume = PlayerPrefs.GetInt("AudioUiVolume", 100);
         AudioVoiceVolume = PlayerPrefs.GetInt("AudioVoiceVolume", 100);
         AudioAmbientVolume = PlayerPrefs.GetInt("AudioAmbientVolume", 100);
+        IsWindowedFullscreenEnabled = PlayerPrefs.GetInt("WindowedFullscreenEnabled", 1) == 1;
 
         Debug.Log($"[ApplicationSettings] Settings loaded - Master: {AudioMasterVolume}, Music: {AudioMusicVolume}, SFX: {AudioSfxVolume}, UI: {AudioUiVolume}, Voice: {AudioVoiceVolume}, Ambient: {AudioAmbientVolume}, Enabled: {IsAudioEnabled}");
     }
@@ -100,6 +107,20 @@ public class ApplicationSettings : MonoBehaviour
         {
             AudioListener.volume = 1f;
             Debug.Log("[ApplicationSettings] Audio enabled via AudioListener.volume = 1");
+        }
+    }
+
+    private void ApplyWindowedFullscreenSettings()
+    {
+        if (IsWindowedFullscreenEnabled)
+        {
+            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+            Debug.Log("[ApplicationSettings] Windowed Fullscreen enabled");
+        }
+        else
+        {
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+            Debug.Log("[ApplicationSettings] Windowed Fullscreen disabled");
         }
     }
 
@@ -174,6 +195,13 @@ public class ApplicationSettings : MonoBehaviour
     {
         IsAudioEnabled = enabled;
         ApplyAudioSettings();
+        SaveSettings();
+    }
+
+    public void SetWindowedFullscreenEnabled(bool enabled)
+    {
+        IsWindowedFullscreenEnabled = enabled;
+        ApplyWindowedFullscreenSettings();
         SaveSettings();
     }
 

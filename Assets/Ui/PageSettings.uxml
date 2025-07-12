@@ -14,7 +14,7 @@
             <engine:SliderInt label="Voice" value="0" high-value="100" fill="true" name="SliderAudioVoice" low-value="0" class="input-slider" />
             <engine:SliderInt label="Ambient" value="0" high-value="100" fill="true" name="SliderAudioAmbient" low-value="0" class="input-slider" />
             <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
-                <engine:Toggle label="Fullscreen" value="true" toggle-on-label-click="true" name="ToggleFullscreen" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
+                <engine:Toggle label="Fullscreen" value="true" toggle-on-label-click="true" name="ToggleWindowFullscreen" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
             </engine:VisualElement>
             <engine:DropdownField label="Resolution" name="DropdownFieldResolution" choices="1920 x 1080," />
         </engine:VisualElement>
