@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -14,6 +15,7 @@ public class ApplicationSettings : MonoBehaviour
     public int AudioAmbientVolume { get; set; } = 100;
 
     public bool IsWindowedFullscreenEnabled { get; set; } = true;
+    public int SelectedResolutionIndex { get; set; } = 0;
 
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer audioMixer; // Assign this in the inspector
@@ -31,6 +33,7 @@ public class ApplicationSettings : MonoBehaviour
         LoadSettings();
         ApplyAudioSettings();
         ApplyWindowedFullscreenSettings();
+        ApplyResolutionSettings();
     }
 
     void Start()
@@ -38,6 +41,7 @@ public class ApplicationSettings : MonoBehaviour
         LoadSettings();
         ApplyAudioSettings();
         ApplyWindowedFullscreenSettings();
+        ApplyResolutionSettings();
     }
 
     public void SaveSettings()
@@ -51,6 +55,10 @@ public class ApplicationSettings : MonoBehaviour
         PlayerPrefs.SetInt("AudioAmbientVolume", AudioAmbientVolume);
 
         PlayerPrefs.SetInt("WindowedFullscreenEnabled", IsWindowedFullscreenEnabled ? 1 : 0);
+        PlayerPrefs.SetInt("SelectedResolutionIndex", SelectedResolutionIndex);
+        Debug.Log($"[ApplicationSettings] Saving Resolution Index: {SelectedResolutionIndex}");
+
+
 
         PlayerPrefs.Save();
     }
@@ -65,8 +73,56 @@ public class ApplicationSettings : MonoBehaviour
         AudioVoiceVolume = PlayerPrefs.GetInt("AudioVoiceVolume", 100);
         AudioAmbientVolume = PlayerPrefs.GetInt("AudioAmbientVolume", 100);
         IsWindowedFullscreenEnabled = PlayerPrefs.GetInt("WindowedFullscreenEnabled", 1) == 1;
+        SelectedResolutionIndex = PlayerPrefs.GetInt("SelectedResolutionIndex", GetDefaultResolutionIndex());
 
         Debug.Log($"[ApplicationSettings] Settings loaded - Master: {AudioMasterVolume}, Music: {AudioMusicVolume}, SFX: {AudioSfxVolume}, UI: {AudioUiVolume}, Voice: {AudioVoiceVolume}, Ambient: {AudioAmbientVolume}, Enabled: {IsAudioEnabled}");
+    }
+
+    public int GetDefaultResolutionIndex()
+    {
+        Resolution current = Screen.currentResolution;
+        Resolution[] available = Screen.resolutions;
+
+        // First, try to find exact match (resolution + refresh rate)
+        for (int i = 0; i < available.Length; i++)
+        {
+            if (available[i].width == current.width &&
+                available[i].height == current.height &&
+                available[i].refreshRateRatio.value == current.refreshRateRatio.value)
+            {
+                return i;
+            }
+        }
+
+        // Second, try to find resolution match (ignore refresh rate)
+        for (int i = 0; i < available.Length; i++)
+        {
+            if (available[i].width == current.width &&
+                available[i].height == current.height)
+            {
+                return i;
+            }
+        }
+
+        // Fallback: find closest resolution by total pixel count
+        int closestIndex = 0;
+        int currentPixels = current.width * current.height;
+        int closestPixelDiff = int.MaxValue;
+
+        for (int i = 0; i < available.Length; i++)
+        {
+            int availablePixels = available[i].width * available[i].height;
+            int pixelDiff = Mathf.Abs(availablePixels - currentPixels);
+
+            if (pixelDiff < closestPixelDiff)
+            {
+                closestPixelDiff = pixelDiff;
+                closestIndex = i;
+            }
+        }
+
+        Debug.LogWarning($"[ApplicationSettings] Could not find exact resolution match for {current.width}x{current.height}@{current.refreshRateRatio.value}Hz. Using closest match: {available[closestIndex].width}x{available[closestIndex].height}@{available[closestIndex].refreshRateRatio.value}Hz");
+        return closestIndex;
     }
 
     public void ApplyAudioSettings()
@@ -122,6 +178,21 @@ public class ApplicationSettings : MonoBehaviour
             Screen.fullScreenMode = FullScreenMode.Windowed;
             Debug.Log("[ApplicationSettings] Windowed Fullscreen disabled");
         }
+    }
+
+    public void ApplyResolutionSettings()
+    {
+        Resolution[] resolutions = Screen.resolutions;
+        if (resolutions.Length == 0 || SelectedResolutionIndex < 0 || SelectedResolutionIndex >= resolutions.Length)
+        {
+            Debug.LogWarning($"[ApplicationSettings] Invalid resolution index: {SelectedResolutionIndex}, available: {resolutions.Length}");
+            return;
+        }
+
+        Resolution selected = resolutions[SelectedResolutionIndex];
+        Debug.Log($"[ApplicationSettings] Applying resolution index {SelectedResolutionIndex}: {selected.width}x{selected.height}@{selected.refreshRateRatio.value}Hz");
+
+        Screen.SetResolution(selected.width, selected.height, Screen.fullScreenMode);
     }
 
     // Convenience methods to update individual settings and apply them immediately
@@ -202,6 +273,13 @@ public class ApplicationSettings : MonoBehaviour
     {
         IsWindowedFullscreenEnabled = enabled;
         ApplyWindowedFullscreenSettings();
+        SaveSettings();
+    }
+
+    public void SetResolutionIndex(int index)
+    {
+        SelectedResolutionIndex = Mathf.Clamp(index, 0, Screen.resolutions.Length - 1);
+        ApplyResolutionSettings();
         SaveSettings();
     }
 

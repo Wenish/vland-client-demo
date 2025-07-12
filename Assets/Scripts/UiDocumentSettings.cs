@@ -57,6 +57,7 @@ public class UiDocumentSettings : MonoBehaviour
     private EventCallback<ChangeEvent<int>> ambientCallback;
     private EventCallback<ChangeEvent<bool>> audioToggleCallback;
     private EventCallback<ChangeEvent<bool>> windowFullscreenToggleCallback;
+    private EventCallback<ChangeEvent<string>> resolutionDropdownCallback;
 
     void OnEnable()
     {
@@ -69,7 +70,8 @@ public class UiDocumentSettings : MonoBehaviour
         ambientCallback = evt => ApplicationSettings.Instance.SetAmbientVolume(evt.newValue);
         audioToggleCallback = evt => ApplicationSettings.Instance.SetAudioEnabled(evt.newValue);
         windowFullscreenToggleCallback = evt => ApplicationSettings.Instance.SetWindowedFullscreenEnabled(evt.newValue);
-        
+        resolutionDropdownCallback = evt => ApplicationSettings.Instance.SetResolutionIndex(dropdownFieldResolution.index);
+
         // Load current settings and initialize UI
         LoadAndApplyCurrentSettings();
 
@@ -95,6 +97,9 @@ public class UiDocumentSettings : MonoBehaviour
 
         if (buttonResetSettings != null)
             buttonResetSettings.clicked += OnButtonResetSettings;
+
+        if (dropdownFieldResolution != null)
+            dropdownFieldResolution.RegisterValueChangedCallback(resolutionDropdownCallback);
     }
 
     void OnDisable()
@@ -105,12 +110,10 @@ public class UiDocumentSettings : MonoBehaviour
         silderAudioUi?.UnregisterValueChangedCallback(uiCallback);
         sliderAudioVoice?.UnregisterValueChangedCallback(voiceCallback);
         sliderAudioAmbient?.UnregisterValueChangedCallback(ambientCallback);
-
-        if (toggleAudio != null)
-            toggleAudio.UnregisterValueChangedCallback(audioToggleCallback);
-
-        if (buttonResetSettings != null)
-            buttonResetSettings.clicked -= OnButtonResetSettings;
+        toggleAudio?.UnregisterValueChangedCallback(audioToggleCallback);
+        toggleWindowFullscreen?.UnregisterValueChangedCallback(windowFullscreenToggleCallback);
+        dropdownFieldResolution?.UnregisterValueChangedCallback(resolutionDropdownCallback);
+        buttonResetSettings.clicked -= OnButtonResetSettings;
     }
 
     void Start()
@@ -148,6 +151,24 @@ public class UiDocumentSettings : MonoBehaviour
         // Set windowed fullscreen toggle
         if (toggleWindowFullscreen != null)
             toggleWindowFullscreen.SetValueWithoutNotify(ApplicationSettings.Instance.IsWindowedFullscreenEnabled);
+
+        // Set resolution dropdown
+        if (dropdownFieldResolution != null)
+        {
+            dropdownFieldResolution.choices = GetResolutionChoices();
+            dropdownFieldResolution.index = ApplicationSettings.Instance.SelectedResolutionIndex;
+        }
+
+    }
+
+    private List<string> GetResolutionChoices()
+    {
+        List<string> choices = new List<string>();
+        foreach (Resolution res in Screen.resolutions)
+        {
+            choices.Add($"{res.width} x {res.height} @ {(int)res.refreshRateRatio.value}Hz");
+        }
+        return choices;
     }
 
     void OnButtonResetSettings()
@@ -167,6 +188,7 @@ public class UiDocumentSettings : MonoBehaviour
 
         // Reset windowed fullscreen setting
         ApplicationSettings.Instance.SetWindowedFullscreenEnabled(true);
+        ApplicationSettings.Instance.SetResolutionIndex(ApplicationSettings.Instance.GetDefaultResolutionIndex());
 
         // Update UI elements to reflect the reset values
         LoadAndApplyCurrentSettings();
