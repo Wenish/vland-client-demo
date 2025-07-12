@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UIElements;
@@ -17,6 +18,10 @@ public class UiDocumentSettings : MonoBehaviour
     private SliderInt silderAudioUi;
     private SliderInt sliderAudioVoice;
     private SliderInt sliderAudioAmbient;
+
+    private Toggle toggleWindowFullscreen;
+
+    private DropdownField dropdownFieldResolution;
 
     private Button buttonResetSettings;
 
@@ -39,6 +44,8 @@ public class UiDocumentSettings : MonoBehaviour
         silderAudioUi = root.Q<SliderInt>("SliderAudioUi");
         sliderAudioVoice = root.Q<SliderInt>("SliderAudioVoice");
         sliderAudioAmbient = root.Q<SliderInt>("SliderAudioAmbient");
+        toggleWindowFullscreen = root.Q<Toggle>("ToggleWindowFullscreen");
+        dropdownFieldResolution = root.Q<DropdownField>("DropdownFieldResolution");
         buttonResetSettings = root.Q<Button>("ButtonResetSettings");
     }
 
@@ -49,6 +56,7 @@ public class UiDocumentSettings : MonoBehaviour
     private EventCallback<ChangeEvent<int>> voiceCallback;
     private EventCallback<ChangeEvent<int>> ambientCallback;
     private EventCallback<ChangeEvent<bool>> audioToggleCallback;
+    private EventCallback<ChangeEvent<bool>> windowFullscreenToggleCallback;
 
     void OnEnable()
     {
@@ -60,6 +68,7 @@ public class UiDocumentSettings : MonoBehaviour
         voiceCallback = evt => ApplicationSettings.Instance.SetVoiceVolume(evt.newValue);
         ambientCallback = evt => ApplicationSettings.Instance.SetAmbientVolume(evt.newValue);
         audioToggleCallback = evt => ApplicationSettings.Instance.SetAudioEnabled(evt.newValue);
+        windowFullscreenToggleCallback = evt => ApplicationSettings.Instance.SetWindowedFullscreenEnabled(evt.newValue);
         
         // Load current settings and initialize UI
         LoadAndApplyCurrentSettings();
@@ -80,6 +89,9 @@ public class UiDocumentSettings : MonoBehaviour
 
         if (toggleAudio != null)
             toggleAudio.RegisterValueChangedCallback(audioToggleCallback);
+
+        if (toggleWindowFullscreen != null)
+            toggleWindowFullscreen.RegisterValueChangedCallback(windowFullscreenToggleCallback);
 
         if (buttonResetSettings != null)
             buttonResetSettings.clicked += OnButtonResetSettings;
@@ -110,6 +122,7 @@ public class UiDocumentSettings : MonoBehaviour
         }
     }
 
+
     private void LoadAndApplyCurrentSettings()
     {
         if (ApplicationSettings.Instance == null) return;
@@ -131,6 +144,10 @@ public class UiDocumentSettings : MonoBehaviour
             sliderAudioVoice.SetValueWithoutNotify(ApplicationSettings.Instance.AudioVoiceVolume);
         if (sliderAudioAmbient != null)
             sliderAudioAmbient.SetValueWithoutNotify(ApplicationSettings.Instance.AudioAmbientVolume);
+
+        // Set windowed fullscreen toggle
+        if (toggleWindowFullscreen != null)
+            toggleWindowFullscreen.SetValueWithoutNotify(ApplicationSettings.Instance.IsWindowedFullscreenEnabled);
     }
 
     void OnButtonResetSettings()
@@ -147,6 +164,9 @@ public class UiDocumentSettings : MonoBehaviour
         ApplicationSettings.Instance.SetUiVolume(audioDefaultValue);
         ApplicationSettings.Instance.SetVoiceVolume(audioDefaultValue);
         ApplicationSettings.Instance.SetAmbientVolume(audioDefaultValue);
+
+        // Reset windowed fullscreen setting
+        ApplicationSettings.Instance.SetWindowedFullscreenEnabled(true);
 
         // Update UI elements to reflect the reset values
         LoadAndApplyCurrentSettings();
