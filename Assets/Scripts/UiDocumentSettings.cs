@@ -7,9 +7,7 @@ public class UiDocumentSettings : MonoBehaviour
     public AudioMixer audioMixer;
     private UIDocument uiDocument;
 
-    private VisualElement pageSettings;
-
-    private int audioDefaultValue = 0;
+    private int audioDefaultValue = 100;
 
     private Toggle toggleAudio;
 
@@ -33,9 +31,6 @@ public class UiDocumentSettings : MonoBehaviour
         // Get the root VisualElement
         VisualElement root = uiDocument.rootVisualElement;
 
-
-        pageSettings = root.Q<VisualElement>("PageSettings");
-
         // Find settings elements by name
         toggleAudio = root.Q<Toggle>("ToggleAudio");
         sliderAudioMaster = root.Q<SliderInt>("SliderAudioMaster");
@@ -57,26 +52,31 @@ public class UiDocumentSettings : MonoBehaviour
 
     void OnEnable()
     {
-        masterCallback = evt => {
-            // Only apply volume change if audio is enabled
-            if (toggleAudio != null && toggleAudio.value)
-            {
-                audioMixer.SetFloat("MasterVolume", evt.newValue);
-            }
-        };
-        musicCallback = evt => audioMixer.SetFloat("MusicVolume", evt.newValue);
-        sfxCallback = evt => audioMixer.SetFloat("SfxVolume", evt.newValue);
-        uiCallback = evt => audioMixer.SetFloat("UiVolume", evt.newValue);
-        voiceCallback = evt => audioMixer.SetFloat("VoiceVolume", evt.newValue);
-        ambientCallback = evt => audioMixer.SetFloat("AmbientVolume", evt.newValue);
-        audioToggleCallback = evt => OnAudioToggleChanged(evt.newValue);
+        // Initialize callbacks with proper ApplicationSettings methods
+        masterCallback = evt => ApplicationSettings.Instance.SetMasterVolume(evt.newValue);
+        musicCallback = evt => ApplicationSettings.Instance.SetMusicVolume(evt.newValue);
+        sfxCallback = evt => ApplicationSettings.Instance.SetSfxVolume(evt.newValue);
+        uiCallback = evt => ApplicationSettings.Instance.SetUiVolume(evt.newValue);
+        voiceCallback = evt => ApplicationSettings.Instance.SetVoiceVolume(evt.newValue);
+        ambientCallback = evt => ApplicationSettings.Instance.SetAmbientVolume(evt.newValue);
+        audioToggleCallback = evt => ApplicationSettings.Instance.SetAudioEnabled(evt.newValue);
+        
+        // Load current settings and initialize UI
+        LoadAndApplyCurrentSettings();
 
-        RegisterSliderWithMixer(sliderAudioMaster, "MasterVolume", masterCallback);
-        RegisterSliderWithMixer(sliderAudioMusic, "MusicVolume", musicCallback);
-        RegisterSliderWithMixer(sliderAudioSfx, "SfxVolume", sfxCallback);
-        RegisterSliderWithMixer(silderAudioUi, "UiVolume", uiCallback);
-        RegisterSliderWithMixer(sliderAudioVoice, "VoiceVolume", voiceCallback);
-        RegisterSliderWithMixer(sliderAudioAmbient, "AmbientVolume", ambientCallback);
+        // Register callbacks
+        if (sliderAudioMaster != null)
+            sliderAudioMaster.RegisterValueChangedCallback(masterCallback);
+        if (sliderAudioMusic != null)
+            sliderAudioMusic.RegisterValueChangedCallback(musicCallback);
+        if (sliderAudioSfx != null)
+            sliderAudioSfx.RegisterValueChangedCallback(sfxCallback);
+        if (silderAudioUi != null)
+            silderAudioUi.RegisterValueChangedCallback(uiCallback);
+        if (sliderAudioVoice != null)
+            sliderAudioVoice.RegisterValueChangedCallback(voiceCallback);
+        if (sliderAudioAmbient != null)
+            sliderAudioAmbient.RegisterValueChangedCallback(ambientCallback);
 
         if (toggleAudio != null)
             toggleAudio.RegisterValueChangedCallback(audioToggleCallback);
@@ -101,53 +101,54 @@ public class UiDocumentSettings : MonoBehaviour
             buttonResetSettings.clicked -= OnButtonResetSettings;
     }
 
-    private void RegisterSliderWithMixer(SliderInt slider, string mixerParameter, EventCallback<ChangeEvent<int>> callback)
+    void Start()
     {
-        float volume;
-        if (audioMixer.GetFloat(mixerParameter, out volume))
+        // Ensure ApplicationSettings is ready and apply current settings to UI
+        if (ApplicationSettings.Instance != null)
         {
-            slider.value = (int)volume;
+            LoadAndApplyCurrentSettings();
         }
-
-        slider.RegisterValueChangedCallback(callback);
     }
-    
-    private void OnAudioToggleChanged(bool isEnabled)
+
+    private void LoadAndApplyCurrentSettings()
     {
-        if (isEnabled)
-        {
-            // Restore the master volume to the slider value
-            audioMixer.SetFloat("MasterVolume", sliderAudioMaster.value);
-        }
-        else
-        {
-            // Mute master audio completely
-            audioMixer.SetFloat("MasterVolume", -80f); // -80dB is effectively silent
-        }
+        if (ApplicationSettings.Instance == null) return;
+
+        // Set toggle value
+        if (toggleAudio != null)
+            toggleAudio.SetValueWithoutNotify(ApplicationSettings.Instance.IsAudioEnabled);
+
+        // Set slider values without triggering callbacks
+        if (sliderAudioMaster != null)
+            sliderAudioMaster.SetValueWithoutNotify(ApplicationSettings.Instance.AudioMasterVolume);
+        if (sliderAudioMusic != null)
+            sliderAudioMusic.SetValueWithoutNotify(ApplicationSettings.Instance.AudioMusicVolume);
+        if (sliderAudioSfx != null)
+            sliderAudioSfx.SetValueWithoutNotify(ApplicationSettings.Instance.AudioSfxVolume);
+        if (silderAudioUi != null)
+            silderAudioUi.SetValueWithoutNotify(ApplicationSettings.Instance.AudioUiVolume);
+        if (sliderAudioVoice != null)
+            sliderAudioVoice.SetValueWithoutNotify(ApplicationSettings.Instance.AudioVoiceVolume);
+        if (sliderAudioAmbient != null)
+            sliderAudioAmbient.SetValueWithoutNotify(ApplicationSettings.Instance.AudioAmbientVolume);
     }
 
     void OnButtonResetSettings()
     {
         Debug.Log("Reset Settings button clicked");
         
-        // Reset audio toggle to enabled
-        if (toggleAudio != null)
-            toggleAudio.value = true;
-        
-        // Reset audio settings to default values
-        audioMixer.SetFloat("MasterVolume", audioDefaultValue);
-        audioMixer.SetFloat("MusicVolume", audioDefaultValue);
-        audioMixer.SetFloat("SfxVolume", audioDefaultValue);
-        audioMixer.SetFloat("UiVolume", audioDefaultValue);
-        audioMixer.SetFloat("VoiceVolume", audioDefaultValue);
-        audioMixer.SetFloat("AmbientVolume", audioDefaultValue);
+        if (ApplicationSettings.Instance == null) return;
 
-        // Reset sliders to default values
-        sliderAudioMaster.value = audioDefaultValue;
-        sliderAudioMusic.value = audioDefaultValue;
-        sliderAudioSfx.value = audioDefaultValue;
-        silderAudioUi.value = audioDefaultValue;
-        sliderAudioVoice.value = audioDefaultValue;
-        sliderAudioAmbient.value = audioDefaultValue;
+        // Reset all audio settings to default values
+        ApplicationSettings.Instance.SetAudioEnabled(true);
+        ApplicationSettings.Instance.SetMasterVolume(audioDefaultValue);
+        ApplicationSettings.Instance.SetMusicVolume(audioDefaultValue);
+        ApplicationSettings.Instance.SetSfxVolume(audioDefaultValue);
+        ApplicationSettings.Instance.SetUiVolume(audioDefaultValue);
+        ApplicationSettings.Instance.SetVoiceVolume(audioDefaultValue);
+        ApplicationSettings.Instance.SetAmbientVolume(audioDefaultValue);
+
+        // Update UI elements to reflect the reset values
+        LoadAndApplyCurrentSettings();
     }
 }
