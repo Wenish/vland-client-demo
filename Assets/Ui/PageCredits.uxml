@@ -8,7 +8,7 @@
             <engine:Label text="Jonas Voland" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 36px;" />
         </engine:VisualElement>
         <engine:VisualElement>
-            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" />
+            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" style="font-size: 22px;" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

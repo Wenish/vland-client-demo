@@ -19,8 +19,8 @@
             <engine:DropdownField label="Resolution" name="DropdownFieldResolution" choices="1920 x 1080," />
         </engine:VisualElement>
         <engine:VisualElement name="VisualElement">
-            <engine:Button text="Reset to default" name="ButtonResetSettings" class="main-menu-button" />
-            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" />
+            <engine:Button text="Reset to default" name="ButtonResetSettings" class="main-menu-button" style="font-size: 22px;" />
+            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" style="font-size: 22px;" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>
