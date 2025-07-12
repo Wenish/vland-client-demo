@@ -187,8 +187,10 @@ public class UiDocumentSettings : MonoBehaviour
         ApplicationSettings.Instance.SetAmbientVolume(audioDefaultValue);
 
         // Reset windowed fullscreen setting
-        ApplicationSettings.Instance.SetWindowedFullscreenEnabled(true);
         ApplicationSettings.Instance.SetResolutionIndex(ApplicationSettings.Instance.GetDefaultResolutionIndex());
+
+        // Somehow reseting window fullscreeen with reesolution before bugs out
+        // ApplicationSettings.Instance.SetWindowedFullscreenEnabled(true);
 
         // Update UI elements to reflect the reset values
         LoadAndApplyCurrentSettings();
