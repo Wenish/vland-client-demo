@@ -150,5 +150,7 @@ public class UiDocumentSettings : MonoBehaviour
 
         // Update UI elements to reflect the reset values
         LoadAndApplyCurrentSettings();
+        
+        buttonResetSettings?.Blur();
     }
 }
