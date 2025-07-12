@@ -5,7 +5,7 @@
         <engine:Label text="SETTINGS" class="page-title" />
         <engine:VisualElement name="VisualElement" class="audio-container" style="color: rgb(255, 255, 255); align-items: stretch; flex-direction: column;">
             <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
-                <engine:Toggle label="Audio" value="true" toggle-on-label-click="false" name="ToggleAudio" class="audio-checkbox" style="flex-wrap: nowrap; flex-direction: row-reverse; width: auto;" />
+                <engine:Toggle label="Audio" value="true" toggle-on-label-click="true" name="ToggleAudio" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
             </engine:VisualElement>
             <engine:SliderInt label="Master" value="100" high-value="100" fill="true" name="SliderAudioMaster" low-value="0" class="input-slider" />
             <engine:SliderInt label="Music" value="0" high-value="100" fill="true" name="SliderAudioMusic" low-value="0" class="input-slider" />
@@ -13,6 +13,10 @@
             <engine:SliderInt label="UI" value="0" high-value="100" fill="true" name="SliderAudioUi" low-value="0" class="input-slider" />
             <engine:SliderInt label="Voice" value="0" high-value="100" fill="true" name="SliderAudioVoice" low-value="0" class="input-slider" />
             <engine:SliderInt label="Ambient" value="0" high-value="100" fill="true" name="SliderAudioAmbient" low-value="0" class="input-slider" />
+            <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
+                <engine:Toggle label="Fullscreen" value="true" toggle-on-label-click="true" name="ToggleFullscreen" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
+            </engine:VisualElement>
+            <engine:DropdownField label="Resolution" name="DropdownFieldResolution" choices="1920 x 1080," />
         </engine:VisualElement>
         <engine:VisualElement name="VisualElement">
             <engine:Button text="Reset to default" name="ButtonResetSettings" class="main-menu-button" />
