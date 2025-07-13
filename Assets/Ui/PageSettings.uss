@@ -17,6 +17,8 @@
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .unity-toggle .unity-toggle__checkmark {
