@@ -36,18 +36,15 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs:
-    - _MainTexture:
-        m_Texture: {fileID: 2800000, guid: 25b995508eafc9e4a8114482a33a3033, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+    m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _DissolveScale: 25
+    - _DissolveScale: 4.3
     - _QueueControl: 0
     m_Colors:
     - _Color01: {r: 0.081367925, g: 0, b: 0, a: 1}
     - _Color02: {r: 0.014150947, g: 0, b: 0, a: 1}
-    - _MainTextureSpeed: {r: -0.5, g: 0, b: 0, a: 0}
+    - _DissolveSpeed: {r: -1, g: 0, b: 0, a: 0}
+    - _MainTextureSpeed: {r: -2, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
