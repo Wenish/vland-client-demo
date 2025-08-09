@@ -286,7 +286,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "X",
     "m_StageCapability": 3,
-    "m_Value": 0.20000000298023225,
+    "m_Value": 2.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
 }
@@ -717,10 +717,10 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "r": 0.7490196228027344,
-        "g": 0.0,
-        "b": 0.0,
-        "a": 0.4000000059604645
+        "r": 0.35849058628082278,
+        "g": 0.08448270708322525,
+        "b": 0.07609470933675766,
+        "a": 0.41960784792900088
     },
     "isMainColor": false,
     "m_ColorMode": 0
@@ -855,10 +855,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -548.0000610351563,
-            "y": 96.00000762939453,
-            "width": 105.00003051757813,
-            "height": 33.99999237060547
+            "x": -610.0,
+            "y": 112.0,
+            "width": 105.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
