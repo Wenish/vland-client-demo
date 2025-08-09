@@ -216,7 +216,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Transform parent = null;
         if (attachToTarget && targetNetId != 0)
         {
-            if (NetworkServer.spawned.TryGetValue(targetNetId, out var identity))
+            if (TryGetNetworkIdentity(targetNetId, out var identity))
                 parent = identity.transform;
         }
 
@@ -232,6 +232,25 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Destroy(vfxInstance, duration);
     }
 
+    private static bool TryGetNetworkIdentity(uint netId, out NetworkIdentity identity)
+    {
+        identity = null;
+
+        // server-side dictonary
+        if (NetworkServer.active && NetworkServer.spawned.TryGetValue(netId, out identity))
+        {
+            return true;
+        }
+
+        // client-side dictonary
+        if (NetworkClient.active && NetworkClient.spawned.TryGetValue(netId, out identity))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     [ClientRpc(includeOwner = true)]
     public void Rpc_PlaySound(string soundName, Vector3 position, bool attachToTarget, uint targetNetId)
     {
@@ -240,7 +259,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Transform parent = null;
         if (attachToTarget && targetNetId != 0)
         {
-            if (NetworkServer.spawned.TryGetValue(targetNetId, out var identity))
+            if (TryGetNetworkIdentity(targetNetId, out var identity))
                 parent = identity.transform;
         }
 
