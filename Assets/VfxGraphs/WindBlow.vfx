@@ -613,7 +613,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"7c7470d7a45fefa479f3b923938c2f76","type":3}}'
+      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"7797b47f32427b84ea29974bc945d5c0","type":3}}'
     m_Space: -1
   m_Property:
     name: mainTexture
@@ -3069,7 +3069,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.05
+      m_SerializableObject: 0.1
     m_Space: -1
   m_Property:
     name: _Size
@@ -3502,7 +3502,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.AnimationCurve, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"frames":[{"time":0.0,"value":1.0,"inTangent":-4.273828506469727,"outTangent":-4.273828506469727,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":0.1629268378019333,"value":0.30367860198020937,"inTangent":-4.2305474281311039,"outTangent":-4.2305474281311039,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.19081659615039826,"value":0.5068938136100769,"inTangent":5.43045711517334,"outTangent":5.43045711517334,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":0.3094927966594696,"value":0.9311066269874573,"inTangent":-1.1936463117599488,"outTangent":-1.1936463117599488,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.41778528690338137,"value":0.265699565410614,"inTangent":0.7105775475502014,"outTangent":0.7105775475502014,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.5934255719184876,"value":0.9709562063217163,"inTangent":1.9781523942947388,"outTangent":1.9781523942947388,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":0.7379696369171143,"value":0.9624220728874207,"inTangent":-0.13285131752490998,"outTangent":-0.13285131752490998,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.7601157426834106,"value":0.19008272886276246,"inTangent":-0.11172174662351608,"outTangent":-0.11172174662351608,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.8303486704826355,"value":0.7031620740890503,"inTangent":4.527544975280762,"outTangent":4.527544975280762,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":1.0,"value":1.0,"inTangent":1.7496941089630128,"outTangent":1.7496941089630128,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false}],"preWrapMode":8,"postWrapMode":8,"version":1}'
+      m_SerializableObject: '{"frames":[{"time":0.0,"value":1.0,"inTangent":-3.618356943130493,"outTangent":-3.618356943130493,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":0.1463405340909958,"value":0.47048768401145937,"inTangent":-4.2305474281311039,"outTangent":-4.2305474281311039,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.19081659615039826,"value":0.5068938136100769,"inTangent":2.196547746658325,"outTangent":2.196547746658325,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":0.3094927966594696,"value":0.9311066269874573,"inTangent":-1.1936463117599488,"outTangent":-1.1936463117599488,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.41778528690338137,"value":0.438337504863739,"inTangent":0.7105775475502014,"outTangent":0.7105775475502014,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.5934255719184876,"value":0.9709562063217163,"inTangent":1.4866993427276612,"outTangent":1.4866993427276612,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":0.7379696369171143,"value":0.9624220728874207,"inTangent":-0.13285131752490998,"outTangent":-0.13285131752490998,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.7747641801834106,"value":0.46165865659713747,"inTangent":-0.11172174662351608,"outTangent":-0.11172174662351608,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.8303486704826355,"value":0.7031620740890503,"inTangent":3.0472464561462404,"outTangent":3.0472464561462404,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false},{"time":1.0,"value":1.0,"inTangent":1.7496941089630128,"outTangent":1.7496941089630128,"tangentMode":0,"leftTangentMode":1,"rightTangentMode":1,"broken":false}],"preWrapMode":8,"postWrapMode":8,"version":1}'
     m_Space: -1
   m_Property:
     name: Alpha
