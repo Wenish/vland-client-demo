@@ -5318,7 +5318,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.25
+  m_Time: 0.22
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -5329,12 +5329,21 @@ TrailRenderer:
       - serializedVersion: 3
         time: 0
         value: 1
-        inSlope: -0.8188075
-        outSlope: -0.8188075
+        inSlope: -0.20335831
+        outSlope: -0.20335831
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.10084034
+        outWeight: 0.2618215
+      - serializedVersion: 3
+        time: 0.91406584
+        value: 0.4705994
+        inSlope: -0.40993476
+        outSlope: -0.40993476
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.21930021
+        outWeight: 0.76090175
       - serializedVersion: 3
         time: 1
         value: 0.036697328
@@ -5349,7 +5358,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.32599998, g: 0, b: 0, a: 0}
+      key0: {r: 0.24528301, g: 0, b: 0, a: 0}
       key1: {r: 0.32599998, g: 0, b: 0, a: 1}
       key2: {r: 0.2924528, g: 0.0402458, b: 0, a: 1}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -5864,6 +5873,15 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+        time: 0.7904343
+        value: 0.5189045
+        inSlope: -0.938272
+        outSlope: -0.938272
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
         time: 1
         value: 0.036697328
         inSlope: -0.82821816
@@ -5877,9 +5895,9 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.3679245, g: 0.06613005, b: 0.036445353, a: 0}
-      key1: {r: 0.3679245, g: 0.06613005, b: 0.036445353, a: 1}
-      key2: {r: 0.2924528, g: 0.0402458, b: 0, a: 1}
+      key0: {r: 0, g: 0, b: 0, a: 0.24313726}
+      key1: {r: 0.3679245, g: 0.06613005, b: 0.036445353, a: 0.7254902}
+      key2: {r: 0.3679245, g: 0.06613005, b: 0.036445353, a: 0.84313726}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -5887,7 +5905,7 @@ TrailRenderer:
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
       ctime1: 65535
-      ctime2: 1928
+      ctime2: 65535
       ctime3: 0
       ctime4: 0
       ctime5: 0
