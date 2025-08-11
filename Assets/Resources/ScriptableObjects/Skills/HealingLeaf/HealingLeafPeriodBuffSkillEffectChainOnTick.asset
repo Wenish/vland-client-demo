@@ -26,5 +26,5 @@ MonoBehaviour:
     - rid: 913793365921759327
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
-        effect: {fileID: 11400000, guid: bc02c666c5c0a43d88c202debf9458b9, type: 2}
+        effect: {fileID: 11400000, guid: a0280b686b86b4f01aadeaa177057c22, type: 2}
         children: []
