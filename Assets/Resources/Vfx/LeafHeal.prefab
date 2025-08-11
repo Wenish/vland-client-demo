@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4562337278848454845}
   - component: {fileID: 8353345005819991417}
   m_Layer: 0
-  m_Name: WindBlow
+  m_Name: LeafHeal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
