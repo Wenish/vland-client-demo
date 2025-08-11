@@ -12,8 +12,8 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
     public float width = 1f;
     public Vector2 offset = Vector2.zero;
 
-    [Tooltip("Path under Resources to your unlit transparent VFX material")]
-    public string materialResourcePath = "Materials/VFX/LinearAreaHighlight";
+    [Tooltip("The material to use for the area VFX. Must be in the Resources folder.")]
+    public Material material;
 
     [Tooltip("How long the spawned mesh should live")]
     public float duration = 1f;
@@ -40,7 +40,7 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
                     direction,
                     range,
                     width,
-                    materialResourcePath,
+                    material.name,
                     duration,
                     target.transform,
                     shape,

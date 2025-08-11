@@ -16,6 +16,7 @@ MonoBehaviour:
   width: 2
   offset: {x: 0, y: 0}
   materialResourcePath: Materials/VFX/SkillAreaRectFire
+  material: {fileID: 2100000, guid: 528fb93711b304466944c31aea0dc9e9, type: 2}
   duration: 1
   shape: 0
   attachToTarget: 1
