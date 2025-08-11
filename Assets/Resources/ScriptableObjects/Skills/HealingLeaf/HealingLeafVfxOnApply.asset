@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60d0f817aaa974e4bbc469575ccee556, type: 3}
-  m_Name: HealingLeafHealOverTime
+  m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
+  m_Name: HealingLeafVfxOnApply
   m_EditorClassIdentifier: 
-  buffId: HealingLeaf
-  modifierType: 0
-  healAmount: 15
-  duration: 9
-  tickInterval: 3
-  uniqueMode: 2
+  vfxPrefab: {fileID: 8437746579173084844, guid: b423f9d011fd346c6b10de065d437d5a, type: 3}
+  duration: 1
+  attachToTarget: 1
