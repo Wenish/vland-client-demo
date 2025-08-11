@@ -142,7 +142,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Vector3 direction,
         float range,
         float width,
-        string materialResourcePath,
+        string materialName,
         float duration,
         Transform target,
         AreaVFXShape shape,
@@ -157,7 +157,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
             _ => throw new ArgumentOutOfRangeException(nameof(shape), shape, null)
         };
 
-        Material mat = Resources.Load<Material>(materialResourcePath);
+        Material mat = Resources.Load<Material>("Materials/VFX/" + materialName);
         // Offset in the direction of 'direction' (forward) and its right vector
         Vector3 forward = direction.normalized;
         Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;

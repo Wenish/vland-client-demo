@@ -15,7 +15,7 @@ MonoBehaviour:
   range: 7
   width: 1
   offset: {x: 0, y: 0}
-  materialResourcePath: Materials/VFX/SkillAreaCircleWarn
+  material: {fileID: 2100000, guid: fb286a30a51c44470ac6120d1d2f1518, type: 2}
   duration: 4
   shape: 1
   attachToTarget: 0

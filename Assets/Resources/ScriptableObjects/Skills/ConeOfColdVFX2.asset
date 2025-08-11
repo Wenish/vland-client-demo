@@ -16,6 +16,7 @@ MonoBehaviour:
   width: 37
   offset: {x: 0, y: 0}
   materialResourcePath: Materials/VFX/SkillAreaConeCold2
+  material: {fileID: 2100000, guid: 2b481c863ee379d43bfbf69c2397c543, type: 2}
   duration: 0.6
   shape: 2
   attachToTarget: 0
