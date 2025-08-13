@@ -13,18 +13,24 @@ MonoBehaviour:
   m_Name: HealingLeafSkillEffectChain
   m_EditorClassIdentifier: 
   rootNodes:
-  - rid: 6751759145628336213
+  - rid: 913793431489740866
   references:
     version: 2
     RefIds:
-    - rid: 4530181679905505398
+    - rid: 913793431489740866
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
-        effect: {fileID: 11400000, guid: 2cfc652c1af75436ebb28b75df5c9646, type: 2}
-        children: []
-    - rid: 6751759145628336213
+        effect: {fileID: 11400000, guid: ec8a0a2d6f53940438fe442e636241e0, type: 2}
+        children:
+        - rid: 913793431489740872
+    - rid: 913793431489740872
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: ab34eaa47c9c24db18dd037feba0907d, type: 2}
         children:
-        - rid: 4530181679905505398
+        - rid: 913793431489740873
+    - rid: 913793431489740873
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 2cfc652c1af75436ebb28b75df5c9646, type: 2}
+        children: []
