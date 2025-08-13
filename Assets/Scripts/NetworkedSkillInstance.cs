@@ -98,7 +98,9 @@ public class NetworkedSkillInstance : NetworkBehaviour
             aimPoint = aimPoint
         };
         _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
-    }
+    }    
+
+    [Server]
     public void CancelCast()
     {
         _runningCastContext?.Cancel();
