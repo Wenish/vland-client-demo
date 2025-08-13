@@ -65,7 +65,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         {
             StopCoroutine(_runningInitCoroutine);
         }
-        _runningInitContext = new CastContext(unit, this); ;
+        _runningInitContext = new CastContext(unit, this);
         _runningInitCoroutine = StartCoroutine(skillData.ExecuteInitCoroutine(_runningInitContext));
     }
 
@@ -84,7 +84,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     private CastContext _runningCastContext;
 
     [Server]
-    public void Cast()
+    public void Cast(Vector3? aimPoint)
     {
         if (IsOnCooldown || skillData == null) return;
 
@@ -93,7 +93,10 @@ public class NetworkedSkillInstance : NetworkBehaviour
         {
             StopCoroutine(_runningCastCoroutine);
         }
-        _runningCastContext = new CastContext(unit, this);
+        _runningCastContext = new CastContext(unit, this)
+        {
+            aimPoint = aimPoint
+        };
         _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
     }
     public void CancelCast()

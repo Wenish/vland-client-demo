@@ -334,25 +334,25 @@ public class PlayerController : NetworkBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            CmdUseSkill(SkillSlotType.Normal, 0);
+            CmdUseSkill(SkillSlotType.Normal, 0, _mouseWorldPosition);
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            CmdUseSkill(SkillSlotType.Normal, 1);
+            CmdUseSkill(SkillSlotType.Normal, 1, _mouseWorldPosition);
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            CmdUseSkill(SkillSlotType.Normal, 2);
+            CmdUseSkill(SkillSlotType.Normal, 2, _mouseWorldPosition);
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            CmdUseSkill(SkillSlotType.Ultimate, 0);
+            CmdUseSkill(SkillSlotType.Ultimate, 0, _mouseWorldPosition);
         }
     }
 
     [Command]
-    public void CmdUseSkill(SkillSlotType slot, int index)
+    public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {
-        _unitController.unitMediator.Skills.CastSkill(slot, index);
+        _unitController.unitMediator.Skills.CastSkill(slot, index, aimPoint);
     }
 }
