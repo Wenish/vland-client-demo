@@ -88,7 +88,6 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         if (IsOnCooldown || skillData == null) return;
 
-        lastCastTime = NetworkTime.time;
         if (_runningCastCoroutine != null)
         {
             StopCoroutine(_runningCastCoroutine);
@@ -325,5 +324,12 @@ public class NetworkedSkillInstance : NetworkBehaviour
         yield return skillData.ExecuteCastCoroutine(ctx);
         // notify
         onDone();
+    }
+
+    [Server]
+    internal void OnCastCounted()
+    {
+        // Start cooldown when the first eligible effect executes
+        lastCastTime = NetworkTime.time;
     }
 }

@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38dc5c5f987da41e69c6cc8da7dae1fb, type: 3}
   m_Name: TargetConeRange10Angle35
   m_EditorClassIdentifier: 
+  countsAsCasted: 1
+  teamMask: 4
+  includeDead: 0
+  distinct: 1
+  maxTargets: 0
+  randomizeOrder: 0
+  sortByDistance: 1
   range: 10
   angle: 35
   unitLayer:

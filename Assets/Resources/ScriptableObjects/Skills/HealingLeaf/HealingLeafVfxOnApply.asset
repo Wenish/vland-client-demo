@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
   m_Name: HealingLeafVfxOnApply
   m_EditorClassIdentifier: 
+  countsAsCasted: 0
   vfxPrefab: {fileID: 8437746579173084844, guid: b423f9d011fd346c6b10de065d437d5a, type: 3}
   duration: 1
   attachToTarget: 1
