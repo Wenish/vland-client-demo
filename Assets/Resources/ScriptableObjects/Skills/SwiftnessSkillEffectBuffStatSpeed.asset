@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a02f08d0ddb34ad9bf5447f63ba90c5, type: 3}
   m_Name: SwiftnessSkillEffectBuffStatSpeed
   m_EditorClassIdentifier: 
+  countsAsCasted: 1
   buffId: Swiftness
   StatType: 1
   ModifierType: 1

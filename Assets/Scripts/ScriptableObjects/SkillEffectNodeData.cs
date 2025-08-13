@@ -19,6 +19,12 @@ public class SkillEffectNodeData
         List<UnitController> nextTargets = null;
         bool finished = false;
 
+        // If this effect is the one that should count the cast, mark it now
+        if (effect.countsAsCasted)
+        {
+            castContext.MarkCastCounted();
+        }
+
         // 1) run the effect’s coroutine, passing it our onComplete callback
         yield return castContext.skillInstance.StartCoroutine(
             effect.Execute(castContext, targets, (result) =>
@@ -34,16 +40,17 @@ public class SkillEffectNodeData
             yield return null;
         }
 
-        // 3) if the effect has children, run their coroutines
+        // 3) if effect has no children, we're done
         if (children.Count == 0) yield break;
 
-        // 4) if the effect has children, run their coroutines
-        if (nextTargets == null)
+        // 4) if next targets are null or empty, we're done
+        if (nextTargets == null || nextTargets.Count == 0)
         {
-            Debug.LogError("Next targets are null. Effect might not have been executed correctly.");
+            Debug.LogWarning("Next targets are null or empty. Effect does not continue.");
             yield break;
         }
-        
+
+        // 5) run child coroutines
         foreach (var child in children)
         {
             yield return child.ExecuteCoroutine(castContext, nextTargets);

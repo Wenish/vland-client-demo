@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d4628603b564108a7d43f9092f482b, type: 3}
   m_Name: SkillEffectMechanicChannel1s
   m_EditorClassIdentifier: 
+  countsAsCasted: 1
   channelDuration: 1
   moveSpeedPercent: 0
   turnSpeedPercent: 0

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e02eddd6e2fcc4488baaf8f4e2c9a23b, type: 3}
   m_Name: HealingLeafPeriodicBuff
   m_EditorClassIdentifier: 
+  countsAsCasted: 1
   buffId: HealingLeaf
   duration: 9
   tickInterval: 3

@@ -12,6 +12,23 @@ public class CastContext
     {
         _isCancelled = true;
     }
+
+    private bool _castCounted = false;
+    // Call when an effect marked as "counts as casted" executes. Only counts once per cast.
+    public void MarkCastCounted()
+    {
+        if (_castCounted) return;
+        _castCounted = true;
+        // only the server should set cooldown
+        if (skillInstance != null)
+        {
+            // Guard if not on server, do nothing
+            if (skillInstance.isServer)
+            {
+                skillInstance.OnCastCounted();
+            }
+        }
+    }
     public CastContext(UnitController caster, NetworkedSkillInstance skillInstance)
     {
         this.caster = caster;
