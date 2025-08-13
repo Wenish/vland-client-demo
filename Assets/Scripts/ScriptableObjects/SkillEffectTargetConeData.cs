@@ -10,10 +10,8 @@ public class SkillEffectTargetCone : SkillEffectTarget
 
     public override List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
     {
-        List<UnitController> result = new List<UnitController>();
+        List<UnitController> collected = new List<UnitController>();
 
-
-        int casterTeam = castContext.caster.team;
         Vector3 casterPosition = castContext.caster.transform.position;
         Vector3 forward = castContext.caster.transform.forward;
 
@@ -21,24 +19,17 @@ public class SkillEffectTargetCone : SkillEffectTarget
         Collider[] hits = Physics.OverlapSphere(casterPosition, range, unitLayer);
         foreach (var hit in hits)
         {
-            GameObject obj = hit.gameObject;
-            if (obj == castContext.caster) continue;
-
-            UnitController unit = obj.GetComponent<UnitController>();
+            UnitController unit = hit.GetComponent<UnitController>();
             if (unit == null) continue;
-            if (unit.IsDead) continue;
-
-            // Check if on enemy team
-            if (unit.team == casterTeam) continue;
-
-            // Check if within angle
             Vector3 directionToTarget = (unit.transform.position - casterPosition).normalized;
             float angleToTarget = Vector3.Angle(forward, directionToTarget);
             if (angleToTarget <= angle * 0.5f)
             {
-                result.Add(unit);
+                collected.Add(unit);
             }
         }
+
+        var filtered = ApplyCommonFilters(castContext, collected);
 
 #if UNITY_EDITOR
         SkillEffectTargetConeDebugDrawer drawer = castContext.caster.GetComponent<SkillEffectTargetConeDebugDrawer>();
@@ -54,6 +45,6 @@ public class SkillEffectTargetCone : SkillEffectTarget
         drawer.draw = true;
 #endif
 
-        return result;
+        return new List<UnitController>(filtered);
     }
 }

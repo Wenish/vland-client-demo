@@ -11,9 +11,7 @@ public class SkillEffectTargetLinear : SkillEffectTarget
 
     public override List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
     {
-        List<UnitController> result = new List<UnitController>();
-
-
+        List<UnitController> collected = new List<UnitController>();
         Vector3 origin = castContext.caster.transform.position + Vector3.up;
         Vector3 direction = castContext.caster.transform.forward;
 
@@ -22,18 +20,11 @@ public class SkillEffectTargetLinear : SkillEffectTarget
         foreach (RaycastHit hit in hits)
         {
             UnitController targetController = hit.collider.GetComponentInParent<UnitController>();
-
-            if (targetController != null &&
-                targetController != castContext.caster &&
-                !targetController.IsDead &&
-                targetController.team != castContext.caster.team)
-            {
-                if (!result.Contains(targetController))
-                {
-                    result.Add(targetController);
-                }
-            }
+            if (targetController == null) continue;
+            collected.Add(targetController);
         }
+
+        var filtered = ApplyCommonFilters(castContext, collected);
 
 #if UNITY_EDITOR
         SkillEffectTargetLinearDebugDrawer drawer = castContext.caster.GetComponent<SkillEffectTargetLinearDebugDrawer>();
@@ -49,6 +40,6 @@ public class SkillEffectTargetLinear : SkillEffectTarget
         drawer.draw = true;
 #endif
 
-        return result;
+        return new List<UnitController>(filtered);
     }
 }
