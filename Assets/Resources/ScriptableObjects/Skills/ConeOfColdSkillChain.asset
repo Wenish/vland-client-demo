@@ -37,8 +37,7 @@ MonoBehaviour:
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 52b6abc3b5f464a83bd79558b491617f, type: 2}
-        children:
-        - rid: 5656048446822154341
+        children: []
     - rid: 5250464195305799800
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
@@ -53,11 +52,6 @@ MonoBehaviour:
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: f4e67edd40fea7f4d9b543c0bfa6f335, type: 2}
-        children: []
-    - rid: 5656048446822154341
-      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
-      data:
-        effect: {fileID: 11400000, guid: bc02c666c5c0a43d88c202debf9458b9, type: 2}
         children: []
     - rid: 5656048450938339445
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
