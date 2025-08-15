@@ -161,7 +161,7 @@ MonoBehaviour:
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
+  m_DynamicPixelsPerUnit: 2
   m_PresetInfoIsWorld: 1
 --- !u!114 &502557277
 MonoBehaviour:
@@ -1552,7 +1552,6 @@ MonoBehaviour:
   sliderBackground: {fileID: 3710185027803245242}
   sliderFill: {fileID: 4203238857823437548}
   sliderBorder: {fileID: 8259283907220284161}
-  updateSpeedSeconds: 0.2
 --- !u!1 &9014061411780374411
 GameObject:
   m_ObjectHideFlags: 0
