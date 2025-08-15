@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -29,6 +30,8 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     )
     {
         var caster = ctx.caster;
+        caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Channeling, NetworkTime.time, channelDuration, ctx.skillInstance.skillName);
+
         StatModifier moveSpeedModifier = new StatModifier() {
             Type = StatType.MovementSpeed,
             ModifierType = ModifierType.Percent,
@@ -54,6 +57,8 @@ public class SkillEffectMechanicChannelData : SkillEffectData
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        caster.unitActionState.SetUnitActionStateToIdle();
 
         // Remove the move speed modifier
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
