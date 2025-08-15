@@ -88,6 +88,9 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         if (IsOnCooldown || skillData == null) return;
 
+        // TODO: configure skills that they can skip this test and always be casted
+        if (unit.unitActionState.IsActive) return;
+
         if (_runningCastCoroutine != null)
         {
             StopCoroutine(_runningCastCoroutine);
