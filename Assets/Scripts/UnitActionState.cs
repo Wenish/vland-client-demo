@@ -13,16 +13,6 @@ public class UnitActionState : NetworkBehaviour
 
     public event Action<UnitActionState> OnActionStateChanged = delegate { };
 
-    private void Awake()
-    {
-        OnActionStateChanged += HandleActionStateChanged;
-    }
-
-    private void HandleActionStateChanged(UnitActionState state)
-    {
-        Debug.Log($"Action state changed: {state.state.type} at {state.state.startTime} for {state.state.duration} seconds with name {state.state.name}");
-    }
-
     [Server]
     public void SetUnitActionState(ActionType newActionType, double startTime, double duration, string name)
     {
