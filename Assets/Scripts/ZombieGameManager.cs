@@ -45,6 +45,8 @@ public class ZombieGameManager : NetworkBehaviour
         if (!isServer) return;
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
         EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
+
+        StopAllCoroutines();
     }
 
 
@@ -67,6 +69,8 @@ public class ZombieGameManager : NetworkBehaviour
     async Task SpawnWave()
     {
         await Task.Delay(timeBetweenWaves);
+        if (!isServer) return;
+
         currentWave++;
         var zombiesToSpawnThisWave = zombiesPerWaveMultiplier * currentWave;
         Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
@@ -82,6 +86,7 @@ public class ZombieGameManager : NetworkBehaviour
                 i--;
             }
             await Task.Delay(timeBetweenSpawns);
+            if (!isServer) return;
         }
 
         isSpawingWave = false;
@@ -120,6 +125,7 @@ public class ZombieGameManager : NetworkBehaviour
             zombiesAlive--;
             // Destroy the zombie
             await Task.Delay(5000);
+            if (!isServer) return;
             NetworkServer.Destroy(zombie);
         };
         
