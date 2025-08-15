@@ -108,11 +108,13 @@ public class UnitController : NetworkBehaviour
     public event Action OnDied = delegate {};
     public event Action OnRevive = delegate {};
     public UnitMediator unitMediator;
+    public UnitActionState unitActionState;
 
     void Awake()
     {
         weaponController = GetComponent<WeaponController>();
         unitMediator = GetComponent<UnitMediator>();
+        unitActionState = GetComponent<UnitActionState>();
     }
     // Start is called before the first frame update
     void Start()
