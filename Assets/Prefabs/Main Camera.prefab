@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1041720123290599148}
   - component: {fileID: 5017836846480081700}
   - component: {fileID: 6877446575877977791}
-  - component: {fileID: 7215417975964783873}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -129,20 +128,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &7215417975964783873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4236097134555561656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c71cb45c8ba53c7428f9c8e226309def, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fieldOfView: 60
-  aspectRatio: 1.7777778
 --- !u!1 &5913976703155713801
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,7 +142,6 @@ GameObject:
   - component: {fileID: 1205856487570322610}
   - component: {fileID: 8398633881187561724}
   - component: {fileID: 1045805171326908767}
-  - component: {fileID: 6377759380832418333}
   - component: {fileID: -8212074392146612490}
   m_Layer: 6
   m_Name: Main Camera
@@ -326,20 +310,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &6377759380832418333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5913976703155713801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c71cb45c8ba53c7428f9c8e226309def, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fieldOfView: 60
-  aspectRatio: 1.7777778
 --- !u!114 &-8212074392146612490
 MonoBehaviour:
   m_ObjectHideFlags: 0
