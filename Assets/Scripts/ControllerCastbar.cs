@@ -11,6 +11,7 @@ public class ControllerCastbar : MonoBehaviour
     public RectTransform sliderFill;
     public RectTransform sliderBorder;
     public RectTransform sliderIcon;
+    public RectTransform sliderIconBorder;
     private Image sliderIconImage;
     private DatabaseManager databaseManager;
     private void Awake()
@@ -113,6 +114,7 @@ public class ControllerCastbar : MonoBehaviour
         sliderFill.gameObject.SetActive(false);
         sliderBorder.gameObject.SetActive(false);
         sliderIcon.gameObject.SetActive(false);
+        sliderIconBorder.gameObject.SetActive(false);
     }
 
     private void ShowCastbar()
@@ -121,5 +123,6 @@ public class ControllerCastbar : MonoBehaviour
         sliderFill.gameObject.SetActive(true);
         sliderBorder.gameObject.SetActive(true);
         sliderIcon.gameObject.SetActive(true);
+        sliderIconBorder.gameObject.SetActive(true);
     }
 }
