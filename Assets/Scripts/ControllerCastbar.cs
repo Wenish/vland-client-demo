@@ -57,7 +57,14 @@ public class ControllerCastbar : MonoBehaviour
     
         while (currentTime < endTime)
         {
-            slider.value = (float)((currentTime - startTime) / actionStateData.duration);
+            if (actionStateData.type == UnitActionState.ActionType.Channeling)
+            {
+                slider.value = (float)((endTime - currentTime) / actionStateData.duration);
+            }
+            else
+            {
+                slider.value = (float)((currentTime - startTime) / actionStateData.duration);
+            }
             yield return null;
             currentTime = NetworkTime.time;
         }
