@@ -95,6 +95,7 @@ public class UnitUiController : MonoBehaviour
     
     public void SetFloorCircleColor(Color color)
     {
+        color.a = 0.5f; // Set alpha to 50%
         if (FloorCircleImage != null)
         {
             FloorCircleImage.color = color;
