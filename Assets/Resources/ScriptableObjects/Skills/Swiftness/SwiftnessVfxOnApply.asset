@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
+  m_Name: SwiftnessVfxOnApply
+  m_EditorClassIdentifier: 
+  countsAsCasted: 0
+  vfxPrefab: {fileID: 8437746579173084844, guid: 88faee0091c47b947bfc3b5800cd114c, type: 3}
+  duration: 4
+  attachToTarget: 1
