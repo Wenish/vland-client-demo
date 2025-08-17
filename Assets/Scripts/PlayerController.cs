@@ -120,7 +120,7 @@ public class PlayerController : NetworkBehaviour
     [Server]
     void SpawnPlayerUnit()
     {
-        var unit = UnitSpawner.Instance.SpawnUnit("player", Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
+        var unit = UnitSpawner.Instance.SpawnUnit("Player", Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
         Unit = unit;
         _unitController = Unit.GetComponent<UnitController>();
     }

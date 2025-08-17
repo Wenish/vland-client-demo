@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f8c54470ddbb8a4eb4cc39c24fd33d8, type: 3}
   m_Name: ZombieCrawler
   m_EditorClassIdentifier: 
-  unitName: zombieCrawler
+  unitName: Crawler
   unitType: 1
   team: 0
   health: 10
@@ -22,3 +22,6 @@ MonoBehaviour:
   moveSpeed: 4
   weapon: {fileID: 11400000, guid: 5a821e469598a924a8ada0962153e09a, type: 2}
   modelData: {fileID: 11400000, guid: df2fb81e530ca4c82a74ba7eb7a7fba8, type: 2}
+  passiveSkills: []
+  normalSkills: []
+  ultimateSkills: []

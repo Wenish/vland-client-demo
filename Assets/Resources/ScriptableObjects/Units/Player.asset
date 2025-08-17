@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f8c54470ddbb8a4eb4cc39c24fd33d8, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: 
-  unitName: player
+  unitName: Player
   unitType: 0
   team: 1
   health: 100
