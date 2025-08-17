@@ -112,7 +112,7 @@ public class ZombieGameManager : NetworkBehaviour
     [Server]
     void SpawnZombie(Vector3 spawnPosition, Quaternion spawnRotation)
     {
-        var zombieNameToSpawn = UnityEngine.Random.value < 0.8f ? "zombie" : "zombieCrawler";
+        var zombieNameToSpawn = UnityEngine.Random.value < 0.8f ? "Infected" : "Crawler";
 
         var zombie = UnitSpawner.Instance.SpawnUnit(zombieNameToSpawn, spawnPosition, spawnRotation);
         if (zombie == null)

@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +9,7 @@ public class UnitUiController : MonoBehaviour
     public GameObject Shieldbar;
     public GameObject FloorCircle;
     public Image FloorCircleImage;
+    public TextMeshProUGUI nameTag;
     UnitController _unitController;
     // Start is called before the first frame update
     void Start()
@@ -20,6 +19,7 @@ public class UnitUiController : MonoBehaviour
         _unitController.OnRevive += HandleOnRevive;
         _unitController.OnShieldChange += HandleOnShieldChange;
         InitUiBars();
+        SetNameTag(_unitController.unitName);
     }
 
     void InitUiBars()
@@ -92,7 +92,7 @@ public class UnitUiController : MonoBehaviour
     {
         Shieldbar.SetActive(false);
     }
-    
+
     public void SetFloorCircleColor(Color color)
     {
         color.a = 0.5f; // Set alpha to 50%
@@ -109,5 +109,10 @@ public class UnitUiController : MonoBehaviour
     {
         Color color = TeamColorManager.Instance.GetColorForTeam(teamId);
         SetFloorCircleColor(color);
+    }
+
+    public void SetNameTag(string name)
+    {
+        nameTag.text = name;
     }
 }
