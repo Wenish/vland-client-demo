@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Mirror;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class NetworkedSkillInstance : NetworkBehaviour
 {
@@ -236,6 +237,15 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
 
         var vfxInstance = Instantiate(prefab, position, rotation, parent);
+
+        var visualEffect = vfxInstance.GetComponent<VisualEffect>();
+        if (visualEffect != null)
+        {
+            if (visualEffect.HasFloat("Duration"))
+            {
+                visualEffect.SetFloat("Duration", duration);
+            }
+        }
         Destroy(vfxInstance, duration);
     }
 
