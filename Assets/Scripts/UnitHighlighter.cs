@@ -61,6 +61,7 @@ public class UnitHighlighter : MonoBehaviour
         {
             outlineColor = TeamColorManager.Instance.GetColorForTeam(hoverUnitControler.team);
         }
+        outlineColor.a = 0.5f; // Set alpha to 50%
 
         outline.OutlineMode = Outline.Mode.OutlineAll;
         outline.OutlineColor = outlineColor;

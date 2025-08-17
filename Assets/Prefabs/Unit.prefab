@@ -454,7 +454,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1415595218}
+  sliderFill: {fileID: 582131732}
   updateSpeedSeconds: 0.2
+  myUnitHealthColor: {r: 0, g: 0.6509804, b: 0.24313727, a: 1}
 --- !u!1 &321437018096114333
 GameObject:
   m_ObjectHideFlags: 0
