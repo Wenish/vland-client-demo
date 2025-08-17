@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Arrow
   m_EditorClassIdentifier: 
   prefab: {fileID: 5955218331064883768, guid: 69dd6695268b6dc4e827b0145ac565d7, type: 3}
-  maxHits: 2
+  maxHits: 1
