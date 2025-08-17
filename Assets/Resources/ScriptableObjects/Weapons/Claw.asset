@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: claw
   weaponType: 0
-  attackPower: 40
+  attackPower: 20
   attackRange: 1.5
   attackTime: 0.2
   attackSpeed: 0.4
-  moveSpeedPercentWhileAttacking: 0.8
+  moveSpeedPercentWhileAttacking: 0
   iconTexture: {fileID: 2800000, guid: fa0c47ba7d6e44ecabea895caf7b3660, type: 3}
   mode: 0
   maxHits: 1
