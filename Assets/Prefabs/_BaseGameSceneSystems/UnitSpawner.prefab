@@ -48,7 +48,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  unitPrefab: {fileID: 0}
+  unitPrefab: {fileID: 321437018096114333, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
 --- !u!114 &1823901573443753664
 MonoBehaviour:
   m_ObjectHideFlags: 0
