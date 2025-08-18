@@ -120,14 +120,24 @@ public class Outline : MonoBehaviour {
   {
     foreach (var renderer in renderers)
     {
+      // Skip destroyed or missing renderers (e.g., VFXRenderer removed at runtime)
+      if (renderer == null) {
+        continue;
+      }
 
-      // Append outline shaders
-      var materials = renderer.sharedMaterials.ToList();
+      try {
+        // Append outline shaders
+        var materials = renderer.sharedMaterials.ToList();
 
-      materials.Add(outlineMaskMaterial);
-      materials.Add(outlineFillMaterial);
+        materials.Add(outlineMaskMaterial);
+        materials.Add(outlineFillMaterial);
 
-      renderer.materials = materials.ToArray();
+        renderer.materials = materials.ToArray();
+      }
+      catch (MissingReferenceException) {
+        // Renderer was destroyed between null-check and access; skip safely
+        continue;
+      }
     }
     
     UpdateMaterialProperties();
@@ -160,14 +170,24 @@ public class Outline : MonoBehaviour {
 
   void OnDisable() {
     foreach (var renderer in renderers) {
+      // Skip destroyed or missing renderers (e.g., VFXRenderer removed at runtime)
+      if (renderer == null) {
+        continue;
+      }
 
-      // Remove outline shaders
-      var materials = renderer.sharedMaterials.ToList();
+      try {
+        // Remove outline shaders
+        var materials = renderer.sharedMaterials.ToList();
 
-      materials.Remove(outlineMaskMaterial);
-      materials.Remove(outlineFillMaterial);
+        materials.Remove(outlineMaskMaterial);
+        materials.Remove(outlineFillMaterial);
 
-      renderer.materials = materials.ToArray();
+        renderer.materials = materials.ToArray();
+      }
+      catch (MissingReferenceException) {
+        // Renderer was destroyed between null-check and access; nothing to clean up
+        continue;
+      }
     }
   }
 
