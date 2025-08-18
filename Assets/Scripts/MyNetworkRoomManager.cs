@@ -197,21 +197,6 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomClientSceneChanged()
     {
         base.OnRoomClientSceneChanged();
-        
-        if (AudioManager.Instance == null)
-        {
-            Debug.LogError("AudioManager instance is null. Ensure it is initialized before calling PlayMusic.");
-            return;
-        }
-        
-        if (Utils.IsSceneActive(GameplayScene))
-        {
-            AudioManager.Instance.StopMusic();
-        }
-        else
-        {
-            AudioManager.Instance.PlayMusic();
-        }
     }
 
     #endregion
