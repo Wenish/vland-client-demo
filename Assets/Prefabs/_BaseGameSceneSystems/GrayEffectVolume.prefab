@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1087415418790295045
+--- !u!1 &6092603904590678548
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,70 +8,60 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3960823615236325581}
-  - component: {fileID: 747747818119489521}
-  - component: {fileID: 5923501022592648545}
+  - component: {fileID: 8374109545342107837}
+  - component: {fileID: 5104605643917265069}
+  - component: {fileID: 7949664380560626237}
   m_Layer: 0
-  m_Name: ZombieGameManager
+  m_Name: GrayEffectVolume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3960823615236325581
+--- !u!4 &8374109545342107837
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1087415418790295045}
+  m_GameObject: {fileID: 6092603904590678548}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.4825084, y: 0.7320156, z: 0.42931366}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &747747818119489521
+--- !u!114 &5104605643917265069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1087415418790295045}
+  m_GameObject: {fileID: 6092603904590678548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3f2965c831a7e94c9c30b0194a240ae, type: 3}
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  ZombiePrefab: {fileID: 0}
-  ZombieSpawns: []
-  currentWave: 0
-  timeBetweenWaves: 10000
-  timeBetweenSpawns: 500
-  maxZombiesAlive: 30
-  zombiesPerWaveMultiplier: 5
-  isGamePaused: 0
-  zombiesAlive: 0
-  isSpawingWave: 0
---- !u!114 &5923501022592648545
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 0
+  sharedProfile: {fileID: 11400000, guid: 88a6b2842698f4884bbe6d718557360b, type: 2}
+--- !u!114 &7949664380560626237
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1087415418790295045}
+  m_GameObject: {fileID: 6092603904590678548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Script: {fileID: 11500000, guid: fe921ff097c5e44a89cd905a16de776e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneId: 0
-  _assetId: 3274907159
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
+  MyUnit: {fileID: 0}
+  postProcessVolume: {fileID: 5104605643917265069}
+  fadeDuration: 0.3
