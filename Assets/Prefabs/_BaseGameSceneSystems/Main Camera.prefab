@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c85b7ea9ad8f0349b85ffe5aa777a11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OffsetCamera: {x: 0, y: 23, z: -12.5}
+  OffsetCamera: {x: 0, y: 25, z: -12}
   SpeedCamera: 4
   BorderThickness: 10
   IsFocusingPlayer: 1
@@ -245,7 +245,7 @@ MonoBehaviour:
   ScrollSpeed: 20
   MinCameraDistance: 3
   MaxCameraDistance: 120
-  MouseOffsetInfluenceZ: 11
+  MouseOffsetInfluenceZ: 13
   MouseOffsetInfluenceX: 19
   Zoom: 1
 --- !u!114 &8398633881187561724

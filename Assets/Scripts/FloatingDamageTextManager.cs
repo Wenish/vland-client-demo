@@ -4,6 +4,8 @@ using UnityEngine;
 public class FloatingDamageTextManager : MonoBehaviour
 {
     public GameObject damageTextPrefab;
+
+    [SerializeField]
     private Vector3 textOffset = new Vector3(0, 2, 0); // Adjust the offset if needed
 
     public UnitController myPlayerUnitController;
