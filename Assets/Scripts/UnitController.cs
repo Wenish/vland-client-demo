@@ -146,7 +146,7 @@ public class UnitController : NetworkBehaviour
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
-            Heal(maxHealth);
+            Heal(maxHealth, this);
             Shield(maxShield);
         }
     }
@@ -275,8 +275,9 @@ public class UnitController : NetworkBehaviour
 
     // Heal the unit
     [Server]
-    public void Heal(int amount)
+    public void Heal(int amount, UnitController healer)
     {
+        var oldHealth = health;
         if (health == 0 && amount > 0)
         {
             Revive();
@@ -284,13 +285,16 @@ public class UnitController : NetworkBehaviour
         // Increase the health by the heal amount
         health = Mathf.Min(health + amount, maxHealth);
 
-        RpcOnHeal(amount);
+        EventManager.Instance.Publish(new UnitHealedEvent(this, amount, oldHealth, health, healer));
+
+        RpcOnHeal(amount, oldHealth, health, healer);
     }
 
     [ClientRpc]
-    public void RpcOnHeal(int amount)
+    public void RpcOnHeal(int amount, int oldHealth, int newHealth, UnitController healer)
     {
-        EventManager.Instance.Publish(new UnitHealedEvent(this, amount));
+        if (isServer) return;
+        EventManager.Instance.Publish(new UnitHealedEvent(this, amount, oldHealth, newHealth, healer));
     }
 
     // Shield the unit

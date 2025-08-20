@@ -113,7 +113,7 @@ public class PlayerController : NetworkBehaviour
     public void OnWaveStartedHealPlayerUnitFull(WaveStartedEvent waveStartedEvent)
     {
         if (!_unitController) return;
-        _unitController.Heal(_unitController.maxHealth / 2);
+        _unitController.Heal(_unitController.maxHealth / 2, _unitController);
         _unitController.Shield(_unitController.maxShield / 2);
     }
 

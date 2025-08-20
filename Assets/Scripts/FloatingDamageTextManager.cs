@@ -17,6 +17,7 @@ public class FloatingDamageTextManager : MonoBehaviour
     private Color blueColor = new Color(0f / 255f, 166f / 255f, 244f / 255f);
     private Color orangeColor = new Color(255f / 255f, 105f / 255f, 0f / 255f);
     private Color yellowColor = new Color(253f / 255f, 199f / 255f, 0f / 255f);
+    private Color redColor = new Color(255f / 255f, 0f / 255f, 0f / 255f);
 
     void OnEnable()
     {
@@ -42,16 +43,24 @@ public class FloatingDamageTextManager : MonoBehaviour
         var hasMyUnitReceivedTheDamage = unitDamagedEvent.Unit == myPlayerUnitController;
         if (hasMyUnitMadeTheDamage || hasMyUnitReceivedTheDamage)
         {
-            SpawnDamageText(unitDamagedEvent.DamageAmount.ToString(), unitDamagedEvent.DamageAmount, unitDamagedEvent.Unit.transform, orangeColor);
+            var color = hasMyUnitReceivedTheDamage ? redColor : orangeColor;
+            SpawnDamageText(unitDamagedEvent.DamageAmount.ToString(), unitDamagedEvent.DamageAmount, unitDamagedEvent.Unit.transform, color);
         }
     }
 
     public void OnUnitHealed(UnitHealedEvent unitHealedEvent)
     {
         var hasMyUnitedReceivedTheHeal = unitHealedEvent.Unit == myPlayerUnitController;
-        if (hasMyUnitedReceivedTheHeal)
+        var hasMyUnitdMadeTheHeal = unitHealedEvent.Healer == myPlayerUnitController;
+        if (hasMyUnitedReceivedTheHeal || hasMyUnitdMadeTheHeal)
         {
             var text = $"+{unitHealedEvent.HealAmount}";
+
+            var ifUnitAlreadyWasMaxHealth = unitHealedEvent.OldHealth == unitHealedEvent.Unit.maxHealth;
+            if (ifUnitAlreadyWasMaxHealth)
+            {
+                text = "Max";
+            }
             SpawnDamageText(text, unitHealedEvent.HealAmount, unitHealedEvent.Unit.transform, greenColor);
         }
     }

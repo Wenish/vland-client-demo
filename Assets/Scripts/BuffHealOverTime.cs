@@ -50,6 +50,6 @@ public class BuffHealOverTime : PeriodicBuff
         _residual = rawHeal - toHeal;
 
         if (toHeal > 0)
-            mediator.UnitController.Heal(toHeal);
+            mediator.UnitController.Heal(toHeal, this.Caster.UnitController);
     }
 }
