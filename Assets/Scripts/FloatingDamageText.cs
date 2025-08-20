@@ -4,7 +4,7 @@ using TMPro;
 public class FloatingDamageText : MonoBehaviour
 {
     private Camera cameraToLookAt;
-    public float moveSpeed = 1f;
+    private float moveSpeed = 1f;
     public float lifetime = .5f;
     public float fadeSpeed = 2f;
     
@@ -45,7 +45,8 @@ public class FloatingDamageText : MonoBehaviour
         direction.y = 0; // Ignore vertical movement for left/right calculation
         float horizontalDirection = Vector3.Dot(cameraToLookAt.transform.right, direction.normalized);
         transform.position += new Vector3(horizontalDirection * moveSpeed * Time.deltaTime, moveSpeed * Time.deltaTime, 0);
-        textColor.a -= fadeSpeed * Time.deltaTime;
+        textColor.a -= 1f / fadeSpeed * Time.deltaTime;
+        textMesh.color = textColor;
     }
     
     private void LookAtCamera()
