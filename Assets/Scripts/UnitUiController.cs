@@ -139,7 +139,13 @@ public class UnitUiController : MonoBehaviour
 
     public void SetFloorCircleColor(Color color)
     {
-        color.a = 0.5f; // Set alpha to 50%
+        color.a = 0.125f; // Set alpha to 12.5%
+        var isPlayer = _unitController.unitType == UnitType.Player;
+        if (isPlayer)
+        {
+            color.a = 0.25f; // Set alpha to 25% for player units
+        }
+        
         if (FloorCircleImage != null)
         {
             FloorCircleImage.color = color;
