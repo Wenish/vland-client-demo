@@ -2,6 +2,7 @@ using System.Collections;
 using MyGame.Events;
 using UnityEngine;
 
+[RequireComponent(typeof(UnitController))]
 public class UnitFeedback : MonoBehaviour
 {
     [SerializeField] private Renderer targetRenderer;
@@ -19,46 +20,93 @@ public class UnitFeedback : MonoBehaviour
     public Color ColorOnMyUnitDamaged = Color.red;
     public bool IsMyUnit = false;
 
+    private MaterialPropertyBlock _mpb;
+    private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+
     void Awake()
     {
-        unitController = GetComponent<UnitController>();
-        unitController.OnModelChange += HandleOnModelChange;
-        unitController.OnTakeDamage += HandleOnTakeDamage;
-        unitController.OnHealed += HandleOnHeal;
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-        targetRenderer = GetComponentInChildren<Renderer>();
+        _mpb = new MaterialPropertyBlock();
+        // prefer TryGetComponent to avoid exceptions
+        TryGetComponent<UnitController>(out unitController);
+
+        // Only fall back to finding a renderer if the inspector field is empty
+        if (targetRenderer == null)
+        {
+            targetRenderer = GetComponentInChildren<Renderer>();
+        }
+
         if (targetRenderer != null)
         {
+            // accessing .material creates an instance; keep reference so we can destroy it later
             mat = targetRenderer.material;
         }
+
         SetUnitOwnership();
     }
 
-    void OnDestroy()
+    void OnEnable()
     {
-        if (flashRoutine != null) StopCoroutine(flashRoutine);
-        unitController.OnModelChange -= HandleOnModelChange;
-        unitController.OnTakeDamage -= HandleOnTakeDamage;
-        unitController.OnHealed -= HandleOnHeal;
-        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        if (unitController != null)
+        {
+            unitController.OnModelChange += HandleOnModelChange;
+            unitController.OnTakeDamage += HandleOnTakeDamage;
+            unitController.OnHealed += HandleOnHeal;
+        }
+
+        if (EventManager.Instance != null)
+            EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+    }
+
+    void OnDisable()
+    {
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+            flashRoutine = null;
+        }
+
+        if (unitController != null)
+        {
+            unitController.OnModelChange -= HandleOnModelChange;
+            unitController.OnTakeDamage -= HandleOnTakeDamage;
+            unitController.OnHealed -= HandleOnHeal;
+        }
+
+        if (EventManager.Instance != null)
+            EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+
+        // If we created an instance material via .material, destroy it to avoid leaks
+        if (mat != null)
+        {
+            Destroy(mat);
+            mat = null;
+        }
     }
 
     void HandleOnModelChange((UnitController unitController, GameObject modelInstance) obj)
     {
-        Debug.Log(obj);
-        targetRenderer = obj.modelInstance.GetComponentInChildren<Renderer>();
+        if (obj.modelInstance == null) return;
+        var r = obj.modelInstance.GetComponentInChildren<Renderer>();
+        if (r == null) return;
+
+        targetRenderer = r;
+
+        if (mat != null)
+        {
+            Destroy(mat);
+            mat = null;
+        }
+
         mat = targetRenderer.material;
     }
 
     void HandleOnTakeDamage(UnitController unitController)
     {
-        if (mat == null) return;
         FlashDamage();
     }
 
     void HandleOnHeal(UnitController unitController)
     {
-        if (mat == null) return;
         FlashHeal();
     }
 
@@ -76,18 +124,27 @@ public class UnitFeedback : MonoBehaviour
 
     private IEnumerator FlashSmooth(Color flashColor)
     {
-        mat.EnableKeyword("_EMISSION");
+        if (targetRenderer == null) yield break;
+
+        // Ensure the emission keyword is on (for built-in/URP)
+        if (mat != null) mat.EnableKeyword("_EMISSION");
 
         float t = 0f;
         while (t < 1f)
         {
-            t += Time.deltaTime / flashDuration;
+            t += Time.deltaTime / Mathf.Max(0.0001f, flashDuration);
             Color emissionColor = Color.Lerp(flashColor, Color.black, t);
-            mat.SetColor("_EmissionColor", emissionColor);
+
+            targetRenderer.GetPropertyBlock(_mpb);
+            _mpb.SetColor(EmissionColorId, emissionColor);
+            targetRenderer.SetPropertyBlock(_mpb);
+
             yield return null;
         }
 
-        mat.SetColor("_EmissionColor", Color.black);
+        targetRenderer.GetPropertyBlock(_mpb);
+        _mpb.SetColor(EmissionColorId, Color.black);
+        targetRenderer.SetPropertyBlock(_mpb);
         flashRoutine = null;
     }
 
@@ -96,6 +153,7 @@ public class UnitFeedback : MonoBehaviour
         var players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
         foreach (var pc in players)
         {
+            if (pc == null) continue;
             if (pc.isLocalPlayer && pc.Unit != null)
             {
                 var myUnit = pc.Unit.GetComponent<UnitController>();
@@ -110,6 +168,7 @@ public class UnitFeedback : MonoBehaviour
 
     public void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
     {
+        if (myPlayerUnitSpawnedEvent == null) return;
         IsMyUnit = myPlayerUnitSpawnedEvent.PlayerCharacter == unitController;
     }
 

@@ -655,10 +655,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitFeedback
   targetRenderer: {fileID: 0}
-  flashDuration: 0.15
+  flashDuration: 0.3
   ColorOnDamaged: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   ColorOnHealed: {r: 0, g: 0.2509804, b: 0, a: 0}
-  ColorOnMyUnitDamaged: {r: 0.2509804, g: 0, b: 0, a: 1}
+  ColorOnMyUnitDamaged: {r: 0.5019608, g: 0, b: 0, a: 1}
   IsMyUnit: 0
 --- !u!114 &3010265075052333281
 MonoBehaviour:
