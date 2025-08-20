@@ -18,8 +18,33 @@ public class UnitUiController : MonoBehaviour
         _unitController.OnDied += HandleOnDied;
         _unitController.OnRevive += HandleOnRevive;
         _unitController.OnShieldChange += HandleOnShieldChange;
+        _unitController.OnHealthChange += HandleOnHealthChange;
         InitUiBars();
         SetNameTag(_unitController.unitName);
+    }
+
+    private void HandleOnHealthChange((int current, int max) health)
+    {
+        if (health.max == 0)
+        {
+            DisableHealthbar();
+            return;
+        }
+
+        if (health.current < health.max)
+        {
+            EnableHealthbar();
+            return;
+        }
+
+        if (health.current == health.max)
+        {
+            var isPlayer = _unitController.unitType == UnitType.Player;
+            if (!isPlayer)
+            {
+                DisableHealthbar();
+            }
+        }
     }
 
     void InitUiBars()
@@ -38,6 +63,15 @@ public class UnitUiController : MonoBehaviour
             DisableGuiElements();
         }
         SetFloorCircleColorFromTeam(_unitController.team);
+
+        var isPlayer = _unitController.unitType == UnitType.Player;
+        var isFullHealth = _unitController.health == _unitController.maxHealth;
+
+        if (!isPlayer && isFullHealth)
+        {
+            DisableHealthbar();
+            DisableNameTag();
+        }
     }
 
     private void HandleOnDied()
@@ -91,6 +125,16 @@ public class UnitUiController : MonoBehaviour
     public void DisableShieldbar()
     {
         Shieldbar.SetActive(false);
+    }
+
+    public void EnableNameTag()
+    {
+        nameTag.gameObject.SetActive(true);
+    }
+
+    public void DisableNameTag()
+    {
+        nameTag.gameObject.SetActive(false);
     }
 
     public void SetFloorCircleColor(Color color)
