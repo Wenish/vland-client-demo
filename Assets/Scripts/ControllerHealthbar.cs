@@ -23,6 +23,12 @@ public class ControllerHealthbar : MonoBehaviour
         TryApplyMyPlayerColor();
     }
 
+    void OnEnable()
+    {
+        slider.value = unitController.maxHealth;
+        StartCoroutine(ChangeHealth(unitController.health));
+    }
+
     private void TryApplyMyPlayerColor()
     {
         // Find the local player and check if this unit is theirs
