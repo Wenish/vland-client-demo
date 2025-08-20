@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageTextPrefab: {fileID: 7533594239420699139, guid: 7a34125e3042ce94a970d51d5e366288, type: 3}
+  textOffset: {x: 1.75, y: 3, z: 0}
   myPlayerUnitController: {fileID: 0}
-  minFontSize: 2
-  maxFontSize: 4
+  minFontSize: 1.25
+  maxFontSize: 2
