@@ -52,6 +52,11 @@ public class ZombieGameManager : NetworkBehaviour
     void Update()
     {
         if (!isServer) return;
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            isGamePaused = !isGamePaused;
+        }
+
         if (isSpawingWave) return;
         if (isGamePaused) return;
 
