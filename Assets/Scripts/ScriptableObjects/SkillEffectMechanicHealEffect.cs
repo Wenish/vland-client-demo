@@ -11,7 +11,7 @@ public class SkillEffectMechanicHeal : SkillEffectMechanic
         Debug.Log($"Executing Heal Effect on {targets.Count} targets.");
         foreach (var target in targets)
         {
-            target.Heal(healAmount);
+            target.Heal(healAmount, castContext.caster);
             Debug.Log($"Healed {target.name} for {healAmount} health.");
         }
         return targets;
