@@ -37,14 +37,12 @@ public class ZombieGameManager : NetworkBehaviour
     {
         if (!isServer) return;
         EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
-        EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
     }
 
     void OnDestroy()
     {
         if (!isServer) return;
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
-        EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
 
         StopAllCoroutines();
     }
@@ -150,17 +148,6 @@ public class ZombieGameManager : NetworkBehaviour
     {
         OnNewWaveStarted(currentWave);
         EventManager.Instance.Publish(new WaveStartedEvent(currentWave, zombiesPerWaveMultiplier * currentWave));
-    }
-
-    [Server]
-    void OnUnitDamagedEvent(UnitDamagedEvent unitDamagedEvent)
-    {
-        var hasZombieTakenDamage = unitDamagedEvent.Unit.unitType == UnitType.Zombie;
-        if (!hasZombieTakenDamage) return;
-        var hasPlayerAttacked = unitDamagedEvent.Attacker.unitType == UnitType.Player;
-        if (!hasPlayerAttacked) return;
-
-        ZombieDropGold(unitDamagedEvent.Unit, unitDamagedEvent.Attacker, 1);
     }
 
     [Server]
