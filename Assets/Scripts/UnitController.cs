@@ -78,17 +78,23 @@ public class UnitController : NetworkBehaviour
         SetModelData(newModelName);
     }
 
-    private void SetModelData(string modelName) {
+    public event Action<(UnitController unitController, GameObject modelInstance)> OnModelChange = delegate {};
+
+    private void SetModelData(string modelName)
+    {
         ModelData modelData = DatabaseManager.Instance.modelDatabase.GetModelByName(modelName);
-        if (modelData == null) {
+        if (modelData == null)
+        {
             Debug.LogError($"Model {modelName} not found in database.");
             return;
         }
         this.modelData = modelData;
-        if (modelInstance != null) {
+        if (modelInstance != null)
+        {
             Destroy(modelInstance);
         }
         modelInstance = Instantiate(modelData.prefab, transform.position, transform.rotation, transform);
+        OnModelChange((this, modelInstance));
     }
 
     [Server]
@@ -105,7 +111,8 @@ public class UnitController : NetworkBehaviour
     public event Action<(int current, int max)> OnShieldChange = delegate {};
     public event Action<UnitController> OnAttackStart = delegate {};
     public event Action<UnitController> OnTakeDamage = delegate {};
-    public event Action OnDied = delegate {};
+    public event Action<UnitController> OnHealed = delegate {};
+    public event Action OnDied = delegate { };
     public event Action OnRevive = delegate {};
     public UnitMediator unitMediator;
     public UnitActionState unitActionState;
@@ -286,6 +293,7 @@ public class UnitController : NetworkBehaviour
         health = Mathf.Min(health + amount, maxHealth);
 
         EventManager.Instance.Publish(new UnitHealedEvent(this, amount, oldHealth, health, healer));
+        OnHealed(this);
 
         RpcOnHeal(amount, oldHealth, health, healer);
     }
@@ -295,6 +303,7 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer) return;
         EventManager.Instance.Publish(new UnitHealedEvent(this, amount, oldHealth, newHealth, healer));
+        OnHealed(this);
     }
 
     // Shield the unit
