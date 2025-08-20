@@ -125,6 +125,11 @@ public class Outline : MonoBehaviour {
         continue;
       }
 
+      // Skip VFXRenderer as it doesn't support material modification
+      if (renderer.GetType().Name == "VFXRenderer") {
+        continue;
+      }
+
       try {
         // Append outline shaders
         var materials = renderer.sharedMaterials.ToList();
@@ -172,6 +177,11 @@ public class Outline : MonoBehaviour {
     foreach (var renderer in renderers) {
       // Skip destroyed or missing renderers (e.g., VFXRenderer removed at runtime)
       if (renderer == null) {
+        continue;
+      }
+
+      // Skip VFXRenderer as it doesn't support material modification
+      if (renderer.GetType().Name == "VFXRenderer") {
         continue;
       }
 
