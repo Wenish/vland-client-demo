@@ -144,7 +144,7 @@ public class UnitController : NetworkBehaviour
         {
             TakeDamage(20, this);
         }
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             Heal(maxHealth);
             Shield(maxShield);
