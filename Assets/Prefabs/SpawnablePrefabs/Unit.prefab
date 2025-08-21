@@ -474,6 +474,7 @@ GameObject:
   - component: {fileID: 4331653288315711781}
   - component: {fileID: 6874837824722936778}
   - component: {fileID: 683020628344242666}
+  - component: {fileID: 1397612983753662656}
   - component: {fileID: 3010265075052333281}
   - component: {fileID: 4644873500728417110}
   - component: {fileID: -3108773104642818051}
@@ -660,6 +661,18 @@ MonoBehaviour:
   ColorOnHealed: {r: 0, g: 0.2509804, b: 0, a: 0}
   ColorOnMyUnitDamaged: {r: 0.5019608, g: 0, b: 0, a: 1}
   IsMyUnit: 0
+--- !u!114 &1397612983753662656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e4e2245deaa4bd29f8bd352ad9bf64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDeath
 --- !u!114 &3010265075052333281
 MonoBehaviour:
   m_ObjectHideFlags: 0
