@@ -110,7 +110,7 @@ public class UnitController : NetworkBehaviour
     public event Action<(int current, int max)> OnHealthChange = delegate { };
     public event Action<(int current, int max)> OnShieldChange = delegate {};
     public event Action<UnitController> OnAttackStart = delegate {};
-    public event Action<UnitController> OnTakeDamage = delegate {};
+    public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate {};
     public event Action<UnitController> OnHealed = delegate {};
     public event Action OnDied = delegate { };
     public event Action OnRevive = delegate {};
@@ -261,7 +261,7 @@ public class UnitController : NetworkBehaviour
     public void OnTakeDamageEvent(int damage, UnitController attacker)
     {
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
-        OnTakeDamage(this);
+        OnTakeDamage((this, attacker));
         RpcOnTakenDamage(damage, attacker);
     }
 
@@ -269,7 +269,7 @@ public class UnitController : NetworkBehaviour
     public void RpcOnTakenDamage(int damage, UnitController attacker)
     {
         if(isServer) return;
-        OnTakeDamage(this);
+        OnTakeDamage((this, attacker));
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
     }
 

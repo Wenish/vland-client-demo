@@ -71,7 +71,7 @@ public class UnitAnimationController : MonoBehaviour
         }
     }
 
-    private void HandleOnTakeDamage(UnitController unitController)
+    private void HandleOnTakeDamage((UnitController unitController, UnitController attacker) obj)
     {
         animator.SetTrigger("Hitted");
     }
