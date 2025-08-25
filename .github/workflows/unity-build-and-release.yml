@@ -1,0 +1,87 @@
+name: Build & Release Unity (Win/Linux/macOS)
+
+on:
+  # Push a tag like v1.2.3 to trigger a release build
+  push:
+    tags:
+      - "v*"
+  # Allow manual runs too
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64   # Windows 64-bit
+          - StandaloneLinux64     # Linux 64-bit
+          - StandaloneOSX         # macOS (Intel/Universal per your Unity settings)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      - name: Build with Unity
+        id: buildStep
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          # Semantic uses your git tags/commits to version the Player
+          versioning: Semantic
+          # (Optional) customize buildName, buildPath, etc.
+
+      - name: Zip build
+        run: |
+          mkdir -p artifacts
+          cd build/${{ matrix.targetPlatform }}
+          zip -r "../../artifacts/${{ matrix.targetPlatform }}.zip" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.targetPlatform }}.zip
+          path: artifacts/${{ matrix.targetPlatform }}.zip
+          if-no-files-found: error
+
+  release:
+    name: Create/Update GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Show files
+        run: ls -lah dist
+
+      # Attaches to the release for the current tag (creates it if missing)
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
