@@ -17,8 +17,9 @@ public class UnitFeedback : MonoBehaviour
     [ColorUsage(true, true)]
     public Color ColorOnHealed = Color.green;
     [ColorUsage(true, true)]
-    public Color ColorOnMyUnitDamaged = Color.red;
-    public bool IsMyUnit = false;
+    public Color ColorOnMyPlayerUnitDamaged = Color.red;
+    public bool IsMyPlayerUnit = false;
+    public UnitController MyPlayerUnitController;
 
     private MaterialPropertyBlock _mpb;
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
@@ -100,8 +101,16 @@ public class UnitFeedback : MonoBehaviour
         mat = targetRenderer.material;
     }
 
-    void HandleOnTakeDamage(UnitController unitController)
+
+    void HandleOnTakeDamage((UnitController target, UnitController attacker) obj)
     {
+        var isMyPlayerUnitTheAttacker = obj.attacker == MyPlayerUnitController;
+        var isMyPlayerUnitTheTarget =  obj.target == MyPlayerUnitController;
+
+        var isMyPlayerUnitInvolved = isMyPlayerUnitTheAttacker || isMyPlayerUnitTheTarget;
+
+        if (!isMyPlayerUnitInvolved) return;
+
         FlashDamage();
     }
 
@@ -113,7 +122,7 @@ public class UnitFeedback : MonoBehaviour
     public void FlashDamage()
     {
         if (flashRoutine != null) StopCoroutine(flashRoutine);
-        flashRoutine = StartCoroutine(FlashSmooth(IsMyUnit ? ColorOnMyUnitDamaged : ColorOnDamaged));
+        flashRoutine = StartCoroutine(FlashSmooth(IsMyPlayerUnit ? ColorOnMyPlayerUnitDamaged : ColorOnDamaged));
     }
 
     public void FlashHeal()
@@ -157,9 +166,10 @@ public class UnitFeedback : MonoBehaviour
             if (pc.isLocalPlayer && pc.Unit != null)
             {
                 var myUnit = pc.Unit.GetComponent<UnitController>();
+                MyPlayerUnitController = myUnit;
                 if (myUnit == unitController)
                 {
-                    IsMyUnit = true;
+                    IsMyPlayerUnit = true;
                     break;
                 }
             }
@@ -169,7 +179,8 @@ public class UnitFeedback : MonoBehaviour
     public void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
     {
         if (myPlayerUnitSpawnedEvent == null) return;
-        IsMyUnit = myPlayerUnitSpawnedEvent.PlayerCharacter == unitController;
+        IsMyPlayerUnit = myPlayerUnitSpawnedEvent.PlayerCharacter == unitController;
+        MyPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
     }
 
 }
