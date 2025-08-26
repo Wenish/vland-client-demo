@@ -659,8 +659,9 @@ MonoBehaviour:
   flashDuration: 0.3
   ColorOnDamaged: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   ColorOnHealed: {r: 0, g: 0.2509804, b: 0, a: 0}
-  ColorOnMyUnitDamaged: {r: 0.5019608, g: 0, b: 0, a: 1}
-  IsMyUnit: 0
+  ColorOnMyPlayerUnitDamaged: {r: 1, g: 0, b: 0, a: 1}
+  IsMyPlayerUnit: 0
+  MyPlayerUnitController: {fileID: 0}
 --- !u!114 &1397612983753662656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1780,8 +1781,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 157}
-  m_SizeDelta: {x: 164, y: 20}
+  m_AnchoredPosition: {x: 0, y: 130}
+  m_SizeDelta: {x: 154, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3815031059734840089
 CanvasRenderer:
@@ -1838,15 +1839,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 17
+  m_fontSize: 16
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 16
-  m_fontSizeMax: 17
+  m_fontSizeMax: 16
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 4096
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 8192
   m_textAlignment: 65535
   m_characterSpacing: 4
   m_wordSpacing: 0
