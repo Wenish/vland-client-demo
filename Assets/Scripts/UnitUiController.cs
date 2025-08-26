@@ -70,7 +70,6 @@ public class UnitUiController : MonoBehaviour
         if (!isPlayer && isFullHealth)
         {
             DisableHealthbar();
-            DisableNameTag();
         }
     }
 
@@ -110,11 +109,13 @@ public class UnitUiController : MonoBehaviour
     public void EnableHealthbar()
     {
         Healthbar.SetActive(true);
+        EnableNameTag();
     }
 
     public void DisableHealthbar()
     {
         Healthbar.SetActive(false);
+        DisableNameTag();
     }
 
     public void EnableShieldbar()
