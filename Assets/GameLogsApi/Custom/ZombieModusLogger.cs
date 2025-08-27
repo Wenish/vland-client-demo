@@ -91,5 +91,21 @@ public class ZombieModusLogger : MonoBehaviour
         {
             LogKeyboardInput("WorldPing", "Alt+Mouse0");
         }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            LogKeyboardInput("MoveForward", "W");
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            LogKeyboardInput("MoveLeft", "A");
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            LogKeyboardInput("MoveBackward", "S");
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            LogKeyboardInput("MoveRight", "D");
+        }
     }
 }
