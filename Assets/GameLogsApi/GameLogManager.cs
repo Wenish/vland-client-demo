@@ -21,6 +21,8 @@ public class GameLogManager : MonoBehaviour
     [SerializeField] private string sessionId;
     public string SessionId { get => sessionId; private set => sessionId = value; }
 
+    public bool isLoggingOn = true;
+
     CancellationTokenSource _cts;
 
     private async void Start()
@@ -93,6 +95,8 @@ public class GameLogManager : MonoBehaviour
 
     public async Task StartLogging()
     {
+        if (!isLoggingOn) return;
+
         if (string.IsNullOrWhiteSpace(playerExternalId))
         {
             Debug.LogWarning("GameLogManager: playerExternalId is empty.");
