@@ -146,4 +146,10 @@ public class GameLogManager : MonoBehaviour
         var res = await GameLogsApi.Instance.LogEventJson(SessionId, type, payloadJson, _cts.Token);
         if (!res.Success) Debug.LogWarning($"LogEventJson '{type}' failed: {res.Status} {res.Error}");
     }
+
+    [ContextMenu("Start Logging Manually")]
+    public async void StartLoggingManually()
+    {
+        await StartLogging();
+    }
 }
