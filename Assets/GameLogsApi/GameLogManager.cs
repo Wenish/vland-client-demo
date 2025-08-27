@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using kcp2k;
 using UnityEngine;
 
 /// <summary>
@@ -22,6 +21,8 @@ public class GameLogManager : MonoBehaviour
     [SerializeField] private string sessionId;
     public string SessionId { get => sessionId; private set => sessionId = value; }
 
+    public bool isLoggingOn = true;
+
     CancellationTokenSource _cts;
 
     private async void Start()
@@ -39,40 +40,46 @@ public class GameLogManager : MonoBehaviour
     }
 
     private void Awake()
-{
-    _cts = new CancellationTokenSource();
-
-    // load or generate persistent playerExternalId
-    if (PlayerPrefs.HasKey("playerExternalId"))
     {
-        playerExternalId = PlayerPrefs.GetString("playerExternalId");
-    }
-    else
-    {
-        // Get device unique string
-        string rawId = SystemInfo.deviceUniqueIdentifier;
+        _cts = new CancellationTokenSource();
 
-        // Compute SHA256 hash
-        using (SHA256 sha256 = SHA256.Create())
+#if UNITY_EDITOR
+        isLoggingOn = false;
+#endif
+
+
+
+        // load or generate persistent playerExternalId
+        if (PlayerPrefs.HasKey("playerExternalId"))
         {
-            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawId));
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in hashBytes)
-                sb.Append(b.ToString("x2")); // hex string
-            playerExternalId = sb.ToString(); // 64 chars
+            playerExternalId = PlayerPrefs.GetString("playerExternalId");
+        }
+        else
+        {
+            // Get device unique string
+            string rawId = SystemInfo.deviceUniqueIdentifier;
+
+            // Compute SHA256 hash
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawId));
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in hashBytes)
+                    sb.Append(b.ToString("x2")); // hex string
+                playerExternalId = sb.ToString(); // 64 chars
+            }
+
+            PlayerPrefs.SetString("playerExternalId", playerExternalId);
+            PlayerPrefs.Save();
         }
 
-        PlayerPrefs.SetString("playerExternalId", playerExternalId);
-        PlayerPrefs.Save();
+        // configure API
+        GameLogsApi.Instance
+            .SetBaseUrl(baseUrl)
+            .SetApiKey(apiKey)
+            .SetTimeout(15)
+            .SetRetries(2);
     }
-
-    // configure API
-    GameLogsApi.Instance
-        .SetBaseUrl(baseUrl)
-        .SetApiKey(apiKey)
-        .SetTimeout(15)
-        .SetRetries(2);
-}
 
     private async void OnDestroy()
     {
@@ -88,6 +95,8 @@ public class GameLogManager : MonoBehaviour
 
     public async Task StartLogging()
     {
+        if (!isLoggingOn) return;
+
         if (string.IsNullOrWhiteSpace(playerExternalId))
         {
             Debug.LogWarning("GameLogManager: playerExternalId is empty.");

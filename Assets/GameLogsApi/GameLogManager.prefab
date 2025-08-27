@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a55fc44b9db7da4428607777cfdd463e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseUrl: https://oathguard.game-logs-api.pibern.ch
+  baseUrl: https://shadowinfection.game-logs-api.pibern.ch/
   apiKey: 
   playerExternalId: 
   sessionId: 
