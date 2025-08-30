@@ -134,6 +134,7 @@ public class GameLogManager : MonoBehaviour
     /// <summary>Log a typed payload that JsonUtility can serialize.</summary>
     public async Task LogEvent<T>(string type, T payload) where T : struct
     {
+        if (!isLoggingOn) return;
         if (string.IsNullOrEmpty(SessionId)) { Debug.LogWarning("No session; call StartLogging() first."); return; }
         var res = await GameLogsApi.Instance.LogEvent(SessionId, type, payload, _cts.Token);
         if (!res.Success) Debug.LogWarning($"LogEvent '{type}' failed: {res.Status} {res.Error}");
@@ -142,6 +143,7 @@ public class GameLogManager : MonoBehaviour
     /// <summary>Log a raw JSON payload string (best for dictionaries or polymorphic data).</summary>
     public async Task LogEventJson(string type, string payloadJson)
     {
+        if (!isLoggingOn) return;
         if (string.IsNullOrEmpty(SessionId)) { Debug.LogWarning("No session; call StartLogging() first."); return; }
         var res = await GameLogsApi.Instance.LogEventJson(SessionId, type, payloadJson, _cts.Token);
         if (!res.Success) Debug.LogWarning($"LogEventJson '{type}' failed: {res.Status} {res.Error}");
