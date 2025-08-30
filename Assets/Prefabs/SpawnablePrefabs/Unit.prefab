@@ -195,9 +195,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unit: {fileID: 321437018096114274}
   distanceFromCamera: 15
-  scaleMax: {x: 0.01, y: 0.01, z: 0.01}
+  scaleMax: {x: 0.015, y: 0.015, z: 0.015}
   scaleMin: {x: 0.001, y: 0.001, z: 0.001}
-  positionMax: {x: 0, y: 0.5, z: 0}
+  positionMax: {x: 0, y: -0.28, z: 0}
   positionMin: {x: 0, y: 2, z: 0}
   Zoom: 1
   SpeedScale: 20
