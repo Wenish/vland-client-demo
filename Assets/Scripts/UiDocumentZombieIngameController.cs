@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using MyGame.Events;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -231,9 +232,14 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
         _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
         _myPlayerUnitSkillSystem = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<SkillSystem>();
-        SetGoldText(myPlayerUnitSpawnedEvent.Player.Gold);
         OnWeaponChange(_myPlayerUnitController);
         _myPlayerUnitController.OnWeaponChange += OnWeaponChange;
+
+        var localPlayerController = FindObjectsByType<PlayerController>(FindObjectsSortMode.None).FirstOrDefault(pc => pc.isLocalPlayer);
+        if (localPlayerController != null)
+        {
+            SetGoldText(localPlayerController.Gold);
+        }
     }
 
     private void OnWeaponChange(UnitController unitController)

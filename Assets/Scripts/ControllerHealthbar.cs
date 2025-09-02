@@ -32,12 +32,12 @@ public class ControllerHealthbar : MonoBehaviour
     private void TryApplyMyPlayerColor()
     {
         // Find the local player and check if this unit is theirs
-        var players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+        var players = FindObjectsByType<PlayerInput>(FindObjectsSortMode.None);
         foreach (var pc in players)
         {
-            if (pc.isLocalPlayer && pc.Unit != null)
+            if (pc.isLocalPlayer && pc.myUnit != null)
             {
-                var myUnit = pc.Unit.GetComponent<UnitController>();
+                var myUnit = pc.myUnit.GetComponent<UnitController>();
                 if (myUnit == unitController)
                 {
                     sliderFill.color = myUnitHealthColor;

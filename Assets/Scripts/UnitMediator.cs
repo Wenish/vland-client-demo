@@ -33,7 +33,6 @@ public class UnitMediator : NetworkBehaviour
                 UnitController.maxShield = (int)Stats.GetStat(StatType.Shield);
                 break;
             default:
-                Debug.LogWarning($"Stat {type} not handled in UnitMediator.");
                 break;
         }
     }
@@ -47,7 +46,6 @@ public class UnitMediator : NetworkBehaviour
 
     public void AddBuff(Buff buff)
     {
-        Debug.Log($"Adding buff {buff.BuffId} to {UnitController.name}");
         if (!isServer) return;
         Buffs.AddBuff(buff);
     }

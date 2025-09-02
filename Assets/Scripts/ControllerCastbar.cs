@@ -93,7 +93,6 @@ public class ControllerCastbar : MonoBehaviour
     private void SetSkillIcon(string skillName)
     {
         var skillData = databaseManager.skillDatabase.GetSkillByName(skillName);
-        Debug.Log($"Setting skill icon for: {skillName}, found: {skillData != null}");
         sliderIcon.gameObject.SetActive(true);
         var icon = skillData.iconTexture != null
             ? Sprite.Create(skillData.iconTexture, new Rect(0, 0, skillData.iconTexture.width, skillData.iconTexture.height), Vector2.zero)

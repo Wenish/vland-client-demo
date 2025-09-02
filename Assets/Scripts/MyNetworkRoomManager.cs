@@ -50,6 +50,9 @@ public class MyNetworkRoomManager : NetworkRoomManager
         }
     }
 
+    public Action<NetworkConnectionToClient> OnPlayerEnterRoom;
+    public Action<NetworkConnectionToClient> OnPlayerExitRoom;
+
     /// <summary>
     /// This is called on the host when a host is started.
     /// </summary>
@@ -64,7 +67,10 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// This is called on the server when a new client connects to the server.
     /// </summary>
     /// <param name="conn">The new connection.</param>
-    public override void OnRoomServerConnect(NetworkConnectionToClient conn) { }
+    public override void OnRoomServerConnect(NetworkConnectionToClient conn)
+    {
+        OnPlayerEnterRoom?.Invoke(conn);
+    }
 
     /// <summary>
     /// This is called on the server when a client disconnects.
@@ -73,12 +79,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
     {
         base.OnRoomServerDisconnect(conn);
-        if (Utils.IsSceneActive(GameplayScene))
-        {
-            GameObject player = conn.identity.gameObject;
-            PlayerController playerController = player.GetComponent<PlayerController>();
-            NetworkServer.Destroy(playerController.Unit);
-        }
+        OnPlayerExitRoom?.Invoke(conn);
     }
 
     /// <summary>
@@ -258,11 +259,11 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
             // 🔹 UDP Port öffnen
             await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game UDP"));
-            Debug.Log($"✅ UPnP: UDP Port {port} wurde geöffnet.");
 
             // 🔹 TCP Port öffnen
             await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, port, port, "Mirror Game TCP"));
-            Debug.Log($"✅ UPnP: TCP Port {port} wurde geöffnet.");
+
+            Debug.Log($"[MyNetworkRoomManager] ✅ UPnP TCP und UDP Ports geöffnet: {port}");
 
             upnpSuccess = true;
         }
@@ -282,11 +283,11 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
             // 🔹 UDP Port schließen
             await device.DeletePortMapAsync(new Mapping(Protocol.Udp, port, port));
-            Debug.Log($"🚪 UPnP: UDP Port {port} wurde geschlossen.");
 
             // 🔹 TCP Port schließen
             await device.DeletePortMapAsync(new Mapping(Protocol.Tcp, port, port));
-            Debug.Log($"🚪 UPnP: TCP Port {port} wurde geschlossen.");
+
+            Debug.Log($"[MyNetworkRoomManager] 🚪 UPnP TCP und UDPPorts geschlossen: {port}");
         }
         catch (Exception ex)
         {

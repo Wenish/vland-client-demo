@@ -12,7 +12,6 @@ public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechan
 
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
-        Debug.Log($"Executing Buff Periodic Skill Effect Chain on {targets.Count} targets.");
         foreach (var target in targets)
         {
             UnitMediator mediator = target.unitMediator;
@@ -32,7 +31,6 @@ public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechan
                 castContext.caster.unitMediator
             );
             castContext.skillInstance.ManageBuff(mediator, buff, true);
-            Debug.Log($"Applied Buff Periodic Skill Effect Chain to {target.name}.");
         }
         return targets;
     }

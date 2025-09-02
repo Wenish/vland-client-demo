@@ -32,7 +32,6 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
 
             BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, castContext.caster.unitMediator);
             castContext.skillInstance.ManageBuff(mediator, buff, true);
-            Debug.Log($"Applied BuffStat to {target.name}: {StatType}, {ModifierType}, {Value}");
         }
         return targets;
     }

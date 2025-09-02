@@ -54,8 +54,6 @@ public class SoundtrackManager : MonoBehaviour
 
     private void HandleActiveSceneChanged(Scene oldScene, Scene newScene)
     {
-        Debug.Log($"Active scene changed from '{oldScene.name}' to '{newScene.name}'");
-
         var newSceneSoundData = GetSoundDataForScene(newScene.name);
         if (newSceneSoundData != null)
         {
