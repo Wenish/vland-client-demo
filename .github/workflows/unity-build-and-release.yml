@@ -46,19 +46,20 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           # Semantic uses your git tags/commits to version the Player
           versioning: Semantic
+          buildName: ShadowInfection-${{ steps.buildStep.outputs.version }}  # Customize as needed
           # (Optional) customize buildName, buildPath, etc.
 
       - name: Zip build
         run: |
           mkdir -p artifacts
           cd build/${{ matrix.targetPlatform }}
-          zip -r "../../artifacts/${{ matrix.targetPlatform }}.zip" .
+          zip -r "../../artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.targetPlatform }}.zip
-          path: artifacts/${{ matrix.targetPlatform }}.zip
+          name: ${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip
+          path: artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip
           if-no-files-found: error
 
   release:
