@@ -50,6 +50,9 @@ public class MyNetworkRoomManager : NetworkRoomManager
         }
     }
 
+    public Action<NetworkConnectionToClient> OnPlayerEnterRoom;
+    public Action<NetworkConnectionToClient> OnPlayerExitRoom;
+
     /// <summary>
     /// This is called on the host when a host is started.
     /// </summary>
@@ -64,7 +67,10 @@ public class MyNetworkRoomManager : NetworkRoomManager
     /// This is called on the server when a new client connects to the server.
     /// </summary>
     /// <param name="conn">The new connection.</param>
-    public override void OnRoomServerConnect(NetworkConnectionToClient conn) { }
+    public override void OnRoomServerConnect(NetworkConnectionToClient conn)
+    {
+        OnPlayerEnterRoom?.Invoke(conn);
+    }
 
     /// <summary>
     /// This is called on the server when a client disconnects.
@@ -73,6 +79,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
     {
         base.OnRoomServerDisconnect(conn);
+        OnPlayerExitRoom?.Invoke(conn);
         if (Utils.IsSceneActive(GameplayScene))
         {
             GameObject player = conn.identity.gameObject;

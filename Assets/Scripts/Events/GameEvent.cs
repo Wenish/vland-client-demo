@@ -84,6 +84,18 @@ namespace MyGame.Events
         }
     }
 
+    public class PlayerUnitSpawnedEvent : GameEvent
+    {
+        public int ConnectionId { get; }
+        public GameObject Unit { get; }
+
+        public PlayerUnitSpawnedEvent(int connectionId, GameObject unit)
+        {
+            ConnectionId = connectionId;
+            Unit = unit;
+        }
+    }
+
     public class MyPlayerUnitSpawnedEvent : GameEvent
     {
         public PlayerController Player { get; }

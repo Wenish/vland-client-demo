@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1125180839234756980
+--- !u!1 &7630682656622943655
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,24 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2052541696456508290}
-  - component: {fileID: 2510973584712402970}
-  - component: {fileID: 6026645248580221611}
-  - component: {fileID: 8901443433731581867}
+  - component: {fileID: 3641035401953542887}
+  - component: {fileID: 8123045838221484851}
+  - component: {fileID: 9156389482669356423}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerUnitsManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2052541696456508290
+--- !u!4 &3641035401953542887
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125180839234756980}
+  m_GameObject: {fileID: 7630682656622943655}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -34,57 +33,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2510973584712402970
+--- !u!114 &8123045838221484851
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125180839234756980}
+  m_GameObject: {fileID: 7630682656622943655}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61953a2b7bb2d1c4d82a352c8d3b4c60, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ca9aacb654d34579af1bcb13de8f8b2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUnitsManager
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  Unit: {fileID: 0}
-  HorizontalInput: 0
-  VerticalInput: 0
-  Angle: 0
-  IsPressingFire1: 0
-  Gold: 0
-  _interactionZone: {fileID: 0}
---- !u!114 &6026645248580221611
+  UnitPrefab: {fileID: 0}
+  playerUnits: []
+--- !u!114 &9156389482669356423
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125180839234756980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f7d75674e6dd4cffb6fdca91115e463, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
---- !u!114 &8901443433731581867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125180839234756980}
+  m_GameObject: {fileID: 7630682656622943655}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 675685390
+  _assetId: 2322103438
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
