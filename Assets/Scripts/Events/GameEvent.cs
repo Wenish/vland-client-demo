@@ -98,12 +98,10 @@ namespace MyGame.Events
 
     public class MyPlayerUnitSpawnedEvent : GameEvent
     {
-        public PlayerController Player { get; }
         public UnitController PlayerCharacter { get; }
 
-        public MyPlayerUnitSpawnedEvent(PlayerController player, UnitController playerCharacter)
+        public MyPlayerUnitSpawnedEvent(UnitController playerCharacter)
         {
-            Player = player;
             PlayerCharacter = playerCharacter;
         }
     }

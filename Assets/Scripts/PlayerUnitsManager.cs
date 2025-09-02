@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
 using UnityEngine;
@@ -6,7 +5,6 @@ using UnityEngine;
 public class PlayerUnitsManager : NetworkBehaviour
 {
     public static PlayerUnitsManager Instance { get; private set; }
-    public GameObject UnitPrefab;
 
     private MyNetworkRoomManager roomManager;
 
@@ -40,7 +38,6 @@ public class PlayerUnitsManager : NetworkBehaviour
     {
         foreach (var conn in NetworkServer.connections.Values)
         {
-            Debug.Log($"Existing connection found: connectionId={conn.connectionId}");
             SpawnPlayerUnit(conn);
         }
     }
@@ -56,31 +53,45 @@ public class PlayerUnitsManager : NetworkBehaviour
         roomManager.OnPlayerExitRoom -= HandlePlayerExitRoom;
     }
 
+    public GameObject GetPlayerUnit(int connectionId)
+    {
+        var playerUnit = playerUnits.Find(pu => pu.ConnectionId == connectionId);
+        if (playerUnit.Unit == null) return null;
+
+        return playerUnit.Unit;
+    }   
+
     private void HandlePlayerEnterRoom(NetworkConnectionToClient conn)
     {
-        // Handle player joining logic here
-        Debug.Log($"Player connected: connectionId={conn.connectionId}");
         SpawnPlayerUnit(conn);
     }
     private void HandlePlayerExitRoom(NetworkConnectionToClient conn)
     {
-        Debug.Log($"Player disconnected: connectionId={conn.connectionId}");
         DespawnPlayerUnit(conn);
     }
 
     public void SpawnPlayerUnit(NetworkConnectionToClient conn)
     {
         var existingPlayerUnit = playerUnits.Find(pu => pu.ConnectionId == conn.connectionId);
-        if (existingPlayerUnit.Unit != null)
-        {
-            Debug.Log($"Player unit already exists for connectionId={conn.connectionId}");
-            return;
-        }
+        if (existingPlayerUnit.Unit != null) return; // Already spawned
 
-        var unit = UnitSpawner.Instance.SpawnUnit("Player", Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
+        var spawnPoint = GetNextPlayerSpawnPoint();
+        var unit = UnitSpawner.Instance.SpawnUnit("Player", spawnPoint, Quaternion.Euler(0f, 0f, 0f));
         playerUnits.Add(new PlayerUnit { ConnectionId = conn.connectionId, Unit = unit });
         EventManager.Instance.Publish(new PlayerUnitSpawnedEvent(conn.connectionId, unit));
         RpcPlayerUnitSpawned(conn.connectionId, unit);
+    }
+
+    [SerializeField] private float spawnCircleRadius = 2f;
+    [SerializeField] private float spawnAngleStepDegrees = 90f;
+    private int spawnIndex = 0;
+
+    public Vector3 GetNextPlayerSpawnPoint()
+    {
+        float angleRad = spawnIndex * spawnAngleStepDegrees * Mathf.Deg2Rad;
+        Vector3 spawnPoint = new Vector3(Mathf.Cos(angleRad) * spawnCircleRadius, 0f, Mathf.Sin(angleRad) * spawnCircleRadius);
+        spawnIndex++;
+        return spawnPoint;
     }
 
     [ClientRpc]

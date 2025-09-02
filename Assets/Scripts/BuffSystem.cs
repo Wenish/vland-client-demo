@@ -33,7 +33,6 @@ public class BuffSystem
         // 3) Now add the new one
         _active.Add(buff);
         buff.OnApply(_target);
-        Debug.Log($"Buff {buff.BuffId} applied to {_target.UnitController.name}");
     }
 
     public void RemoveBuff(Buff buff)
@@ -41,7 +40,6 @@ public class BuffSystem
         if (_active.Remove(buff))
         {
             buff.OnRemove(_target);
-            Debug.Log($"Buff {buff.BuffId} removed from {_target.UnitController.name}");
         }
     }
 

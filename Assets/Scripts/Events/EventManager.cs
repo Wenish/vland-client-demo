@@ -19,6 +19,7 @@ public class EventManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     // Subscribe to an event of type T

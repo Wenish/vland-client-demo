@@ -97,8 +97,6 @@ public class SkillSystem : NetworkBehaviour
         {
             NetworkServer.Destroy(skillToRemove.gameObject);
         }
-        Debug.Log($"Removed skill {skillToRemove.skillName} from {unit.name}");
-        Debug.Log($"{ultimateSkills.Count} ultimate skills found.");
     }
 
     private SyncList<NetworkedSkillInstance> GetList(SkillSlotType type)

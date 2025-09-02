@@ -40,8 +40,6 @@ public class BuffPeriodicSkillEffectChain : PeriodicBuff
             return;
         }
 
-        Debug.Log($"Executing periodic effect chain for buff {BuffId} on {mediator.UnitController}.");
-
         var targets = new List<UnitController> { mediator.UnitController };
         var coroutine = _effectChainDataOnTick.ExecuteCoroutine(_castContext, targets);
 

@@ -80,12 +80,6 @@ public class MyNetworkRoomManager : NetworkRoomManager
     {
         base.OnRoomServerDisconnect(conn);
         OnPlayerExitRoom?.Invoke(conn);
-        if (Utils.IsSceneActive(GameplayScene))
-        {
-            GameObject player = conn.identity.gameObject;
-            PlayerController playerController = player.GetComponent<PlayerController>();
-            NetworkServer.Destroy(playerController.Unit);
-        }
     }
 
     /// <summary>
@@ -265,11 +259,11 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
             // 🔹 UDP Port öffnen
             await device.CreatePortMapAsync(new Mapping(Protocol.Udp, port, port, "Mirror Game UDP"));
-            Debug.Log($"✅ UPnP: UDP Port {port} wurde geöffnet.");
 
             // 🔹 TCP Port öffnen
             await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, port, port, "Mirror Game TCP"));
-            Debug.Log($"✅ UPnP: TCP Port {port} wurde geöffnet.");
+
+            Debug.Log($"[MyNetworkRoomManager] ✅ UPnP TCP und UDP Ports geöffnet: {port}");
 
             upnpSuccess = true;
         }
@@ -289,11 +283,11 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
             // 🔹 UDP Port schließen
             await device.DeletePortMapAsync(new Mapping(Protocol.Udp, port, port));
-            Debug.Log($"🚪 UPnP: UDP Port {port} wurde geschlossen.");
 
             // 🔹 TCP Port schließen
             await device.DeletePortMapAsync(new Mapping(Protocol.Tcp, port, port));
-            Debug.Log($"🚪 UPnP: TCP Port {port} wurde geschlossen.");
+
+            Debug.Log($"[MyNetworkRoomManager] 🚪 UPnP TCP und UDPPorts geschlossen: {port}");
         }
         catch (Exception ex)
         {

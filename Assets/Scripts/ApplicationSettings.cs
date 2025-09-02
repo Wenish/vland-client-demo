@@ -74,8 +74,6 @@ public class ApplicationSettings : MonoBehaviour
         AudioAmbientVolume = PlayerPrefs.GetInt("AudioAmbientVolume", 100);
         IsWindowedFullscreenEnabled = PlayerPrefs.GetInt("WindowedFullscreenEnabled", 1) == 1;
         SelectedResolutionIndex = PlayerPrefs.GetInt("SelectedResolutionIndex", GetDefaultResolutionIndex());
-
-        Debug.Log($"[ApplicationSettings] Settings loaded - Master: {AudioMasterVolume}, Music: {AudioMusicVolume}, SFX: {AudioSfxVolume}, UI: {AudioUiVolume}, Voice: {AudioVoiceVolume}, Ambient: {AudioAmbientVolume}, Enabled: {IsAudioEnabled}");
     }
 
     public int GetDefaultResolutionIndex()
@@ -157,12 +155,10 @@ public class ApplicationSettings : MonoBehaviour
         if (!IsAudioEnabled)
         {
             AudioListener.volume = 0f;
-            Debug.Log("[ApplicationSettings] Audio disabled via AudioListener.volume = 0");
         }
         else
         {
             AudioListener.volume = 1f;
-            Debug.Log("[ApplicationSettings] Audio enabled via AudioListener.volume = 1");
         }
     }
 
@@ -171,12 +167,10 @@ public class ApplicationSettings : MonoBehaviour
         if (IsWindowedFullscreenEnabled)
         {
             Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
-            Debug.Log("[ApplicationSettings] Windowed Fullscreen enabled");
         }
         else
         {
             Screen.fullScreenMode = FullScreenMode.Windowed;
-            Debug.Log("[ApplicationSettings] Windowed Fullscreen disabled");
         }
     }
 
@@ -190,7 +184,6 @@ public class ApplicationSettings : MonoBehaviour
         }
 
         Resolution selected = resolutions[SelectedResolutionIndex];
-        Debug.Log($"[ApplicationSettings] Applying resolution index {SelectedResolutionIndex}: {selected.width}x{selected.height}@{selected.refreshRateRatio.value}Hz");
 
         Screen.SetResolution(selected.width, selected.height, Screen.fullScreenMode);
     }

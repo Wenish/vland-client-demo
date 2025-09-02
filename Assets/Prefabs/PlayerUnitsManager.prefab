@@ -48,8 +48,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  UnitPrefab: {fileID: 0}
-  playerUnits: []
+  spawnCircleRadius: 2
+  spawnAngleStepDegrees: 90
 --- !u!114 &9156389482669356423
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -46,7 +46,6 @@ public class SkillEffectNodeData
         // 4) if next targets are null or empty, we're done
         if (nextTargets == null || nextTargets.Count == 0)
         {
-            Debug.LogWarning("Next targets are null or empty. Effect does not continue.");
             yield break;
         }
 

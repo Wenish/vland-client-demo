@@ -16,14 +16,12 @@ public class UnitHighlighter : MonoBehaviour
     void Awake()
     {
         _mainCamera = Camera.main;
-        Debug.Log("[UnitHighlighter] Awake: Main camera assigned.");
     }
 
     void Update()
     {
         if (_mainCamera == null)
         {
-            Debug.LogWarning("[UnitHighlighter] Update: Main camera is null.");
             return;
         }
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -33,7 +31,6 @@ public class UnitHighlighter : MonoBehaviour
             GameObject unit = hit.collider.gameObject;
             if (lastHighlighted != unit)
             {
-                Debug.Log($"[UnitHighlighter] Highlighting new unit: {unit.name}");
                 RemoveHighlight();
                 ApplyHighlight(unit);
                 lastHighlighted = unit;
@@ -43,7 +40,6 @@ public class UnitHighlighter : MonoBehaviour
         {
             if (lastHighlighted != null)
             {
-                Debug.Log("[UnitHighlighter] No unit under cursor, removing highlight.");
                 RemoveHighlight();
                 lastHighlighted = null;
             }
@@ -77,7 +73,6 @@ public class UnitHighlighter : MonoBehaviour
             if (outline != null)
             {
                 Destroy(outline); // Remove the outline component
-                Debug.Log($"[UnitHighlighter] Removed highlight from unit: {lastHighlighted.name}");
             }
 
             return;
@@ -86,7 +81,6 @@ public class UnitHighlighter : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log("[UnitHighlighter] OnDestroy: Removing highlight.");
         RemoveHighlight(); // Ensure highlight is removed when the script is destroyed
     }
 }
