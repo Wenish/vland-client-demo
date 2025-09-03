@@ -24,6 +24,8 @@ public class UiDocumentMainMenu : MonoBehaviour
     // Buttons for the credits page
     private Button buttonCreditsBackToMenu;
 
+    private Label labelVersionNumber;
+
 
 
     private List<VisualElement> pages = new List<VisualElement>();
@@ -61,6 +63,8 @@ public class UiDocumentMainMenu : MonoBehaviour
         // Find credits page buttons by name
         buttonCreditsBackToMenu = pageCredits.Q<Button>("ButtonBackToMenu");
 
+        labelVersionNumber = root.Q<Label>("LabelVersionNumber");
+        labelVersionNumber.text = $"v{Application.version}";
     }
 
     void OnEnable()
