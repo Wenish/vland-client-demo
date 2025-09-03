@@ -74,7 +74,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}
+          name: ${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip
           path: artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip
           if-no-files-found: error
 
