@@ -34,6 +34,22 @@ jobs:
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
             Library-
+      
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          # Für Tag-Runs (z.B. v0.2.4) -> 0.2.4
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && -n "${GITHUB_REF_NAME}" ]]; then
+            ref="${GITHUB_REF_NAME}"
+          # Fallback für workflow_dispatch: nimm den letzten Tag oder 0.0.0
+          elif git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            ref="$(git describe --tags --abbrev=0)"
+          else
+            ref="v0.0.0"
+          fi
+          ver="${ref#v}"
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
 
       - name: Build with Unity
         id: buildStep
@@ -46,7 +62,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           # Semantic uses your git tags/commits to version the Player
           versioning: Semantic
-          buildName: ShadowInfection-${{ steps.buildStep.outputs.version }}  # Customize as needed
+          buildName: "Shadow Infection"  # Customize as needed
           # (Optional) customize buildName, buildPath, etc.
 
       - name: Zip build
