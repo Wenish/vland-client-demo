@@ -20,15 +20,19 @@ public class PlayerInput : NetworkBehaviour
     [SyncVar]
     public bool isThisInputActive = false;
 
+    [SerializeField]
     private UnitController _myUnitController;
+    [SerializeField]
     private Vector3 _mouseWorldPosition;
-    Plane _plane;
-    Camera _cameraMain;
+    private Plane _plane;
+    [SerializeField]
+    private Camera _cameraMain;
 
     private ControllerCamera _controllerCamera;
 
     void Start()
     {
+        _plane = new Plane(Vector3.up, 0);
         if (isServer)
         {
             var unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionToClient.connectionId);
@@ -69,6 +73,20 @@ public class PlayerInput : NetworkBehaviour
 
     void Update()
     {
+        if (isLocalPlayer && !isThisInputActive)
+        {
+            CmdSetInputActive(true);
+        }
+
+        if (isLocalPlayer && _myUnitController == null && myUnit != null)
+        {
+            _myUnitController = myUnit.GetComponent<UnitController>();
+        }
+        if (isLocalPlayer && _cameraMain == null)
+        {
+            _cameraMain = Camera.main;
+        }
+
         if (!isThisInputActive) return;
         if (isLocalPlayer && myUnit != null)
         {
@@ -207,7 +225,6 @@ public class PlayerInput : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        _plane = new Plane(Vector3.up, 0);
         _cameraMain = Camera.main;
         CmdSetInputActive(true);
         StartCoroutine(WaitForUnit());
@@ -217,7 +234,10 @@ public class PlayerInput : NetworkBehaviour
     {
         base.OnStopLocalPlayer();
         CmdSetInputActive(false);
+        CmdResetInput();
         StopCoroutine(WaitForUnit());
+        _myUnitController = null;
+        _cameraMain = null;
     }
 
     [Command]
@@ -249,7 +269,7 @@ public class PlayerInput : NetworkBehaviour
     }
 
     [Client]
-    public void InputUseSkills() 
+    public void InputUseSkills()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -273,5 +293,22 @@ public class PlayerInput : NetworkBehaviour
     public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {
         _myUnitController.unitMediator.Skills.CastSkill(slot, index, aimPoint);
+    }
+
+    [Command]
+    public void CmdResetInput()
+    {
+        ResetInput();
+    }
+
+    [Server]
+    public void ResetInput()
+    {
+        myUnit = null;
+        _myUnitController = null;
+        HorizontalInput = 0f;
+        VerticalInput = 0f;
+        Angle = 0f;
+        IsPressingFire1 = false;
     }
 }
