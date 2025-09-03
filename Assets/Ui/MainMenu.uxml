@@ -11,4 +11,5 @@
         <engine:Instance template="PageCredits" name="PageCredits" style="display: none; width: 100%; height: 100%;" />
     </engine:VisualElement>
     <engine:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;" />
+    <engine:Label picking-mode="Ignore" name="LabelVersionNumber" text="v0.1" style="white-space: nowrap; position: absolute; right: 0; bottom: 0; color: rgb(153, 153, 153); padding-right: 30px;" />
 </engine:UXML>
