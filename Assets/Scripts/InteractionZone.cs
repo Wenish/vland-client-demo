@@ -52,6 +52,7 @@ public class InteractionZone : MonoBehaviour
 
     private void RemoveUnitFromZone(UnitController unit)
     {
+        if (unit == null) return;
         Debug.Log(unit?.name + " exited interaction zone " + interactionId);
         if (unitsInZone.Remove(unit))
         {
