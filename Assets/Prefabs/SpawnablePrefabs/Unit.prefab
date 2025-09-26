@@ -908,9 +908,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 2.5
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!114 &4172459348133356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -923,6 +923,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d028955d3644f59b6784b18fcf17ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropsPushVolume
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   impulseStrength: 1
   maxImpulse: 2
   lift: 1
