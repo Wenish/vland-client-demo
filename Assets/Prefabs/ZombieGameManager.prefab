@@ -55,7 +55,7 @@ MonoBehaviour:
   timeBetweenSpawns: 500
   maxZombiesAlive: 30
   zombiesPerWaveMultiplier: 5
-  isGamePaused: 1
+  isGamePaused: 0
   zombiesAlive: 0
   isSpawingWave: 0
 --- !u!114 &5923501022592648545
