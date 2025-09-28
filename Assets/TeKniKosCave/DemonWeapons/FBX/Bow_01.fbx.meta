@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 38b41a445cebc79498c9490450466f35
+guid: 1fafa40718b38f54ba1821d86f9580e8
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -109,5 +109,5 @@ AssetOrigin:
   productId: 228080
   packageName: Demonic Weapons Pack
   packageVersion: 1.1
-  assetPath: Assets/TeKniKosCave/DemonWeapons/FBX/Arrow_01.fbx
+  assetPath: Assets/TeKniKosCave/DemonWeapons/FBX/Bow_01.fbx
   uploadId: 552791
