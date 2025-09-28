@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f3bd82d9c77367d4c970a9795c4f15c7
+guid: fe790ca359ebcf241a8b1cc79b4da309
 PrefabImporter:
   externalObjects: {}
   userData: 
@@ -9,6 +9,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 228080
   packageName: Demonic Weapons Pack
-  packageVersion: 
-  assetPath: Assets/TeKniKosCave/DemonWeapons/Prefabs/Arrow_01.prefab
-  uploadId: 0
+  packageVersion: 1.1
+  assetPath: Assets/TeKniKosCave/DemonWeapons/Prefabs/Bow_01.prefab
+  uploadId: 552791

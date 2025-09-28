@@ -20,6 +20,8 @@ MonoBehaviour:
   attackSpeed: 0.6
   moveSpeedPercentWhileAttacking: 0.5
   iconTexture: {fileID: 2800000, guid: 1541f1b1a8646476a9b6643148a42642, type: 3}
+  weaponModelRightHand: {fileID: 0}
+  weaponModelLeftHand: {fileID: 9016231584660341948, guid: 14ad90cbff54be541bdb8323e9f4df96, type: 3}
   projectileSpeed: 22
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
