@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
 public class UnitAnimationController : MonoBehaviour
 {
@@ -52,14 +49,17 @@ public class UnitAnimationController : MonoBehaviour
         animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
     }
 
+    private int attackCounter = 0;
+
     private void HandleOnAttackStartChange(UnitController unitController)
     {
-        if (unitController.currentWeapon != null) {
+        if (unitController.currentWeapon != null)
+        {
             SetAttackTime(unitController.currentWeapon.attackTime);
         }
-        animator.SetInteger("AttackVersion", Random.Range(0, 2));
+        animator.SetInteger("AttackVersion", attackCounter % 2);
         animator.SetTrigger("Attack");
-        
+        attackCounter++;
     }
 
     private void HandleOnHealthChange((int current, int max) health)
