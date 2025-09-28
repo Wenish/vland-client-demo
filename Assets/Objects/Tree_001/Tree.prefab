@@ -68,7 +68,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &255916505356954224
@@ -185,7 +188,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &7129329970808994374
@@ -302,7 +308,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &8173158509771988744
@@ -419,7 +428,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &20766817895657980
@@ -581,7 +593,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &1324751710658214858
@@ -698,7 +713,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &8322806559451366178
@@ -815,7 +833,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &4422158512338800211
@@ -932,7 +953,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &6438350881527851460
@@ -1049,7 +1073,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &1175295676004332938
@@ -1166,7 +1193,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &3817063998117885920
@@ -1283,7 +1313,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &6962134461693987697
@@ -1400,7 +1433,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &5204595434738855176
@@ -1517,7 +1553,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 2f5798c9a0eb92847bf070f91c0fb61f, type: 3}
+        m_Name: Texture 2D
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &7420026903928215709
@@ -1713,6 +1752,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 8513859187771203891, guid: c09e8b6b3d97c694f97ac12841fe3e24, type: 3}
+    - {fileID: -6733177361254619370, guid: c09e8b6b3d97c694f97ac12841fe3e24, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -5568371526223589888, guid: c09e8b6b3d97c694f97ac12841fe3e24, type: 3}
