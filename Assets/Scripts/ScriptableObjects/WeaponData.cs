@@ -15,6 +15,10 @@ public abstract class WeaponData : ScriptableObject
     [Header("UI")]
     public Texture2D iconTexture;
 
+    [Header("Visuals")]
+    public GameObject weaponModelRightHand;
+    public GameObject weaponModelLeftHand;
+
     public float AttackCooldown => attackTime + attackSpeed;
 
     public abstract void PerformAttack(UnitController attacker);
