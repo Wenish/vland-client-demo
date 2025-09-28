@@ -820,6 +820,8 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -841,6 +843,7 @@ SkinnedMeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1186,6 +1189,7 @@ GameObject:
   - component: {fileID: 414097595381765757}
   - component: {fileID: 6883684566732210730}
   - component: {fileID: 2159139732371161816}
+  - component: {fileID: 5286824784682441838}
   m_Layer: 0
   m_Name: ModelNinja
   m_TagString: Untagged
@@ -1245,6 +1249,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 5
+--- !u!114 &5286824784682441838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7864191341164438517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08ff6c4d987c7d44e9f094b17d1efee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitModelWeaponEquipper
+  rightHandTransform: {fileID: 9170898892094192812}
+  leftHandTransform: {fileID: 8424162313128437347}
+  positionOffset: {x: 0, y: 0.1, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 90}
 --- !u!1 &8238183997058076521
 GameObject:
   m_ObjectHideFlags: 0
