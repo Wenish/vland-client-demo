@@ -126,19 +126,14 @@ public class GateController : NetworkBehaviour
             navMeshObstacle.enabled = !isOpen;
         }
 
-        // Only the server should publish gameplay events
-        if (isServer && EventManager.Instance != null)
+        if (isOpen)
         {
-            if (isOpen)
-            {
-                EventManager.Instance.Publish(new OpenedGateEvent(gateId));
-            }
-            else
-            {
-                EventManager.Instance.Publish(new ClosedGateEvent(gateId));
-            }
+            EventManager.Instance.Publish(new OpenedGateEvent(gateId));
         }
-
+        else
+        {
+            EventManager.Instance.Publish(new ClosedGateEvent(gateId));
+        }
 
         if (moveCoroutine != null)
         {
