@@ -17,8 +17,8 @@
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
-    margin-left: 0px;
-    margin-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .unity-toggle .unity-toggle__checkmark {
@@ -129,9 +129,7 @@ SliderInt .unity-base-slider__dragger {
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
-
     margin-left: 0;
-
     transition-duration: 0.16s;
     transition-property: border-color;
 }
@@ -150,4 +148,34 @@ SliderInt .unity-base-slider__dragger {
 
 .unity-base-popup-field__arrow {
     -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.unity-base-text-field__input {
+    color: rgb(255, 255, 255);
+    background-color: transparent;
+    border-width: 3px;
+    border-color: white;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    margin-left: 0;
+    transition-duration: 0.16s;
+    transition-property: border-color;
+    padding-top: 0;
+    padding-right: 12px;
+    padding-left: 12px;
+    padding-bottom: 0;
+}
+
+.unity-base-text-field__input--placeholder {
+    color: rgba(214, 214, 214, 1);
+}
+
+.unity-base-text-field__input:hover {
+    border-color: rgb(150, 190, 186);
+}
+
+.unity-base-text-field:focus .unity-base-text-field__input {
+    border-color: rgb(111, 202, 192);
 }
