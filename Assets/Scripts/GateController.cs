@@ -30,20 +30,52 @@ public class GateController : NetworkBehaviour
 
     private void Start()
     {
+        if (gateObject == null)
+        {
+            Debug.LogWarning($"[{nameof(GateController)}] gateObject is not assigned. Disabling component.");
+            enabled = false;
+            return;
+        }
+
         closedPosition = gateObject.transform.position;
 
         // Calculate the open position by subtracting the gate's height in the local Y axis
-        float height = gateObject.GetComponent<Renderer>().bounds.size.y;
-        openPosition = closedPosition - new Vector3(0, height, 0);
+        var renderer = gateObject.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            float height = renderer.bounds.size.y;
+            openPosition = closedPosition - new Vector3(0, height, 0);
+        }
+        else
+        {
+            // Fallback in case no renderer is present
+            openPosition = closedPosition - new Vector3(0, 2f, 0);
+        }
 
         // Set the initial state of the gate
         ChangeGateState();
+    }
 
-        if (isServer)
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        // Subscribe to events when running on the server
+        if (EventManager.Instance != null)
         {
             EventManager.Instance.Subscribe<OpenGateEvent>(OnOpenGateEvent);
             EventManager.Instance.Subscribe<CloseGateEvent>(OnCloseGateEvent);
         }
+    }
+
+    public override void OnStopServer()
+    {
+        // Unsubscribe to avoid callbacks after this object is destroyed
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.Unsubscribe<OpenGateEvent>(OnOpenGateEvent);
+            EventManager.Instance.Unsubscribe<CloseGateEvent>(OnCloseGateEvent);
+        }
+        base.OnStopServer();
     }
 
     private void Update()
@@ -78,13 +110,33 @@ public class GateController : NetworkBehaviour
 
     private void ChangeGateState()
     {
-        gateCollider.enabled = !isOpen;
-        navMeshObstacle.enabled = !isOpen;
+        // Guard against destroyed or missing references
+        if (gateCollider != null)
+        {
+            gateCollider.enabled = !isOpen;
+        }
+        else
+        {
+            // Optional: log once to help diagnose setup issues
+            Debug.LogWarning($"[{nameof(GateController)}] gateCollider is missing for gateId {gateId}.");
+        }
 
-        if (isOpen) {
-            EventManager.Instance.Publish(new OpenedGateEvent(gateId));
-        } else {
-            EventManager.Instance.Publish(new ClosedGateEvent(gateId));
+        if (navMeshObstacle != null)
+        {
+            navMeshObstacle.enabled = !isOpen;
+        }
+
+        // Only the server should publish gameplay events
+        if (isServer && EventManager.Instance != null)
+        {
+            if (isOpen)
+            {
+                EventManager.Instance.Publish(new OpenedGateEvent(gateId));
+            }
+            else
+            {
+                EventManager.Instance.Publish(new ClosedGateEvent(gateId));
+            }
         }
 
 
@@ -94,7 +146,10 @@ public class GateController : NetworkBehaviour
         }
 
         Vector3 targetPosition = isOpen ? openPosition : closedPosition;
-        moveCoroutine = StartCoroutine(MoveGate(targetPosition));
+        if (gateObject != null && isActiveAndEnabled)
+        {
+            moveCoroutine = StartCoroutine(MoveGate(targetPosition));
+        }
     }
 
     private void OnIsOpenChanged(bool oldValue, bool newValue)
@@ -105,11 +160,20 @@ public class GateController : NetworkBehaviour
 
     private System.Collections.IEnumerator MoveGate(Vector3 targetPosition)
     {
+        if (gateObject == null)
+        {
+            yield break;
+        }
+
         Vector3 startPosition = gateObject.transform.position;
         float elapsed = 0f;
 
         while (elapsed < moveDuration)
         {
+            if (gateObject == null)
+            {
+                yield break;
+            }
             gateObject.transform.position = Vector3.Lerp(startPosition, targetPosition, elapsed / moveDuration);
             elapsed += Time.deltaTime;
             yield return null;
