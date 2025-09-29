@@ -59,7 +59,7 @@ public class UnitAnimationController : MonoBehaviour
         }
         animator.SetInteger("AttackVersion", attackCounter % 2);
         animator.SetTrigger("Attack");
-        attackCounter++;
+        attackCounter = (attackCounter + 1) % 4;
     }
 
     private void HandleOnHealthChange((int current, int max) health)
