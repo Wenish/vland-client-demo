@@ -6,6 +6,7 @@ public class ApplicationSettings : MonoBehaviour
 {
     public static ApplicationSettings Instance;
 
+    public string Nickname { get; set; } = "";
     public bool IsAudioEnabled { get; set; } = true;
     public int AudioMasterVolume { get; set; } = 100;
     public int AudioMusicVolume { get; set; } = 100;
@@ -46,6 +47,7 @@ public class ApplicationSettings : MonoBehaviour
 
     public void SaveSettings()
     {
+        PlayerPrefs.SetString("Nickname", Nickname);
         PlayerPrefs.SetInt("AudioEnabled", IsAudioEnabled ? 1 : 0);
         PlayerPrefs.SetInt("AudioMasterVolume", AudioMasterVolume);
         PlayerPrefs.SetInt("AudioMusicVolume", AudioMusicVolume);
@@ -65,6 +67,7 @@ public class ApplicationSettings : MonoBehaviour
 
     public void LoadSettings()
     {
+        Nickname = PlayerPrefs.GetString("Nickname", "");
         IsAudioEnabled = PlayerPrefs.GetInt("AudioEnabled", 1) == 1;
         AudioMasterVolume = PlayerPrefs.GetInt("AudioMasterVolume", 100);
         AudioMusicVolume = PlayerPrefs.GetInt("AudioMusicVolume", 100);
@@ -273,6 +276,12 @@ public class ApplicationSettings : MonoBehaviour
     {
         SelectedResolutionIndex = Mathf.Clamp(index, 0, Screen.resolutions.Length - 1);
         ApplyResolutionSettings();
+        SaveSettings();
+    }
+
+    public void SetNickname(string nickname)
+    {
+        Nickname = nickname;
         SaveSettings();
     }
 

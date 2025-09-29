@@ -4,6 +4,7 @@
     <engine:VisualElement name="PageSettings" class="page-content">
         <engine:Label text="SETTINGS" class="page-title" />
         <engine:VisualElement name="VisualElement" class="audio-container" style="color: rgb(255, 255, 255); align-items: stretch; flex-direction: column;">
+            <engine:TextField label="Nickname" placeholder-text="No Nickname" max-length="20" name="TextFieldNickname" />
             <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
                 <engine:Toggle label="Audio" value="true" toggle-on-label-click="true" name="ToggleAudio" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
             </engine:VisualElement>

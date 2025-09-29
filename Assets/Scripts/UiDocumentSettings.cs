@@ -10,6 +10,8 @@ public class UiDocumentSettings : MonoBehaviour
 
     private int audioDefaultValue = 100;
 
+    private TextField nicknameField;
+
     private Toggle toggleAudio;
 
     private SliderInt sliderAudioMaster;
@@ -47,6 +49,7 @@ public class UiDocumentSettings : MonoBehaviour
         toggleWindowFullscreen = root.Q<Toggle>("ToggleWindowFullscreen");
         dropdownFieldResolution = root.Q<DropdownField>("DropdownFieldResolution");
         buttonResetSettings = root.Q<Button>("ButtonResetSettings");
+        nicknameField = root.Q<TextField>("TextFieldNickname");
     }
 
     private EventCallback<ChangeEvent<int>> masterCallback;
@@ -58,6 +61,7 @@ public class UiDocumentSettings : MonoBehaviour
     private EventCallback<ChangeEvent<bool>> audioToggleCallback;
     private EventCallback<ChangeEvent<bool>> windowFullscreenToggleCallback;
     private EventCallback<ChangeEvent<string>> resolutionDropdownCallback;
+    private EventCallback<ChangeEvent<string>> nicknameFieldCallback;
 
     void OnEnable()
     {
@@ -71,6 +75,7 @@ public class UiDocumentSettings : MonoBehaviour
         audioToggleCallback = evt => ApplicationSettings.Instance.SetAudioEnabled(evt.newValue);
         windowFullscreenToggleCallback = evt => ApplicationSettings.Instance.SetWindowedFullscreenEnabled(evt.newValue);
         resolutionDropdownCallback = evt => ApplicationSettings.Instance.SetResolutionIndex(dropdownFieldResolution.index);
+        nicknameFieldCallback = evt => ApplicationSettings.Instance.SetNickname(evt.newValue);
 
         // Load current settings and initialize UI
         LoadAndApplyCurrentSettings();
@@ -100,6 +105,9 @@ public class UiDocumentSettings : MonoBehaviour
 
         if (dropdownFieldResolution != null)
             dropdownFieldResolution.RegisterValueChangedCallback(resolutionDropdownCallback);
+
+        if (nicknameField != null)
+            nicknameField.RegisterValueChangedCallback(nicknameFieldCallback);
     }
 
     void OnDisable()
@@ -114,6 +122,7 @@ public class UiDocumentSettings : MonoBehaviour
         toggleWindowFullscreen?.UnregisterValueChangedCallback(windowFullscreenToggleCallback);
         dropdownFieldResolution?.UnregisterValueChangedCallback(resolutionDropdownCallback);
         buttonResetSettings.clicked -= OnButtonResetSettings;
+        nicknameField?.UnregisterValueChangedCallback(nicknameFieldCallback);
     }
 
     void Start()
@@ -158,6 +167,9 @@ public class UiDocumentSettings : MonoBehaviour
             dropdownFieldResolution.choices = GetResolutionChoices();
             dropdownFieldResolution.index = ApplicationSettings.Instance.SelectedResolutionIndex;
         }
+        // Set nickname field
+        if (nicknameField != null)
+            nicknameField.SetValueWithoutNotify(ApplicationSettings.Instance.Nickname);
 
     }
 
