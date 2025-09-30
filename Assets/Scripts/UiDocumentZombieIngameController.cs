@@ -138,6 +138,35 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _skillUltimate.TooltipText = GetSkillTooltip(skillUltimate.skillData);
         }
 
+        // Reset elements if no skill
+        if (skillPassive == null)
+        {
+            ResetAbilityCooldownElement(_skillPassive);
+        }
+        if (skill1 == null)
+        {
+            ResetAbilityCooldownElement(_skillNormal1);
+        }
+        if (skill2 == null)
+        {
+            ResetAbilityCooldownElement(_skillNormal2);
+        }
+        if (skill3 == null)
+        {
+            ResetAbilityCooldownElement(_skillNormal3);
+        }
+        if (skillUltimate == null)
+        {
+            ResetAbilityCooldownElement(_skillUltimate);
+        }
+    }
+
+    void ResetAbilityCooldownElement(AbilityCooldownElement element)
+    {
+        element.CooldownRemaining = 0f;
+        element.CooldownProgress = 0f;
+        element.IconTexture = null;
+        element.TooltipText = "";
     }
 
     void OnPlayerGoldChangedEvent(PlayerGoldChangedEvent playerGoldChangedEvent)
