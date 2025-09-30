@@ -19,6 +19,7 @@ public class UnitUiController : MonoBehaviour
         _unitController.OnRevive += HandleOnRevive;
         _unitController.OnShieldChange += HandleOnShieldChange;
         _unitController.OnHealthChange += HandleOnHealthChange;
+        _unitController.OnNameChanged += HandleOnNameChanged;
         InitUiBars();
         SetNameTag(_unitController.unitName);
     }
@@ -165,5 +166,9 @@ public class UnitUiController : MonoBehaviour
     public void SetNameTag(string name)
     {
         nameTag.text = name;
+    }
+    public void HandleOnNameChanged(UnitController controller)
+    {
+        SetNameTag(controller.unitName);
     }
 }
