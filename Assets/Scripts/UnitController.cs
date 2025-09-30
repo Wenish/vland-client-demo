@@ -11,8 +11,24 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public int team;
 
-    [SyncVar]
+
+    [SyncVar(hook = nameof(HookOnUnitNameChanged))]
     public string unitName;
+    
+
+    public event Action<UnitController> OnNameChanged = delegate {};
+
+    [Server]
+    public void SetUnitName(string name)
+    {
+        unitName = name;
+        OnNameChanged(this);
+    }
+    [Client]
+    public void HookOnUnitNameChanged(string oldValue, string newValue)
+    {
+        OnNameChanged(this);
+    }
 
     [SyncVar]
     public float horizontalInput = 0f;
