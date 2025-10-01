@@ -134,7 +134,6 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     public void OnUnitRevive()
     {
-        Debug.Log("Unit revived, reinitializing skills.");
         foreach (var skill in passiveSkills)
         {
             skill.TriggerInit();
