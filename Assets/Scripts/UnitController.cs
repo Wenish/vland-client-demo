@@ -142,13 +142,22 @@ public class UnitController : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (isServer) {
+        if (isServer)
+        {
             health = maxHealth;
+            EquipModel(modelName);
+            EquipWeapon(weaponName);
         }
         unitRigidbody = GetComponent<Rigidbody>();
         unitCollider = GetComponent<Collider>();
         RaiseHealthChangeEvent();
         RaiseShieldChangeEvent();
+
+        if (!isServer)
+        {
+            SetModelData(modelName);
+            SetWeaponData(weaponName);
+        }
     }
 
     void FixedUpdate()
