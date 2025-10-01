@@ -9,6 +9,12 @@ public class UnitAnimationController : MonoBehaviour
     void Awake() {
         unitController = GetComponentInParent<UnitController>();
         animator = GetComponent<Animator>();
+        if (unitController == null || animator == null)
+        {
+            Debug.LogError("UnitAnimationController: Missing UnitController or Animator reference.", this);
+            enabled = false;
+            return;
+        }
         animator.fireEvents = false;
         unitController.OnAttackStart += HandleOnAttackStartChange;
         unitController.OnHealthChange += HandleOnHealthChange;
@@ -89,9 +95,17 @@ public class UnitAnimationController : MonoBehaviour
     }
 
     private void SelectAnimator(UnitController unitController) {
+        if (animator == null || unitController == null) return;
 
-        if( unitController.modelData != null) {
-            animator.runtimeAnimatorController = unitController.modelData.GetAnimationSetForWeapon(unitController.currentWeapon.weaponType).animatorController;
+        if (unitController.modelData != null) {
+            var weapon = unitController.currentWeapon;
+            if (weapon != null) {
+                var animSet = unitController.modelData.GetAnimationSetForWeapon(weapon.weaponType);
+                if (animSet != null && animSet.animatorController != null) {
+                    animator.runtimeAnimatorController = animSet.animatorController;
+                }
+            }
+            // If no weapon yet, keep current controller; OnWeaponChange will refresh it later.
         }
 
         animator.SetInteger("Health", unitController.health);

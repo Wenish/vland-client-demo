@@ -158,8 +158,8 @@ public class UnitController : NetworkBehaviour
 
         if (!isServer)
         {
-            SetModelData(modelName);
             SetWeaponData(weaponName);
+            SetModelData(modelName);
         }
     }
 
