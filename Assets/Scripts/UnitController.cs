@@ -14,9 +14,9 @@ public class UnitController : NetworkBehaviour
 
     [SyncVar(hook = nameof(HookOnUnitNameChanged))]
     public string unitName;
-    
 
-    public event Action<UnitController> OnNameChanged = delegate {};
+
+    public event Action<UnitController> OnNameChanged = delegate { };
 
     [Server]
     public void SetUnitName(string name)
@@ -58,7 +58,7 @@ public class UnitController : NetworkBehaviour
     public string weaponName;
     public WeaponData currentWeapon;
     public WeaponController weaponController;
-    public event Action<UnitController> OnWeaponChange = delegate {};
+    public event Action<UnitController> OnWeaponChange = delegate { };
 
     private void OnWeaponNameChanged(string oldWeaponName, string newWeaponName)
     {
@@ -66,9 +66,11 @@ public class UnitController : NetworkBehaviour
         SetWeaponData(newWeaponName);
     }
 
-    private void SetWeaponData(string weaponName) {
+    private void SetWeaponData(string weaponName)
+    {
         WeaponData weaponData = DatabaseManager.Instance.weaponDatabase.GetWeaponByName(weaponName);
-        if (weaponData == null) {
+        if (weaponData == null)
+        {
             Debug.LogError($"Weapon {weaponName} not found in database.");
             return;
         }
@@ -78,7 +80,8 @@ public class UnitController : NetworkBehaviour
     }
 
     [Server]
-    public void EquipWeapon(string weaponName) {
+    public void EquipWeapon(string weaponName)
+    {
         this.weaponName = weaponName;
         SetWeaponData(weaponName);
     }
@@ -94,7 +97,7 @@ public class UnitController : NetworkBehaviour
         SetModelData(newModelName);
     }
 
-    public event Action<(UnitController unitController, GameObject modelInstance)> OnModelChange = delegate {};
+    public event Action<(UnitController unitController, GameObject modelInstance)> OnModelChange = delegate { };
 
     private void SetModelData(string modelName)
     {
@@ -114,7 +117,8 @@ public class UnitController : NetworkBehaviour
     }
 
     [Server]
-    public void EquipModel(string modelName) {
+    public void EquipModel(string modelName)
+    {
         this.modelName = modelName;
         SetModelData(modelName);
     }
@@ -124,12 +128,12 @@ public class UnitController : NetworkBehaviour
     private Collider unitCollider;
 
     public event Action<(int current, int max)> OnHealthChange = delegate { };
-    public event Action<(int current, int max)> OnShieldChange = delegate {};
-    public event Action<UnitController> OnAttackStart = delegate {};
-    public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate {};
-    public event Action<UnitController> OnHealed = delegate {};
+    public event Action<(int current, int max)> OnShieldChange = delegate { };
+    public event Action<UnitController> OnAttackStart = delegate { };
+    public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
+    public event Action<UnitController> OnHealed = delegate { };
     public event Action OnDied = delegate { };
-    public event Action OnRevive = delegate {};
+    public event Action OnRevive = delegate { };
     public UnitMediator unitMediator;
     public UnitActionState unitActionState;
 
@@ -144,7 +148,6 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer)
         {
-            health = maxHealth;
             EquipModel(modelName);
             EquipWeapon(weaponName);
         }
@@ -162,7 +165,8 @@ public class UnitController : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (isServer) {
+        if (isServer)
+        {
             MovePlayer();
             RotatePlayer();
         }
@@ -202,14 +206,15 @@ public class UnitController : NetworkBehaviour
             shield = maxShield;
         }
     }
-    
+
     [Server]
     private void MovePlayer()
     {
-        if(IsDead) {
+        if (IsDead)
+        {
             unitRigidbody.linearVelocity = Vector3.zero;
             return;
-        };
+        }
 
         var currentMoveSpeed = unitMediator.Stats.GetStat(StatType.MovementSpeed);
 
@@ -224,7 +229,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     private void RotatePlayer()
     {
-        if(IsDead) return;
+        if (IsDead) return;
 
         float turnSpeed = unitMediator.Stats.GetStat(StatType.TurnSpeed); // Should be in range [0,1]
         if (turnSpeed <= 0f) return; // Do not turn if turnSpeed is 0
@@ -293,7 +298,7 @@ public class UnitController : NetworkBehaviour
     [ClientRpc]
     public void RpcOnTakenDamage(int damage, UnitController attacker)
     {
-        if(isServer) return;
+        if (isServer) return;
         OnTakeDamage((this, attacker));
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
     }
@@ -372,7 +377,7 @@ public class UnitController : NetworkBehaviour
         {
             Die();
         }
-        if(!isServer && oldValue == 0 && newValue > 0)
+        if (!isServer && oldValue == 0 && newValue > 0)
         {
             Revive();
         }
@@ -416,6 +421,30 @@ public class UnitController : NetworkBehaviour
     private void RaiseOnReviveEvent()
     {
         OnRevive();
+    }
+
+    [Server]
+    public void SetHealth(int newHealth)
+    {
+        health = Mathf.Clamp(newHealth, 0, maxHealth);
+
+        if (health <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            Revive();
+        }
+
+        RaiseHealthChangeEvent();
+    }
+
+    [Server]
+    public void SetShield(int newShield)
+    {
+        shield = Mathf.Clamp(newShield, 0, maxShield);
+        RaiseShieldChangeEvent();
     }
 }
 
