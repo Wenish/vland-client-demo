@@ -16,14 +16,14 @@ MonoBehaviour:
   weaponType: 2
   attackPower: 70
   attackRange: 3
-  attackTime: 0.4
-  attackSpeed: 0.6
+  attackTime: 0.3
+  attackSpeed: 0.5
   moveSpeedPercentWhileAttacking: 0.9
   iconTexture: {fileID: 2800000, guid: e299739c0b07042d0abef4dd454c0572, type: 3}
   weaponModelRightHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
   weaponModelLeftHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
   mode: 0
-  maxHits: 3
+  maxHits: 1
   coneAngleRadians: 80
   numRays: 11
   weighting: 0.5
