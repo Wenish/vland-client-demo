@@ -35,6 +35,10 @@ public class UnitUiController : MonoBehaviour
         if (health.current < health.max)
         {
             EnableHealthbar();
+            if (_unitController.maxShield > 0)
+            {
+                EnableShieldbar();
+            }
             return;
         }
 
@@ -67,10 +71,12 @@ public class UnitUiController : MonoBehaviour
 
         var isPlayer = _unitController.unitType == UnitType.Player;
         var isFullHealth = _unitController.health == _unitController.maxHealth;
+        var isFullShield = _unitController.shield == _unitController.maxShield;
 
-        if (!isPlayer && isFullHealth)
+        if (!isPlayer && isFullHealth && isFullShield)
         {
             DisableHealthbar();
+            DisableShieldbar();
         }
     }
 
@@ -88,10 +94,26 @@ public class UnitUiController : MonoBehaviour
         if (shield.max == 0)
         {
             DisableShieldbar();
+            return;
         }
-        else
+
+        if (shield.current < shield.max)
         {
             EnableShieldbar();
+            if (_unitController.maxHealth > 0)
+            {
+                EnableHealthbar();
+            }
+            return;
+        }
+
+        if (shield.current == shield.max)
+        {
+            var isPlayer = _unitController.unitType == UnitType.Player;
+            if (!isPlayer)
+            {
+                DisableShieldbar();
+            }
         }
     }
 
