@@ -148,6 +148,63 @@ public class SkillSystem : NetworkBehaviour
             skill.TriggerInit();
         }
     }
+
+    [Server]
+    private void ClearSkills(SkillSlotType slot)
+    {
+        var list = GetList(slot);
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            RemoveSkill(slot, i);
+        }
+    }
+
+    [Server]
+    public void ClearAllSkills()
+    {
+        ClearSkills(SkillSlotType.Passive);
+        ClearSkills(SkillSlotType.Normal);
+        ClearSkills(SkillSlotType.Ultimate);
+    }
+
+    [Server]
+    public void ReplaceLoadout(IEnumerable<string> passive, IEnumerable<string> normal, IEnumerable<string> ultimate)
+    {
+        // Remove everything first
+        ClearAllSkills();
+
+        // Add passives
+        if (passive != null)
+        {
+            foreach (var name in passive)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    AddSkill(SkillSlotType.Passive, name);
+                }
+            }
+        }
+        // Add normals
+        if (normal != null)
+        {
+            foreach (var name in normal)
+            {
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                AddSkill(SkillSlotType.Normal, name);
+            }
+        }
+
+
+        // Add ultimates
+        if (ultimate != null)
+        {
+            foreach (var name in ultimate)
+            {
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                AddSkill(SkillSlotType.Ultimate, name);
+            }
+        }
+    }
 }
 
 

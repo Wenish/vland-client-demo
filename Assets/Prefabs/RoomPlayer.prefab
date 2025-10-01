@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -2405997924468250314}
   - component: {fileID: -8486940071737686315}
   - component: {fileID: 4527370824861600523}
+  - component: {fileID: 7035114602567053319}
   m_Layer: 0
   m_Name: RoomPlayer
   m_TagString: Untagged
@@ -49,6 +50,15 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  myUnit: {fileID: 0}
+  HorizontalInput: 0
+  VerticalInput: 0
+  Angle: 0
+  IsPressingFire1: 0
+  isThisInputActive: 0
+  _myUnitController: {fileID: 0}
+  _mouseWorldPosition: {x: 0, y: 0, z: 0}
+  _cameraMain: {fileID: 0}
 --- !u!114 &-8486940071737686315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,3 +94,18 @@ MonoBehaviour:
   showRoomGUI: 1
   readyToBegin: 0
   index: 0
+--- !u!114 &7035114602567053319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454127022611772594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ccbfee8d322d4769856ff376a93e783, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLoadout
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
