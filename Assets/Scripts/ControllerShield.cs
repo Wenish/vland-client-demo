@@ -7,14 +7,23 @@ public class ControllerShield : MonoBehaviour
 {
     public Slider slider;
     public float updateSpeedSeconds = 0.2f;
+
+    private UnitController unitController;
     private void Awake()
     {
-        GetComponentInParent<UnitController>().OnShieldChange += HandleOnShieldChange;
+        unitController = GetComponentInParent<UnitController>();
+        unitController.OnShieldChange += HandleOnShieldChange;
+    }
+
+    void OnEnable()
+    {
+        slider.value = unitController.maxShield;
+        StartCoroutine(ChangeShield(unitController.shield));
     }
     private void HandleOnShieldChange((int current, int max) shield)
     {
         slider.maxValue = shield.max;
-        
+
         if (!gameObject.activeInHierarchy) return;
         StartCoroutine(ChangeShield(shield.current));
     }
