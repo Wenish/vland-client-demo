@@ -244,7 +244,6 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
     private class LobbyData
     {
-        public string ip;
         public int port;
         public string name;
     }
