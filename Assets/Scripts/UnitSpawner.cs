@@ -27,9 +27,14 @@ public class UnitSpawner : NetworkBehaviour
             Debug.LogError($"Unit {unitName} not found in database.");
             return null;
         }
+        return Spawn(unitData, position, rotation);
+    }
 
+    [Server]
+    public GameObject Spawn(UnitData unitData, Vector3 position, Quaternion rotation)
+    {
         GameObject unitInstance = Instantiate(unitPrefab, position, rotation);
-        unitInstance.name = $"Unit ({unitName})";
+        unitInstance.name = $"Unit ({unitData.unitName})";
         UnitController unitController = unitInstance.GetComponent<UnitController>();
 
         if (unitController != null)
