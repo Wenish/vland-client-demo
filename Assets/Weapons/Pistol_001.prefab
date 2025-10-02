@@ -80,10 +80,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6070142288197875207, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4f1ef37ae953c484bbc5d5e4049147e5, type: 2}
+    - target: {fileID: -5644157652960933076, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: b9db57ef684929045a9d6d8375cfd149, type: 3}
+    - target: {fileID: -4515403427399497115, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4f1ef37ae953c484bbc5d5e4049147e5, type: 2}
+    - target: {fileID: -2021875266349507063, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: b9db57ef684929045a9d6d8375cfd149, type: 3}
     - target: {fileID: 919132149155446097, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
       propertyPath: m_Name
       value: Pistol_G
       objectReference: {fileID: 0}
+    - target: {fileID: 1125069943873386056, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: edb7465c106a3d84e977e6c6d78a1127, type: 2}
+    - target: {fileID: 5291488236744999403, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: b9db57ef684929045a9d6d8375cfd149, type: 3}
+    - target: {fileID: 6417429504500992382, guid: 6f69e84380a48644da208203c288f9a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: edb7465c106a3d84e977e6c6d78a1127, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
