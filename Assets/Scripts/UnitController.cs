@@ -161,6 +161,18 @@ public class UnitController : NetworkBehaviour
             SetWeaponData(weaponName);
             SetModelData(modelName);
         }
+
+        if (isServer)
+        {
+            if (health <= 0)
+            {
+                Die();
+            }
+            else
+            {
+                Revive();
+            }
+        }
     }
 
     void FixedUpdate()
