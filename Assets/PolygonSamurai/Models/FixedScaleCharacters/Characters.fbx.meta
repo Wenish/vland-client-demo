@@ -1,263 +1,687 @@
 fileFormatVersion: 2
 guid: 1d561ab794bc05b44aa243d39691c790
-timeCreated: 1545007111
-licenseType: Store
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: Ankle_L
-    100002: Ankle_R
-    100004: Ball_L
-    100006: Ball_R
-    100008: Character_Geisha
-    100010: Character_Ninja
-    100012: Character_Samurai_Grunt
-    100014: Character_Samurai_Warrior
-    100016: Character_Sensei
-    100018: Character_Village_Man
-    100020: Character_Village_Woman
-    100022: //RootNode
-    100024: Clavicle_L
-    100026: Clavicle_R
-    100028: Elbow_L
-    100030: Elbow_R
-    100032: Eyebrows
-    100034: Eyes
-    100036: Finger_01
-    100038: Finger_01 1
-    100040: Finger_02
-    100042: Finger_02 1
-    100044: Finger_03
-    100046: Finger_03 1
-    100048: Finger_04
-    100050: Finger_04 1
-    100052: Hand_L
-    100054: Hand_R
-    100056: Head
-    100058: Hips
-    100060: IndexFinger_01
-    100062: IndexFinger_01 1
-    100064: IndexFinger_02
-    100066: IndexFinger_02 1
-    100068: IndexFinger_03
-    100070: IndexFinger_03 1
-    100072: IndexFinger_04
-    100074: IndexFinger_04 1
-    100076: Item_Basket_Rice_01
-    100078: Item_CoinBag
-    100080: Item_Dagger
-    100082: Item_Pouch
-    100084: Item_Samurai_HouseFlag
-    100086: Item_Sword
-    100088: Item_SwordHolder
-    100090: Item_SwordSheath
-    100092: Item_WarriorSholderArmor
-    100094: Item_WarriorSholderArmor 1
-    100096: Item_WaterBladder_01
-    100098: Item_WaterCanteen
-    100100: LowerLeg_L
-    100102: LowerLeg_R
-    100104: Neck
-    100106: Root
-    100108: Shoulder_L
-    100110: Shoulder_R
-    100112: Spine_01
-    100114: Spine_02
-    100116: Spine_03
-    100118: Thumb_01
-    100120: Thumb_01 1
-    100122: Thumb_02
-    100124: Thumb_02 1
-    100126: Thumb_03
-    100128: Thumb_03 1
-    100130: Toes_L
-    100132: Toes_R
-    100134: UpperLeg_L
-    100136: UpperLeg_R
-    100138: Wep_Odachi_Covered_01
-    100140: Wep_Tanto_Covered_01
-    400000: Ankle_L
-    400002: Ankle_R
-    400004: Ball_L
-    400006: Ball_R
-    400008: Character_Geisha
-    400010: Character_Ninja
-    400012: Character_Samurai_Grunt
-    400014: Character_Samurai_Warrior
-    400016: Character_Sensei
-    400018: Character_Village_Man
-    400020: Character_Village_Woman
-    400022: //RootNode
-    400024: Clavicle_L
-    400026: Clavicle_R
-    400028: Elbow_L
-    400030: Elbow_R
-    400032: Eyebrows
-    400034: Eyes
-    400036: Finger_01
-    400038: Finger_01 1
-    400040: Finger_02
-    400042: Finger_02 1
-    400044: Finger_03
-    400046: Finger_03 1
-    400048: Finger_04
-    400050: Finger_04 1
-    400052: Hand_L
-    400054: Hand_R
-    400056: Head
-    400058: Hips
-    400060: IndexFinger_01
-    400062: IndexFinger_01 1
-    400064: IndexFinger_02
-    400066: IndexFinger_02 1
-    400068: IndexFinger_03
-    400070: IndexFinger_03 1
-    400072: IndexFinger_04
-    400074: IndexFinger_04 1
-    400076: Item_Basket_Rice_01
-    400078: Item_CoinBag
-    400080: Item_Dagger
-    400082: Item_Pouch
-    400084: Item_Samurai_HouseFlag
-    400086: Item_Sword
-    400088: Item_SwordHolder
-    400090: Item_SwordSheath
-    400092: Item_WarriorSholderArmor
-    400094: Item_WarriorSholderArmor 1
-    400096: Item_WaterBladder_01
-    400098: Item_WaterCanteen
-    400100: LowerLeg_L
-    400102: LowerLeg_R
-    400104: Neck
-    400106: Root
-    400108: Shoulder_L
-    400110: Shoulder_R
-    400112: Spine_01
-    400114: Spine_02
-    400116: Spine_03
-    400118: Thumb_01
-    400120: Thumb_01 1
-    400122: Thumb_02
-    400124: Thumb_02 1
-    400126: Thumb_03
-    400128: Thumb_03 1
-    400130: Toes_L
-    400132: Toes_R
-    400134: UpperLeg_L
-    400136: UpperLeg_R
-    400138: Wep_Odachi_Covered_01
-    400140: Wep_Tanto_Covered_01
-    2300000: Item_Basket_Rice_01
-    2300002: Item_CoinBag
-    2300004: Item_Dagger
-    2300006: Item_Pouch
-    2300008: Item_Samurai_HouseFlag
-    2300010: Item_Sword
-    2300012: Item_SwordHolder
-    2300014: Item_SwordSheath
-    2300016: Item_WarriorSholderArmor
-    2300018: Item_WarriorSholderArmor 1
-    2300020: Item_WaterBladder_01
-    2300022: Item_WaterCanteen
-    2300024: Wep_Odachi_Covered_01
-    2300026: Wep_Tanto_Covered_01
-    3300000: Item_Basket_Rice_01
-    3300002: Item_CoinBag
-    3300004: Item_Dagger
-    3300006: Item_Pouch
-    3300008: Item_Samurai_HouseFlag
-    3300010: Item_Sword
-    3300012: Item_SwordHolder
-    3300014: Item_SwordSheath
-    3300016: Item_WarriorSholderArmor
-    3300018: Item_WarriorSholderArmor 1
-    3300020: Item_WaterBladder_01
-    3300022: Item_WaterCanteen
-    3300024: Wep_Odachi_Covered_01
-    3300026: Wep_Tanto_Covered_01
-    4300000: Item_WarriorSholderArmor
-    4300002: Item_WarriorSholderArmor
-    4300004: Item_Sword
-    4300006: Item_Samurai_HouseFlag
-    4300008: Item_Basket_Rice_01
-    4300010: Item_SwordHolder
-    4300012: Item_WaterCanteen
-    4300014: Item_WaterBladder_01
-    4300016: Wep_Odachi_Covered_01
-    4300018: Wep_Tanto_Covered_01
-    4300020: Item_Pouch
-    4300022: Item_SwordSheath
-    4300024: Item_Dagger
-    4300026: Item_CoinBag
-    4300028: Character_Geisha
-    4300030: Character_Samurai_Warrior
-    4300032: Character_Village_Woman
-    4300034: Character_Sensei
-    4300036: Character_Village_Man
-    4300038: Character_Ninja
-    4300040: Character_Samurai_Grunt
-    7400000: Take 001
-    9500000: //RootNode
-    13700000: Character_Geisha
-    13700002: Character_Ninja
-    13700004: Character_Samurai_Grunt
-    13700006: Character_Samurai_Warrior
-    13700008: Character_Sensei
-    13700010: Character_Village_Man
-    13700012: Character_Village_Woman
+  serializedVersion: 24200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Ankle_L
+  - first:
+      1: 100002
+    second: Ankle_R
+  - first:
+      1: 100004
+    second: Ball_L
+  - first:
+      1: 100006
+    second: Ball_R
+  - first:
+      1: 100008
+    second: Character_Geisha
+  - first:
+      1: 100010
+    second: Character_Ninja
+  - first:
+      1: 100012
+    second: Character_Samurai_Grunt
+  - first:
+      1: 100014
+    second: Character_Samurai_Warrior
+  - first:
+      1: 100016
+    second: Character_Sensei
+  - first:
+      1: 100018
+    second: Character_Village_Man
+  - first:
+      1: 100020
+    second: Character_Village_Woman
+  - first:
+      1: 100022
+    second: //RootNode
+  - first:
+      1: 100024
+    second: Clavicle_L
+  - first:
+      1: 100026
+    second: Clavicle_R
+  - first:
+      1: 100028
+    second: Elbow_L
+  - first:
+      1: 100030
+    second: Elbow_R
+  - first:
+      1: 100032
+    second: Eyebrows
+  - first:
+      1: 100034
+    second: Eyes
+  - first:
+      1: 100036
+    second: Finger_01
+  - first:
+      1: 100038
+    second: Finger_01 1
+  - first:
+      1: 100040
+    second: Finger_02
+  - first:
+      1: 100042
+    second: Finger_02 1
+  - first:
+      1: 100044
+    second: Finger_03
+  - first:
+      1: 100046
+    second: Finger_03 1
+  - first:
+      1: 100048
+    second: Finger_04
+  - first:
+      1: 100050
+    second: Finger_04 1
+  - first:
+      1: 100052
+    second: Hand_L
+  - first:
+      1: 100054
+    second: Hand_R
+  - first:
+      1: 100056
+    second: Head
+  - first:
+      1: 100058
+    second: Hips
+  - first:
+      1: 100060
+    second: IndexFinger_01
+  - first:
+      1: 100062
+    second: IndexFinger_01 1
+  - first:
+      1: 100064
+    second: IndexFinger_02
+  - first:
+      1: 100066
+    second: IndexFinger_02 1
+  - first:
+      1: 100068
+    second: IndexFinger_03
+  - first:
+      1: 100070
+    second: IndexFinger_03 1
+  - first:
+      1: 100072
+    second: IndexFinger_04
+  - first:
+      1: 100074
+    second: IndexFinger_04 1
+  - first:
+      1: 100076
+    second: Item_Basket_Rice_01
+  - first:
+      1: 100078
+    second: Item_CoinBag
+  - first:
+      1: 100080
+    second: Item_Dagger
+  - first:
+      1: 100082
+    second: Item_Pouch
+  - first:
+      1: 100084
+    second: Item_Samurai_HouseFlag
+  - first:
+      1: 100086
+    second: Item_Sword
+  - first:
+      1: 100088
+    second: Item_SwordHolder
+  - first:
+      1: 100090
+    second: Item_SwordSheath
+  - first:
+      1: 100092
+    second: Item_WarriorSholderArmor
+  - first:
+      1: 100094
+    second: Item_WarriorSholderArmor 1
+  - first:
+      1: 100096
+    second: Item_WaterBladder_01
+  - first:
+      1: 100098
+    second: Item_WaterCanteen
+  - first:
+      1: 100100
+    second: LowerLeg_L
+  - first:
+      1: 100102
+    second: LowerLeg_R
+  - first:
+      1: 100104
+    second: Neck
+  - first:
+      1: 100106
+    second: Root
+  - first:
+      1: 100108
+    second: Shoulder_L
+  - first:
+      1: 100110
+    second: Shoulder_R
+  - first:
+      1: 100112
+    second: Spine_01
+  - first:
+      1: 100114
+    second: Spine_02
+  - first:
+      1: 100116
+    second: Spine_03
+  - first:
+      1: 100118
+    second: Thumb_01
+  - first:
+      1: 100120
+    second: Thumb_01 1
+  - first:
+      1: 100122
+    second: Thumb_02
+  - first:
+      1: 100124
+    second: Thumb_02 1
+  - first:
+      1: 100126
+    second: Thumb_03
+  - first:
+      1: 100128
+    second: Thumb_03 1
+  - first:
+      1: 100130
+    second: Toes_L
+  - first:
+      1: 100132
+    second: Toes_R
+  - first:
+      1: 100134
+    second: UpperLeg_L
+  - first:
+      1: 100136
+    second: UpperLeg_R
+  - first:
+      1: 100138
+    second: Wep_Odachi_Covered_01
+  - first:
+      1: 100140
+    second: Wep_Tanto_Covered_01
+  - first:
+      4: 400000
+    second: Ankle_L
+  - first:
+      4: 400002
+    second: Ankle_R
+  - first:
+      4: 400004
+    second: Ball_L
+  - first:
+      4: 400006
+    second: Ball_R
+  - first:
+      4: 400008
+    second: Character_Geisha
+  - first:
+      4: 400010
+    second: Character_Ninja
+  - first:
+      4: 400012
+    second: Character_Samurai_Grunt
+  - first:
+      4: 400014
+    second: Character_Samurai_Warrior
+  - first:
+      4: 400016
+    second: Character_Sensei
+  - first:
+      4: 400018
+    second: Character_Village_Man
+  - first:
+      4: 400020
+    second: Character_Village_Woman
+  - first:
+      4: 400022
+    second: //RootNode
+  - first:
+      4: 400024
+    second: Clavicle_L
+  - first:
+      4: 400026
+    second: Clavicle_R
+  - first:
+      4: 400028
+    second: Elbow_L
+  - first:
+      4: 400030
+    second: Elbow_R
+  - first:
+      4: 400032
+    second: Eyebrows
+  - first:
+      4: 400034
+    second: Eyes
+  - first:
+      4: 400036
+    second: Finger_01
+  - first:
+      4: 400038
+    second: Finger_01 1
+  - first:
+      4: 400040
+    second: Finger_02
+  - first:
+      4: 400042
+    second: Finger_02 1
+  - first:
+      4: 400044
+    second: Finger_03
+  - first:
+      4: 400046
+    second: Finger_03 1
+  - first:
+      4: 400048
+    second: Finger_04
+  - first:
+      4: 400050
+    second: Finger_04 1
+  - first:
+      4: 400052
+    second: Hand_L
+  - first:
+      4: 400054
+    second: Hand_R
+  - first:
+      4: 400056
+    second: Head
+  - first:
+      4: 400058
+    second: Hips
+  - first:
+      4: 400060
+    second: IndexFinger_01
+  - first:
+      4: 400062
+    second: IndexFinger_01 1
+  - first:
+      4: 400064
+    second: IndexFinger_02
+  - first:
+      4: 400066
+    second: IndexFinger_02 1
+  - first:
+      4: 400068
+    second: IndexFinger_03
+  - first:
+      4: 400070
+    second: IndexFinger_03 1
+  - first:
+      4: 400072
+    second: IndexFinger_04
+  - first:
+      4: 400074
+    second: IndexFinger_04 1
+  - first:
+      4: 400076
+    second: Item_Basket_Rice_01
+  - first:
+      4: 400078
+    second: Item_CoinBag
+  - first:
+      4: 400080
+    second: Item_Dagger
+  - first:
+      4: 400082
+    second: Item_Pouch
+  - first:
+      4: 400084
+    second: Item_Samurai_HouseFlag
+  - first:
+      4: 400086
+    second: Item_Sword
+  - first:
+      4: 400088
+    second: Item_SwordHolder
+  - first:
+      4: 400090
+    second: Item_SwordSheath
+  - first:
+      4: 400092
+    second: Item_WarriorSholderArmor
+  - first:
+      4: 400094
+    second: Item_WarriorSholderArmor 1
+  - first:
+      4: 400096
+    second: Item_WaterBladder_01
+  - first:
+      4: 400098
+    second: Item_WaterCanteen
+  - first:
+      4: 400100
+    second: LowerLeg_L
+  - first:
+      4: 400102
+    second: LowerLeg_R
+  - first:
+      4: 400104
+    second: Neck
+  - first:
+      4: 400106
+    second: Root
+  - first:
+      4: 400108
+    second: Shoulder_L
+  - first:
+      4: 400110
+    second: Shoulder_R
+  - first:
+      4: 400112
+    second: Spine_01
+  - first:
+      4: 400114
+    second: Spine_02
+  - first:
+      4: 400116
+    second: Spine_03
+  - first:
+      4: 400118
+    second: Thumb_01
+  - first:
+      4: 400120
+    second: Thumb_01 1
+  - first:
+      4: 400122
+    second: Thumb_02
+  - first:
+      4: 400124
+    second: Thumb_02 1
+  - first:
+      4: 400126
+    second: Thumb_03
+  - first:
+      4: 400128
+    second: Thumb_03 1
+  - first:
+      4: 400130
+    second: Toes_L
+  - first:
+      4: 400132
+    second: Toes_R
+  - first:
+      4: 400134
+    second: UpperLeg_L
+  - first:
+      4: 400136
+    second: UpperLeg_R
+  - first:
+      4: 400138
+    second: Wep_Odachi_Covered_01
+  - first:
+      4: 400140
+    second: Wep_Tanto_Covered_01
+  - first:
+      23: 2300000
+    second: Item_Basket_Rice_01
+  - first:
+      23: 2300002
+    second: Item_CoinBag
+  - first:
+      23: 2300004
+    second: Item_Dagger
+  - first:
+      23: 2300006
+    second: Item_Pouch
+  - first:
+      23: 2300008
+    second: Item_Samurai_HouseFlag
+  - first:
+      23: 2300010
+    second: Item_Sword
+  - first:
+      23: 2300012
+    second: Item_SwordHolder
+  - first:
+      23: 2300014
+    second: Item_SwordSheath
+  - first:
+      23: 2300016
+    second: Item_WarriorSholderArmor
+  - first:
+      23: 2300018
+    second: Item_WarriorSholderArmor 1
+  - first:
+      23: 2300020
+    second: Item_WaterBladder_01
+  - first:
+      23: 2300022
+    second: Item_WaterCanteen
+  - first:
+      23: 2300024
+    second: Wep_Odachi_Covered_01
+  - first:
+      23: 2300026
+    second: Wep_Tanto_Covered_01
+  - first:
+      33: 3300000
+    second: Item_Basket_Rice_01
+  - first:
+      33: 3300002
+    second: Item_CoinBag
+  - first:
+      33: 3300004
+    second: Item_Dagger
+  - first:
+      33: 3300006
+    second: Item_Pouch
+  - first:
+      33: 3300008
+    second: Item_Samurai_HouseFlag
+  - first:
+      33: 3300010
+    second: Item_Sword
+  - first:
+      33: 3300012
+    second: Item_SwordHolder
+  - first:
+      33: 3300014
+    second: Item_SwordSheath
+  - first:
+      33: 3300016
+    second: Item_WarriorSholderArmor
+  - first:
+      33: 3300018
+    second: Item_WarriorSholderArmor 1
+  - first:
+      33: 3300020
+    second: Item_WaterBladder_01
+  - first:
+      33: 3300022
+    second: Item_WaterCanteen
+  - first:
+      33: 3300024
+    second: Wep_Odachi_Covered_01
+  - first:
+      33: 3300026
+    second: Wep_Tanto_Covered_01
+  - first:
+      43: 4300000
+    second: Item_WarriorSholderArmor
+  - first:
+      43: 4300002
+    second: Item_WarriorSholderArmor
+  - first:
+      43: 4300004
+    second: Item_Sword
+  - first:
+      43: 4300006
+    second: Item_Samurai_HouseFlag
+  - first:
+      43: 4300008
+    second: Item_Basket_Rice_01
+  - first:
+      43: 4300010
+    second: Item_SwordHolder
+  - first:
+      43: 4300012
+    second: Item_WaterCanteen
+  - first:
+      43: 4300014
+    second: Item_WaterBladder_01
+  - first:
+      43: 4300016
+    second: Wep_Odachi_Covered_01
+  - first:
+      43: 4300018
+    second: Wep_Tanto_Covered_01
+  - first:
+      43: 4300020
+    second: Item_Pouch
+  - first:
+      43: 4300022
+    second: Item_SwordSheath
+  - first:
+      43: 4300024
+    second: Item_Dagger
+  - first:
+      43: 4300026
+    second: Item_CoinBag
+  - first:
+      43: 4300028
+    second: Character_Geisha
+  - first:
+      43: 4300030
+    second: Character_Samurai_Warrior
+  - first:
+      43: 4300032
+    second: Character_Village_Woman
+  - first:
+      43: 4300034
+    second: Character_Sensei
+  - first:
+      43: 4300036
+    second: Character_Village_Man
+  - first:
+      43: 4300038
+    second: Character_Ninja
+  - first:
+      43: 4300040
+    second: Character_Samurai_Grunt
+  - first:
+      74: 7400000
+    second: Take 001
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Character_Geisha
+  - first:
+      137: 13700002
+    second: Character_Ninja
+  - first:
+      137: 13700004
+    second: Character_Samurai_Grunt
+  - first:
+      137: 13700006
+    second: Character_Samurai_Warrior
+  - first:
+      137: 13700008
+    second: Character_Sensei
+  - first:
+      137: 13700010
+    second: Character_Village_Man
+  - first:
+      137: 13700012
+    second: Character_Village_Woman
+  externalObjects: {}
   materials:
-    importMaterials: 0
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: "Avatar Rig Configuration mis-match. Bone length in configuration
-      does not match position in animation file:\n\t'UpperLeg_L' : position error
-      = 10982.584961 mm\n\t'LowerLeg_L' : position error = 39682.546875 mm\n\t'Ankle_L'
-      : position error = 37477.753906 mm\n\t'Ball_L' : position error = 11213.846680
-      mm\n"
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 0
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 5
     normalImportMode: 1
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 0
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human:
     - boneName: Hips
       humanName: Hips
@@ -942,14 +1366,19 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

@@ -59,7 +59,9 @@ public class UnitModelWeaponEquipper : MonoBehaviour
         {
             currentWeaponLeftHandInstance = Instantiate(weaponData.weaponModelLeftHand, leftHandTransform);
             currentWeaponLeftHandInstance.transform.localPosition = Vector3.zero + positionOffset;
-            currentWeaponLeftHandInstance.transform.localRotation = Quaternion.identity * Quaternion.Euler(rotationOffset);
+            var leftHandRotationOffset = rotationOffset;
+            leftHandRotationOffset.y += 180;
+            currentWeaponLeftHandInstance.transform.localRotation = Quaternion.identity * Quaternion.Euler(leftHandRotationOffset);
         }
     }
 }
