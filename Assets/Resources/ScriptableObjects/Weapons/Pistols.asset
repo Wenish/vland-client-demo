@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f46262310475b148b4e64d453494e78, type: 3}
+  m_Name: Pistols
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponRangedData
+  weaponName: pistols
+  weaponType: 5
+  attackPower: 10
+  attackRange: 5
+  attackTime: 0.2
+  attackSpeed: 1
+  moveSpeedPercentWhileAttacking: 0.5
+  iconTexture: {fileID: 0}
+  weaponModelRightHand: {fileID: 0}
+  weaponModelLeftHand: {fileID: 0}
+  projectileSpeed: 10
+  spawnDistance: 1
+  projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
