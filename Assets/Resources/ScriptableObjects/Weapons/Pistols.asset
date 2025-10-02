@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponRangedData
   weaponName: pistols
   weaponType: 5
-  attackPower: 10
-  attackRange: 5
-  attackTime: 0.2
-  attackSpeed: 1
+  attackPower: 8
+  attackRange: 10
+  attackTime: 0.1
+  attackSpeed: 0
   moveSpeedPercentWhileAttacking: 0.5
-  iconTexture: {fileID: 0}
+  iconTexture: {fileID: 2800000, guid: 18adb64ab55bc47dd929074207b98e42, type: 3}
   weaponModelRightHand: {fileID: 0}
   weaponModelLeftHand: {fileID: 0}
-  projectileSpeed: 10
-  spawnDistance: 1
+  projectileSpeed: 20
+  spawnDistance: 0.5
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
