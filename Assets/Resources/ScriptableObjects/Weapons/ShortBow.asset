@@ -16,9 +16,9 @@ MonoBehaviour:
   weaponType: 3
   attackPower: 15
   attackRange: 12
-  attackTime: 0.4
-  attackSpeed: 0.6
-  moveSpeedPercentWhileAttacking: 0.5
+  attackTime: 0.5
+  attackSpeed: 0.5
+  moveSpeedPercentWhileAttacking: 0.3
   iconTexture: {fileID: 2800000, guid: 1541f1b1a8646476a9b6643148a42642, type: 3}
   weaponModelRightHand: {fileID: 0}
   weaponModelLeftHand: {fileID: 9016231584660341948, guid: 14ad90cbff54be541bdb8323e9f4df96, type: 3}
