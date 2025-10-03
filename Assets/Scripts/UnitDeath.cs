@@ -1,25 +1,31 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(UnitController))]
 public class UnitDeath : MonoBehaviour
 {
-    [SerializeField] private Renderer targetRenderer;
+    // Optional: assign specific renderers in the Inspector. If empty, we'll auto-find all mesh/skinned mesh renderers under the model.
+    [SerializeField] private Renderer[] targetRenderers;
+    // Legacy single-field support to migrate existing serialized data
+    [FormerlySerializedAs("targetRenderer")]
+    [SerializeField] private Renderer targetRendererLegacy;
     [SerializeField] private float fadeDuration = 0.2f;
 
-    private Material mat;
     private Coroutine fadeRoutine;
     private UnitController unitController;
 
     [ColorUsage(true, true)]
     public Color ColorDead = Color.black;
-    [ColorUsage(true, true)]
-    public Color ColorAlive = Color.white;
 
     private MaterialPropertyBlock _mpb;
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor"); // URP/HDRP
     private static readonly int LegacyColorId = Shader.PropertyToID("_Color"); // Built-in fallback
-    private int _activeColorId = BaseColorId;
+    // Cache the active color property per renderer
+    private readonly Dictionary<Renderer, int> _rendererColorId = new Dictionary<Renderer, int>();
+    // Cache the original (alive) color per renderer, captured on initialize/model change
+    private readonly Dictionary<Renderer, Color> _rendererAliveColor = new Dictionary<Renderer, Color>();
 
     void Awake()
     {
@@ -27,13 +33,20 @@ public class UnitDeath : MonoBehaviour
         // prefer TryGetComponent to avoid exceptions
         TryGetComponent(out unitController);
 
-        // Only fall back to finding a renderer if the inspector field is empty
-        if (targetRenderer == null)
+        // If array is empty but legacy field is set, migrate it
+        if ((targetRenderers == null || targetRenderers.Length == 0) && targetRendererLegacy != null)
         {
-            targetRenderer = GetComponentInChildren<Renderer>();
+            targetRenderers = new[] { targetRendererLegacy };
         }
 
-    UpdateActiveColorPropertyId();
+        // If still no renderers assigned in inspector, find all mesh-type renderers under this object
+        if (targetRenderers == null || targetRenderers.Length == 0)
+        {
+            targetRenderers = FindModelRenderers(gameObject);
+        }
+
+        UpdateActiveColorPropertyIds();
+        CaptureAliveColors();
     }
 
     void OnEnable()
@@ -61,30 +74,27 @@ public class UnitDeath : MonoBehaviour
             unitController.OnRevive -= HandleOnRevive;
         }
 
-        // If we created an instance material via .material, destroy it to avoid leaks
-        if (mat != null)
-        {
-            Destroy(mat);
-            mat = null;
-        }
+        _rendererColorId.Clear();
+        _rendererAliveColor.Clear();
     }
 
     void HandleOnModelChange((UnitController unitController, GameObject modelInstance) obj)
     {
         if (obj.modelInstance == null) return;
-        var r = obj.modelInstance.GetComponentInChildren<Renderer>();
-        if (r == null) return;
-
-        targetRenderer = r;
-
-        if (mat != null)
+        // Stop any ongoing fade that might reference old/destroyed renderers
+        if (fadeRoutine != null)
         {
-            Destroy(mat);
-            mat = null;
+            StopCoroutine(fadeRoutine);
+            fadeRoutine = null;
         }
+        var renderers = FindModelRenderers(obj.modelInstance);
+        if (renderers == null || renderers.Length == 0) return;
 
-        // Avoid instantiating materials; use MPB instead
-        UpdateActiveColorPropertyId();
+        targetRenderers = renderers;
+
+        // Avoid instantiating materials; use MPB instead, and refresh color property + alive color cache
+        UpdateActiveColorPropertyIds();
+        CaptureAliveColors();
     }
 
     void HandleOnDied()
@@ -116,56 +126,161 @@ public class UnitDeath : MonoBehaviour
             StopCoroutine(fadeRoutine);
         }
 
-        fadeRoutine = StartCoroutine(FadeCoroutine(ColorAlive));
+        fadeRoutine = StartCoroutine(FadeCoroutineToAlive());
     }
 
     private IEnumerator FadeCoroutine(Color targetColor)
     {
-        if (targetRenderer == null) yield break;
-        var sm = targetRenderer.sharedMaterial;
-        if (sm == null) yield break;
+        if (targetRenderers == null || targetRenderers.Length == 0) yield break;
 
-        // Ensure we use the correct color property
-        UpdateActiveColorPropertyId();
+        // Ensure we use the correct color property per renderer
+        UpdateActiveColorPropertyIds();
+
+        // Prepare initial colors for each renderer
+        var activeEntries = new List<(Renderer r, int colorId, Color initial)>();
+        foreach (var r in targetRenderers)
+        {
+            if (r == null) continue;
+            var sm = r.sharedMaterial;
+            if (sm == null) continue;
+
+            int colorId = GetColorPropertyFor(r);
+            Color initialColor = sm.HasProperty(colorId) ? sm.GetColor(colorId) : Color.white;
+            activeEntries.Add((r, colorId, initialColor));
+        }
+
+        if (activeEntries.Count == 0) yield break;
 
         float t = 0f;
-        Color initialColor = sm.HasProperty(_activeColorId)
-            ? sm.GetColor(_activeColorId)
-            : Color.white;
-
         while (t < 1f)
         {
             t += Time.deltaTime / fadeDuration;
-            var c = Color.Lerp(initialColor, targetColor, t);
-            targetRenderer.GetPropertyBlock(_mpb);
-            _mpb.SetColor(_activeColorId, c);
-            targetRenderer.SetPropertyBlock(_mpb);
+            var lerp = Mathf.Clamp01(t);
+            foreach (var e in activeEntries)
+            {
+                if (e.r == null) continue; // renderer might have been destroyed
+                var c = Color.Lerp(e.initial, targetColor, lerp);
+                e.r.GetPropertyBlock(_mpb);
+                _mpb.SetColor(e.colorId, c);
+                e.r.SetPropertyBlock(_mpb);
+            }
             yield return null;
         }
 
         // Snap to final color to avoid precision drift
-        targetRenderer.GetPropertyBlock(_mpb);
-        _mpb.SetColor(_activeColorId, targetColor);
-        targetRenderer.SetPropertyBlock(_mpb);
+        foreach (var e in activeEntries)
+        {
+            if (e.r == null) continue;
+            e.r.GetPropertyBlock(_mpb);
+            _mpb.SetColor(e.colorId, targetColor);
+            e.r.SetPropertyBlock(_mpb);
+        }
 
         fadeRoutine = null;
     }
 
-    private void UpdateActiveColorPropertyId()
+    private IEnumerator FadeCoroutineToAlive()
     {
-        _activeColorId = BaseColorId;
-        if (targetRenderer == null) return;
-        var sm = targetRenderer.sharedMaterial;
-        if (sm == null) return;
+        if (targetRenderers == null || targetRenderers.Length == 0) yield break;
 
-        if (sm.HasProperty(BaseColorId))
+        // Ensure we use the correct color property per renderer
+        UpdateActiveColorPropertyIds();
+
+        // Prepare initial and target (alive) colors for each renderer
+        var activeEntries = new List<(Renderer r, int colorId, Color initial, Color target)>();
+        foreach (var r in targetRenderers)
         {
-            _activeColorId = BaseColorId;
+            if (r == null) continue;
+            var sm = r.sharedMaterial;
+            if (sm == null) continue;
+
+            int colorId = GetColorPropertyFor(r);
+            Color initialColor = sm.HasProperty(colorId) ? sm.GetColor(colorId) : Color.white;
+            Color targetColor = _rendererAliveColor.TryGetValue(r, out var alive) ? alive : Color.white;
+            activeEntries.Add((r, colorId, initialColor, targetColor));
         }
-        else if (sm.HasProperty(LegacyColorId))
+
+        if (activeEntries.Count == 0) yield break;
+
+        float t = 0f;
+        while (t < 1f)
         {
-            _activeColorId = LegacyColorId;
+            t += Time.deltaTime / fadeDuration;
+            var lerp = Mathf.Clamp01(t);
+            foreach (var e in activeEntries)
+            {
+                if (e.r == null) continue; // renderer might have been destroyed
+                var c = Color.Lerp(e.initial, e.target, lerp);
+                e.r.GetPropertyBlock(_mpb);
+                _mpb.SetColor(e.colorId, c);
+                e.r.SetPropertyBlock(_mpb);
+            }
+            yield return null;
         }
+
+        // Snap to final color to avoid precision drift
+        foreach (var e in activeEntries)
+        {
+            if (e.r == null) continue;
+            e.r.GetPropertyBlock(_mpb);
+            _mpb.SetColor(e.colorId, e.target);
+            e.r.SetPropertyBlock(_mpb);
+        }
+
+        fadeRoutine = null;
+    }
+
+    private void UpdateActiveColorPropertyIds()
+    {
+        _rendererColorId.Clear();
+        if (targetRenderers == null) return;
+        foreach (var r in targetRenderers)
+        {
+            if (r == null) continue;
+            _rendererColorId[r] = GetColorPropertyFor(r);
+        }
+    }
+
+    private int GetColorPropertyFor(Renderer r)
+    {
+        if (r == null) return BaseColorId;
+        if (_rendererColorId.TryGetValue(r, out var cached)) return cached;
+        var sm = r.sharedMaterial;
+        if (sm == null) return BaseColorId;
+        if (sm.HasProperty(BaseColorId)) return BaseColorId;
+        if (sm.HasProperty(LegacyColorId)) return LegacyColorId;
+        return BaseColorId;
+    }
+
+    private void CaptureAliveColors()
+    {
+        _rendererAliveColor.Clear();
+        if (targetRenderers == null) return;
+        foreach (var r in targetRenderers)
+        {
+            if (r == null) continue;
+            var sm = r.sharedMaterial;
+            if (sm == null) continue;
+            int colorId = GetColorPropertyFor(r);
+            var alive = sm.HasProperty(colorId) ? sm.GetColor(colorId) : Color.white;
+            _rendererAliveColor[r] = alive;
+        }
+    }
+
+    private static Renderer[] FindModelRenderers(GameObject root)
+    {
+        if (root == null) return null;
+        // Only include MeshRenderer and SkinnedMeshRenderer by default
+        var all = root.GetComponentsInChildren<Renderer>(true);
+        var list = new List<Renderer>(all.Length);
+        foreach (var r in all)
+        {
+            if (r is MeshRenderer || r is SkinnedMeshRenderer)
+            {
+                list.Add(r);
+            }
+        }
+        return list.ToArray();
     }
 
 }
