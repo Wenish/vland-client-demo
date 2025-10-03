@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 703488366161456249}
   - component: {fileID: 7981222390201237684}
   - component: {fileID: 5931696652940603194}
-  - component: {fileID: 5775281941209273731}
   m_Layer: 0
   m_Name: EyeRight
   m_TagString: Untagged
@@ -90,27 +89,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &5775281941209273731
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3555864714417496335}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5379877933901727989
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,7 +100,6 @@ GameObject:
   - component: {fileID: 4857402348550864257}
   - component: {fileID: 5727651361111193323}
   - component: {fileID: 869510562480509577}
-  - component: {fileID: 5146254861410577007}
   m_Layer: 0
   m_Name: EyeLeft
   m_TagString: Untagged
@@ -201,27 +178,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &5146254861410577007
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5379877933901727989}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6849180908754271025
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,6 +227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TargetDummyWip
   amplitudeDegrees: 8
   frequencyHz: 0.4
+  randomOffset: 0.1
 --- !u!1001 &4267112072183720246
 PrefabInstance:
   m_ObjectHideFlags: 0
