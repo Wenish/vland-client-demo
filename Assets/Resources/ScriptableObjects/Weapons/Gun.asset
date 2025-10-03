@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: gun
   weaponType: 4
-  attackPower: 50
+  attackPower: 25
   attackRange: 17
   attackTime: 0.4
   attackSpeed: 1
@@ -22,6 +22,6 @@ MonoBehaviour:
   iconTexture: {fileID: 2800000, guid: a75d106bee05f484d878ccfbbe052cd4, type: 3}
   weaponModelRightHand: {fileID: 8570921939139364386, guid: 9dd315c983d90bd49b67ff1fa981ca4b, type: 3}
   weaponModelLeftHand: {fileID: 0}
-  projectileSpeed: 35
+  projectileSpeed: 25
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
