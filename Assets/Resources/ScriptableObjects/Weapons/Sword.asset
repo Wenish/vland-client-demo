@@ -20,7 +20,7 @@ MonoBehaviour:
   attackSpeed: 0.8
   moveSpeedPercentWhileAttacking: 0.8
   iconTexture: {fileID: 2800000, guid: fa0c47ba7d6e44ecabea895caf7b3660, type: 3}
-  weaponModelRightHand: {fileID: 138024, guid: 6d137d44990918a48bfc447d3dda3796, type: 3}
+  weaponModelRightHand: {fileID: 2300579297111590268, guid: 434f858f2add644caa0f24a050866880, type: 3}
   weaponModelLeftHand: {fileID: 0}
   mode: 0
   maxHits: 5

@@ -333,7 +333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -493,7 +493,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -714,7 +714,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -878,7 +878,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: ninja
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -1163,7 +1163,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -1384,7 +1384,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -1704,7 +1704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -2052,7 +2052,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: ninja
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -2245,7 +2245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -2580,7 +2580,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -2904,7 +2904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -3286,7 +3286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -3892,7 +3892,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -4376,7 +4376,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
@@ -4536,7 +4536,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: modelName
-      value: zombieCrawler
+      value: targetDummy
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
