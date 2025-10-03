@@ -1,14 +1,17 @@
 using System.Collections;
+using System.Collections.Generic;
 using MyGame.Events;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitController))]
 public class UnitFeedback : MonoBehaviour
 {
-    [SerializeField] private Renderer targetRenderer;
+    // Supports multiple child renderers (MeshRenderer/SkinnedMeshRenderer)
+    [SerializeField] private Renderer[] targetRenderers;
     [SerializeField] private float flashDuration = 0.2f;
 
-    private Material mat;
+    // We instantiate materials to toggle emission keyword safely per renderer/material
+    private readonly List<Material> _instancedMats = new List<Material>();
     private Coroutine flashRoutine;
     private UnitController unitController;
 
@@ -30,17 +33,13 @@ public class UnitFeedback : MonoBehaviour
         // prefer TryGetComponent to avoid exceptions
         TryGetComponent<UnitController>(out unitController);
 
-        // Only fall back to finding a renderer if the inspector field is empty
-        if (targetRenderer == null)
+        // Find child renderers if none assigned in inspector
+        if (targetRenderers == null || targetRenderers.Length == 0)
         {
-            targetRenderer = GetComponentInChildren<Renderer>();
+            targetRenderers = GetComponentsInChildren<Renderer>(includeInactive: true);
         }
 
-        if (targetRenderer != null)
-        {
-            // accessing .material creates an instance; keep reference so we can destroy it later
-            mat = targetRenderer.material;
-        }
+        SetupInstancedMaterials();
 
         SetUnitOwnership();
     }
@@ -76,29 +75,20 @@ public class UnitFeedback : MonoBehaviour
         if (EventManager.Instance != null)
             EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
 
-        // If we created an instance material via .material, destroy it to avoid leaks
-        if (mat != null)
-        {
-            Destroy(mat);
-            mat = null;
-        }
+        // Clean up instanced materials (created via .materials)
+        CleanupInstancedMaterials();
     }
 
     void HandleOnModelChange((UnitController unitController, GameObject modelInstance) obj)
     {
         if (obj.modelInstance == null) return;
-        var r = obj.modelInstance.GetComponentInChildren<Renderer>();
-        if (r == null) return;
+        var renderers = obj.modelInstance.GetComponentsInChildren<Renderer>(includeInactive: true);
+        if (renderers == null || renderers.Length == 0) return;
 
-        targetRenderer = r;
-
-        if (mat != null)
-        {
-            Destroy(mat);
-            mat = null;
-        }
-
-        mat = targetRenderer.material;
+        // Assign and (re)setup materials
+        targetRenderers = renderers;
+        CleanupInstancedMaterials();
+        SetupInstancedMaterials();
     }
 
 
@@ -133,10 +123,7 @@ public class UnitFeedback : MonoBehaviour
 
     private IEnumerator FlashSmooth(Color flashColor)
     {
-        if (targetRenderer == null) yield break;
-
-        // Ensure the emission keyword is on (for built-in/URP)
-        if (mat != null) mat.EnableKeyword("_EMISSION");
+        if (targetRenderers == null || targetRenderers.Length == 0) yield break;
 
         float t = 0f;
         while (t < 1f)
@@ -144,16 +131,28 @@ public class UnitFeedback : MonoBehaviour
             t += Time.deltaTime / Mathf.Max(0.0001f, flashDuration);
             Color emissionColor = Color.Lerp(flashColor, Color.black, t);
 
-            targetRenderer.GetPropertyBlock(_mpb);
-            _mpb.SetColor(EmissionColorId, emissionColor);
-            targetRenderer.SetPropertyBlock(_mpb);
+            // Apply to all renderers
+            for (int i = 0; i < targetRenderers.Length; i++)
+            {
+                var r = targetRenderers[i];
+                if (r == null) continue;
+                r.GetPropertyBlock(_mpb);
+                _mpb.SetColor(EmissionColorId, emissionColor);
+                r.SetPropertyBlock(_mpb);
+            }
 
             yield return null;
         }
 
-        targetRenderer.GetPropertyBlock(_mpb);
-        _mpb.SetColor(EmissionColorId, Color.black);
-        targetRenderer.SetPropertyBlock(_mpb);
+        // Reset to black on all renderers
+        for (int i = 0; i < targetRenderers.Length; i++)
+        {
+            var r = targetRenderers[i];
+            if (r == null) continue;
+            r.GetPropertyBlock(_mpb);
+            _mpb.SetColor(EmissionColorId, Color.black);
+            r.SetPropertyBlock(_mpb);
+        }
         flashRoutine = null;
     }
 
@@ -183,4 +182,36 @@ public class UnitFeedback : MonoBehaviour
         MyPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
     }
 
+    private void SetupInstancedMaterials()
+    {
+        if (targetRenderers == null) return;
+        for (int i = 0; i < targetRenderers.Length; i++)
+        {
+            var r = targetRenderers[i];
+            if (r == null) continue;
+            // Accessing .materials creates instanced copies per submesh; we keep references to clean up
+            var mats = r.materials;
+            if (mats == null) continue;
+            for (int m = 0; m < mats.Length; m++)
+            {
+                var mat = mats[m];
+                if (mat == null) continue;
+                _instancedMats.Add(mat);
+                mat.EnableKeyword("_EMISSION");
+            }
+        }
+    }
+
+    private void CleanupInstancedMaterials()
+    {
+        for (int i = 0; i < _instancedMats.Count; i++)
+        {
+            var mat = _instancedMats[i];
+            if (mat != null)
+            {
+                Destroy(mat);
+            }
+        }
+        _instancedMats.Clear();
+    }
 }

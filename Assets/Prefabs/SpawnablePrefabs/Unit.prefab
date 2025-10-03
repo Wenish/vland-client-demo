@@ -656,7 +656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a013f275c3d32497c948fd91a608c814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitFeedback
-  targetRenderer: {fileID: 0}
+  targetRenderers: []
   flashDuration: 0.3
   ColorOnDamaged: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   ColorOnHealed: {r: 0, g: 0.2509804, b: 0, a: 0}
@@ -675,10 +675,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e4e2245deaa4bd29f8bd352ad9bf64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitDeath
-  targetRenderer: {fileID: 0}
+  targetRenderers: []
+  targetRendererLegacy: {fileID: 0}
   fadeDuration: 1.5
   ColorDead: {r: 0, g: 0, b: 0, a: 1}
-  ColorAlive: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &3010265075052333281
 MonoBehaviour:
   m_ObjectHideFlags: 0
