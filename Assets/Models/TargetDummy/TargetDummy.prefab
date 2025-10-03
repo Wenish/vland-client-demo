@@ -95,7 +95,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 5bc0dea17d2d94f8cbf19c8900fdde69, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: -876546973899608171, guid: 1e20e011f4dc44e0283297317372ae7b, type: 3}
+      objectReference: {fileID: 2100000, guid: 3f11e63e064ea47ff909c0b582d7575b, type: 2}
     - target: {fileID: 919132149155446097, guid: 5bc0dea17d2d94f8cbf19c8900fdde69, type: 3}
       propertyPath: m_Name
       value: TargetDummyBody
