@@ -148,8 +148,15 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer)
         {
-            EquipModel(modelName);
-            EquipWeapon(weaponName);
+            if (!string.IsNullOrEmpty(modelName))
+            {
+                EquipModel(modelName);
+            }
+
+            if (!string.IsNullOrEmpty(weaponName))
+            {
+                EquipWeapon(weaponName);
+            }
         }
         unitRigidbody = GetComponent<Rigidbody>();
         unitCollider = GetComponent<Collider>();
@@ -158,8 +165,14 @@ public class UnitController : NetworkBehaviour
 
         if (!isServer)
         {
-            SetWeaponData(weaponName);
-            SetModelData(modelName);
+            if (!string.IsNullOrEmpty(weaponName))
+            {
+                SetWeaponData(weaponName);
+            }
+            if (!string.IsNullOrEmpty(modelName))
+            {
+                SetModelData(modelName);
+            }
         }
 
         if (isServer)
