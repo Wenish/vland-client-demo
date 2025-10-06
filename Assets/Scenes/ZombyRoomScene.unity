@@ -177,7 +177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -411,7 +411,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 321437018096114274, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: m_LocalPosition.x
@@ -739,7 +739,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -1535,7 +1535,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 321437018096114274, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2873,7 +2873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -3351,7 +3351,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -4381,7 +4381,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -4602,7 +4602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -4991,7 +4991,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 321437018096114274, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5060,6 +5060,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 321437018096114333, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1970372570}
+    - targetCorrespondingSourceObject: {fileID: 321437018096114333, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1970372571}
   m_SourcePrefab: {fileID: 100100000, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
 --- !u!4 &1970372568 stripped
 Transform:
@@ -5093,6 +5096,26 @@ MonoBehaviour:
   defaultShield: 50
   defaultMaxShield: 50
   defaultMoveSpeed: 0
+--- !u!114 &1970372571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970372569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3c01bbc675ef43418390804a22fd1ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AiTargetDummyBehavior
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  patrolDistance: 4
+  edgeTolerance: 0.05
+  returnTolerance: 0.1
+  returnStrength: 1
+  hardReturnDistance: 1
 --- !u!1 &2019895537
 GameObject:
   m_ObjectHideFlags: 0
@@ -5254,7 +5277,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 321437018096114274, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5488,7 +5511,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 321437018096114274, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: m_LocalPosition.x
