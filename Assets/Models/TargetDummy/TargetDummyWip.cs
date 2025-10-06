@@ -91,8 +91,20 @@ public class TargetDummyWip : MonoBehaviour
 
     private void HandleOnTakeDamage((UnitController target, UnitController attacker) obj)
     {
-        Debug.Log("TargetDummyWip: HandleOnTakeDamage");
-        QueueSpin(spinDegreesPerHit);
+        // Only respond to damage intended for this unit (defensive)
+        if (obj.target != _unitController) return;
+
+        if (Mathf.Approximately(spinDegreesPerHit, 0f)) return;
+
+        // Count how many full spins are already queued/in-progress
+        float remainingDeg = _targetSpinAngle - _spinAngle;
+        int queuedSpins = Mathf.FloorToInt(Mathf.Abs(remainingDeg) / Mathf.Abs(spinDegreesPerHit));
+
+        // Allow at most one extra spin queued on top of the current/in-progress spin
+        if (queuedSpins < 1)
+        {
+            QueueSpin(spinDegreesPerHit);
+        }
     }
 
     // ————————————————————————————————————————————————————————————————
