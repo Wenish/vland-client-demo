@@ -229,6 +229,8 @@ MonoBehaviour:
   amplitudeDegrees: 8
   frequencyHz: 0.4
   randomOffset: 0.1
+  spinDegreesPerHit: 360
+  spinSpeedDegPerSec: 900
 --- !u!1001 &670112474983131867
 PrefabInstance:
   m_ObjectHideFlags: 0
