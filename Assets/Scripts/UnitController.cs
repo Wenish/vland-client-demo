@@ -451,13 +451,14 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void SetHealth(int newHealth)
     {
+        int oldHealth = health;
         health = Mathf.Clamp(newHealth, 0, maxHealth);
 
-        if (health <= 0)
+        if (oldHealth > 0 && health <= 0)
         {
             Die();
         }
-        else
+        else if (oldHealth <= 0 && health > 0)
         {
             Revive();
         }
