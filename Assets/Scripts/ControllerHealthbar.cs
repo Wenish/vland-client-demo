@@ -14,7 +14,20 @@ public class ControllerHealthbar : MonoBehaviour
     {
         unitController = GetComponentInParent<UnitController>();
         unitController.OnHealthChange += HandleOnHealthChange;
+        unitController.OnTeamChanged += HandleOnTeamChanged;
     }
+
+    private void OnDestroy()
+    {
+        if (unitController != null)
+        {
+            unitController.OnHealthChange -= HandleOnHealthChange;
+            unitController.OnTeamChanged -= HandleOnTeamChanged;
+        }
+    }
+
+
+
     void Start()
     {
         Color teamColor = TeamColorManager.Instance.GetColorForTeam(unitController.team);
@@ -66,5 +79,13 @@ public class ControllerHealthbar : MonoBehaviour
         }
 
         slider.value = health;
+    }
+
+    public void HandleOnTeamChanged(UnitController obj)
+    {
+        Color teamColor = TeamColorManager.Instance.GetColorForTeam(unitController.team);
+        sliderFill.color = teamColor;
+
+        TryApplyMyPlayerColor();
     }
 }

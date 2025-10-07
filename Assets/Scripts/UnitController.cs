@@ -8,9 +8,65 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public UnitType unitType;
 
-    [SyncVar]
+    public event Action<UnitController> OnTeamChanged = delegate { };
+
+    [SyncVar(hook = nameof(HookOnTeamChanged))]
     public int team;
 
+    [Header("Team")]
+    [Tooltip("Set the team number in the editor. During Play mode, if you're the server/host, changing this will update the networked team.")]
+    [SerializeField, Min(0)]
+    private int teamNumber = 0;
+
+    [Server]
+    public void SetTeam(int team)
+    {
+        this.team = team;
+        // Keep inspector field in sync when changed via code/server
+        teamNumber = team;
+        OnTeamChanged(this);
+    }
+
+    [Client]
+    public void HookOnTeamChanged(int oldTeam, int newTeam)
+    {
+        // Reflect networked value into the inspector field on clients
+        teamNumber = newTeam;
+        OnTeamChanged(this);
+    }
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        // Keep the serialized inspector field and SyncVar in sync in editor
+        // - Edit mode: writing the default/team on the component updates the initial SyncVar value
+        // - Play mode server/host: changing the inspector field pushes a networked update via SetTeam
+        // - Play mode client: the inspector mirrors the authoritative network value
+        if (!Application.isPlaying)
+        {
+            team = teamNumber;
+        }
+        else
+        {
+            // In play mode, OnValidate can be called before Mirror wires up netIdentity.
+            // Avoid accessing isServer/isClient unless netIdentity exists.
+            if (netIdentity != null && NetworkServer.active && netIdentity.isServer)
+            {
+                if (team != teamNumber)
+                {
+                    SetTeam(teamNumber);
+                }
+            }
+            else
+            {
+                // On clients (or when not fully initialized yet), mirror the networked value back to the inspector field.
+                if (teamNumber != team)
+                {
+                    teamNumber = team;
+                }
+            }
+        }
+    }
 
     [SyncVar(hook = nameof(HookOnUnitNameChanged))]
     public string unitName;

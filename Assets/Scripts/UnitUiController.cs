@@ -20,8 +20,21 @@ public class UnitUiController : MonoBehaviour
         _unitController.OnShieldChange += HandleOnShieldChange;
         _unitController.OnHealthChange += HandleOnHealthChange;
         _unitController.OnNameChanged += HandleOnNameChanged;
+        _unitController.OnTeamChanged += HandleOnTeamChanged;
         InitUiBars();
         SetNameTag(_unitController.unitName);
+    }
+    void OnDestroy()
+    {
+        if (_unitController != null)
+        {
+            _unitController.OnDied -= HandleOnDied;
+            _unitController.OnRevive -= HandleOnRevive;
+            _unitController.OnShieldChange -= HandleOnShieldChange;
+            _unitController.OnHealthChange -= HandleOnHealthChange;
+            _unitController.OnNameChanged -= HandleOnNameChanged;
+            _unitController.OnTeamChanged -= HandleOnTeamChanged;
+        }
     }
 
     private void HandleOnHealthChange((int current, int max) health)
@@ -169,7 +182,7 @@ public class UnitUiController : MonoBehaviour
         {
             color.a = 0.25f; // Set alpha to 25% for player units
         }
-        
+
         if (FloorCircleImage != null)
         {
             FloorCircleImage.color = color;
@@ -192,5 +205,10 @@ public class UnitUiController : MonoBehaviour
     public void HandleOnNameChanged(UnitController controller)
     {
         SetNameTag(controller.unitName);
+    }
+    
+    public void HandleOnTeamChanged(UnitController controller)
+    {
+        SetFloorCircleColorFromTeam(controller.team);
     }
 }
