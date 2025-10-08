@@ -9,7 +9,7 @@ public class SkillEffectTargetSmart : SkillEffectTarget
     public float range;
 
     [Header("Smart Targeting")]
-    public float searchRadius = 5f;
+    public float searchRadius = 2f;
     public LayerMask unitLayer;
 
     [Header("Weights (0..1 typical)")]

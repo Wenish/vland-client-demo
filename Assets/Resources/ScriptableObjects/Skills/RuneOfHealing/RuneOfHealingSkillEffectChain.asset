@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: RuneOfHealingSkillEffectChain
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 2610058285472284761
+  references:
+    version: 2
+    RefIds:
+    - rid: 2610058285472284761
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 11cf88c144e50477894cb09e15531626, type: 2}
+        children:
+        - rid: 2610058285472284768
+        - rid: 2610058285472284769
+    - rid: 2610058285472284768
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: dbd96b6b16bd44c3b8595cd1ed248967, type: 2}
+        children:
+        - rid: 2610058285472284770
+    - rid: 2610058285472284769
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 3aeace3dc1598442e9cfd935aff4fefa, type: 2}
+        children: []
+    - rid: 2610058285472284770
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 8e36485ab7f2d4f69b59beba489edefb, type: 2}
+        children: []
