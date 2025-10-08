@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4a9f4bc382e41d899c066ac50ff1b1, type: 3}
   m_Name: RuneOfHealingSkill Effect Mechanic Heal Low Health
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicHeal
-  countsAsCasted: 1
+  countsAsCasted: 0
   mode: 0
   healAmount: 60
