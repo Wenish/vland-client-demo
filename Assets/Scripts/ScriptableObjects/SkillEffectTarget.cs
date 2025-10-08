@@ -16,12 +16,19 @@ public abstract class SkillEffectTarget : SkillEffectData
         Enemies = 1 << 2,
     }
 
+    [System.Flags]
+    public enum LifeMask
+    {
+        Alive = 1 << 0,
+        Dead = 1 << 1,
+    }
+
     [Header("General Target Filters")]
     [Tooltip("Which relative teams are allowed (relative to caster).")]
     public TargetTeam teamMask = TargetTeam.Enemies; // default like before
 
-    [Tooltip("Include dead units.")]
-    public bool includeDead = false;
+    [Tooltip("Which life states are allowed.")]
+    public LifeMask lifeMask = LifeMask.Alive;
 
     [Tooltip("Ensure returned list contains unique units.")]
     public bool distinct = true;
@@ -60,10 +67,12 @@ public abstract class SkillEffectTarget : SkillEffectData
         }
 
         seq = seq.Where(u => u != null);
-        if (!includeDead)
+        // Filter by life state using the mask
+        seq = seq.Where(u =>
         {
-            seq = seq.Where(u => !u.IsDead);
-        }
+            var state = u.IsDead ? LifeMask.Dead : LifeMask.Alive;
+            return (lifeMask & state) != 0;
+        });
         seq = seq.Where(u => PassesTeamMask(context, u));
 
         if (randomizeOrder && maxTargets > 0)
