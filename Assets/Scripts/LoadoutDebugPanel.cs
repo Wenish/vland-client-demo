@@ -31,6 +31,7 @@ public class LoadoutDebugPanel : MonoBehaviour
 
     void Start()
     {
+        unitName = ApplicationSettings.Instance.Nickname;
         databaseManager = DatabaseManager.Instance;
         RefreshOptions();
     }
