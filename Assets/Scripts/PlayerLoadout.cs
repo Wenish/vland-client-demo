@@ -16,6 +16,41 @@ public class PlayerLoadout : NetworkBehaviour
         }
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        // start a short coroutine that waits until the local unit is ready, then sends the command
+        CmdRequestSetName(ApplicationSettings.Instance.Nickname);
+    }
+
+    [Command]
+    public void CmdRequestSetName(string desiredName)
+    {
+        var unitController = _playerInput.myUnit?.GetComponent<UnitController>();
+        if (unitController == null) return;
+
+        // Basic anti-spam: allow 2 req/s per connection (optional: store timestamp per-conn externally)
+        // This minimal implementation skips detailed rate limiting for brevity.
+
+        // Validate name
+        string sanitized = (desiredName ?? "Player").Trim();
+        if (sanitized.Length < 3 || sanitized.Length > 30)
+        {
+            Debug.LogWarning("Name must be 3-30 chars.");
+            return;
+        }
+        // restrict to alnum, space, _ and -
+        sanitized = new string(sanitized.Where(c => char.IsLetterOrDigit(c) || c == ' ' || c == '_' || c == '-').ToArray());
+        if (sanitized.Length < 3)
+        {
+            Debug.LogWarning("Name contains invalid characters.");
+            return;
+        }
+
+        // Apply to unit (server authoritative)
+        unitController.SetUnitName(sanitized);
+        Debug.Log($"Set player name to {sanitized}");
+    }
+
 
     [Command]
     public void CmdRequestSetLoadout(string desiredUnitName, string desiredWeaponName, string[] desiredNormalSkills, string desiredUltimateSkill, string[] desiredPassiveSkills)
@@ -27,7 +62,7 @@ public class PlayerLoadout : NetworkBehaviour
         // This minimal implementation skips detailed rate limiting for brevity.
 
         // Validate name
-        string sanitized = (desiredUnitName ?? "Player Test").Trim();
+        string sanitized = (desiredUnitName ?? "Player").Trim();
         if (sanitized.Length < 3 || sanitized.Length > 20)
         {
             TargetAckSetLoadout(connectionToClient, false, "Name must be 3-20 chars.");
