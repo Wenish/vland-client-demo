@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d80b31033d93a4b0793eeaba76c1bbcf, type: 3}
-  m_Name: RuneOfHealingSkillEffectMechanicCast
-  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicCast
+  m_Script: {fileID: 11500000, guid: 626adc8cd51944bfda2721e51e8e7645, type: 3}
+  m_Name: ShadowStepSkillEffectMechanicDamage
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
-  castDuration: 0.25
-  moveSpeedPercent: 0
-  turnSpeedPercent: 1
+  amount: 10

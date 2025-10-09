@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/WarpToTarget")]
+[CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/WarpToTarget", fileName = "SkillEffectMechanicWarpToTarget")]
 public class SkillEffectMechanicWarpToTargetData : SkillEffectMechanic
 {
+    public Vector2 warpOffset = Vector2.zero;
     public override List<UnitController> DoMechanic(
         CastContext castContext,
         List<UnitController> targets)
@@ -21,14 +22,23 @@ public class SkillEffectMechanicWarpToTargetData : SkillEffectMechanic
         if (Mirror.NetworkServer.active)
         {
             var rb = castContext.caster.GetComponent<Rigidbody>();
+            // Compute destination using target position plus rotated offset (offset is in target's local XZ plane)
+            var targetTransform = firstTarget.transform;
+            var destination = targetTransform.position;
+            if (warpOffset != Vector2.zero)
+            {
+                var localOffset = new Vector3(warpOffset.x, 0f, warpOffset.y);
+                var rotatedOffset = targetTransform.rotation * localOffset;
+                destination += rotatedOffset;
+            }
             if (rb != null)
             {
                 rb.linearVelocity = Vector3.zero; // Stop movement (Unity 2022+)
-                rb.position = firstTarget.transform.position; // Teleport instantly, no collision in between
+                rb.position = destination; // Teleport instantly, no collision in between
             }
             else
             {
-                castContext.caster.transform.position = firstTarget.transform.position;
+                castContext.caster.transform.position = destination;
             }
         }
         else

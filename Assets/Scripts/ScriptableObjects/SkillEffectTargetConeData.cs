@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewSkillEffect", menuName = "Game/Skills/Effects/Target/Cone")]
+[CreateAssetMenu(fileName = "SkillEffectTargetCone", menuName = "Game/Skills/Effects/Target/Cone")]
 public class SkillEffectTargetCone : SkillEffectTarget
 {
     public float range = 5f;
