@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewSkillEffectChain", menuName = "Game/Skills/Skill Effect Chain")]
+[CreateAssetMenu(fileName = "SkillEffectChain", menuName = "Game/Skills/Skill Effect Chain")]
 public class SkillEffectChainData : ScriptableObject
 {
     [SerializeReference]
