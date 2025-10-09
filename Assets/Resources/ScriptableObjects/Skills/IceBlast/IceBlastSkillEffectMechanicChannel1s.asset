@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e633cd427ef04fe4980593130a2eade, type: 3}
-  m_Name: SkillEffectMechanicDelay1s
+  m_Script: {fileID: 11500000, guid: 02d4628603b564108a7d43f9092f482b, type: 3}
+  m_Name: IceBlastSkillEffectMechanicChannel1s
   m_EditorClassIdentifier: 
-  delaySeconds: 1
+  countsAsCasted: 1
+  channelDuration: 1
+  moveSpeedPercent: 0
+  turnSpeedPercent: 0

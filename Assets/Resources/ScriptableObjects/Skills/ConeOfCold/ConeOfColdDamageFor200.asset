@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a105092bef4643aebc0dff2776bfba8, type: 3}
-  m_Name: TargetLinearRange30Width2
+  m_Script: {fileID: 11500000, guid: 626adc8cd51944bfda2721e51e8e7645, type: 3}
+  m_Name: ConeOfColdDamageFor200
   m_EditorClassIdentifier: 
-  range: 20
-  width: 2
-  unitLayer:
-    serializedVersion: 2
-    m_Bits: 8
+  amount: 5
