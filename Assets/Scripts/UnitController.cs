@@ -326,6 +326,10 @@ public class UnitController : NetworkBehaviour
     {
         if (IsDead) return;
 
+        float damageMultiplier = GetIncomingDamageMultiplier();
+        int reducedDamage = Mathf.CeilToInt(damage * damageMultiplier);
+        damage = Mathf.Max(0, reducedDamage);
+
         OnTakeDamageEvent(damage, attacker);
         // If the unit has a shield, reduce the shield points first
         if (shield > 0)
@@ -352,6 +356,17 @@ public class UnitController : NetworkBehaviour
             OnKillEvent(attacker);
             Die();
         }
+    }
+
+    private float GetIncomingDamageMultiplier()
+    {
+        float dr = 0f;
+        if (unitMediator != null)
+        {
+            dr = unitMediator.Stats.GetStat(StatType.DamageReduction);
+        }
+        float multiplier = 1f - Mathf.Clamp01(dr);
+        return multiplier;
     }
 
     [Server]

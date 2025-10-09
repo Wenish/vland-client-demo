@@ -4,6 +4,7 @@ public enum StatType
     MovementSpeed,
     Shield,
     TurnSpeed,
+    DamageReduction
 }
 
 [System.Serializable]
