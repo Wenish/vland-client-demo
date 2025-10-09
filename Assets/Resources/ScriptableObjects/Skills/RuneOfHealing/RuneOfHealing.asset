@@ -16,7 +16,7 @@ MonoBehaviour:
   skillType: 2
   description: Heals 30 health. Heals an additional 60 health if the target is below
     50% health.
-  cooldown: 60
+  cooldown: 6
   castCost: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: e32e2b758bee74562a892ef88af0452f, type: 2}
