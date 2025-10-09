@@ -5,9 +5,10 @@ using UnityEngine;
 public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
 {
     public string buffId;
-    public StatType StatType;
-    public ModifierType ModifierType;
-    public float Value;
+
+    [Header("Stat Modifiers")] 
+    [Tooltip("Configure one or more stat modifiers that this buff will apply.")]
+    public List<StatModifier> statModifiers = new List<StatModifier>();
     public float duration = 5f;
     public UniqueMode uniqueMode = UniqueMode.None;
 
@@ -21,14 +22,27 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
                 Debug.LogWarning($"Target {target.name} does not have a UnitMediator component.");
                 continue;
             }
-            var listStatModifiers = new List<StatModifier>
+            if (statModifiers == null || statModifiers.Count == 0)
             {
-                new StatModifier() {
-                    Type = StatType,
-                    ModifierType = ModifierType,
-                    Value = Value
-                }
-            };
+                // Nothing to apply
+                continue;
+            }
+
+            // Create fresh instances so multiple buffs don't share the same StatModifier references.
+            var listStatModifiers = new List<StatModifier>(statModifiers.Count);
+            foreach (var sm in statModifiers)
+            {
+                if (sm == null) continue;
+                listStatModifiers.Add(new StatModifier
+                {
+                    Type = sm.Type,
+                    ModifierType = sm.ModifierType,
+                    Value = sm.Value
+                });
+            }
+
+            if (listStatModifiers.Count == 0)
+                continue;
 
             BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, castContext.caster.unitMediator);
             castContext.skillInstance.ManageBuff(mediator, buff, true);
