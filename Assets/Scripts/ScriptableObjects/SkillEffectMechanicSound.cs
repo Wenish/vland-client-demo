@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Audio/Sound")]
+[CreateAssetMenu(fileName = "SkillEffectMechanicSound", menuName = "Game/Skills/Effects/Audio/Sound")]
 public class SkillEffectMechanicSound : SkillEffectMechanic
 {
     [Tooltip("Sound to play when the effect is executed")]

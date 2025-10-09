@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewSkillEffectTargetSmart", menuName = "Game/Skills/Effects/Target/Smart")]
+[CreateAssetMenu(fileName = "SkillEffectTargetSmart", menuName = "Game/Skills/Effects/Target/Smart")]
 public class SkillEffectTargetSmart : SkillEffectTarget
 {
     [Tooltip("The range within which the skill can target units.")]

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/Damage")]
+[CreateAssetMenu(fileName = "SkillEffectMechanicDamage", menuName = "Game/Skills/Effects/Mechanic/Damage")]
 public class SkillEffectMechanicDamageData : SkillEffectMechanic
 {
     public int amount = 20;

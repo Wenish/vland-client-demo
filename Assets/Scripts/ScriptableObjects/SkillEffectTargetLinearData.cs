@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewSkillEffect", menuName = "Game/Skills/Effects/Target/Linear")]
+[CreateAssetMenu(fileName = "SkillEffectTargetLinear", menuName = "Game/Skills/Effects/Target/Linear")]
 public class SkillEffectTargetLinear : SkillEffectTarget
 {
     public float range = 5f;
