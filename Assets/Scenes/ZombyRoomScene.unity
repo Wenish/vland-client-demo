@@ -180,6 +180,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      propertyPath: teamNumber
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
       value: 
       objectReference: {fileID: 0}
@@ -740,6 +744,10 @@ PrefabInstance:
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      propertyPath: teamNumber
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -3087,6 +3095,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      propertyPath: teamNumber
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
       value: 
       objectReference: {fileID: 0}
@@ -3563,6 +3575,10 @@ PrefabInstance:
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      propertyPath: teamNumber
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
@@ -4664,6 +4680,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      propertyPath: teamNumber
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
       value: 
       objectReference: {fileID: 0}
@@ -4883,6 +4903,10 @@ PrefabInstance:
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: moveSpeed
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
+      propertyPath: teamNumber
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 795324802, guid: d733e185f6e0de247b8caaef1ed75751, type: 3}
       propertyPath: weaponName
