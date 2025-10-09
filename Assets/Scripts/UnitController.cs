@@ -183,6 +183,17 @@ public class UnitController : NetworkBehaviour
     private Rigidbody unitRigidbody;
     private Collider unitCollider;
 
+    // Dash state (server-authoritative)
+    private bool _isDashing = false;
+    private Vector3 _dashDirection = Vector3.zero; // normalized XZ
+    private float _dashSpeed = 0f;
+    private float _dashDistance = 0f;
+    private Vector3 _dashStartPosition = Vector3.zero;
+    // Dash completion helpers
+    private float _dashEndTime = 0f;               // absolute time when dash should end at the latest
+    private float _lastDashTraveled = 0f;          // distance traveled along dash direction in previous FixedUpdate
+    private int _dashStalledFrames = 0;            // consecutive frames with no meaningful progress
+
     public event Action<(int current, int max)> OnHealthChange = delegate { };
     public event Action<(int current, int max)> OnShieldChange = delegate { };
     public event Action<UnitController> OnAttackStart = delegate { };
@@ -294,6 +305,49 @@ public class UnitController : NetworkBehaviour
         if (IsDead)
         {
             unitRigidbody.linearVelocity = Vector3.zero;
+            return;
+        }
+
+        // If currently dashing, override normal movement until distance reached
+        if (_isDashing)
+        {
+            // keep motion constrained to XZ plane
+            Vector3 flatPos = transform.position; flatPos.y = 0f;
+            Vector3 flatStart = _dashStartPosition; flatStart.y = 0f;
+            float traveled = Vector3.Project(flatPos - flatStart, _dashDirection).magnitude;
+            float remaining = _dashDistance - traveled;
+
+            // End conditions: reached distance, timed out, or stalled against an obstacle
+            const float endEpsilon = 0.01f;           // small tolerance for completion
+            const float stallEpsilon = 0.001f;        // minimal delta to consider as movement progress
+            const int maxStallFrames = 3;             // how many fixed frames of no-progress to allow
+
+            bool timedOut = Time.time >= _dashEndTime && _dashEndTime > 0f;
+            bool completed = remaining <= endEpsilon;
+            bool progressed = (traveled - _lastDashTraveled) > stallEpsilon;
+            _dashStalledFrames = progressed ? 0 : (_dashStalledFrames + 1);
+            _lastDashTraveled = traveled;
+
+            if (completed || timedOut || _dashStalledFrames >= maxStallFrames)
+            {
+                // End dash and stop dash velocity; normal movement resumes next frame
+                _isDashing = false;
+                unitRigidbody.linearVelocity = Vector3.zero;
+            }
+            else
+            {
+                float maxStep = _dashSpeed * Time.fixedDeltaTime;
+                if (remaining < maxStep && Time.fixedDeltaTime > 0f)
+                {
+                    // Scale the final velocity so we land exactly at the end distance
+                    float scaledSpeed = remaining / Time.fixedDeltaTime;
+                    unitRigidbody.linearVelocity = _dashDirection * scaledSpeed;
+                }
+                else
+                {
+                    unitRigidbody.linearVelocity = _dashDirection * _dashSpeed;
+                }
+            }
             return;
         }
 
@@ -542,6 +596,29 @@ public class UnitController : NetworkBehaviour
     {
         shield = Mathf.Clamp(newShield, 0, maxShield);
         RaiseShieldChangeEvent();
+    }
+
+    [Server]
+    public void StartDash(Vector3 direction, float speed, float distance)
+    {
+        if (IsDead) return;
+        // Only allow flat XZ dashes and non-zero direction
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f) return;
+
+        _dashDirection = direction.normalized;
+        _dashSpeed = Mathf.Max(0f, speed);
+        _dashDistance = Mathf.Max(0f, distance);
+        _dashStartPosition = transform.position;
+        _dashStartPosition.y = 0f;
+        _isDashing = _dashDistance > 0f && _dashSpeed > 0f;
+
+        // Initialize dash completion helpers
+        _lastDashTraveled = 0f;
+        _dashStalledFrames = 0;
+        // Safety timeout: expected dash duration + small fudge
+        float expectedDuration = (_dashSpeed > 0f) ? (_dashDistance / _dashSpeed) : 0f;
+        _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration + 0.1f);
     }
 }
 
