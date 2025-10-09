@@ -22,8 +22,14 @@ MonoBehaviour:
       data:
         effect: {fileID: 11400000, guid: ce3271bb2c9e242b8b35ed59c996bdca, type: 2}
         children:
-        - rid: 2610058285472284760
-    - rid: 2610058285472284760
+        - rid: 2610058305526562893
+    - rid: 2610058305526562893
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 8c84ae8155e344e528b7e6d59d1c0ecd, type: 2}
+        children:
+        - rid: 2610058305526562894
+    - rid: 2610058305526562894
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 181b8d56aa1784dd19d65b5c96a670c7, type: 2}
