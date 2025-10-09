@@ -53,7 +53,6 @@ public class InteractionZone : MonoBehaviour
     private void RemoveUnitFromZone(UnitController unit)
     {
         if (unit == null) return;
-        Debug.Log(unit?.name + " exited interaction zone " + interactionId);
         if (unitsInZone.Remove(unit))
         {
             if (deathListeners.TryGetValue(unit, out var onDied))
@@ -72,11 +71,9 @@ public class InteractionZone : MonoBehaviour
 
     private void OnUnitRevivedInZone(UnitController unit)
     {
-        Debug.Log($"Unit {unit.name} revived in interaction zone {interactionId}");
         // Only fire if the unit is still in the zone
         if (unitsInZone.Contains(unit))
         {
-            Debug.Log("Fire EventManager.Instance.Publish for UnitEnteredInteractionZone");
             EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
         }
     }
