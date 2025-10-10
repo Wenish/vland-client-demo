@@ -361,6 +361,9 @@ public class UnitController : NetworkBehaviour
         unitRigidbody.linearVelocity = moveDirection;
     }
 
+    [SerializeField]
+    private float baseTurnSpeed = 20f;
+
     [Server]
     private void RotatePlayer()
     {
@@ -371,7 +374,7 @@ public class UnitController : NetworkBehaviour
 
         float currentY = transform.rotation.eulerAngles.y;
         float targetY = angle;
-        float lerpedAngle = Mathf.LerpAngle(currentY, targetY, Time.deltaTime * 10 * turnSpeed);
+        float lerpedAngle = Mathf.LerpAngle(currentY, targetY, Time.deltaTime * baseTurnSpeed * turnSpeed);
         transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
     }
 
