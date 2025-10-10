@@ -17,6 +17,7 @@ MonoBehaviour:
   description: Dashes a short distance in the direction you're moving.
   cooldown: 5
   castCost: 0
+  canActivateWhileBusy: 1
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: ad01b4a663d9548198400847eaddc2d1, type: 2}
   iconTexture: {fileID: 2800000, guid: ebe7bb1f7a3e743a89fa283e7ac235c1, type: 3}

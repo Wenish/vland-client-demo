@@ -17,6 +17,7 @@ MonoBehaviour:
   description: You move 10% faster for 15 seconds and take only 50% of incoming damage.
   cooldown: 70
   castCost: 0
+  canActivateWhileBusy: 1
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: d54759c25c5be4981a3a4388e21f893e, type: 2}
   iconTexture: {fileID: 2800000, guid: 4b136b23e3f234551a1bac481d562b37, type: 3}

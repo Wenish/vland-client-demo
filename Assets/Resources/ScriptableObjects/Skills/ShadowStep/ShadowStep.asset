@@ -17,6 +17,7 @@ MonoBehaviour:
   description: Jump to an enemy and strike him for 10 damage.
   cooldown: 4
   castCost: 0
+  canActivateWhileBusy: 1
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: 1c12c6e9ed47d47b0b6ef4ca11373c80, type: 2}
   iconTexture: {fileID: 2800000, guid: b5a572388781c49c097e557bf843af11, type: 3}

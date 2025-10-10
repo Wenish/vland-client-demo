@@ -89,8 +89,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         if (IsOnCooldown || skillData == null) return;
 
-        // TODO: configure skills that they can skip this test and always be casted
-        if (unit.unitActionState.IsActive) return;
+        // If the unit is busy (casting/attacking/etc), only block if the skill doesn't allow activation while busy
+        if (unit.unitActionState.IsActive && !skillData.canActivateWhileBusy) return;
 
         if (_runningCastCoroutine != null)
         {
