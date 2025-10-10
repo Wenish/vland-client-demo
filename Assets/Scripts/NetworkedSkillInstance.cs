@@ -269,7 +269,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [ClientRpc(includeOwner = true)]
-    public void Rpc_PlaySound(string soundName, Vector3 position, bool attachToTarget, uint targetNetId)
+    public void Rpc_PlaySound(string soundName, Vector3 position, float pitchOffset, bool attachToTarget, uint targetNetId)
     {
         if (string.IsNullOrEmpty(soundName)) return;
 
@@ -280,7 +280,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
                 parent = identity.transform;
         }
 
-        SoundManager.Instance.PlaySound(soundName, position, parent);
+        SoundManager.Instance.PlaySound(soundName, position, parent, pitchOffset);
     }
 
     [Server]
