@@ -57,6 +57,12 @@ public class UnitDeath : MonoBehaviour
             unitController.OnDied += HandleOnDied;
             unitController.OnRevive += HandleOnRevive;
         }
+
+        // If the unit is already dead (e.g., spawned that way), ensure we start faded out
+        if (unitController != null && unitController.IsDead)
+        {
+            FadeToDeath();
+        }
     }
 
     void OnDisable()
@@ -95,6 +101,15 @@ public class UnitDeath : MonoBehaviour
         // Avoid instantiating materials; use MPB instead, and refresh color property + alive color cache
         UpdateActiveColorPropertyIds();
         CaptureAliveColors();
+        // If the unit is currently dead, ensure the new model is also fully faded out
+        if (unitController != null && unitController.IsDead)
+        {
+            FadeToDeath();
+        }
+        else
+        {
+            FadeToAlive();
+        }
     }
 
     void HandleOnDied()
