@@ -15,4 +15,5 @@ MonoBehaviour:
   countsAsCasted: 0
   vfxPrefab: {fileID: 5653840130532530168, guid: dc486ce01efec45d48a01eca2b20fb85, type: 3}
   duration: 1
+  lifetime: 0.8
   attachToTarget: 0
