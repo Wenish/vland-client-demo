@@ -15,6 +15,7 @@ MonoBehaviour:
   rootNodes:
   - rid: 2610058305526562904
   - rid: 2610058305526562905
+  - rid: 2610058305526562922
   references:
     version: 2
     RefIds:
@@ -27,4 +28,9 @@ MonoBehaviour:
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: f338493d4cc7544548e2c39c2fd01a93, type: 2}
+        children: []
+    - rid: 2610058305526562922
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: afcba78989ea14a57b4c850f62f2e94c, type: 2}
         children: []
