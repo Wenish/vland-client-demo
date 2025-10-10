@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/VFX/Graph")]
+[CreateAssetMenu(fileName = "SkillEffectMechanicVFXGraph", menuName = "Game/Skills/Effects/VFX/Graph")]
 public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
 {
     [Tooltip("Prefab with a VisualEffect component (assign in inspector)")]

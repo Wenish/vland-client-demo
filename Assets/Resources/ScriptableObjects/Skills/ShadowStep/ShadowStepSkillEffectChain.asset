@@ -22,27 +22,51 @@ MonoBehaviour:
       data:
         effect: {fileID: 11400000, guid: 02ef30fd73dbe4dbd9558844b673896f, type: 2}
         children:
-        - rid: 2610058305526562896
-    - rid: 2610058305526562896
-      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
-      data:
-        effect: {fileID: 11400000, guid: 0c060edaddd5f4deebf7ef0f7f16eed2, type: 2}
-        children:
-        - rid: 2610058305526562898
-        - rid: 2610058305526562902
-    - rid: 2610058305526562898
-      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
-      data:
-        effect: {fileID: 11400000, guid: edb5207d27c7c4744923f5821e91fc2c, type: 2}
-        children: []
-    - rid: 2610058305526562902
+        - rid: 2610058305526562912
+        - rid: 2610058305526562913
+    - rid: 2610058305526562912
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: f2799ec11b70246969d4921e194e7dab, type: 2}
         children:
-        - rid: 2610058305526562903
-    - rid: 2610058305526562903
+        - rid: 2610058305526562918
+    - rid: 2610058305526562913
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 0c060edaddd5f4deebf7ef0f7f16eed2, type: 2}
+        children:
+        - rid: 2610058305526562914
+        - rid: 2610058305526562915
+    - rid: 2610058305526562914
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: edb5207d27c7c4744923f5821e91fc2c, type: 2}
+        children: []
+    - rid: 2610058305526562915
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: f2799ec11b70246969d4921e194e7dab, type: 2}
+        children:
+        - rid: 2610058305526562916
+        - rid: 2610058305526562920
+    - rid: 2610058305526562916
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 23b66c30d661b4cf0b44ebfa4b4c28d5, type: 2}
+        children: []
+    - rid: 2610058305526562918
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: bcffc1efce6c54079b9760bb96c3ce3c, type: 2}
+        children: []
+    - rid: 2610058305526562920
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 16eecca62aa6c4397a7fa49fddf522c9, type: 2}
+        children:
+        - rid: 2610058305526562921
+    - rid: 2610058305526562921
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: bcffc1efce6c54079b9760bb96c3ce3c, type: 2}
         children: []
