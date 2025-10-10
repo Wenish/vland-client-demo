@@ -28,7 +28,7 @@ public class SoundManager : MonoBehaviour
     /// <param name="soundName">Name of the sound in SoundDatabase</param>
     /// <param name="position">Optional world position (null = global 2D sound)</param>
     /// <param name="parent">Optional parent GameObject to attach the sound to</param>
-    public void PlaySound(string soundName, Vector3? position = null, Transform parent = null)
+    public void PlaySound(string soundName, Vector3? position = null, Transform parent = null, float pitchOffset = 0f)
     {
         SoundData soundData = soundDatabase.GetSound(soundName);
         if (soundData == null)
@@ -37,7 +37,7 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        PlaySound(soundData, position, parent);
+        PlaySound(soundData, position, parent, pitchOffset);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class SoundManager : MonoBehaviour
     /// <param name="soundData">The SoundData asset to play</param>
     /// <param name="position">Optional world position (null = global 2D sound)</param>
     /// <param name="parent">Optional parent GameObject to attach the sound to</param>
-    public void PlaySound(SoundData soundData, Vector3? position = null, Transform parent = null)
+    public void PlaySound(SoundData soundData, Vector3? position = null, Transform parent = null, float pitchOffset = 0f)
     {
         if (soundData == null || soundData.clip == null)
         {
@@ -75,10 +75,10 @@ public class SoundManager : MonoBehaviour
         source.clip = soundData.clip;
         source.outputAudioMixerGroup = soundData.mixerGroup;
         source.volume = soundData.volume;
-        source.pitch = soundData.pitch;
+        source.pitch = soundData.pitch + pitchOffset;
         source.spatialBlend = soundData.isSpatial ? 1f : 0f;
 
         source.Play();
-        Destroy(go, soundData.clip.length / soundData.pitch); // Cleanup
+        Destroy(go, soundData.clip.length / source.pitch); // Cleanup
     }
 }
