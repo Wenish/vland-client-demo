@@ -16,16 +16,12 @@ public class SkillEffectConditionLowHealthData : SkillEffectCondition
         int current = target.health;
         int max = target.maxHealth;
 
-        Debug.Log("Current Health: " + current + ", Max Health: " + max);
-
         if (max <= 0) return false;
 
         float percent = (float)current / (float)max;
 
         bool result = inclusive ? (percent <= thresholdPercent) : (percent < thresholdPercent);
-
-        Debug.Log($"[LowHealthCondition] target={target.name} inclusive={inclusive} percent={percent:P1} threshold={thresholdPercent:P1} -> {result}");
-
+        
         return result;
     }
 }
