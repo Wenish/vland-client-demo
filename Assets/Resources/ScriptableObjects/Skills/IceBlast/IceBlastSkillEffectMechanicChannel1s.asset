@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: IceBlastSkillEffectMechanicChannel1s
   m_EditorClassIdentifier: 
   countsAsCasted: 1
-  channelDuration: 1
+  channelDuration: 0.75
   moveSpeedPercent: 0
   turnSpeedPercent: 0
