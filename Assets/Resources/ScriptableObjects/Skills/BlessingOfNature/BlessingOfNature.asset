@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
-  m_Name: IceBlast
-  m_EditorClassIdentifier: 
-  skillName: Ice Blast
-  skillType: 0
-  description: Makes damage to all enemy in a line in front of you.
-  cooldown: 10
+  m_Name: BlessingOfNature
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Blessing Of Nature
+  skillType: 1
+  description: 
+  cooldown: 0
   castCost: 0
   canActivateWhileBusy: 0
-  initTrigger: {fileID: 0}
-  castTrigger: {fileID: 11400000, guid: e965d6c54c9da46c985928ab68e2732b, type: 2}
-  iconTexture: {fileID: 2800000, guid: d6a08e4e04939497b84ced11db24cb5d, type: 3}
+  initTrigger: {fileID: 11400000, guid: 94da4e83b3b314fbd9ccba2197d73046, type: 2}
+  castTrigger: {fileID: 0}
+  iconTexture: {fileID: 2800000, guid: 77e7428bf01434b48b7b80340775e6f8, type: 3}

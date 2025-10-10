@@ -39,12 +39,14 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     private void InitializeSlots()
     {
-        AddSkill(SkillSlotType.Passive, "HealingLeaf");
-        AddSkill(SkillSlotType.Normal, "ConeOfCold");
-        AddSkill(SkillSlotType.Normal, "IceBlast");
+        var isPlayerUnit = unit.unitType == UnitType.Player;
+
+        if (!isPlayerUnit) return;
+        AddSkill(SkillSlotType.Passive, "Blessing Of Nature");
+        AddSkill(SkillSlotType.Normal, "Evade");
+        AddSkill(SkillSlotType.Normal, "Ice Blast");
         AddSkill(SkillSlotType.Normal, "Swiftness");
-        AddSkill(SkillSlotType.Ultimate, "HealingLeaf");
-        RemoveSkill(SkillSlotType.Passive, 0);
+        AddSkill(SkillSlotType.Ultimate, "Shadow Form");
     }
 
     [Server]

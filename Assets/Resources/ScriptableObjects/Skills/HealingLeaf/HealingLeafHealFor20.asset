@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b4a9f4bc382e41d899c066ac50ff1b1, type: 3}
-  m_Name: TestHealFor20
+  m_Name: HealingLeafHealFor20
   m_EditorClassIdentifier: 
   countsAsCasted: 1
   healAmount: 20

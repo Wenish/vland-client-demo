@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/BuffPeriodicSkillEffectChain")]
+[CreateAssetMenu(fileName = "BuffPeriodicSkillEffectChain", menuName = "Game/Skills/Effects/Mechanic/BuffPeriodicSkillEffectChain")]
 public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechanic
 {
     public string buffId;
