@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: BlessingOfNatureSkillEffectChainOnTick
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 2610058326384312394
+  references:
+    version: 2
+    RefIds:
+    - rid: 2610058326384312394
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 368cbb796f73547b08db9d1b389c0fa9, type: 2}
+        children:
+        - rid: 2610058326384312395
+    - rid: 2610058326384312395
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: dc485967cd9cf46fc9513574d4e71134, type: 2}
+        children: []

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/Heal")]
+[CreateAssetMenu(fileName = "SkillEffectMechanicHeal", menuName = "Game/Skills/Effects/Mechanic/Heal")]
 public class SkillEffectMechanicHeal : SkillEffectMechanic
 {
     public enum HealAmountMode

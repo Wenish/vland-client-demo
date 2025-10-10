@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Condition/Low Health")]
+[CreateAssetMenu(fileName = "SkillEffectConditionLowHealth", menuName = "Game/Skills/Effects/Condition/Low Health")]
 public class SkillEffectConditionLowHealthData : SkillEffectCondition
 {
     [Range(0f, 1f)]
