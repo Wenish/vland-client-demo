@@ -573,6 +573,7 @@ MonoBehaviour:
   syncInterval: 0
   unitType: 0
   team: 0
+  teamNumber: 0
   unitName: 
   horizontalInput: 0
   verticalInput: 0
@@ -590,6 +591,7 @@ MonoBehaviour:
   modelInstance: {fileID: 0}
   unitMediator: {fileID: 0}
   unitActionState: {fileID: 0}
+  baseTurnSpeed: 20
 --- !u!114 &-6987186403959014264
 MonoBehaviour:
   m_ObjectHideFlags: 0

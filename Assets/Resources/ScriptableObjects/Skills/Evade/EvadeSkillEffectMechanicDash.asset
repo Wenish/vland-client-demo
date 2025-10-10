@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDash
   countsAsCasted: 1
   dashDirection: 0
-  dashDistance: 3.5
+  dashDistance: 4.5
   dashSpeed: 25
