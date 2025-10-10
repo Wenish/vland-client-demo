@@ -217,6 +217,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Vector3 position,
         Quaternion rotation,
         float duration,
+        float lifetime,
         bool attachToTarget,
         uint targetNetId,
         string prefabName)
@@ -244,6 +245,10 @@ public class NetworkedSkillInstance : NetworkBehaviour
             if (visualEffect.HasFloat("Duration"))
             {
                 visualEffect.SetFloat("Duration", duration);
+            }
+            if (visualEffect.HasFloat("Lifetime"))
+            {
+                visualEffect.SetFloat("Lifetime", lifetime);
             }
         }
         Destroy(vfxInstance, duration);

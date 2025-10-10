@@ -7,9 +7,13 @@ public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
     [Tooltip("Prefab with a VisualEffect component (assign in inspector)")]
     public GameObject vfxPrefab;
 
-    [Tooltip("How long the VFX should live")] 
+    [Tooltip("How long the VFX GameObject should live")]
     public float duration = 1f;
 
+    [Tooltip("How long the particle should live")]
+    public float lifetime = 1f;
+
+    [Tooltip("If true, the VFX will be parented to the target unit's transform")]
     public bool attachToTarget = true;
 
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
@@ -27,6 +31,7 @@ public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
                     position,
                     rotation,
                     duration,
+                    lifetime,
                     attachToTarget,
                     targetNetId,
                     vfxPrefab.name
