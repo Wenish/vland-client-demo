@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 996564d63fd0a7646b035363102c97ce, type: 3}
   m_Name: ConeOfColdSound
   m_EditorClassIdentifier: 
+  countsAsCasted: 0
   soundData: {fileID: 11400000, guid: a3fa7e90c44187043860b3a1aed003ad, type: 2}
   attachToTarget: 0
+  pitchOffset: 0.053
