@@ -19,7 +19,6 @@ public class SkillEffectMechanicDash : SkillEffectMechanic
         CastContext castContext,
         List<UnitController> targets)
     {
-        Debug.Log($"Dashing {castContext.caster.name} forward with speed {dashSpeed}. Distance: {dashDistance}");
         var newTargetList = new List<UnitController> { castContext.caster };
 
         Vector2 dashDir = Vector2.zero;
