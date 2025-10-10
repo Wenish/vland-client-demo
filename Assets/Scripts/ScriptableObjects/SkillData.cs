@@ -10,6 +10,7 @@ public class SkillData : ScriptableObject
     public string description;
     public int cooldown;
     public int castCost;
+    public bool canActivateWhileBusy;
     public WeaponType? requiredWeapon;
 
     [Header("Effects")]
