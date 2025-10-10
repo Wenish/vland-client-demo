@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Shadow Step
   skillType: 0
   description: Jump to an enemy and strike him for 10 damage.
-  cooldown: 0
+  cooldown: 12
   castCost: 0
   canActivateWhileBusy: 1
   initTrigger: {fileID: 0}
