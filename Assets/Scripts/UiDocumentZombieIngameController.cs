@@ -98,8 +98,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillPassive.CooldownRemaining = skillPassive.CooldownRemaining;
             _skillPassive.CooldownProgress = skillPassive.CooldownProgress;
-            _skillPassive.IconTexture = skillPassive.skillData.iconTexture;
-            _skillPassive.TooltipText = GetSkillTooltip(skillPassive.skillData);
+            if (skillPassive.skillData != null)
+            {
+                _skillPassive.IconTexture = skillPassive.skillData.iconTexture;
+                _skillPassive.TooltipText = GetSkillTooltip(skillPassive.skillData);
+            }
+            else
+            {
+                ResetAbilityCooldownElement(_skillPassive);
+            }
         }
 
         var skill1 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 0);
@@ -107,8 +114,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillNormal1.CooldownRemaining = skill1.CooldownRemaining;
             _skillNormal1.CooldownProgress = skill1.CooldownProgress;
-            _skillNormal1.IconTexture = skill1.skillData.iconTexture;
-            _skillNormal1.TooltipText = GetSkillTooltip(skill1.skillData);
+            if (skill1.skillData != null)
+            {
+                _skillNormal1.IconTexture = skill1.skillData.iconTexture;
+                _skillNormal1.TooltipText = GetSkillTooltip(skill1.skillData);
+            }
+            else
+            {
+                ResetAbilityCooldownElement(_skillNormal1);
+            }
         }
 
         var skill2 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 1);
@@ -116,8 +130,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillNormal2.CooldownRemaining = skill2.CooldownRemaining;
             _skillNormal2.CooldownProgress = skill2.CooldownProgress;
-            _skillNormal2.IconTexture = skill2.skillData.iconTexture;
-            _skillNormal2.TooltipText = GetSkillTooltip(skill2.skillData);
+            if (skill2.skillData != null)
+            {
+                _skillNormal2.IconTexture = skill2.skillData.iconTexture;
+                _skillNormal2.TooltipText = GetSkillTooltip(skill2.skillData);
+            }
+            else
+            {
+                ResetAbilityCooldownElement(_skillNormal2);
+            }
         }
 
         var skill3 = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Normal, 2);
@@ -125,8 +146,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillNormal3.CooldownRemaining = skill3.CooldownRemaining;
             _skillNormal3.CooldownProgress = skill3.CooldownProgress;
-            _skillNormal3.IconTexture = skill3.skillData.iconTexture;
-            _skillNormal3.TooltipText = GetSkillTooltip(skill3.skillData);
+            if (skill3.skillData != null)
+            {
+                _skillNormal3.IconTexture = skill3.skillData.iconTexture;
+                _skillNormal3.TooltipText = GetSkillTooltip(skill3.skillData);
+            }
+            else
+            {
+                ResetAbilityCooldownElement(_skillNormal3);
+            }
         }
 
         var skillUltimate = _myPlayerUnitSkillSystem.GetSkill(SkillSlotType.Ultimate, 0);
@@ -134,8 +162,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillUltimate.CooldownRemaining = skillUltimate.CooldownRemaining;
             _skillUltimate.CooldownProgress = skillUltimate.CooldownProgress;
-            _skillUltimate.IconTexture = skillUltimate.skillData.iconTexture;
-            _skillUltimate.TooltipText = GetSkillTooltip(skillUltimate.skillData);
+            if (skillUltimate.skillData != null)
+            {
+                _skillUltimate.IconTexture = skillUltimate.skillData.iconTexture;
+                _skillUltimate.TooltipText = GetSkillTooltip(skillUltimate.skillData);
+            }
+            else
+            {
+                ResetAbilityCooldownElement(_skillUltimate);
+            }
         }
 
         // Reset elements if no skill

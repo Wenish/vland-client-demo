@@ -23,10 +23,10 @@ MonoBehaviour:
   weapon: {fileID: 11400000, guid: c8313ed289195d541a854ac0e7c818f8, type: 2}
   modelData: {fileID: 11400000, guid: c8ded03887d54f0488b0aa25162938c0, type: 2}
   passiveSkills:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 96c392615d028431688de2bb8662dca6, type: 2}
   normalSkills:
-  - {fileID: 11400000, guid: 3e2e0b92c3c82403f80288af667bf72d, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: cc617927561264995a311a36163e0ef9, type: 2}
+  - {fileID: 11400000, guid: ac6078070c7ec4b2384ae5fece1a8228, type: 2}
+  - {fileID: 11400000, guid: 72605801f490942fab2d38cec8c6dd48, type: 2}
   ultimateSkills:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: d7bdd3d5c36224314bf70dcd2dccd914, type: 2}

@@ -53,6 +53,14 @@ public class UnitSpawner : NetworkBehaviour
         }
 
         NetworkServer.Spawn(unitInstance);
+
+        foreach (var skill in unitData.passiveSkills)
+            unitController.unitMediator.Skills.AddSkill(SkillSlotType.Passive, skill.skillName);
+        foreach (var skill in unitData.normalSkills)
+            unitController.unitMediator.Skills.AddSkill(SkillSlotType.Normal, skill.skillName);
+        foreach (var skill in unitData.ultimateSkills)
+            unitController.unitMediator.Skills.AddSkill(SkillSlotType.Ultimate, skill.skillName);
+
         return unitInstance;
     }
 }

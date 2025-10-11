@@ -16,7 +16,6 @@ public class SkillSystem : NetworkBehaviour
     public override void OnStartServer()
     {
         unit = GetComponent<UnitController>();
-        InitializeSlots();
         unit.OnRevive += OnUnitRevive;
     }
 
@@ -34,19 +33,6 @@ public class SkillSystem : NetworkBehaviour
     {
         if (!isServer) return;
         unit.OnRevive -= OnUnitRevive;
-    }
-
-    [Server]
-    private void InitializeSlots()
-    {
-        var isPlayerUnit = unit.unitType == UnitType.Player;
-
-        if (!isPlayerUnit) return;
-        AddSkill(SkillSlotType.Passive, "Blessing Of Nature");
-        AddSkill(SkillSlotType.Normal, "Evade");
-        AddSkill(SkillSlotType.Normal, "Ice Blast");
-        AddSkill(SkillSlotType.Normal, "Swiftness");
-        AddSkill(SkillSlotType.Ultimate, "Shadow Form");
     }
 
     [Server]
