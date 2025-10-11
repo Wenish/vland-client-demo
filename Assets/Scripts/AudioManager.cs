@@ -31,6 +31,13 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     public float musicMaxVolume = 1.0f;
 
+    // Loop-with-pause settings
+    [Tooltip("Seconds to wait after a track finishes before looping again.")]
+    public float loopPauseSeconds = 120f; // 2 minutes by default
+
+    private Coroutine loopPauseCoroutine;
+    private bool loopWithPauseEnabled = false;
+
     public void PlayMusic(AudioClip music, bool loop = true)
     {
         if (music == null)
@@ -39,8 +46,19 @@ public class AudioManager : MonoBehaviour
         bool isSameClip = musicSource.clip == music;
         bool isPlayingSameClip = isSameClip && musicSource.isPlaying;
 
+        // Update desired loop behavior (we manage looping manually)
+        loopWithPauseEnabled = loop;
+        musicSource.loop = false; // we handle looping with a pause manually
+
         if (isPlayingSameClip && musicFadeCoroutine == null)
-            return; // nothing to do
+        {
+            // Potentially only the loop flag changed; ensure loop coroutine reflects that
+            if (loopWithPauseEnabled)
+                StartLoopWithPauseIfNeeded();
+            else
+                StopLoopWithPauseCoroutine();
+            return; // nothing else to do
+        }
 
         if (musicFadeCoroutine != null)
             StopCoroutine(musicFadeCoroutine);
@@ -48,11 +66,14 @@ public class AudioManager : MonoBehaviour
         // If a different clip is currently playing, fade it out then fade in the new one.
         if (musicSource.isPlaying && !isSameClip)
         {
+            // stop any loop coroutine before switching
+            StopLoopWithPauseCoroutine();
             musicFadeCoroutine = StartCoroutine(FadeOutAndInMusic(music, loop));
         }
         else
         {
             // Either nothing is playing or same clip is requested but not playing -> just fade in
+            StopLoopWithPauseCoroutine();
             musicFadeCoroutine = StartCoroutine(FadeInMusic(music, loop));
         }
     }
@@ -64,7 +85,8 @@ public class AudioManager : MonoBehaviour
         {
             if (musicFadeCoroutine != null)
                 StopCoroutine(musicFadeCoroutine);
-            musicFadeCoroutine = StartCoroutine(FadeInMusic(musicSource.clip, musicSource.loop));
+            // use our stored desired loopWithPauseEnabled instead of AudioSource.loop
+            musicFadeCoroutine = StartCoroutine(FadeInMusic(musicSource.clip, loopWithPauseEnabled));
         }
     }
 
@@ -73,6 +95,9 @@ public class AudioManager : MonoBehaviour
     {
         if (musicSource.isPlaying)
         {
+            // ensure loop doesn't restart while we fade out
+            loopWithPauseEnabled = false;
+            StopLoopWithPauseCoroutine();
             if (musicFadeCoroutine != null)
                 StopCoroutine(musicFadeCoroutine);
             musicFadeCoroutine = StartCoroutine(FadeOutMusic());
@@ -86,10 +111,11 @@ public class AudioManager : MonoBehaviour
 
     private System.Collections.IEnumerator FadeInMusic(AudioClip newClip, bool loop)
     {
+        loopWithPauseEnabled = loop;
         float targetVolume = musicMaxVolume;
         musicSource.volume = 0f;
         musicSource.clip = newClip;
-        musicSource.loop = loop;
+        musicSource.loop = false; // manual looping if enabled
         musicSource.Play();
         float t = 0f;
         while (t < musicFadeDuration)
@@ -99,6 +125,7 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
         musicSource.volume = targetVolume;
+        StartLoopWithPauseIfNeeded();
         musicFadeCoroutine = null;
     }
 
@@ -120,6 +147,8 @@ public class AudioManager : MonoBehaviour
     // Fades out the currently playing music (if any) and then fades in the provided clip.
     private System.Collections.IEnumerator FadeOutAndInMusic(AudioClip newClip, bool loop)
     {
+        // Ensure loop coroutine doesn't try to restart while transitioning
+        StopLoopWithPauseCoroutine();
         // Fade out current
         if (musicSource.isPlaying)
         {
@@ -143,10 +172,11 @@ public class AudioManager : MonoBehaviour
         }
 
         // Fade in new
+        loopWithPauseEnabled = loop;
         float targetVolume = musicMaxVolume;
         musicSource.volume = 0f;
         musicSource.clip = newClip;
-        musicSource.loop = loop;
+        musicSource.loop = false; // manual looping if enabled
         musicSource.Play();
         float tIn = 0f;
         if (musicFadeDuration <= 0f)
@@ -163,6 +193,65 @@ public class AudioManager : MonoBehaviour
             }
             musicSource.volume = targetVolume;
         }
+        StartLoopWithPauseIfNeeded();
         musicFadeCoroutine = null;
+    }
+
+    private void StopLoopWithPauseCoroutine()
+    {
+        if (loopPauseCoroutine != null)
+        {
+            StopCoroutine(loopPauseCoroutine);
+            loopPauseCoroutine = null;
+        }
+    }
+
+    private void StartLoopWithPauseIfNeeded()
+    {
+        if (!loopWithPauseEnabled || musicSource.clip == null)
+            return;
+        // Always disable built-in looping
+        musicSource.loop = false;
+        if (loopPauseCoroutine != null)
+        {
+            StopCoroutine(loopPauseCoroutine);
+            loopPauseCoroutine = null;
+        }
+        loopPauseCoroutine = StartCoroutine(LoopWithPauseCoroutine());
+    }
+
+    private System.Collections.IEnumerator LoopWithPauseCoroutine()
+    {
+        // Ensure no built-in loop
+        musicSource.loop = false;
+
+        while (loopWithPauseEnabled && musicSource.clip != null)
+        {
+            // Wait for current playback to finish naturally
+            while (loopWithPauseEnabled && musicSource.clip != null && musicSource.isPlaying)
+            {
+                yield return null;
+            }
+
+            if (!loopWithPauseEnabled || musicSource.clip == null)
+                break;
+
+            // Wait for the configured pause duration in real time
+            float waited = 0f;
+            while (loopWithPauseEnabled && musicSource.clip != null && waited < loopPauseSeconds)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!loopWithPauseEnabled || musicSource.clip == null)
+                break;
+
+            // Restart track from beginning without changing volume (respect current volume)
+            musicSource.time = 0f;
+            musicSource.Play();
+        }
+
+        loopPauseCoroutine = null;
     }
 }
