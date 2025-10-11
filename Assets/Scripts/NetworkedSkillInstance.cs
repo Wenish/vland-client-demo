@@ -51,9 +51,33 @@ public class NetworkedSkillInstance : NetworkBehaviour
         skillData = skillDatabase.GetSkillByName(newName);
     }
 
-    public bool IsOnCooldown => NetworkTime.time < lastCastTime + skillData.cooldown;
-    public float CooldownRemaining => skillData.cooldown - (float)(NetworkTime.time - lastCastTime);
-    public float CooldownProgress => (CooldownRemaining / skillData.cooldown) * 100f;
+    public bool IsOnCooldown
+        => skillData != null && skillData.cooldown > 0f && NetworkTime.time < lastCastTime + skillData.cooldown;
+
+    public float CooldownRemaining
+    {
+        get
+        {
+            if (skillData == null || skillData.cooldown <= 0f)
+                return 0f;
+
+            // remaining = (lastCast + cd) - now
+            var remaining = (float)((lastCastTime + skillData.cooldown) - NetworkTime.time);
+            return Mathf.Max(0f, remaining);
+        }
+    }
+
+    public float CooldownProgress
+    {
+        get
+        {
+            if (skillData == null || skillData.cooldown <= 0f)
+                return 0f;
+
+            // keep returning 0..100 like before
+            return Mathf.Clamp01(CooldownRemaining / skillData.cooldown) * 100f;
+        }
+    }
 
     private Coroutine _runningInitCoroutine;
     private CastContext _runningInitContext;
