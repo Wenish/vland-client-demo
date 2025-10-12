@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37fc01e286b124b0db5216f10a2d6078, type: 3}
+  m_Name: BaseHealSpellSkillEffectTargetSmart
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectTargetSmart
+  countsAsCasted: 0
+  teamMask: 3
+  lifeMask: 1
+  distinct: 1
+  maxTargets: 0
+  randomizeOrder: 0
+  sortByDistance: 1
+  range: 40
+  searchRadius: 2
+  unitLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  weightAimPointDistance: 1
+  weightCasterDistance: 0
+  weightForwardAlignment: 0

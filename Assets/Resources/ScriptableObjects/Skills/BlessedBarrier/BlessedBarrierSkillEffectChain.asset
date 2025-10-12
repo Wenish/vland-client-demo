@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: BlessedBarrierSkillEffectChain
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 2610058357351645484
+  references:
+    version: 2
+    RefIds:
+    - rid: 2610058357351645484
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: d971c98650f3e4186a9483f79512e0f6, type: 2}
+        children:
+        - rid: 2610058357351645485
+    - rid: 2610058357351645485
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 5ef6fd3449cdb45c0b3ccc1029003fd7, type: 2}
+        children:
+        - rid: 2610058357351645486
+        - rid: 2610058357351645488
+    - rid: 2610058357351645486
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 4f85a17b5616543bb95f6f166e1814a5, type: 2}
+        children: []
+    - rid: 2610058357351645488
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 739d3a3c1bdb04b7799823301dd2276e, type: 2}
+        children: []
