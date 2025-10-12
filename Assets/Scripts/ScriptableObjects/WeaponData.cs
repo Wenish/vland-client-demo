@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using OpenCover.Framework.Model;
 using UnityEngine;
 
 public abstract class WeaponData : ScriptableObject
