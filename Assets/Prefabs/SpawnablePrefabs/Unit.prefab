@@ -663,7 +663,7 @@ MonoBehaviour:
   targetRenderers: []
   flashDuration: 0.3
   ColorOnDamaged: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  ColorOnHealed: {r: 0, g: 0.2509804, b: 0, a: 0}
+  ColorOnHealed: {r: 0, g: 1, b: 0, a: 1}
   ColorOnShielded: {r: 0, g: 1, b: 1, a: 1}
   ColorOnMyPlayerUnitDamaged: {r: 1, g: 0, b: 0, a: 1}
   IsMyPlayerUnit: 0

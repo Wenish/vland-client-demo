@@ -15,6 +15,7 @@ public class UnitSwingAudio : MonoBehaviour
             return;
         }
         unitController.OnAttackSwing += HandleOnAttackSwing;
+        unitController.OnAttackStart += HandleOnAttackStart;
     }
 
     private void OnDestroy()
@@ -22,7 +23,27 @@ public class UnitSwingAudio : MonoBehaviour
         if (unitController != null)
         {
             unitController.OnAttackSwing -= HandleOnAttackSwing;
+            unitController.OnAttackStart -= HandleOnAttackStart;
         }
+    }
+
+    private void HandleOnAttackStart((UnitController attacker, int attackIndex) obj)
+    {
+        if (obj.attacker != unitController) return;
+        if (unitController.currentWeapon == null) return;
+
+        var onAttackStartAudioList = unitController.currentWeapon.onAttackStartAudioClips;
+        if (onAttackStartAudioList == null || onAttackStartAudioList.Count == 0) return;
+
+        var audioListItem = onAttackStartAudioList[obj.attackIndex % onAttackStartAudioList.Count];
+        if (audioListItem.soundData == null || audioListItem.soundData.clip == null) return;
+
+        // Randomize pitch each time within [-pitchOffset, +pitchOffset]
+        float randomizedPitchOffset = audioListItem.pitchOffset != 0f
+            ? Random.Range(-audioListItem.pitchOffset, audioListItem.pitchOffset)
+            : 0f;
+
+        SoundManager.Instance.PlaySound(audioListItem.soundData, unitController.transform.position, transform, randomizedPitchOffset);
     }
 
     private void HandleOnAttackSwing((UnitController attacker, int attackIndex) obj)
