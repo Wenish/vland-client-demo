@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OpenCover.Framework.Model;
 using UnityEngine;
 
 public abstract class WeaponData : ScriptableObject
@@ -23,6 +24,10 @@ public abstract class WeaponData : ScriptableObject
     [Header("Swing VFX")]
     public List<SwingVfxListItem> swingVfxs = new List<SwingVfxListItem>();
 
+    [Header("Audio")]
+    public List<SwingAudioListItem> swingAudioClips = new List<SwingAudioListItem>();
+
+
     public float AttackCooldown => attackTime + attackSpeed;
 
     public abstract void PerformAttack(UnitController attacker);
@@ -34,6 +39,17 @@ public abstract class WeaponData : ScriptableObject
         public Vector3 swingVfxPositionOffset = Vector3.zero;
         public Vector3 swingVfxRotationOffset = Vector3.zero;
         public float swingVfxLifetime = 0.3f;
+    }
+
+    [System.Serializable]
+    public class SwingAudioListItem
+    {
+        public SoundData soundData;
+
+        [Range(0f, 0.5f)]
+        [Tooltip("Maximum random pitch deviation (±). 0.0 = no variation, 0.5 = noticeable variation")]
+        public float pitchOffset = 0f;
+
     }
 }
 
