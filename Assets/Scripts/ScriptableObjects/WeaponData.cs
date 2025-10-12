@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class WeaponData : ScriptableObject
@@ -19,19 +20,21 @@ public abstract class WeaponData : ScriptableObject
     public GameObject weaponModelRightHand;
     public GameObject weaponModelLeftHand;
 
-    [Header("Visuals - Swing VFX")]
-    [Tooltip("Optional slash/swing VFX prefab to spawn on successful hits.")]
-    public GameObject swingVfxPrefab;
-    [Tooltip("Local position offset relative to the spawn anchor (usually right hand).")]
-    public Vector3 swingVfxPositionOffset = Vector3.zero;
-    [Tooltip("Local rotation offset (Euler) relative to the spawn anchor.")]
-    public Vector3 swingVfxRotationOffset = Vector3.zero;
-    [Tooltip("If > 0, the spawned VFX will be destroyed after this lifetime in seconds. If 0, relies on self-destruction in the prefab.")]
-    public float swingVfxLifetime = 0.3f;
+    [Header("Swing VFX")]
+    public List<SwingVfxListItem> swingVfxs = new List<SwingVfxListItem>();
 
     public float AttackCooldown => attackTime + attackSpeed;
 
     public abstract void PerformAttack(UnitController attacker);
+
+    [System.Serializable]
+    public class SwingVfxListItem
+    {
+        public GameObject swingVfxPrefab;
+        public Vector3 swingVfxPositionOffset = Vector3.zero;
+        public Vector3 swingVfxRotationOffset = Vector3.zero;
+        public float swingVfxLifetime = 0.3f;
+    }
 }
 
 
