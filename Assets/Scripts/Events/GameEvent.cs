@@ -64,11 +64,17 @@ namespace MyGame.Events
     {
         public UnitController Unit { get; }
         public int ShieldAmount { get; }
+        public int OldShield { get; }
+        public int NewShield { get; }
+        public UnitController? Shielder { get; }
 
-        public UnitShieldedEvent(UnitController unit, int shieldAmount)
+        public UnitShieldedEvent(UnitController unit, int shieldAmount, int oldShield, int newShield, UnitController? shielder = null)
         {
             Unit = unit;
             ShieldAmount = shieldAmount;
+            OldShield = oldShield;
+            NewShield = newShield;
+            Shielder = shielder;
         }
     }
 

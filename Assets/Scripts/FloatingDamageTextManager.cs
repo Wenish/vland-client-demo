@@ -68,9 +68,15 @@ public class FloatingDamageTextManager : MonoBehaviour
     public void OnUnitShielded(UnitShieldedEvent unitShieldedEvent)
     {
         var hasMyUnitedReceivedTheShield = unitShieldedEvent.Unit == myPlayerUnitController;
-        if (hasMyUnitedReceivedTheShield)
+        var hasMyUnitdMadeTheShield = unitShieldedEvent.Shielder == myPlayerUnitController;
+        if (hasMyUnitedReceivedTheShield || hasMyUnitdMadeTheShield)
         {
             var text = $"+{unitShieldedEvent.ShieldAmount}";
+            var ifUnitAlreadyWasMaxShield = unitShieldedEvent.OldShield == unitShieldedEvent.Unit.maxShield;
+            if (ifUnitAlreadyWasMaxShield)
+            {
+                text = "Max";
+            }
             SpawnDamageText(text, unitShieldedEvent.ShieldAmount, unitShieldedEvent.Unit.transform, blueColor);
         }
     }

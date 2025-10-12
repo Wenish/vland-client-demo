@@ -496,19 +496,21 @@ public class UnitController : NetworkBehaviour
     {
         if (IsDead) return;
 
+        var oldShield = shield;
+
         // Increase the shield by the shield amount
         shield = Mathf.Min(shield + amount, maxShield);
-        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount));
+        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount, oldShield, shield, shielder));
         OnShielded((this, amount));
-        RpcOnShield(amount, shielder);
+        RpcOnShield(amount, oldShield, shield, shielder);
     }
 
     [ClientRpc]
-    public void RpcOnShield(int amount, UnitController shielder)
+    public void RpcOnShield(int amount, int oldShield, int newShield, UnitController shielder)
     {
         if (isServer) return;
         OnShielded((this, amount));
-        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount));
+        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount, oldShield, newShield, shielder));
     }
 
     private void Die()
