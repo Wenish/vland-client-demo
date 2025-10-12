@@ -50,16 +50,25 @@ VisualEffect:
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 0.25
+        m_Name: Lifetime
+        m_Overridden: 1
+      - m_Value: 5
+        m_Name: Speed
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0, y: 0, z: 0, w: 1}
+      - m_Value: {x: 0.032123774, y: 0.003921565, z: 0.16078432, w: 1}
         m_Name: ColorDark
-        m_Overridden: 0
+        m_Overridden: 1
+      - m_Value: {x: 0.07667369, y: 0.010033, z: 0.709, w: 1}
+        m_Name: ColorBright
+        m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:
