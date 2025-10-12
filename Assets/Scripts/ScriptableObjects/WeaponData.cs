@@ -25,7 +25,8 @@ public abstract class WeaponData : ScriptableObject
     public List<SwingVfxListItem> swingVfxs = new List<SwingVfxListItem>();
 
     [Header("Audio")]
-    public List<SwingAudioListItem> swingAudioClips = new List<SwingAudioListItem>();
+    public List<AudioListItem> onAttackStartAudioClips = new List<AudioListItem>();
+    public List<AudioListItem> swingAudioClips = new List<AudioListItem>();
 
 
     public float AttackCooldown => attackTime + attackSpeed;
@@ -42,7 +43,7 @@ public abstract class WeaponData : ScriptableObject
     }
 
     [System.Serializable]
-    public class SwingAudioListItem
+    public class AudioListItem
     {
         public SoundData soundData;
 

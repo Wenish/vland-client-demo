@@ -568,9 +568,17 @@ public class UnitController : NetworkBehaviour
         OnShieldChange((current: shield, max: maxShield));
     }
 
-    [ClientRpc]
+    [Server]
     public void RaiseOnAttackStartEvent(int attackIndex)
     {
+        OnAttackStart((this, attackIndex));
+        RpcRaiseOnAttackStartEvent(attackIndex);
+    }
+
+    [ClientRpc]
+    public void RpcRaiseOnAttackStartEvent(int attackIndex)
+    {
+        if (isServer) return;
         OnAttackStart((this, attackIndex));
     }
 
