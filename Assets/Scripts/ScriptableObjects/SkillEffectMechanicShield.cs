@@ -29,7 +29,7 @@ public class SkillEffectMechanicShield : SkillEffectMechanic
         {
             int amount = CalculateShieldAmount(target);
             if (amount <= 0) continue;
-            target.Shield(amount);
+            target.Shield(amount, castContext.caster);
         }
         return targets;
     }
