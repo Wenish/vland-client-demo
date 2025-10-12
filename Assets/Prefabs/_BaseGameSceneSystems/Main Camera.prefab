@@ -143,6 +143,7 @@ GameObject:
   - component: {fileID: 8398633881187561724}
   - component: {fileID: 1045805171326908767}
   - component: {fileID: -8212074392146612490}
+  - component: {fileID: 172281609117418994}
   m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -327,3 +328,21 @@ MonoBehaviour:
     m_Bits: 8
   outlineColorDefault: {r: 1, g: 0.92156863, b: 0.015686275, a: 0.05882353}
   outlineWidth: 2
+--- !u!114 &172281609117418994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5913976703155713801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88768d1314276cf4fa5d96e20e0f8eda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
+  mainCamera: {fileID: 0}
+  shakeDuration: 0.1
+  shakeMagnitude: 0.01
+  shakeSpeed: 25
+  returnDuration: 0.05
+  myUnit: {fileID: 0}
