@@ -22,6 +22,15 @@ MonoBehaviour:
   iconTexture: {fileID: 2800000, guid: e299739c0b07042d0abef4dd454c0572, type: 3}
   weaponModelRightHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
   weaponModelLeftHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
+  swingVfxs:
+  - swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
+    swingVfxPositionOffset: {x: 0, y: 0.3, z: 0}
+    swingVfxRotationOffset: {x: 1, y: 0, z: -10}
+    swingVfxLifetime: 2
+  - swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
+    swingVfxPositionOffset: {x: 0, y: 0.3, z: 0}
+    swingVfxRotationOffset: {x: 1, y: 0, z: 190}
+    swingVfxLifetime: 2
   swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
   swingVfxPositionOffset: {x: 0, y: 0.3, z: 0}
   swingVfxRotationOffset: {x: 1, y: 0, z: 0}
