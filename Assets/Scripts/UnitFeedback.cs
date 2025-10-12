@@ -20,6 +20,8 @@ public class UnitFeedback : MonoBehaviour
     [ColorUsage(true, true)]
     public Color ColorOnHealed = Color.green;
     [ColorUsage(true, true)]
+    public Color ColorOnShielded = Color.cyan;
+    [ColorUsage(true, true)]
     public Color ColorOnMyPlayerUnitDamaged = Color.red;
     public bool IsMyPlayerUnit = false;
     public UnitController MyPlayerUnitController;
@@ -51,6 +53,7 @@ public class UnitFeedback : MonoBehaviour
             unitController.OnModelChange += HandleOnModelChange;
             unitController.OnTakeDamage += HandleOnTakeDamage;
             unitController.OnHealed += HandleOnHeal;
+            unitController.OnShielded += HandleOnShielded;
         }
 
         if (EventManager.Instance != null)
@@ -70,6 +73,7 @@ public class UnitFeedback : MonoBehaviour
             unitController.OnModelChange -= HandleOnModelChange;
             unitController.OnTakeDamage -= HandleOnTakeDamage;
             unitController.OnHealed -= HandleOnHeal;
+            unitController.OnShielded -= HandleOnShielded;
         }
 
         if (EventManager.Instance != null)
@@ -109,6 +113,11 @@ public class UnitFeedback : MonoBehaviour
         FlashHeal();
     }
 
+    void HandleOnShielded((UnitController caster, int amount) obj)
+    {
+        FlashShield();
+    }
+
     public void FlashDamage()
     {
         if (flashRoutine != null) StopCoroutine(flashRoutine);
@@ -119,6 +128,12 @@ public class UnitFeedback : MonoBehaviour
     {
         if (flashRoutine != null) StopCoroutine(flashRoutine);
         flashRoutine = StartCoroutine(FlashSmooth(ColorOnHealed));
+    }
+
+    public void FlashShield()
+    {
+        if (flashRoutine != null) StopCoroutine(flashRoutine);
+        flashRoutine = StartCoroutine(FlashSmooth(ColorOnShielded));
     }
 
     private IEnumerator FlashSmooth(Color flashColor)

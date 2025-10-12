@@ -109,7 +109,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (!_unitController) return;
         _unitController.Heal(_unitController.maxHealth / 2, _unitController);
-        _unitController.Shield(_unitController.maxShield / 2);
+        _unitController.Shield(_unitController.maxShield / 2, _unitController);
     }
 
 

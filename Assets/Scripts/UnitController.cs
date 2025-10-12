@@ -199,6 +199,7 @@ public class UnitController : NetworkBehaviour
     public event Action<UnitController> OnAttackStart = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
+    public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
     public event Action OnDied = delegate { };
     public event Action OnRevive = delegate { };
     public UnitMediator unitMediator;
@@ -275,7 +276,7 @@ public class UnitController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.L))
         {
             Heal(maxHealth, this);
-            Shield(maxShield);
+            Shield(maxShield, this);
         }
     }
 
@@ -491,18 +492,22 @@ public class UnitController : NetworkBehaviour
 
     // Shield the unit
     [Server]
-    public void Shield(int amount)
+    public void Shield(int amount, UnitController shielder)
     {
         if (IsDead) return;
 
         // Increase the shield by the shield amount
         shield = Mathf.Min(shield + amount, maxShield);
-        RpcOnShield(amount);
+        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount));
+        OnShielded((this, amount));
+        RpcOnShield(amount, shielder);
     }
 
     [ClientRpc]
-    public void RpcOnShield(int amount)
+    public void RpcOnShield(int amount, UnitController shielder)
     {
+        if (isServer) return;
+        OnShielded((this, amount));
         EventManager.Instance.Publish(new UnitShieldedEvent(this, amount));
     }
 
