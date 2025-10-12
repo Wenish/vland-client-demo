@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63f7ddf428b6fe34fa6d322790a1a617, type: 3}
-  m_Name: RuneOfHealing
+  m_Name: Swiftness
   m_EditorClassIdentifier: Assembly-CSharp::SoundData
-  soundName: RuneOfHealing
-  clip: {fileID: 8300000, guid: 59ad5850037ba49d38dc34de31f09c14, type: 3}
+  soundName: Swiftness
+  clip: {fileID: 8300000, guid: 3677d1e0de9904f88bc59447fcadcaa8, type: 3}
   mixerGroup: {fileID: -5574617817705501464, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
   isSpatial: 1
-  volume: 0.685
-  pitch: 0.423
+  volume: 0.5
+  pitch: 1

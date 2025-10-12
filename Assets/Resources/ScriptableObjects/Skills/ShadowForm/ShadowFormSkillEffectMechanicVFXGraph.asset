@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
-  m_Name: RuneOfHealingSkillEffectMechanicVFXGraph
+  m_Name: ShadowFormSkillEffectMechanicVFXGraph
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicVFXGraph
   countsAsCasted: 0
-  vfxPrefab: {fileID: 5721618012284709695, guid: 918e35ee476df42738ed1418a7e6684b, type: 3}
-  duration: 1
+  vfxPrefab: {fileID: 2147817223357921905, guid: d5f465f09b8ee428f873c55562de8283, type: 3}
+  duration: 15
   lifetime: 1
   attachToTarget: 1

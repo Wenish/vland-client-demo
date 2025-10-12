@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 996564d63fd0a7646b035363102c97ce, type: 3}
-  m_Name: RuneOfHealingSkillEffectMechanicSound
+  m_Name: SwiftnessSkillEffectMechanicSound
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicSound
   countsAsCasted: 0
-  soundData: {fileID: 11400000, guid: 82674555ae6a442089780bda8375da16, type: 2}
+  soundData: {fileID: 11400000, guid: 3629e7fd55dd640bcb15c6be4b022f6c, type: 2}
   attachToTarget: 1
-  pitchOffset: 0.005
+  pitchOffset: 0.01

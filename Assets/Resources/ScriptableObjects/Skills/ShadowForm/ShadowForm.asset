@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Shadow Form
   skillType: 2
   description: You move 10% faster for 15 seconds and take only 50% of incoming damage.
-  cooldown: 70
+  cooldown: 1
   castCost: 0
   canActivateWhileBusy: 1
   initTrigger: {fileID: 0}
