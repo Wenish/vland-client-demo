@@ -17,4 +17,4 @@ MonoBehaviour:
   mixerGroup: {fileID: -5574617817705501464, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
   isSpatial: 1
   volume: 1
-  pitch: 1
+  pitch: 0.77
