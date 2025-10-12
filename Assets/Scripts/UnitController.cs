@@ -196,7 +196,8 @@ public class UnitController : NetworkBehaviour
 
     public event Action<(int current, int max)> OnHealthChange = delegate { };
     public event Action<(int current, int max)> OnShieldChange = delegate { };
-    public event Action<UnitController> OnAttackStart = delegate { };
+    public event Action<(UnitController unitController, int attackIndex)> OnAttackStart = delegate { };
+    public event Action<(UnitController attacker, int attackIndex)> OnAttackSwing = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
     public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
@@ -568,9 +569,9 @@ public class UnitController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RaiseOnAttackStartEvent()
+    public void RaiseOnAttackStartEvent(int attackIndex)
     {
-        OnAttackStart(this);
+        OnAttackStart((this, attackIndex));
     }
 
     private void RaiseOnDiedEvent()
@@ -581,6 +582,20 @@ public class UnitController : NetworkBehaviour
     private void RaiseOnReviveEvent()
     {
         OnRevive();
+    }
+
+    [Server]
+    public void RaiseOnAttackSwingEvent(int attackIndex)
+    {
+        OnAttackSwing((this, attackIndex));
+        RpcRaiseOnAttackSwingEvent(attackIndex);
+    }
+
+    [ClientRpc]
+    public void RpcRaiseOnAttackSwingEvent(int attackIndex)
+    {
+        if (isServer) return;
+        OnAttackSwing((this, attackIndex));
     }
 
     [Server]

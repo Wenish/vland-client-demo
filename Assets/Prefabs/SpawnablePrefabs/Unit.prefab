@@ -477,6 +477,7 @@ GameObject:
   - component: {fileID: 1397612983753662656}
   - component: {fileID: 3010265075052333281}
   - component: {fileID: 4644873500728417110}
+  - component: {fileID: 9147420873427035499}
   - component: {fileID: -3108773104642818051}
   - component: {fileID: -135528591289134065}
   - component: {fileID: -8639825436896791559}
@@ -662,6 +663,7 @@ MonoBehaviour:
   flashDuration: 0.3
   ColorOnDamaged: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   ColorOnHealed: {r: 0, g: 0.2509804, b: 0, a: 0}
+  ColorOnShielded: {r: 0, g: 1, b: 1, a: 1}
   ColorOnMyPlayerUnitDamaged: {r: 1, g: 0, b: 0, a: 1}
   IsMyPlayerUnit: 0
   MyPlayerUnitController: {fileID: 0}
@@ -708,6 +710,22 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &9147420873427035499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19aae702a4aab46278323c93eb0e916d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitSwingVfx
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  unitController: {fileID: 0}
 --- !u!114 &-3108773104642818051
 MonoBehaviour:
   m_ObjectHideFlags: 0

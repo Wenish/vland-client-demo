@@ -55,17 +55,14 @@ public class UnitAnimationController : MonoBehaviour
         animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
     }
 
-    private int attackCounter = 0;
-
-    private void HandleOnAttackStartChange(UnitController unitController)
+    private void HandleOnAttackStartChange((UnitController unitController, int attackIndex) obj)
     {
         if (unitController.currentWeapon != null)
         {
             SetAttackTime(unitController.currentWeapon.attackTime);
         }
-        animator.SetInteger("AttackVersion", attackCounter % 2);
+        animator.SetInteger("AttackVersion", obj.attackIndex % 2);
         animator.SetTrigger("Attack");
-        attackCounter = (attackCounter + 1) % 4;
     }
 
     private void HandleOnHealthChange((int current, int max) health)

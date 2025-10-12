@@ -16,6 +16,8 @@ public class WeaponController : NetworkBehaviour
     public float AttackCooldownRemaining => weaponData.AttackCooldown - (float)(NetworkTime.time - lastAttackTime);
     public float AttackCooldownProgress => (AttackCooldownRemaining / weaponData.AttackCooldown) * 100f;
 
+    private int attackIndex = 0;
+
     [Server]
     public async Task Attack(UnitController attacker)
     {
@@ -28,7 +30,7 @@ public class WeaponController : NetworkBehaviour
         if (isAttacking || IsAttackOnCooldown || attacker.unitActionState.IsActive) return;
 
         isAttacking = true;
-        attacker.RaiseOnAttackStartEvent();
+        attacker.RaiseOnAttackStartEvent(attackIndex);
 
         lastAttackTime = NetworkTime.time;
 
@@ -52,6 +54,8 @@ public class WeaponController : NetworkBehaviour
         }
 
         weaponData.PerformAttack(attacker);
+        attacker.RaiseOnAttackSwingEvent(attackIndex);
         isAttacking = false;
+        attackIndex = (attackIndex + 1) % 2;
     }
 }
