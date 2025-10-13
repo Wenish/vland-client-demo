@@ -29,6 +29,9 @@ MonoBehaviour:
   swingAudioClips:
   - soundData: {fileID: 11400000, guid: 7c7a463f13305f04e883f3c800a60875, type: 2}
     pitchOffset: 0.1
+  onHitAudioClips:
+  - soundData: {fileID: 11400000, guid: d0138a3ce4b824265b25e7a29f3aa45e, type: 2}
+    pitchOffset: 0
   projectileSpeed: 22
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}

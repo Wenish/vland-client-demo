@@ -198,6 +198,7 @@ public class UnitController : NetworkBehaviour
     public event Action<(int current, int max)> OnShieldChange = delegate { };
     public event Action<(UnitController unitController, int attackIndex)> OnAttackStart = delegate { };
     public event Action<(UnitController attacker, int attackIndex)> OnAttackSwing = delegate { };
+    public event Action<(UnitController target, UnitController attacker)> OnAttackHitReceived = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
     public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
@@ -512,6 +513,20 @@ public class UnitController : NetworkBehaviour
         if (isServer) return;
         OnShielded((this, amount));
         EventManager.Instance.Publish(new UnitShieldedEvent(this, amount, oldShield, newShield, shielder));
+    }
+
+    [Server]
+    public void RaiseOnAttackHitReceivedEvent(UnitController attacker)
+    {
+        OnAttackHitReceived((this, attacker));
+        RpcRaiseOnAttackHitReceivedEvent(attacker);
+    }
+
+    [ClientRpc]
+    public void RpcRaiseOnAttackHitReceivedEvent(UnitController attacker)
+    {
+        if (isServer) return;
+        OnAttackHitReceived((this, attacker));
     }
 
     private void Die()

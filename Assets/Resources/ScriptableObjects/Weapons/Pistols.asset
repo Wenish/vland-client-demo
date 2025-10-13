@@ -22,6 +22,12 @@ MonoBehaviour:
   iconTexture: {fileID: 2800000, guid: 18adb64ab55bc47dd929074207b98e42, type: 3}
   weaponModelRightHand: {fileID: 8387868954701532438, guid: a6dcbb314891aed4fb11ef35d85ca946, type: 3}
   weaponModelLeftHand: {fileID: 8387868954701532438, guid: a6dcbb314891aed4fb11ef35d85ca946, type: 3}
+  swingVfxs: []
+  onAttackStartAudioClips: []
+  swingAudioClips:
+  - soundData: {fileID: 11400000, guid: 7398be1571955447e90529d1c44ef7f8, type: 2}
+    pitchOffset: 0.02
+  onHitAudioClips: []
   projectileSpeed: 25
   spawnDistance: 0.5
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}

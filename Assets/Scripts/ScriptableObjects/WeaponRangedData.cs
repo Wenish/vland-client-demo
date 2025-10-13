@@ -27,6 +27,12 @@ public class WeaponRangedData : WeaponData
         // Get the projectile component of the spawned projectile
         ProjectileController projectileController = projectileObject.GetComponent<ProjectileController>();
 
+        projectileController.OnProjectileUnitHit += OnProjectileUnitHit;
+        projectileController.OnProjectileDestroyed += (proj) => {
+            proj.OnProjectileUnitHit -= OnProjectileUnitHit;
+            proj.OnProjectileDestroyed -= (p) => { };
+        };
+
         // Set the projectile's damage
         projectileController.damage = attackPower;
 
@@ -38,5 +44,11 @@ public class WeaponRangedData : WeaponData
 
         // Set the projectile's max hits
         projectileController.maxHits = projectile.maxHits;
+    }
+
+    private void OnProjectileUnitHit((UnitController target, UnitController attacker) obj)
+    {
+        obj.target.TakeDamage(obj.attacker.currentWeapon.attackPower, obj.attacker);
+        obj.target.RaiseOnAttackHitReceivedEvent(obj.attacker);
     }
 }

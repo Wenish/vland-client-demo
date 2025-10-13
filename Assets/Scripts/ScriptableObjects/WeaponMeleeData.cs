@@ -62,6 +62,7 @@ public class WeaponMeleeData : WeaponData
             for (int i = 0; i < Mathf.Min(maxHits, enemiesHit.Count); i++)
             {
                 enemiesHit[i].TakeDamage(attackPower, attacker);
+                enemiesHit[i].RaiseOnAttackHitReceivedEvent(attacker);
             }
 
         }
@@ -69,6 +70,7 @@ public class WeaponMeleeData : WeaponData
         {
             var enemy = enemiesHit[0];
             enemy.TakeDamage(attackPower, attacker);
+            enemy.RaiseOnAttackHitReceivedEvent(attacker);
             return;
         }
     }
