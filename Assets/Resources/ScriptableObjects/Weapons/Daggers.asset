@@ -24,13 +24,13 @@ MonoBehaviour:
   weaponModelLeftHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
   swingVfxs:
   - swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
-    swingVfxPositionOffset: {x: 0, y: 0.3, z: 0}
-    swingVfxRotationOffset: {x: 1, y: -60, z: -10}
-    swingVfxLifetime: 5
+    swingVfxPositionOffset: {x: 0, y: 0.7, z: 0}
+    swingVfxRotationOffset: {x: -10, y: -40, z: -10}
+    swingVfxLifetime: 3
   - swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
-    swingVfxPositionOffset: {x: 0, y: 0.3, z: 0}
-    swingVfxRotationOffset: {x: 1, y: 60, z: 190}
-    swingVfxLifetime: 5
+    swingVfxPositionOffset: {x: 0, y: 0.7, z: 0}
+    swingVfxRotationOffset: {x: -10, y: 40, z: 190}
+    swingVfxLifetime: 3
   onAttackStartAudioClips: []
   swingAudioClips:
   - soundData: {fileID: 11400000, guid: 230c26e547a400a41a58accebdd1f4de, type: 2}
