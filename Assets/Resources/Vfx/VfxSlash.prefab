@@ -66,10 +66,10 @@ VisualEffect:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.032123774, y: 0.003921565, z: 0.16078432, w: 1}
+      - m_Value: {x: 0.010960094, y: 0.00303527, z: 0.023153365, w: 1}
         m_Name: ColorDark
         m_Overridden: 1
-      - m_Value: {x: 0.07500117, y: 0, z: 0.75395995, w: 1}
+      - m_Value: {x: 0.17464739, y: 0.022173883, z: 0.30498737, w: 1}
         m_Name: ColorBright
         m_Overridden: 1
     m_Uint:
