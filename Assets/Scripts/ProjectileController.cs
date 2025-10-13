@@ -1,10 +1,14 @@
 using UnityEngine;
 using Mirror;
+using System;
 
 public class ProjectileController : NetworkBehaviour
 {
     // The unit that shot the projectile
     public UnitController shooter;
+
+    public event Action<(UnitController target, UnitController attacker)> OnProjectileUnitHit = delegate { };
+    public event Action<ProjectileController> OnProjectileDestroyed = delegate { };
 
     // The current speed of the projectile
     public float speed;
@@ -69,7 +73,7 @@ public class ProjectileController : NetworkBehaviour
         // If the projectile has travelled its range, destroy it
         if (distanceTravelled >= range)
         {
-            NetworkServer.Destroy(gameObject);
+            DestroySelf();
         }
     }
 
@@ -86,7 +90,7 @@ public class ProjectileController : NetworkBehaviour
     void TriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Wall"))
         {
-            NetworkServer.Destroy(gameObject);
+            DestroySelf();
             return;
         }
 
@@ -101,17 +105,24 @@ public class ProjectileController : NetworkBehaviour
         if (!isShooter && !isSameTeam && !isDead && !HasMaxHitCountReached())
         {
             hitCount++;
-            unit.TakeDamage(damage, shooter);
+            OnProjectileUnitHit((unit, shooter));
         }
         
         if (HasMaxHitCountReached())
         {
-            NetworkServer.Destroy(gameObject);
+            DestroySelf();
         }
     }
 
     bool HasMaxHitCountReached()
     {
         return hitCount >= maxHits;
+    }
+
+    [Server]
+    private void DestroySelf()
+    {
+        OnProjectileDestroyed(this);
+        NetworkServer.Destroy(gameObject);
     }
 }

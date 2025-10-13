@@ -26,6 +26,7 @@ public abstract class WeaponData : ScriptableObject
     [Header("Audio")]
     public List<AudioListItem> onAttackStartAudioClips = new List<AudioListItem>();
     public List<AudioListItem> swingAudioClips = new List<AudioListItem>();
+    public List<AudioListItem> onHitAudioClips = new List<AudioListItem>();
 
 
     public float AttackCooldown => attackTime + attackSpeed;
