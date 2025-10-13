@@ -54,8 +54,11 @@ VisualEffect:
       - m_Value: 0.25
         m_Name: Lifetime
         m_Overridden: 1
-      - m_Value: 5
+      - m_Value: 180
         m_Name: Speed
+        m_Overridden: 1
+      - m_Value: 180
+        m_Name: TotalRotation
         m_Overridden: 1
     m_Vector2f:
       m_Array: []
