@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
-  m_Name: HealingLeaf
-  m_EditorClassIdentifier: 
-  skillName: Healing Leaf
+  m_Name: InnerBarrier
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Inner Barrier
   skillType: 0
-  description: Heals over Time
-  cooldown: 3
+  description: Reduces the incoming damage by 35% for 5 seconds.
+  cooldown: 8
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 11400000, guid: f1709d739b738412eab25f42b4d50ab6, type: 2}
-  iconTexture: {fileID: 2800000, guid: ce436c25734bc423e8a59f08e9386a2f, type: 3}
+  castTrigger: {fileID: 11400000, guid: 6391fef70f30541faa7d50dc8631182f, type: 2}
+  iconTexture: {fileID: 2800000, guid: f9462a805cca545258bf8a41e8875dd0, type: 3}

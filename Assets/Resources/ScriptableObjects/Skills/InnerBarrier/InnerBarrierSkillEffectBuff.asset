@@ -10,16 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a02f08d0ddb34ad9bf5447f63ba90c5, type: 3}
-  m_Name: ShadowFormSkillEffectBuff
+  m_Name: InnerBarrierSkillEffectBuff
   m_EditorClassIdentifier: 
   countsAsCasted: 1
-  buffId: ShadowForm
+  buffId: InnerBarrier
   statModifiers:
-  - Type: 1
-    Value: 1.1
-    ModifierType: 1
   - Type: 4
-    Value: 0.5
+    Value: 0.35
     ModifierType: 0
-  duration: 15
+  duration: 5
   uniqueMode: 1
