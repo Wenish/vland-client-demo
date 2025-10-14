@@ -20,4 +20,4 @@ MonoBehaviour:
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: 16a97c96abed943cb9b21a556ab872e6, type: 2}
-  iconTexture: {fileID: 2800000, guid: 8c331e79808994765a52dbeb2b7ad260, type: 3}
+  iconTexture: {fileID: 2800000, guid: 60f937fc135374731b6446e573565e7e, type: 3}
