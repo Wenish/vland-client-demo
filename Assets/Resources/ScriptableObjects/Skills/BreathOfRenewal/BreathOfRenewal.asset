@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
-  m_Name: BlessedBarrier
+  m_Name: BreathOfRenewal
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
-  skillName: Blessed Barrier
+  skillName: Breath of Renewal
   skillType: 0
-  description: Shields a player for 20.
-  cooldown: 2
+  description: Heals for 30.
+  cooldown: 3
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 11400000, guid: 16a97c96abed943cb9b21a556ab872e6, type: 2}
-  iconTexture: {fileID: 2800000, guid: 8c331e79808994765a52dbeb2b7ad260, type: 3}
+  castTrigger: {fileID: 11400000, guid: 1bcef00e3701d4f5ba801ce7a0b06d9e, type: 2}
+  iconTexture: {fileID: 2800000, guid: 77d4e61e0ef154755a2c1d58910cdc6a, type: 3}
