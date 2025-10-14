@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: daggers
   weaponType: 2
   attackPower: 20
-  attackRange: 3
+  attackRange: 2
   attackTime: 0.4
   attackSpeed: 0.1
   moveSpeedPercentWhileAttacking: 0.7
