@@ -18,6 +18,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
     [SyncVar, SerializeField]
     private UnitController unit;
+    public UnitController Caster => unit;
     private SkillDatabase skillDatabase;
 
     [SerializeField]
@@ -29,6 +30,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         unit = unitRef;
         skillDatabase = DatabaseManager.Instance.skillDatabase;
         ResolveSkillData();
+
+        EnsureReactiveRunner();
     }
 
     public void ResolveSkillData()
@@ -49,6 +52,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
 
         skillData = skillDatabase.GetSkillByName(newName);
+        EnsureReactiveRunner();
     }
 
     public bool IsOnCooldown
@@ -92,6 +96,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
         _runningInitContext = new CastContext(unit, this);
         _runningInitCoroutine = StartCoroutine(skillData.ExecuteInitCoroutine(_runningInitContext));
+        // Reactive triggers: subscribe at init so passives/normal skills can react
+        EnsureReactiveRunner();
     }
 
     public void CancelInit()
@@ -323,6 +329,17 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
 
         appliedBuffs.Clear();
+    }
+
+    private ReactiveTriggerRunner _reactiveRunner;
+    private void EnsureReactiveRunner()
+    {
+        if (skillData == null) return;
+        if (_reactiveRunner == null)
+        {
+            _reactiveRunner = GetComponent<ReactiveTriggerRunner>();
+        }
+        _reactiveRunner.Initialize(this, skillData.reactiveTriggers);
     }
 
     [ContextMenu("Benchmark Cast 10,000x (Coroutine)")]

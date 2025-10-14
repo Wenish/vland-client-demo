@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: SelfPreservation
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Self Preservation
+  skillType: 1
+  description: Every time you heal an ally you gain 5 healh.
+  cooldown: 0
+  castCost: 0
+  canActivateWhileBusy: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 0}
+  reactiveTriggers:
+  - {fileID: 11400000, guid: fe408d273a61a49f88f1db69a8c659df, type: 2}
+  iconTexture: {fileID: 2800000, guid: 334f0cca26b7f41a7a05d3d5e046615c, type: 3}

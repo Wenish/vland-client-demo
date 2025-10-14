@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7879068401362257268}
   - component: {fileID: 8406411371889150463}
+  - component: {fileID: -7486954012004877367}
   - component: {fileID: 2640162208892179471}
   m_Layer: 0
   m_Name: SkillInstance
@@ -52,6 +53,23 @@ MonoBehaviour:
   lastCastTime: -Infinity
   skillData: {fileID: 0}
   unit: {fileID: 0}
+--- !u!114 &-7486954012004877367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109706370372911280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a12bc6c112ae6497a9c85cebbe12fa2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReactiveTriggerRunner
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _skill: {fileID: 8406411371889150463}
+  _triggers: []
 --- !u!114 &2640162208892179471
 MonoBehaviour:
   m_ObjectHideFlags: 0

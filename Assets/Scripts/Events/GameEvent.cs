@@ -50,7 +50,7 @@ namespace MyGame.Events
         public UnitController? Healer { get; }
 
 
-        public UnitHealedEvent(UnitController unit, int healAmount, int oldHealth, int newHealth, UnitController? healer = null)
+        public UnitHealedEvent(UnitController unit, int healAmount, int oldHealth, int newHealth, UnitController healer)
         {
             Unit = unit;
             HealAmount = healAmount;

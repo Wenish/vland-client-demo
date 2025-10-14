@@ -17,6 +17,10 @@ public class SkillData : ScriptableObject
     public SkillEffectChainData initTrigger;
     public SkillEffectChainData castTrigger;
 
+    [Header("Reactive Triggers")]
+    [Tooltip("Event-driven triggers that will subscribe when the skill is initialized. Executed on the server by default.")]
+    public List<SkillEventTriggerData> reactiveTriggers = new();
+
     [Header("UI")]
     public Texture2D iconTexture;
 
