@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
-  m_Name: ConeOfCold
-  m_EditorClassIdentifier: 
-  skillName: Cone Of Cold
-  skillType: 0
-  description: Does damage to all enemy in a cone in front of you.
-  cooldown: 7
+  m_Name: SecondWind
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Second Wind
+  skillType: 1
+  description: 5 seconds after taking damage gain 50 health back.
+  cooldown: 30
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 11400000, guid: 0761c45784e1941b58af872f33fee8ce, type: 2}
-  reactiveTriggers: []
-  iconTexture: {fileID: 2800000, guid: 0ccc18d66bf104bfb8a641579bb75bb2, type: 3}
+  castTrigger: {fileID: 0}
+  reactiveTriggers:
+  - {fileID: 11400000, guid: e94874423e9b6fc44befbfa9e008f612, type: 2}
+  iconTexture: {fileID: 2800000, guid: c853ec29052806c479c3de6b70e31a73, type: 3}
