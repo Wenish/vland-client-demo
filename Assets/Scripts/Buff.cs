@@ -7,9 +7,15 @@ public abstract class Buff
     public float Duration { get; }
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
+
+    public Texture2D IconTexture { get; set; }
     public event Action OnRemoved;
 
     private float _elapsed;
+
+    public float Elapsed => _elapsed;
+    public float Remaining => Mathf.Max(0f, Duration - _elapsed);
+    public float NormalizedRemaining => Duration <= 0f ? 0f : Mathf.Clamp01((Duration - _elapsed) / Duration);
 
     protected Buff(string buffId, float duration, UniqueMode uniqueMode = UniqueMode.None,
         UnitMediator caster = null)

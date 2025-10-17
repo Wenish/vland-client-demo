@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,14 +13,24 @@ public class ControllerCastbar : MonoBehaviour
     public RectTransform sliderIconBorder;
     private Image sliderIconImage;
     private DatabaseManager databaseManager;
+    private UnitActionState unitActionState;
     private void Awake()
     {
         slider.minValue = 0f;
         slider.maxValue = 1f;
         HideCastbar();
-        GetComponentInParent<UnitActionState>().OnActionStateChanged += HandleOnActionStateChanged;
+        unitActionState = GetComponentInParent<UnitActionState>();
+        unitActionState.OnActionStateChanged += HandleOnActionStateChanged;
         databaseManager = DatabaseManager.Instance;
         sliderIconImage = sliderIcon.GetComponent<Image>();
+    }
+
+    private void OnDestroy()
+    {
+        if (unitActionState != null)
+        {
+            unitActionState.OnActionStateChanged -= HandleOnActionStateChanged;
+        }
     }
 
     private void HandleOnActionStateChanged(UnitActionState unitActionState)

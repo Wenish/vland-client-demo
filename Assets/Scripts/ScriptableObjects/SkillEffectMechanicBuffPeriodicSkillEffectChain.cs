@@ -30,6 +30,7 @@ public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechan
                 uniqueMode,
                 castContext.caster.unitMediator
             );
+            buff.IconTexture = castContext.skillInstance.skillData.iconTexture;
             castContext.skillInstance.ManageBuff(mediator, buff, true);
         }
         return targets;
