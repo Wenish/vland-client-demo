@@ -7,6 +7,7 @@ public class UnitUiController : MonoBehaviour
     public GameObject HealthAndShieldBar;
     public GameObject Healthbar;
     public GameObject Shieldbar;
+    public GameObject BuffBar;
     public GameObject FloorCircle;
     public Image FloorCircleImage;
     public TextMeshProUGUI nameTag;
@@ -172,6 +173,16 @@ public class UnitUiController : MonoBehaviour
     public void DisableNameTag()
     {
         nameTag.gameObject.SetActive(false);
+    }
+
+    public void EnableBuffBar()
+    {
+        BuffBar.SetActive(true);
+    }
+
+    public void DisableBuffBar()
+    {
+        BuffBar.SetActive(false);
     }
 
     public void SetFloorCircleColor(Color color)

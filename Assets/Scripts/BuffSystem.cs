@@ -7,12 +7,18 @@ public class BuffSystem
     private readonly UnitMediator _target;
     private readonly List<Buff> _active = new();
 
+    public IReadOnlyList<Buff> ActiveBuffs => _active;
     public event Action<Buff> OnBuffAdded;
     public event Action<Buff> OnBuffRemoved;
 
     public BuffSystem(UnitMediator target)
     {
         _target = target;
+    }
+
+    public Buff GetBuffById(string buffId)
+    {
+        return _active.FirstOrDefault(b => b.BuffId == buffId);
     }
 
     public void AddBuff(Buff buff)
