@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class BuffSystem
 {
     private readonly UnitMediator _target;
     private readonly List<Buff> _active = new();
+
+    public event Action<Buff> OnBuffAdded;
+    public event Action<Buff> OnBuffRemoved;
 
     public BuffSystem(UnitMediator target)
     {
@@ -33,6 +36,7 @@ public class BuffSystem
         // 3) Now add the new one
         _active.Add(buff);
         buff.OnApply(_target);
+        OnBuffAdded?.Invoke(buff);
     }
 
     public void RemoveBuff(Buff buff)
@@ -40,6 +44,7 @@ public class BuffSystem
         if (_active.Remove(buff))
         {
             buff.OnRemove(_target);
+            OnBuffRemoved?.Invoke(buff);
         }
     }
 
