@@ -11,6 +11,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
 
     public class NetworkBuffData
     {
+        public string InstanceId;
         public string BuffId;
         public float Duration;
         public float Remaining;
@@ -51,9 +52,10 @@ public class UnitNetworkBuffs : NetworkBehaviour
     [ServerCallback]
     private void HandleBuffAdded(Buff buff)
     {
-        Debug.Log($"Adding buff {buff.BuffId} to NetworkBuffs.");
+        Debug.Log($"Adding buff {buff.BuffId} (inst {buff.InstanceId}) to NetworkBuffs.");
         NetworkBuffs.Add(new NetworkBuffData
         {
+            InstanceId = buff.InstanceId,
             BuffId = buff.BuffId,
             Duration = buff.Duration,
             Remaining = buff.Remaining,
@@ -64,10 +66,10 @@ public class UnitNetworkBuffs : NetworkBehaviour
     [ServerCallback]
     private void HandleBuffRemoved(Buff buff)
     {
-        Debug.Log($"Removing buff {buff.BuffId} from NetworkBuffs.");
+        Debug.Log($"Removing buff {buff.BuffId} (inst {buff.InstanceId}) from NetworkBuffs.");
         for (int i = 0; i < NetworkBuffs.Count; i++)
         {
-            if (NetworkBuffs[i].BuffId == buff.BuffId)
+            if (NetworkBuffs[i].InstanceId == buff.InstanceId)
             {
                 NetworkBuffs.RemoveAt(i);
                 break;
@@ -82,7 +84,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
         {
             var oldBuff = NetworkBuffs[i];
 
-            if (oldBuff.BuffId != buff.BuffId) continue;
+            if (oldBuff.InstanceId != buff.InstanceId) continue;
 
             var hasTimeRemainingChanged = !Mathf.Approximately(oldBuff.Remaining, buff.Remaining);
 
@@ -90,6 +92,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
 
             var updatedBuff = new NetworkBuffData
             {
+                InstanceId = oldBuff.InstanceId,
                 BuffId = oldBuff.BuffId,
                 Duration = oldBuff.Duration,
                 Remaining = buff.Remaining,

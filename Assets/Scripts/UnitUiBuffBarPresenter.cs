@@ -28,7 +28,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         {
             if (buffData.Duration > 0f)
             {
-                var buff = UnitNetworkBuffs.NetworkBuffs.FirstOrDefault(b => b.BuffId == buffData.BuffId);
+                var buff = UnitNetworkBuffs.NetworkBuffs.FirstOrDefault(b => b.InstanceId == buffData.InstanceId);
                 if (buff != null)
                 {
                     buffData.TimeRemaining = buff.Remaining;
@@ -76,6 +76,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
 
         var buffData = new UiBuffData
         {
+            InstanceId = buff.InstanceId,
             BuffId = buff.BuffId,
             IconTexture = iconTexture,
             // StackCount = buff.StackCount,
@@ -88,7 +89,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
 
     private void OnBuffRemoved(int index, UnitNetworkBuffs.NetworkBuffData oldBuff)
     {
-        var buffData = _currentBuffs.FirstOrDefault(b => b.BuffId == oldBuff.BuffId);
+        var buffData = _currentBuffs.FirstOrDefault(b => b.InstanceId == oldBuff.InstanceId);
         if (buffData != null)
         {
             _currentBuffs.Remove(buffData);
@@ -99,7 +100,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
     public void OnBuffChanged(int index, UnitNetworkBuffs.NetworkBuffData oldBuff)
     {
         var buff = UnitNetworkBuffs.NetworkBuffs[index];
-        var buffData = _currentBuffs.FirstOrDefault(b => b.BuffId == buff.BuffId);
+        var buffData = _currentBuffs.FirstOrDefault(b => b.InstanceId == buff.InstanceId);
         if (buffData != null)
         {
             buffData.TimeRemaining = buff.Remaining;
