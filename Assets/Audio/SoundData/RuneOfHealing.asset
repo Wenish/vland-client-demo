@@ -16,5 +16,5 @@ MonoBehaviour:
   clip: {fileID: 8300000, guid: 59ad5850037ba49d38dc34de31f09c14, type: 3}
   mixerGroup: {fileID: -5574617817705501464, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
   isSpatial: 1
-  volume: 0.685
+  volume: 1
   pitch: 0.423
