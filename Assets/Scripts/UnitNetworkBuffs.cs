@@ -13,23 +13,13 @@ public class UnitNetworkBuffs : NetworkBehaviour
         public string BuffId;
         public float Duration;
         public float Remaining;
+        public string SkillName;
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
         _buffSystem = GetComponent<UnitMediator>().Buffs;
-        Debug.Log("Initializing NetworkBuffs with existing buffs.");
-        foreach (var buff in _buffSystem.ActiveBuffs)
-        {
-            Debug.Log($"Adding existing buff {buff.BuffId} to NetworkBuffs.");
-            NetworkBuffs.Add(new NetworkBuffData
-            {
-                BuffId = buff.BuffId,
-                Duration = buff.Duration,
-                Remaining = buff.Remaining
-            });
-        }
         _buffSystem.OnBuffAdded += HandleBuffAdded;
         _buffSystem.OnBuffRemoved += HandleBuffRemoved;
 
@@ -64,7 +54,8 @@ public class UnitNetworkBuffs : NetworkBehaviour
         {
             BuffId = buff.BuffId,
             Duration = buff.Duration,
-            Remaining = buff.Remaining
+            Remaining = buff.Remaining,
+            SkillName = buff.SkillName
         });
     }
 

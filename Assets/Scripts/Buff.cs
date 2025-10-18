@@ -8,7 +8,7 @@ public abstract class Buff
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
 
-    public Texture2D IconTexture { get; set; }
+    public string SkillName { get; set; }
     public event Action OnRemoved;
 
     private float _elapsed;
