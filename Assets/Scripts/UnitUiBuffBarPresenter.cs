@@ -58,6 +58,30 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         UnitNetworkBuffs.NetworkBuffs.OnAdd += OnBuffAdded;
         UnitNetworkBuffs.NetworkBuffs.OnRemove += OnBuffRemoved;
         UnitNetworkBuffs.NetworkBuffs.OnSet += OnBuffChanged;
+
+        // Seed current network buffs into the UI to cover cases where the list
+        // was populated before we subscribed (e.g., host mode or late binding)
+        for (int i = 0; i < UnitNetworkBuffs.NetworkBuffs.Count; i++)
+        {
+            var buff = UnitNetworkBuffs.NetworkBuffs[i];
+            if (_currentBuffs.Any(b => b.InstanceId == buff.InstanceId))
+                continue;
+
+            var isInfiniteBuff = buff.Duration == Mathf.Infinity;
+            Texture2D iconTexture = DatabaseManager.Instance.skillDatabase.GetSkillByName(buff.SkillName)?.iconTexture;
+
+            _currentBuffs.Add(new UiBuffData
+            {
+                InstanceId = buff.InstanceId,
+                BuffId = buff.BuffId,
+                IconTexture = iconTexture,
+                Duration = buff.Duration,
+                TimeRemaining = isInfiniteBuff ? Mathf.Infinity : buff.Remaining
+            });
+        }
+
+        if (_currentBuffs.Count > 0)
+            BuffBar.SetBuffs(_currentBuffs);
     }
 
     private void OnDisable()
@@ -74,16 +98,28 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         var isInfiniteBuff = buff.Duration == Mathf.Infinity;
         Texture2D iconTexture = DatabaseManager.Instance.skillDatabase.GetSkillByName(buff.SkillName)?.iconTexture;
 
-        var buffData = new UiBuffData
+        // Avoid duplicates if we seeded earlier or got multiple add events
+        var existing = _currentBuffs.FirstOrDefault(b => b.InstanceId == buff.InstanceId);
+        if (existing != null)
         {
-            InstanceId = buff.InstanceId,
-            BuffId = buff.BuffId,
-            IconTexture = iconTexture,
-            // StackCount = buff.StackCount,
-            Duration = buff.Duration,
-            TimeRemaining = isInfiniteBuff ? Mathf.Infinity : buff.Remaining
-        };
-        _currentBuffs.Add(buffData);
+            existing.BuffId = buff.BuffId;
+            existing.IconTexture = iconTexture;
+            existing.Duration = buff.Duration;
+            existing.TimeRemaining = isInfiniteBuff ? Mathf.Infinity : buff.Remaining;
+        }
+        else
+        {
+            var buffData = new UiBuffData
+            {
+                InstanceId = buff.InstanceId,
+                BuffId = buff.BuffId,
+                IconTexture = iconTexture,
+                // StackCount = buff.StackCount,
+                Duration = buff.Duration,
+                TimeRemaining = isInfiniteBuff ? Mathf.Infinity : buff.Remaining
+            };
+            _currentBuffs.Add(buffData);
+        }
         BuffBar.SetBuffs(_currentBuffs);
     }
 

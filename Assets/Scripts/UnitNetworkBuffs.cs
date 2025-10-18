@@ -25,15 +25,29 @@ public class UnitNetworkBuffs : NetworkBehaviour
         _buffSystem.OnBuffAdded += HandleBuffAdded;
         _buffSystem.OnBuffRemoved += HandleBuffRemoved;
         _buffSystem.OnBuffUpdated += HandleBuffUpdated;
+
+        // Seed any buffs that are already active so they get proper InstanceIds in the SyncList
+        foreach (var b in _buffSystem.ActiveBuffs)
+        {
+            if (!NetworkBuffs.Any(n => n.InstanceId == b.InstanceId))
+            {
+                NetworkBuffs.Add(new NetworkBuffData
+                {
+                    InstanceId = b.InstanceId,
+                    BuffId = b.BuffId,
+                    Duration = b.Duration,
+                    Remaining = b.Remaining,
+                    SkillName = b.SkillName
+                });
+            }
+        }
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        Debug.Log("Initializing NetworkBuffs on client.");
         for (int i = 0; i < NetworkBuffs.Count; i++)
         {
-            Debug.Log($"Client has buff {NetworkBuffs[i].BuffId} with {NetworkBuffs[i].Remaining}/{NetworkBuffs[i].Duration} remaining.");
             NetworkBuffs.OnAdd.Invoke(i);
         }
     }
@@ -52,7 +66,6 @@ public class UnitNetworkBuffs : NetworkBehaviour
     [ServerCallback]
     private void HandleBuffAdded(Buff buff)
     {
-        Debug.Log($"Adding buff {buff.BuffId} (inst {buff.InstanceId}) to NetworkBuffs.");
         NetworkBuffs.Add(new NetworkBuffData
         {
             InstanceId = buff.InstanceId,
@@ -66,7 +79,6 @@ public class UnitNetworkBuffs : NetworkBehaviour
     [ServerCallback]
     private void HandleBuffRemoved(Buff buff)
     {
-        Debug.Log($"Removing buff {buff.BuffId} (inst {buff.InstanceId}) from NetworkBuffs.");
         for (int i = 0; i < NetworkBuffs.Count; i++)
         {
             if (NetworkBuffs[i].InstanceId == buff.InstanceId)
