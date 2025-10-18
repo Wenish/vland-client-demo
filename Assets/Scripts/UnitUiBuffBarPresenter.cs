@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitUiBuffBar))]
@@ -9,7 +11,8 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
     public UnitUiBuffBar BuffBar;
     public UnitNetworkBuffs UnitNetworkBuffs;
 
-    List<UiBuffData> _currentBuffs = new();
+    [SerializeField]
+    public List<UiBuffData> _currentBuffs = new();
 
     void Awake()
     {
@@ -54,6 +57,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
 
         UnitNetworkBuffs.NetworkBuffs.OnAdd += OnBuffAdded;
         UnitNetworkBuffs.NetworkBuffs.OnRemove += OnBuffRemoved;
+        UnitNetworkBuffs.NetworkBuffs.OnSet += OnBuffChanged;
     }
 
     private void OnDisable()
@@ -61,6 +65,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         if (!UnitNetworkBuffs) return;
         UnitNetworkBuffs.NetworkBuffs.OnAdd -= OnBuffAdded;
         UnitNetworkBuffs.NetworkBuffs.OnRemove -= OnBuffRemoved;
+        UnitNetworkBuffs.NetworkBuffs.OnSet -= OnBuffChanged;
     }
 
     private void OnBuffAdded(int index)
@@ -87,6 +92,17 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         if (buffData != null)
         {
             _currentBuffs.Remove(buffData);
+            BuffBar.SetBuffs(_currentBuffs);
+        }
+    }
+    
+    public void OnBuffChanged(int index, UnitNetworkBuffs.NetworkBuffData oldBuff)
+    {
+        var buff = UnitNetworkBuffs.NetworkBuffs[index];
+        var buffData = _currentBuffs.FirstOrDefault(b => b.BuffId == buff.BuffId);
+        if (buffData != null)
+        {
+            buffData.TimeRemaining = buff.Remaining;
             BuffBar.SetBuffs(_currentBuffs);
         }
     }
