@@ -9,6 +9,7 @@ public class BuffSystem
 
     public IReadOnlyList<Buff> ActiveBuffs => _active;
     public event Action<Buff> OnBuffAdded;
+    public event Action<Buff> OnBuffUpdated;
     public event Action<Buff> OnBuffRemoved;
 
     public BuffSystem(UnitMediator target)
@@ -67,8 +68,14 @@ public class BuffSystem
         for (int i = _active.Count - 1; i >= 0; i--)
         {
             var b = _active[i];
-            if (b.Update(deltaTime, _target))
+            var isExpired = b.Update(deltaTime, _target);
+            if (isExpired)
+            {
                 RemoveBuff(b);
+                continue;
+            }
+
+            OnBuffUpdated?.Invoke(b);
         }
     }
 }

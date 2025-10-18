@@ -1,3 +1,4 @@
+using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
         _buffSystem = GetComponent<UnitMediator>().Buffs;
         _buffSystem.OnBuffAdded += HandleBuffAdded;
         _buffSystem.OnBuffRemoved += HandleBuffRemoved;
-
+        _buffSystem.OnBuffUpdated += HandleBuffUpdated;
     }
 
     public override void OnStartClient()
@@ -43,6 +44,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
         {
             _buffSystem.OnBuffAdded -= HandleBuffAdded;
             _buffSystem.OnBuffRemoved -= HandleBuffRemoved;
+            _buffSystem.OnBuffUpdated -= HandleBuffUpdated;
         }
     }
 
@@ -69,8 +71,32 @@ public class UnitNetworkBuffs : NetworkBehaviour
             {
                 NetworkBuffs.RemoveAt(i);
                 break;
-
             }
+        }
+    }
+
+    [ServerCallback]
+    private void HandleBuffUpdated(Buff buff)
+    {
+        for (int i = 0; i < NetworkBuffs.Count; i++)
+        {
+            var oldBuff = NetworkBuffs[i];
+
+            if (oldBuff.BuffId != buff.BuffId) continue;
+
+            var hasTimeRemainingChanged = !Mathf.Approximately(oldBuff.Remaining, buff.Remaining);
+
+            if (!hasTimeRemainingChanged) continue;
+
+            var updatedBuff = new NetworkBuffData
+            {
+                BuffId = oldBuff.BuffId,
+                Duration = oldBuff.Duration,
+                Remaining = buff.Remaining,
+                SkillName = oldBuff.SkillName
+            };
+            NetworkBuffs[i] = updatedBuff;
+            break;
         }
     }
 
