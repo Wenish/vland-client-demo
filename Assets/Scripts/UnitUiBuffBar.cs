@@ -8,6 +8,7 @@ public class UnitUiBuffBar : MonoBehaviour
     [Header("Prefab & Limits")]
     public UnitUiBuffBarItem BuffBarItemPrefab;
 
+    // key by unique buff instance id to allow multiple same BuffId
     readonly Dictionary<string, UnitUiBuffBarItem> _activeBuffItems = new();
 
     readonly Queue<UnitUiBuffBarItem> _itemPool = new();
@@ -19,7 +20,7 @@ public class UnitUiBuffBar : MonoBehaviour
         var ordered = buffs.OrderByDescending(b => b.TimeRemaining).ToList();
 
         // 1) Remove old buffs
-        var toRemove = _activeBuffItems.Keys.Except(ordered.Select(b => b.BuffId)).ToList();
+        var toRemove = _activeBuffItems.Keys.Except(ordered.Select(b => b.InstanceId)).ToList();
         foreach (var buffId in toRemove)
         {
             RemoveIcon(buffId);
@@ -28,7 +29,7 @@ public class UnitUiBuffBar : MonoBehaviour
         // 2) Add / update current buffs
         foreach (var buffData in ordered)
         {
-            if (_activeBuffItems.TryGetValue(buffData.BuffId, out var item))
+            if (_activeBuffItems.TryGetValue(buffData.InstanceId, out var item))
             {
                 // update existing
                 item.SetBuffData(buffData);
@@ -38,23 +39,23 @@ public class UnitUiBuffBar : MonoBehaviour
                 // add new
                 var newItem = GetBuffBarItem();
                 newItem.SetBuffData(buffData);
-                _activeBuffItems[buffData.BuffId] = newItem;
+                _activeBuffItems[buffData.InstanceId] = newItem;
             }
         }
 
         // 3) Reorder UI to match 'ordered'
         for (int i = 0; i < ordered.Count; i++)
         {
-            if (_activeBuffItems.TryGetValue(ordered[i].BuffId, out var ui))
+            if (_activeBuffItems.TryGetValue(ordered[i].InstanceId, out var ui))
                 ui.transform.SetSiblingIndex(i);
         }
     }
 
-    public void RemoveIcon(string buffId)
+    public void RemoveIcon(string instanceId)
     {
-        if (_activeBuffItems.TryGetValue(buffId, out var item))
+        if (_activeBuffItems.TryGetValue(instanceId, out var item))
         {
-            _activeBuffItems.Remove(buffId);
+            _activeBuffItems.Remove(instanceId);
             item.gameObject.SetActive(false);
             _itemPool.Enqueue(item);
         }

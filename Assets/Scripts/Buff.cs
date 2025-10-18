@@ -3,6 +3,7 @@ using UnityEngine;
 
 public abstract class Buff
 {
+    public string InstanceId { get; }
     public string BuffId { get; }
     public float Duration { get; }
     public UniqueMode UniqueMode { get; }
@@ -26,6 +27,7 @@ public abstract class Buff
         if (uniqueMode == UniqueMode.PerCaster && caster == null)
             throw new ArgumentException("PerCaster buffs need a non-null caster", nameof(caster));
 
+        InstanceId = Guid.NewGuid().ToString("N");
         BuffId = buffId;
         Duration = duration;
         UniqueMode = uniqueMode;

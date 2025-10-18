@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class UiBuffData
 {
+    public string InstanceId; // unique per buff instance
     public string BuffId;
     public Texture2D IconTexture;
     public int StackCount = 1;
