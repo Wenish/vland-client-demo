@@ -67,11 +67,12 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
     {
         var buff = UnitNetworkBuffs.NetworkBuffs[index];
         var isInfiniteBuff = buff.Duration == Mathf.Infinity;
+        Texture2D iconTexture = DatabaseManager.Instance.skillDatabase.GetSkillByName(buff.SkillName)?.iconTexture;
 
         var buffData = new UiBuffData
         {
             BuffId = buff.BuffId,
-            // IconTexture = buff.IconTexture,
+            IconTexture = iconTexture,
             // StackCount = buff.StackCount,
             Duration = buff.Duration,
             TimeRemaining = isInfiniteBuff ? Mathf.Infinity : buff.Remaining
