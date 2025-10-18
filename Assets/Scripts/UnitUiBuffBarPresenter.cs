@@ -7,14 +7,14 @@ using UnityEngine;
 public class UnitUiBuffBarPresenter : MonoBehaviour
 {
     public UnitUiBuffBar BuffBar;
-    public UnitMediator UnitMediator;
+    public UnitNetworkBuffs UnitNetworkBuffs;
 
     List<UiBuffData> _currentBuffs = new();
 
     void Awake()
     {
         BuffBar = GetComponent<UnitUiBuffBar>();
-        UnitMediator = GetComponentInParent<UnitMediator>();
+        UnitNetworkBuffs = GetComponentInParent<UnitNetworkBuffs>();
     }
 
     private void Update()
@@ -25,7 +25,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         {
             if (buffData.Duration > 0f)
             {
-                var buff = UnitMediator.Buffs.GetBuffById(buffData.BuffId);
+                var buff = UnitNetworkBuffs.NetworkBuffs.FirstOrDefault(b => b.BuffId == buffData.BuffId);
                 if (buff != null)
                 {
                     buffData.TimeRemaining = buff.Remaining;
@@ -41,43 +41,37 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!UnitMediator)
+        if (!UnitNetworkBuffs)
         {
-            UnitMediator = GetComponentInParent<UnitMediator>();
+            UnitNetworkBuffs = GetComponentInParent<UnitNetworkBuffs>();
         }
 
-        if (!UnitMediator)
+        if (!UnitNetworkBuffs)
         {
-            Debug.LogWarning($"{nameof(UnitUiBuffBarPresenter)}: UnitMediator not found.", this);
+            Debug.LogWarning($"{nameof(UnitUiBuffBarPresenter)}: UnitNetworkBuffs not found.", this);
             return;
         }
 
-        UnitMediator.Buffs.OnBuffAdded += OnBuffAdded;
-        UnitMediator.Buffs.OnBuffRemoved += OnBuffRemoved;
-        // Initial population
-        _currentBuffs.Clear();
-        foreach (var buff in UnitMediator.Buffs.ActiveBuffs)
-        {
-            OnBuffAdded(buff);
-        }
+        UnitNetworkBuffs.NetworkBuffs.OnAdd += OnBuffAdded;
+        UnitNetworkBuffs.NetworkBuffs.OnRemove += OnBuffRemoved;
     }
 
     private void OnDisable()
     {
-        if (!UnitMediator) return;
-        UnitMediator.Buffs.OnBuffAdded -= OnBuffAdded;
-        UnitMediator.Buffs.OnBuffRemoved -= OnBuffRemoved;
+        if (!UnitNetworkBuffs) return;
+        UnitNetworkBuffs.NetworkBuffs.OnAdd -= OnBuffAdded;
+        UnitNetworkBuffs.NetworkBuffs.OnRemove -= OnBuffRemoved;
     }
 
-    private void OnBuffAdded(Buff buff)
+    private void OnBuffAdded(int index)
     {
-
+        var buff = UnitNetworkBuffs.NetworkBuffs[index];
         var isInfiniteBuff = buff.Duration == Mathf.Infinity;
 
         var buffData = new UiBuffData
         {
             BuffId = buff.BuffId,
-            IconTexture = buff.IconTexture,
+            // IconTexture = buff.IconTexture,
             // StackCount = buff.StackCount,
             Duration = buff.Duration,
             TimeRemaining = isInfiniteBuff ? Mathf.Infinity : buff.Remaining
@@ -86,9 +80,9 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         BuffBar.SetBuffs(_currentBuffs);
     }
 
-    private void OnBuffRemoved(Buff buff)
+    private void OnBuffRemoved(int index, UnitNetworkBuffs.NetworkBuffData oldBuff)
     {
-        var buffData = _currentBuffs.FirstOrDefault(b => b.BuffId == buff.BuffId);
+        var buffData = _currentBuffs.FirstOrDefault(b => b.BuffId == oldBuff.BuffId);
         if (buffData != null)
         {
             _currentBuffs.Remove(buffData);
