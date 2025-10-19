@@ -383,7 +383,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             currentTime = NetworkTime.time;
         }
 
-        _playerCastbar.Progress = 1f;
+        if (actionStateData.type == UnitActionState.ActionType.Channeling)
+        {
+            _playerCastbar.Progress = 0f;
+        }
+        else
+        {
+            _playerCastbar.Progress = 1f;
+        }
+
         _playerCastbar.TextTime = "0.0s";
         // Mark this castbar run as finished
         _castbarCoroutine = null;
