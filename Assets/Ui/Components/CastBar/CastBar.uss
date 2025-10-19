@@ -1,0 +1,53 @@
+.cast-bar {
+    width: 240px;
+    height: 24px;
+    flex-direction: column;
+    background-color: var(--castbar-bg);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: var(--castbar-border);
+    border-right-color: var(--castbar-border);
+    border-top-color: var(--castbar-border);
+    border-bottom-color: var(--castbar-border);
+}
+
+:root {
+    --castbar-bg: rgba(0, 6, 26, 0.8);
+    --castbar-border: rgba(14, 14, 14, 0.95);
+    --castbar-fill: rgb(44, 58, 93);
+}
+
+.cast-bar__fill {
+    height: 100%;
+    background-color: var(--castbar-fill);
+}
+
+.cast-bar__label {
+    font-size: 16px;
+    opacity: 0.85;
+    color: rgb(242, 242, 242);
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    -unity-text-align: middle-left;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    text-overflow: ellipsis;
+    -unity-text-outline-width: 0.2px;
+    -unity-text-outline-color: rgb(13, 13, 13);
+    -unity-font-style: normal;
+    text-shadow: 0 0 1px rgb(0, 0, 0);
+    flex-grow: 1;
+    flex-shrink: 2;
+}
+
+.cast-bar__icon {
+    width: 22px;
+    height: 22px;
+}

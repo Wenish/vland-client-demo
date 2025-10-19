@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using Mirror;
 using MyGame.Events;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,14 +18,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private AbilityCooldownElement _skillNormal2;
     private AbilityCooldownElement _skillNormal3;
     private AbilityCooldownElement _skillUltimate;
+    private CastBar _playerCastbar;
 
 
-    [SerializeField]
     private UnitController _myPlayerUnitController;
-    [SerializeField]
     private WeaponController _myPlayerUnitWeaponController;
-    [SerializeField]
     private SkillSystem _myPlayerUnitSkillSystem;
+    private UnitActionState _myPlayerUnitActionState;
+    private Coroutine _castbarCoroutine;
+    private Coroutine _fadeOutCoroutine;
 
     void Awake()
     {
@@ -58,6 +60,12 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _skillUltimate.CooldownRemaining = 0f;
         _skillUltimate.CooldownProgress = 0f;
         _skillUltimate.IconTexture = null;
+        _playerCastbar = _uiDocument.rootVisualElement.Q<CastBar>(name: "playerCastbar");
+        _playerCastbar.Progress = 0f;
+        _playerCastbar.TextTime = "";
+        _playerCastbar.TextName = "";
+        _playerCastbar.IconTexture = null;
+        HidePlayerCastbar();
     }
 
     void Start()
@@ -296,14 +304,142 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
         _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
         _myPlayerUnitSkillSystem = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<SkillSystem>();
+        _myPlayerUnitActionState = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<UnitActionState>();
         OnWeaponChange(_myPlayerUnitController);
         _myPlayerUnitController.OnWeaponChange += OnWeaponChange;
+        _myPlayerUnitActionState.OnActionStateChanged += HandleOnActionStateChanged;
 
         var localPlayerController = FindObjectsByType<PlayerController>(FindObjectsSortMode.None).FirstOrDefault(pc => pc.isLocalPlayer);
         if (localPlayerController != null)
         {
             SetGoldText(localPlayerController.Gold);
         }
+    }
+
+    private void HandleOnActionStateChanged(UnitActionState unitActionState)
+    {
+        if (_myPlayerUnitActionState == null) return;
+        var isCasting = unitActionState.state.type == UnitActionState.ActionType.Casting;
+        var isChanneling = unitActionState.state.type == UnitActionState.ActionType.Channeling;
+        var isCastingOrChanneling = isCasting || isChanneling;
+        if (!isCastingOrChanneling)
+        {
+            // If the player stopped casting/channeling, ensure everything is cleanly stopped/hidden
+            if (_fadeOutCoroutine != null)
+            {
+                StopCoroutine(_fadeOutCoroutine);
+                _fadeOutCoroutine = null;
+            }
+            if (_castbarCoroutine != null)
+            {
+                StopCoroutine(_castbarCoroutine);
+                _castbarCoroutine = null;
+            }
+            HidePlayerCastbar();
+            return;
+        }
+
+        // Starting a new cast/channel: cancel any previous castbar coroutine and fade-out to avoid early hide
+        if (_castbarCoroutine != null)
+        {
+            StopCoroutine(_castbarCoroutine);
+            _castbarCoroutine = null;
+        }
+        if (_fadeOutCoroutine != null)
+        {
+            StopCoroutine(_fadeOutCoroutine);
+            _fadeOutCoroutine = null;
+        }
+        _castbarCoroutine = StartCoroutine(ChangeCastbar(_myPlayerUnitActionState.state));
+    }
+
+    private IEnumerator ChangeCastbar(UnitActionState.ActionStateData actionStateData)
+    {
+        if (_fadeOutCoroutine != null)
+        {
+            StopCoroutine(_fadeOutCoroutine);
+            _fadeOutCoroutine = null;
+        }
+        _playerCastbar.style.opacity = 1f;
+        _playerCastbar.Progress = 0f;
+
+        switch (actionStateData.type)
+        {
+            case UnitActionState.ActionType.Casting:
+                SetSkillPlayerCastbarIcon(actionStateData.name);
+                break;
+            case UnitActionState.ActionType.Channeling:
+                SetSkillPlayerCastbarIcon(actionStateData.name);
+                break;
+            default:
+                _playerCastbar.IconTexture = null;
+                break;
+        }
+
+        ShowPlayerCastbar();
+
+        _playerCastbar.TextName = actionStateData.name;
+        var startTime = actionStateData.startTime;
+        var endTime = startTime + actionStateData.duration;
+        var currentTime = NetworkTime.time;
+
+        while (currentTime < endTime)
+        {
+            if (actionStateData.type == UnitActionState.ActionType.Channeling)
+            {
+                _playerCastbar.Progress = (float)((endTime - currentTime) / actionStateData.duration);
+            }
+            else
+            {
+                _playerCastbar.Progress = (float)((currentTime - startTime) / actionStateData.duration);
+            }
+            _playerCastbar.TextTime = $"{endTime - currentTime:0.0}s";
+            yield return null;
+            currentTime = NetworkTime.time;
+        }
+
+        _playerCastbar.Progress = 1f;
+        _playerCastbar.TextTime = "0.0s";
+        // Mark this castbar run as finished
+        _castbarCoroutine = null;
+        _fadeOutCoroutine = StartCoroutine(FadeOutPlayerCastbar(0.5f));
+    }
+
+    private void SetSkillPlayerCastbarIcon(string skillName)
+    {
+        var skillData = DatabaseManager.Instance.skillDatabase.GetSkillByName(skillName);
+        if (skillData != null)
+        {
+            _playerCastbar.IconTexture = skillData.iconTexture;
+        }
+
+    }
+
+    private IEnumerator FadeOutPlayerCastbar(float fadeDuration)
+    {
+        float elapsedTime = 0f;
+        float startAlpha = 1f;
+        float endAlpha = 0f;
+
+        while (elapsedTime < fadeDuration)
+        {
+            float newAlpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / fadeDuration);
+            _playerCastbar.style.opacity = newAlpha;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        HidePlayerCastbar();
+        _playerCastbar.style.opacity = startAlpha;
+    }
+
+    private void HidePlayerCastbar()
+    {
+        _playerCastbar.style.display = DisplayStyle.None;
+    }
+
+    private void ShowPlayerCastbar()
+    {
+        _playerCastbar.style.display = DisplayStyle.Flex;
     }
 
     private void OnWeaponChange(UnitController unitController)
