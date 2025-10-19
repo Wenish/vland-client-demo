@@ -90,6 +90,9 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         UnitNetworkBuffs.NetworkBuffs.OnAdd -= OnBuffAdded;
         UnitNetworkBuffs.NetworkBuffs.OnRemove -= OnBuffRemoved;
         UnitNetworkBuffs.NetworkBuffs.OnSet -= OnBuffChanged;
+        
+        _currentBuffs.Clear();
+        BuffBar.SetBuffs(_currentBuffs);
     }
 
     private void OnBuffAdded(int index)
