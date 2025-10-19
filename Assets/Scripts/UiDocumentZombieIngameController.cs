@@ -322,22 +322,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         var isCasting = unitActionState.state.type == UnitActionState.ActionType.Casting;
         var isChanneling = unitActionState.state.type == UnitActionState.ActionType.Channeling;
         var isCastingOrChanneling = isCasting || isChanneling;
-        if (!isCastingOrChanneling)
-        {
-            // If the player stopped casting/channeling, ensure everything is cleanly stopped/hidden
-            if (_fadeOutCoroutine != null)
-            {
-                StopCoroutine(_fadeOutCoroutine);
-                _fadeOutCoroutine = null;
-            }
-            if (_castbarCoroutine != null)
-            {
-                StopCoroutine(_castbarCoroutine);
-                _castbarCoroutine = null;
-            }
-            HidePlayerCastbar();
-            return;
-        }
+        if (!isCastingOrChanneling) return;
 
         // Starting a new cast/channel: cancel any previous castbar coroutine and fade-out to avoid early hide
         if (_castbarCoroutine != null)
