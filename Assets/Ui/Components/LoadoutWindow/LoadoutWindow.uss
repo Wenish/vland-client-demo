@@ -1,0 +1,94 @@
+/* Root */
+.loadout-window {
+    flex-grow: 1;
+    flex-direction: column;
+    padding: 8px;
+}
+
+/* Slots bar */
+.slots-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.slot {
+    width: 52px;  /* square slot - doubled */
+    height: 52px; /* square slot - doubled */
+    padding: 3px; /* inner padding around icon */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: #3A3A3A;
+    background-color: rgba(255,255,255,0.04);
+}
+
+.slot.active {
+    border-color: #5fb1ff;
+    background-color: rgba(95,177,255,0.12);
+}
+
+.slot__icon {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+    background-size: cover;
+    background-position: center;
+    border-radius: 6px;
+}
+
+.slot__label { display: none; }
+
+/* Scroll container */
+.loadout-scroll {
+    flex-grow: 1;
+}
+
+/* Subheading */
+.loadout-subheading {
+    margin-top: 8px;
+    margin-bottom: 6px;
+    font-size: 22px;
+    color: #dfdfdf;
+    -unity-font-style: bold;
+}
+
+/* Grid */
+.loadout-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+
+/* Tile */
+.loadout-tile {
+    padding: 3px; /* small internal gap used for both row/column spacing */
+    border-radius: 6px;
+    border-width: 0px;
+    background-color: rgba(0,0,0,0.0);
+}
+
+.loadout-tile:hover { background-color: rgba(255,255,255,0.04); }
+
+.loadout-tile.selected { background-color: rgba(95,177,255,0.10); }
+.loadout-tile.selected > .loadout-tile__icon { border-color: #5fb1ff; }
+
+.loadout-tile__icon {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.25);
+    background-size: cover;
+    background-position: center;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: #2e2e2e;
+}
+
+.loadout-tile__label {
+    margin-top: 4px;
+    -unity-text-align: middle-center;
+    font-size: 11px;
+}
