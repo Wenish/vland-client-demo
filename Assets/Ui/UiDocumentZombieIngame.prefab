@@ -49,6 +49,13 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 15fa5cba223cff54a9106afe272a816b, type: 3}
   m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!114 &1889985278999505046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,3 +68,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ce6297ac2700e43bb958d58784b1f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  castSuccessColor: {r: 0.07450981, g: 0.49411765, b: 0.07450981, a: 0.9490196}
