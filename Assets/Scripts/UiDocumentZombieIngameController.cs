@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 public class UiDocumentZombieIngameController : MonoBehaviour
 {
+    public Color castSuccessColor = Color.green;
     private UIDocument _uiDocument;
     private Label _labelWave;
     private Label _labelRoundStarted;
@@ -19,8 +20,6 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private AbilityCooldownElement _skillNormal3;
     private AbilityCooldownElement _skillUltimate;
     private CastBar _playerCastbar;
-
-
     private UnitController _myPlayerUnitController;
     private WeaponController _myPlayerUnitWeaponController;
     private SkillSystem _myPlayerUnitSkillSystem;
@@ -360,7 +359,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
                 _playerCastbar.IconTexture = null;
                 break;
         }
-
+        ResetPlayerCastbar();
         ShowPlayerCastbar();
 
         _playerCastbar.TextName = actionStateData.name;
@@ -392,10 +391,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _playerCastbar.Progress = 1f;
         }
 
-        _playerCastbar.TextTime = "0.0s";
-        // Mark this castbar run as finished
-        _castbarCoroutine = null;
-        _fadeOutCoroutine = StartCoroutine(FadeOutPlayerCastbar(0.5f));
+        PlayerCastSuccess();
     }
 
     private void SetSkillPlayerCastbarIcon(string skillName)
@@ -423,6 +419,32 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         }
         HidePlayerCastbar();
         _playerCastbar.style.opacity = startAlpha;
+    }
+
+    private void PlayerCastSuccess()
+    {
+        if (_castbarCoroutine != null)
+        {
+            StopCoroutine(_castbarCoroutine);
+            _castbarCoroutine = null;
+        }
+        if (_fadeOutCoroutine != null)
+        {
+            StopCoroutine(_fadeOutCoroutine);
+            _fadeOutCoroutine = null;
+        }
+        _playerCastbar.TextTime = "";
+        _playerCastbar.SetFeedbackColor(castSuccessColor);
+        _playerCastbar.ShowFeedback(true);
+        _fadeOutCoroutine = StartCoroutine(FadeOutPlayerCastbar(1f));
+    }
+
+    private void ResetPlayerCastbar()
+    {
+        _playerCastbar.TextTime = "";
+        _playerCastbar.TextName = "";
+        _playerCastbar.SetFeedbackColor(Color.clear);
+        _playerCastbar.ShowFeedback(false);
     }
 
     private void HidePlayerCastbar()

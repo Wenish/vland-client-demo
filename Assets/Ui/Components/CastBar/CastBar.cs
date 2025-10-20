@@ -85,10 +85,10 @@ public partial class CastBar : VisualElement
 
     // --------- Cached parts (names come from your UXML) ---------
     private VisualElement _iconImage; // name="iconImage"
-    private VisualElement _bar;       // name="bar" (container)
     private VisualElement _fillBar;   // name="fillBar"
     private Label _labelName;         // name="labelName"
     private Label _labelTime;         // name="labelTime"
+    private VisualElement _feedback;    // name="feedback"
 
     public CastBar()
     {
@@ -107,11 +107,10 @@ public partial class CastBar : VisualElement
 
         // Query parts by name
         _iconImage = this.Q<VisualElement>("iconImage");
-        _bar       = this.Q<VisualElement>("bar");
         _fillBar   = this.Q<VisualElement>("fillBar");
         _labelName = this.Q<Label>("labelName");
         _labelTime = this.Q<Label>("labelTime");
-
+        _feedback = this.Q<VisualElement>("feedback");
 
         // Apply any attributes already set before the template arrived
         if (_iconImage != null && _iconTexture != null)
@@ -143,5 +142,21 @@ public partial class CastBar : VisualElement
     public void SetIcon(Texture2D tex)
     {
         IconTexture = tex;
+    }
+
+    public void SetFeedbackColor(Color color)
+    {
+        if (_feedback != null)
+        {
+            _feedback.style.backgroundColor = color;
+        }
+    }
+
+    public void ShowFeedback(bool show)
+    {
+        if (_feedback != null)
+        {
+            _feedback.style.visibility = show ? Visibility.Visible : Visibility.Hidden;
+        }
     }
 }

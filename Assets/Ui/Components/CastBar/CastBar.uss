@@ -14,9 +14,9 @@
 }
 
 :root {
-    --castbar-bg: rgba(0, 6, 26, 0.8);
+    --castbar-bg: rgba(0, 6, 26, 0.85);
     --castbar-border: rgba(14, 14, 14, 0.95);
-    --castbar-fill: rgb(44, 58, 93);
+    --castbar-fill: rgba(44, 58, 93, 0.95);
 }
 
 .cast-bar__fill {
@@ -25,7 +25,7 @@
 }
 
 .cast-bar__label {
-    font-size: 16px;
+    font-size: 15px;
     opacity: 0.85;
     color: rgb(242, 242, 242);
     -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
@@ -50,4 +50,11 @@
 .cast-bar__icon {
     width: 22px;
     height: 22px;
+}
+
+.cast-bar__feedback {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(39, 176, 40);
 }

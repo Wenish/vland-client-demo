@@ -4,6 +4,7 @@
         <ui:VisualElement name="iconImage" class="cast-bar__icon" style="flex-grow: 0; flex-basis: auto;" />
         <ui:VisualElement name="bar" style="flex-grow: 1;">
             <ui:VisualElement name="fillBar" class="cast-bar__fill" style="width: 54%;" />
+            <ui:VisualElement name="feedback" class="cast-bar__feedback" style="flex-grow: 1; visibility: hidden;" />
             <ui:VisualElement name="VisualElement" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; flex-direction: row; align-items: center; justify-content: space-between; padding-right: 2px; padding-left: 2px; flex-wrap: nowrap; flex-basis: 100%; flex-grow: 1;">
                 <ui:Label text="Inner Shieldsergsergserg5345345" name="labelName" class="cast-bar__label" style="white-space: nowrap; text-overflow: ellipsis; flex-shrink: 1; flex-grow: 0; overflow: hidden;" />
                 <ui:Label text="0.1s" name="labelTime" class="cast-bar__label" style="-unity-text-align: middle-right; flex-shrink: 0;" />
