@@ -7,6 +7,8 @@ public class PlayerLoadout : NetworkBehaviour
 
     private PlayerInput _playerInput;
 
+    private LoadoutManager _loadoutManager = LoadoutManager.Instance;
+
     void Start()
     {
         _playerInput = GetComponent<PlayerInput>();
@@ -20,6 +22,14 @@ public class PlayerLoadout : NetworkBehaviour
     {
         // start a short coroutine that waits until the local unit is ready, then sends the command
         CmdRequestSetName(ApplicationSettings.Instance.Nickname);
+        var currentLoadout = _loadoutManager.Get();
+        CmdRequestSetLoadout(
+            currentLoadout.UnitName,
+            currentLoadout.WeaponId,
+            currentLoadout.GetNormals(),
+            currentLoadout.UltimateId,
+            currentLoadout.GetPassives()
+        );
     }
 
     [Command]
