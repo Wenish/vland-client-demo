@@ -466,15 +466,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private string GetSkillTooltip(SkillData skillData)
     {
         var title = $"<size=20><b>{skillData.skillName}</b></size>";
-        var type = $"<size=16>Type: {skillData.skillType}</size>";
-        var cooldown = $"<size=16>Cooldown: {skillData.cooldown}s</size>";
+        var type = $"<size=16><color=#cccccc>Type: {skillData.skillType}</color></size>";
+        var cooldown = $"<size=16><color=#cccccc>Cooldown: {skillData.cooldown}s</color></size>";
         var description = $"<size=16>{skillData.description}</size>";
 
         var text = "";
         text += $"{title}\n";
         text += $"{type}\n";
         text += skillData.cooldown != 0 ? $"{cooldown}\n" : "";
-        text += $"{description}";
+        text += $"\n{description}";
 
         return text;
     }
@@ -486,6 +486,6 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         var damage = $"<size=16>Damage: {weaponData.attackPower}</size>";
         var range = $"<size=16>Range: {weaponData.attackRange}</size>";
 
-        return $"{title}\n{type}\n{damage}\n{range}";
+        return $"{title}\n<color=#cccccc>{type}\n{damage}\n{range}</color>";
     }
 }
