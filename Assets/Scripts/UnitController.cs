@@ -2,6 +2,7 @@ using System;
 using Mirror;
 using MyGame.Events;
 using UnityEngine;
+using UnityEngine.InputSystem; // New Input System
 
 public class UnitController : NetworkBehaviour
 {
@@ -271,11 +272,11 @@ public class UnitController : NetworkBehaviour
     void Update()
     {
         if (!isServer) return;
-        if (Input.GetKeyDown(KeyCode.O))
+    if (Keyboard.current != null && Keyboard.current.oKey.wasPressedThisFrame)
         {
             TakeDamage(20, this);
         }
-        if (Input.GetKeyDown(KeyCode.L))
+    if (Keyboard.current != null && Keyboard.current.lKey.wasPressedThisFrame)
         {
             Heal(maxHealth, this);
             Shield(maxShield, this);

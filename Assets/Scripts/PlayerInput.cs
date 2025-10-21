@@ -3,6 +3,7 @@ using Game.Scripts.Controllers;
 using Mirror;
 using MyGame.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInput : NetworkBehaviour
 {
@@ -107,7 +108,8 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputWorldPing()
     {
-        if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.Mouse0))
+
+        if ((IsAltPressed()) && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             CmdWorldPing(_mouseWorldPosition);
         }
@@ -132,7 +134,11 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputPressingFire1()
     {
-        if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt) && Input.GetButtonDown("Fire1"))
+        // Fire1 mapped to primary action; ignore when Alt is held
+        bool firePressed = (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+                   || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
+                   || (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame);
+        if (!IsAltPressed() && firePressed)
         {
             if (_delaySendSetFire1InputCoroutine != null)
             {
@@ -140,7 +146,10 @@ public class PlayerInput : NetworkBehaviour
             }
             CmdSetFire1(true);
         }
-        if (Input.GetButtonUp("Fire1"))
+        bool fireReleased = (Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame)
+                    || (Gamepad.current != null && Gamepad.current.rightTrigger.wasReleasedThisFrame)
+                    || (Keyboard.current != null && Keyboard.current.spaceKey.wasReleasedThisFrame);
+        if (fireReleased)
         {
             _delaySendSetFire1InputCoroutine = StartCoroutine(DelaySendSetFire1Input(0.15f, false));
         }
@@ -164,7 +173,17 @@ public class PlayerInput : NetworkBehaviour
     {
         float distance;
         if (_cameraMain == null) return;
-        Ray ray = _cameraMain.ScreenPointToRay(Input.mousePosition);
+
+        Vector2 pointerPos = Vector2.zero;
+        if (Mouse.current != null)
+        {
+            pointerPos = Mouse.current.position.ReadValue();
+        }
+        else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            pointerPos = Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+        Ray ray = _cameraMain.ScreenPointToRay(pointerPos);
         if (_plane.Raycast(ray, out distance))
         {
             _mouseWorldPosition = ray.GetPoint(distance);
@@ -190,10 +209,26 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputAxis()
     {
-        var newHorizontalInput = Input.GetAxisRaw("Horizontal");
-        var hasHorizontalInputChanged = newHorizontalInput != HorizontalInput;
-        var newVerticalInput = Input.GetAxisRaw("Vertical");
-        var hasVerticalInputChanged = newVerticalInput != VerticalInput;
+        float newHorizontalInput = 0f;
+        float newVerticalInput = 0f;
+        // Keyboard
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) newHorizontalInput -= 1f;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) newHorizontalInput += 1f;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) newVerticalInput -= 1f;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) newVerticalInput += 1f;
+        }
+        // Gamepad
+        if (Gamepad.current != null)
+        {
+            Vector2 leftStick = Gamepad.current.leftStick.ReadValue();
+            if (Mathf.Abs(leftStick.x) > Mathf.Abs(newHorizontalInput)) newHorizontalInput = leftStick.x;
+            if (Mathf.Abs(leftStick.y) > Mathf.Abs(newVerticalInput)) newVerticalInput = leftStick.y;
+        }
+
+        var hasHorizontalInputChanged = !Mathf.Approximately(newHorizontalInput, HorizontalInput);
+        var hasVerticalInputChanged = !Mathf.Approximately(newVerticalInput, VerticalInput);
         if (hasHorizontalInputChanged || hasVerticalInputChanged)
         {
             CmdSetInput(newHorizontalInput, newVerticalInput);
@@ -271,22 +306,44 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     public void InputUseSkills()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (
+
+            Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame
+
+            )
         {
             CmdUseSkill(SkillSlotType.Normal, 0, _mouseWorldPosition);
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (
+
+            Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame
+
+            )
         {
             CmdUseSkill(SkillSlotType.Normal, 1, _mouseWorldPosition);
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (
+            Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame
+
+            )
         {
             CmdUseSkill(SkillSlotType.Normal, 2, _mouseWorldPosition);
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (
+
+            Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame
+            )
         {
             CmdUseSkill(SkillSlotType.Ultimate, 0, _mouseWorldPosition);
         }
+    }
+
+    // Helpers
+    [Client]
+    private static bool IsAltPressed()
+    {
+        if (Keyboard.current == null) return false;
+        return Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
     }
 
     [Command]

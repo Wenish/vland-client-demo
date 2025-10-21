@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Mirror;
 using MyGame.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ZombieGameManager : NetworkBehaviour
 {
@@ -52,7 +53,7 @@ public class ZombieGameManager : NetworkBehaviour
     void Update()
     {
         if (!isServer) return;
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
         {
             isGamePaused = !isGamePaused;
         }

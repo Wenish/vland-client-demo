@@ -3,6 +3,7 @@ using UnityEngine;
 using Mirror;
 using Game.Scripts.Controllers;
 using MyGame.Events;
+using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -86,7 +87,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (Input.GetKeyDown(KeyCode.C))
+            if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
             {
                 CmdInteract();
             }

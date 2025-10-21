@@ -1,5 +1,6 @@
 using MyGame.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ZombieModusLogger : MonoBehaviour
 {
@@ -59,51 +60,51 @@ public class ZombieModusLogger : MonoBehaviour
 
     void Update()
     {
-        if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt) && Input.GetButtonDown("Fire1"))
+        if (!Keyboard.current.leftAltKey.isPressed && !Keyboard.current.rightAltKey.isPressed && Mouse.current.leftButton.wasPressedThisFrame)
         {
             LogKeyboardInput("Fire1", "Mouse0");
         }
-        if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt) && Input.GetButtonDown("Fire2"))
+        if (!Keyboard.current.leftAltKey.isPressed && !Keyboard.current.rightAltKey.isPressed && Mouse.current.rightButton.wasPressedThisFrame)
         {
             LogKeyboardInput("Fire2", "Mouse1");
         }
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
         {
             LogKeyboardInput("Skill1", "Q");
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
             LogKeyboardInput("Skill2", "E");
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
             LogKeyboardInput("Skill3", "R");
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
         {
             LogKeyboardInput("Skill4", "F");
         }
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
         {
             LogKeyboardInput("Interact", "C");
         }
-        if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.Mouse0))
+        if (Keyboard.current != null && (Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed) && Mouse.current.leftButton.wasPressedThisFrame)
         {
             LogKeyboardInput("WorldPing", "Alt+Mouse0");
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Keyboard.current != null && Keyboard.current.wKey.wasPressedThisFrame)
         {
             LogKeyboardInput("MoveForward", "W");
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Keyboard.current != null && Keyboard.current.aKey.wasPressedThisFrame)
         {
             LogKeyboardInput("MoveLeft", "A");
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Keyboard.current != null && Keyboard.current.sKey.wasPressedThisFrame)
         {
             LogKeyboardInput("MoveBackward", "S");
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Keyboard.current != null && Keyboard.current.dKey.wasPressedThisFrame)
         {
             LogKeyboardInput("MoveRight", "D");
         }
