@@ -332,6 +332,29 @@ namespace Vland.UI
 
         public string GetSelectedId(LoadoutSlot slot) => _selectedForSlot.TryGetValue(slot, out var t) ? t?.Id : null;
 
+        // Programmatic selection by id (used for initializing from saved loadout)
+        // Does not fire OnSelectionChanged (reserved for user interactions)
+        public void SelectById(LoadoutSlot slot, string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                ClearSlotSelection(slot);
+                // If this is the active slot, ensure grid highlight clears too
+                HighlightSelectionInGridForActiveSlot();
+                return;
+            }
+
+            // Update internal selection state and preview label immediately
+            _selectedForSlot[slot] = new LoadoutTile { Id = id, DisplayName = id, Icon = null };
+            SetSlotPreviewLabel(slot, id);
+
+            // If this slot is currently active and the grid contains the tile, highlight it
+            if (GetActiveSlot() == slot && IsCompatible(_currentFilter, slot))
+            {
+                HighlightSelectionInGridForActiveSlot();
+            }
+        }
+
         // ---------- internals ----------
         private LoadoutSlot _currentFilter = LoadoutSlot.Weapon;
 

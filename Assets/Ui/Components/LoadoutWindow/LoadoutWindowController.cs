@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 using Vland.UI;
 
 // Attach to a GameObject with a UIDocument. Assign the VisualTree to include LoadoutWindow.uxml and add the USS.
+[DefaultExecutionOrder(100)]
 public class LoadoutWindowController : MonoBehaviour
 {
     public UIDocument uiDocument;
@@ -41,6 +42,9 @@ public class LoadoutWindowController : MonoBehaviour
             return;
         }
 
+        // Initialize selections from saved local loadout before wiring events
+        TryInitializeFromSavedLoadout();
+
         // Auto-apply loadout on selection changes (with small debounce to coalesce swaps)
         _window.OnSelectionChanged += HandleSelectionChanged;
 
@@ -53,6 +57,64 @@ public class LoadoutWindowController : MonoBehaviour
             else if (slot == LoadoutSlot.Ultimate) PopulateGridFor(LoadoutSlot.Ultimate);
             else PopulateGridFor(LoadoutSlot.Normal1);
         };
+    }
+
+    private void TryInitializeFromSavedLoadout()
+    {
+        if (_loadoutManager == null) return;
+        var saved = _loadoutManager.Get();
+        if (saved == null) return;
+
+        // Helper local to build tiles with icons where possible
+        LoadoutTile MakeWeaponTile(string id)
+        {
+            Texture2D icon = null;
+            string display = id;
+            if (!string.IsNullOrEmpty(id) && _db != null && _db.weaponDatabase != null)
+            {
+                var w = _db.weaponDatabase.GetWeaponByName(id);
+                if (w != null)
+                {
+                    icon = w.iconTexture;
+                    display = w.weaponName;
+                }
+            }
+            return new LoadoutTile { Id = id, DisplayName = display, Icon = icon };
+        }
+
+        LoadoutTile MakeSkillTile(string id)
+        {
+            Texture2D icon = null;
+            string display = id;
+            if (!string.IsNullOrEmpty(id) && _db != null && _db.skillDatabase != null)
+            {
+                var s = _db.skillDatabase.GetSkillByName(id);
+                if (s != null)
+                {
+                    icon = s.iconTexture;
+                    display = s.skillName;
+                }
+            }
+            return new LoadoutTile { Id = id, DisplayName = display, Icon = icon };
+        }
+
+        // Apply saved ids into the window previews (no events fired). Skip empties.
+        if (!string.IsNullOrEmpty(saved.WeaponId))
+            _window.SelectForSlot(LoadoutSlot.Weapon, MakeWeaponTile(saved.WeaponId));
+        if (!string.IsNullOrEmpty(saved.PassiveId))
+            _window.SelectForSlot(LoadoutSlot.Passive, MakeSkillTile(saved.PassiveId));
+        if (!string.IsNullOrEmpty(saved.Normal1Id))
+            _window.SelectForSlot(LoadoutSlot.Normal1, MakeSkillTile(saved.Normal1Id));
+        if (!string.IsNullOrEmpty(saved.Normal2Id))
+            _window.SelectForSlot(LoadoutSlot.Normal2, MakeSkillTile(saved.Normal2Id));
+        if (!string.IsNullOrEmpty(saved.Normal3Id))
+            _window.SelectForSlot(LoadoutSlot.Normal3, MakeSkillTile(saved.Normal3Id));
+        if (!string.IsNullOrEmpty(saved.UltimateId))
+            _window.SelectForSlot(LoadoutSlot.Ultimate, MakeSkillTile(saved.UltimateId));
+
+        // Populate initial grid for the active slot so highlight can reflect selection
+        // LoadoutWindow defaults to Weapon as active on attach; we mirror that grid here
+        PopulateGridFor(LoadoutSlot.Weapon);
     }
 
     private void PopulateGridFor(LoadoutSlot slot)
