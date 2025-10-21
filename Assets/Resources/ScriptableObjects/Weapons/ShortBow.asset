@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f46262310475b148b4e64d453494e78, type: 3}
   m_Name: ShortBow
   m_EditorClassIdentifier: 
-  weaponName: shortBow
+  weaponName: Short Bow
   weaponType: 3
   attackPower: 15
   attackRange: 12

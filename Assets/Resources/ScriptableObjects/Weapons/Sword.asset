@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc6dfc18dc3c8f4396c30f954b5b087, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
-  weaponName: sword
+  weaponName: Sword
   weaponType: 1
   attackPower: 25
   attackRange: 3
@@ -22,6 +22,10 @@ MonoBehaviour:
   iconTexture: {fileID: 2800000, guid: fa0c47ba7d6e44ecabea895caf7b3660, type: 3}
   weaponModelRightHand: {fileID: 2300579297111590268, guid: 434f858f2add644caa0f24a050866880, type: 3}
   weaponModelLeftHand: {fileID: 0}
+  swingVfxs: []
+  onAttackStartAudioClips: []
+  swingAudioClips: []
+  onHitAudioClips: []
   mode: 0
   maxHits: 5
   coneAngleRadians: 90

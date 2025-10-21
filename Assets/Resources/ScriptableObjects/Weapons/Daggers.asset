@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc6dfc18dc3c8f4396c30f954b5b087, type: 3}
   m_Name: Daggers
   m_EditorClassIdentifier: 
-  weaponName: daggers
+  weaponName: Daggers
   weaponType: 2
   attackPower: 20
   attackRange: 2
