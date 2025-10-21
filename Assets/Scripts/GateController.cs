@@ -2,6 +2,7 @@ using Mirror;
 using MyGame.Events;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 public class GateController : NetworkBehaviour
 {
@@ -82,11 +83,11 @@ public class GateController : NetworkBehaviour
     {
         if (!isServer) return;
 
-        if (Input.GetKeyDown(KeyCode.N))
+        if (Keyboard.current != null && Keyboard.current.nKey.wasPressedThisFrame)
         {
             OpenGate();
         }
-        else if (Input.GetKeyDown(KeyCode.M))
+        else if (Keyboard.current != null && Keyboard.current.mKey.wasPressedThisFrame)
         {
             CloseGate();
         }

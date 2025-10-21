@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Controllers
 {
@@ -35,7 +36,7 @@ namespace Game.Scripts.Controllers
         void Update()
         {
             // Exit Game  
-            if (Input.GetKey(KeyCode.Escape))
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
                 Application.Quit();
                 #if UNITY_EDITOR
@@ -44,7 +45,7 @@ namespace Game.Scripts.Controllers
             }
 
             // Change Camera Type
-            if (Input.GetKeyDown(KeyCode.Z))
+            if (Keyboard.current != null && Keyboard.current.zKey.wasPressedThisFrame)
             {
                 IsFocusingPlayer = !IsFocusingPlayer;
             }
@@ -56,16 +57,40 @@ namespace Game.Scripts.Controllers
             MousePositionChange();
         }
 
+        // Centralized helper to read mouse position via the new Input System
+        private Vector2 GetMousePosition()
+        {
+            if (Mouse.current != null)
+            {
+                return Mouse.current.position.ReadValue();
+            }
+            // Fallback to screen center if no mouse present (e.g., gamepad only)
+            return new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+        }
+
+        // Centralized helper to read scroll delta via the new Input System
+        // Normalized approximately to legacy axis behavior by dividing by 120f per notch on many platforms
+        private float GetScrollDelta()
+        {
+            if (Mouse.current != null)
+            {
+                var scroll = Mouse.current.scroll.ReadValue();
+                return scroll.y;
+            }
+            return 0f;
+        }
+
         void MousePositionChange()
         {
-            mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((Input.mousePosition.x - Screen.width/2) / Screen.width, -0.5f, 0.5f);
-            mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((Input.mousePosition.y - Screen.height/2) / Screen.height, -0.5f, 0.5f);
+            Vector2 mousePos = GetMousePosition();
+            mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((mousePos.x - Screen.width/2f) / Screen.width, -0.5f, 0.5f);
+            mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((mousePos.y - Screen.height/2f) / Screen.height, -0.5f, 0.5f);
         }
 
         void OnScroll()
         {
                 float oldZoom = Zoom;
-                float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+                float scroll = GetScrollDelta();
                 Zoom += -scroll * 100 * Time.deltaTime;
                 float newZoom = Mathf.Clamp(Zoom, 0.3f, 1f);
                 Zoom = newZoom;
@@ -93,28 +118,29 @@ namespace Game.Scripts.Controllers
                 }
             } else {
                 Vector3 pos = transform.position;
-                if (Input.mousePosition.y >= Screen.height - BorderThickness)
+                Vector2 mousePos = GetMousePosition();
+                if (mousePos.y >= Screen.height - BorderThickness)
                 {
                     var t = Time.deltaTime * SpeedCamera;
                     pos.z += t;
                 }
-                if (Input.mousePosition.y <= BorderThickness)
+                if (mousePos.y <= BorderThickness)
                 {
                     var t = Time.deltaTime * SpeedCamera;
                     pos.z -= t;
                 }
-                if (Input.mousePosition.x >= Screen.width - BorderThickness)
+                if (mousePos.x >= Screen.width - BorderThickness)
                 {
                     var t = Time.deltaTime * SpeedCamera;
                     pos.x += t;
                 }
-                if (Input.mousePosition.x <= BorderThickness)
+                if (mousePos.x <= BorderThickness)
                 {
                     var t = Time.deltaTime * SpeedCamera;
                     pos.x -= t;
                 }
 
-                float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+                float scroll = GetScrollDelta();
                 pos.y += -scroll * ScrollSpeed * 100f * Time.deltaTime;
 
                 pos.y = Mathf.Clamp(pos.y, MinCameraDistance, MaxCameraDistance);

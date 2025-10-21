@@ -1,5 +1,6 @@
 using MyGame.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UnitHighlighter : MonoBehaviour
 {
@@ -24,7 +25,36 @@ public class UnitHighlighter : MonoBehaviour
         {
             return;
         }
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        // Use the new Unity Input System for pointer position
+        Vector2 pointerPosition;
+        if (Pointer.current != null)
+        {
+            pointerPosition = Pointer.current.position.ReadValue();
+        }
+        else if (Mouse.current != null)
+        {
+            pointerPosition = Mouse.current.position.ReadValue();
+        }
+        else if (Touchscreen.current != null && Touchscreen.current.touches.Count > 0)
+        {
+            pointerPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+        else if (Pen.current != null)
+        {
+            pointerPosition = Pen.current.position.ReadValue();
+        }
+        else
+        {
+            // No pointer available; clear highlight and skip
+            if (lastHighlighted != null)
+            {
+                RemoveHighlight();
+                lastHighlighted = null;
+            }
+            return;
+        }
+
+        Ray ray = _mainCamera.ScreenPointToRay(pointerPosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100f, unitLayerMask))
         {
