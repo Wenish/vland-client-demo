@@ -7,6 +7,8 @@ public class PlayerLoadout : NetworkBehaviour
 
     private PlayerInput _playerInput;
 
+    private LoadoutManager _loadoutManager = LoadoutManager.Instance;
+
     void Start()
     {
         _playerInput = GetComponent<PlayerInput>();
@@ -20,6 +22,28 @@ public class PlayerLoadout : NetworkBehaviour
     {
         // start a short coroutine that waits until the local unit is ready, then sends the command
         CmdRequestSetName(ApplicationSettings.Instance.Nickname);
+        var currentLoadout = _loadoutManager.Get();
+        HandleLocalLoadoutChanged(currentLoadout);
+
+        _loadoutManager.OnLoadoutChanged += HandleLocalLoadoutChanged;
+    }
+
+    public override void OnStopLocalPlayer()
+    {
+        _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
+    }
+
+    public void HandleLocalLoadoutChanged(LocalLoadout newLoadout)
+    {
+        if (!isLocalPlayer) return;
+
+        CmdRequestSetLoadout(
+            newLoadout.UnitName,
+            newLoadout.WeaponId,
+            newLoadout.GetNormals(),
+            newLoadout.UltimateId,
+            newLoadout.GetPassives()
+        );
     }
 
     [Command]

@@ -39,11 +39,11 @@ namespace Vland.UI
         public int RowsBeforeScroll { get => _rowBeforeScroll; set { _rowBeforeScroll = Mathf.Max(1, value); ApplyGridStyle(); } }
 
         [SerializeField, DontCreateProperty]
-        private Vector2 _tileSize = new Vector2(72, 72);
+        private Vector2 _tileSize = new Vector2(82, 82);
         [UxmlAttribute, CreateProperty]
         public Vector2 TileSize { get => _tileSize; set { _tileSize = value; ApplyGridStyle(); } }
 
-    private VisualElement _slotsBar;
+        private VisualElement _slotsBar;
         private ScrollView _scroll;
         private VisualElement _grid;
         private Label _subheading;
@@ -52,8 +52,8 @@ namespace Vland.UI
         private readonly Dictionary<LoadoutSlot, VisualElement> _slotContainers = new();
         private readonly Dictionary<LoadoutSlot, string> _slotDefaultLabels = new();
 
-    public event Action<LoadoutSlot, string> OnSelectionChanged; // (slot, id)
-    public event Action<LoadoutSlot> OnActiveSlotChanged; // notify controller to refresh grid
+        public event Action<LoadoutSlot, string> OnSelectionChanged; // (slot, id)
+        public event Action<LoadoutSlot> OnActiveSlotChanged; // notify controller to refresh grid
 
         public LoadoutWindow()
         {
@@ -73,6 +73,11 @@ namespace Vland.UI
             _scroll.AddToClassList("loadout-scroll");
             Add(_scroll);
 
+            // Prevent keyboard from scrolling this ScrollView (allow only pointer/touch wheel)
+            // Capture-phase so we can prevent default scrolling even when children have focus.
+            _scroll.RegisterCallback<KeyDownEvent>(OnScrollKeyDownCapture, TrickleDown.TrickleDown);
+            _scroll.RegisterCallback<NavigationMoveEvent>(OnScrollNavigationMoveCapture, TrickleDown.TrickleDown);
+
             _grid = new VisualElement { name = "grid" };
             _grid.AddToClassList("loadout-grid");
             _scroll.Add(_grid);
@@ -82,6 +87,31 @@ namespace Vland.UI
 
             // Ensure Weapon is active when the window first opens (after attaching to panel)
             RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
+        }
+
+        // Block keys that would normally scroll the ScrollView when pressed
+        private void OnScrollKeyDownCapture(KeyDownEvent evt)
+        {
+            switch (evt.keyCode)
+            {
+                case KeyCode.UpArrow:
+                case KeyCode.DownArrow:
+                case KeyCode.LeftArrow:
+                case KeyCode.RightArrow:
+                case KeyCode.PageUp:
+                case KeyCode.PageDown:
+                case KeyCode.Home:
+                case KeyCode.End:
+                case KeyCode.Space:
+                    evt.StopImmediatePropagation();
+                    break;
+            }
+        }
+
+        // Also block UI Toolkit navigation events (e.g., gamepad/keyboard navigation)
+        private void OnScrollNavigationMoveCapture(NavigationMoveEvent evt)
+        {
+            evt.StopImmediatePropagation();
         }
 
         private bool _didInitActive;
@@ -332,6 +362,29 @@ namespace Vland.UI
 
         public string GetSelectedId(LoadoutSlot slot) => _selectedForSlot.TryGetValue(slot, out var t) ? t?.Id : null;
 
+        // Programmatic selection by id (used for initializing from saved loadout)
+        // Does not fire OnSelectionChanged (reserved for user interactions)
+        public void SelectById(LoadoutSlot slot, string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                ClearSlotSelection(slot);
+                // If this is the active slot, ensure grid highlight clears too
+                HighlightSelectionInGridForActiveSlot();
+                return;
+            }
+
+            // Update internal selection state and preview label immediately
+            _selectedForSlot[slot] = new LoadoutTile { Id = id, DisplayName = id, Icon = null };
+            SetSlotPreviewLabel(slot, id);
+
+            // If this slot is currently active and the grid contains the tile, highlight it
+            if (GetActiveSlot() == slot && IsCompatible(_currentFilter, slot))
+            {
+                HighlightSelectionInGridForActiveSlot();
+            }
+        }
+
         // ---------- internals ----------
         private LoadoutSlot _currentFilter = LoadoutSlot.Weapon;
 
@@ -394,7 +447,7 @@ namespace Vland.UI
             if (_slotContainers.TryGetValue(slot, out var cont))
             {
                 var label = cont.Q<Label>(className: "slot__label");
-                if (label != null) label.text = text ?? ( _slotDefaultLabels.TryGetValue(slot, out var def) ? def : string.Empty );
+                if (label != null) label.text = text ?? (_slotDefaultLabels.TryGetValue(slot, out var def) ? def : string.Empty);
             }
         }
     }
