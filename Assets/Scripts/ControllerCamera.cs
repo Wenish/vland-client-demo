@@ -21,7 +21,7 @@ namespace Game.Scripts.Controllers
 
         Vector3 mousePositionRelativeToCenterOfScreen = Vector3.zero;
 
-        public event Action<float> OnZoomChange = delegate {};
+        public event Action<float> OnZoomChange = delegate { };
 
         private void RaiseOnZoomChangeEvent()
         {
@@ -39,9 +39,9 @@ namespace Game.Scripts.Controllers
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
                 Application.Quit();
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
-                #endif
+#endif
             }
 
             // Change Camera Type
@@ -50,7 +50,8 @@ namespace Game.Scripts.Controllers
                 IsFocusingPlayer = !IsFocusingPlayer;
             }
 
-            if (IsFocusingPlayer) {
+            if (IsFocusingPlayer)
+            {
                 // Lookg for target to focusing
             }
             OnScroll();
@@ -83,21 +84,23 @@ namespace Game.Scripts.Controllers
         void MousePositionChange()
         {
             Vector2 mousePos = GetMousePosition();
-            mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((mousePos.x - Screen.width/2f) / Screen.width, -0.5f, 0.5f);
-            mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((mousePos.y - Screen.height/2f) / Screen.height, -0.5f, 0.5f);
+            mousePositionRelativeToCenterOfScreen.x = Mathf.Clamp((mousePos.x - Screen.width / 2f) / Screen.width, -0.5f, 0.5f);
+            mousePositionRelativeToCenterOfScreen.y = Mathf.Clamp((mousePos.y - Screen.height / 2f) / Screen.height, -0.5f, 0.5f);
         }
 
         void OnScroll()
         {
-                float oldZoom = Zoom;
-                float scroll = GetScrollDelta();
-                Zoom += -scroll * 100 * Time.deltaTime;
-                float newZoom = Mathf.Clamp(Zoom, 0.3f, 1f);
-                Zoom = newZoom;
-                if (oldZoom != newZoom)
-                {
-                    RaiseOnZoomChangeEvent();
-                }
+            var isPointerOverUi = UiPointerState.IsPointerOverBlockingElement;
+            if (isPointerOverUi) return;
+            float oldZoom = Zoom;
+            float scroll = GetScrollDelta();
+            Zoom += -scroll * 100 * Time.deltaTime;
+            float newZoom = Mathf.Clamp(Zoom, 0.3f, 1f);
+            Zoom = newZoom;
+            if (oldZoom != newZoom)
+            {
+                RaiseOnZoomChangeEvent();
+            }
         }
 
         void LateUpdate()
@@ -116,7 +119,9 @@ namespace Game.Scripts.Controllers
 
                     //transform.LookAt(GameManager.CameraTarget);
                 }
-            } else {
+            }
+            else
+            {
                 Vector3 pos = transform.position;
                 Vector2 mousePos = GetMousePosition();
                 if (mousePos.y >= Screen.height - BorderThickness)

@@ -135,9 +135,14 @@ public class PlayerInput : NetworkBehaviour
     void InputPressingFire1()
     {
         // Fire1 mapped to primary action; ignore when Alt is held
-        bool firePressed = (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-                   || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
-                   || (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame);
+        // When pointer is over LoadoutPanel, block only the mouse-based press (allow gamepad/keyboard)
+        bool mousePressed = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        bool gamepadPressed = Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame;
+        bool keyboardPressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+
+        bool overUi = UiPointerState.IsPointerOverBlockingElement;
+
+        bool firePressed = (mousePressed && !overUi) || gamepadPressed || keyboardPressed;
         if (!IsAltPressed() && firePressed)
         {
             if (_delaySendSetFire1InputCoroutine != null)

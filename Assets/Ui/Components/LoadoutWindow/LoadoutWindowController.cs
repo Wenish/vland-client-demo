@@ -42,6 +42,9 @@ public class LoadoutWindowController : MonoBehaviour
             return;
         }
 
+        var panelElement = root.Q<VisualElement>(name: "LoadoutPanel");
+        UiPointerState.RegisterBlockingElement(panelElement);
+
         // Initialize selections from saved local loadout before wiring events
         TryInitializeFromSavedLoadout();
 
