@@ -15,7 +15,7 @@ public class LoadoutWindowController : MonoBehaviour
     private LoadoutWindow _window;
 
     private DatabaseManager _db => DatabaseManager.Instance;
-    private PlayerLoadout _playerLoadout;
+    private LoadoutManager _loadoutManager => LoadoutManager.Instance;
 
     private void Awake()
     {
@@ -53,8 +53,6 @@ public class LoadoutWindowController : MonoBehaviour
             else if (slot == LoadoutSlot.Ultimate) PopulateGridFor(LoadoutSlot.Ultimate);
             else PopulateGridFor(LoadoutSlot.Normal1);
         };
-
-        _playerLoadout = FindObjectsByType<PlayerLoadout>(FindObjectsSortMode.None).FirstOrDefault(p => p.isLocalPlayer);
     }
 
     private void PopulateGridFor(LoadoutSlot slot)
@@ -156,27 +154,17 @@ public class LoadoutWindowController : MonoBehaviour
 
     private void ApplyCurrentLoadout()
     {
-        if (_playerLoadout == null)
+        LocalLoadout newLocalLoadout = new LocalLoadout
         {
-            _playerLoadout = FindObjectsByType<PlayerLoadout>(FindObjectsSortMode.None).FirstOrDefault(p => p.isLocalPlayer);
-            if (_playerLoadout == null)
-            {
-                Debug.LogWarning("Local PlayerLoadout not found.");
-                return;
-            }
-        }
-
-        var weapon = _window.GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty;
-        var passives = new[] { _window.GetSelectedId(LoadoutSlot.Passive) ?? string.Empty };
-        var normals = new[]
-        {
-            _window.GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,
-            _window.GetSelectedId(LoadoutSlot.Normal2) ?? string.Empty,
-            _window.GetSelectedId(LoadoutSlot.Normal3) ?? string.Empty,
+            UnitName = ApplicationSettings.Instance?.Nickname ?? "Player",
+            WeaponId = _window.GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
+            PassiveId = _window.GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
+            Normal1Id = _window.GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,
+            Normal2Id = _window.GetSelectedId(LoadoutSlot.Normal2) ?? string.Empty,
+            Normal3Id = _window.GetSelectedId(LoadoutSlot.Normal3) ?? string.Empty,
+            UltimateId = _window.GetSelectedId(LoadoutSlot.Ultimate) ?? string.Empty
         };
-        var ultimate = _window.GetSelectedId(LoadoutSlot.Ultimate) ?? string.Empty;
 
-        var unitName = ApplicationSettings.Instance?.Nickname ?? "Player";
-        _playerLoadout.CmdRequestSetLoadout(unitName, weapon, normals, ultimate, passives);
+        _loadoutManager.Set(newLocalLoadout);
     }
 }

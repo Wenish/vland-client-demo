@@ -23,12 +23,26 @@ public class PlayerLoadout : NetworkBehaviour
         // start a short coroutine that waits until the local unit is ready, then sends the command
         CmdRequestSetName(ApplicationSettings.Instance.Nickname);
         var currentLoadout = _loadoutManager.Get();
+        HandleLocalLoadoutChanged(currentLoadout);
+
+        _loadoutManager.OnLoadoutChanged += HandleLocalLoadoutChanged;
+    }
+
+    public override void OnStopLocalPlayer()
+    {
+        _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
+    }
+
+    public void HandleLocalLoadoutChanged(LocalLoadout newLoadout)
+    {
+        if (!isLocalPlayer) return;
+
         CmdRequestSetLoadout(
-            currentLoadout.UnitName,
-            currentLoadout.WeaponId,
-            currentLoadout.GetNormals(),
-            currentLoadout.UltimateId,
-            currentLoadout.GetPassives()
+            newLoadout.UnitName,
+            newLoadout.WeaponId,
+            newLoadout.GetNormals(),
+            newLoadout.UltimateId,
+            newLoadout.GetPassives()
         );
     }
 

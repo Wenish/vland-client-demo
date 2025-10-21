@@ -43,7 +43,7 @@ namespace Vland.UI
         [UxmlAttribute, CreateProperty]
         public Vector2 TileSize { get => _tileSize; set { _tileSize = value; ApplyGridStyle(); } }
 
-    private VisualElement _slotsBar;
+        private VisualElement _slotsBar;
         private ScrollView _scroll;
         private VisualElement _grid;
         private Label _subheading;
@@ -52,8 +52,8 @@ namespace Vland.UI
         private readonly Dictionary<LoadoutSlot, VisualElement> _slotContainers = new();
         private readonly Dictionary<LoadoutSlot, string> _slotDefaultLabels = new();
 
-    public event Action<LoadoutSlot, string> OnSelectionChanged; // (slot, id)
-    public event Action<LoadoutSlot> OnActiveSlotChanged; // notify controller to refresh grid
+        public event Action<LoadoutSlot, string> OnSelectionChanged; // (slot, id)
+        public event Action<LoadoutSlot> OnActiveSlotChanged; // notify controller to refresh grid
 
         public LoadoutWindow()
         {
@@ -394,7 +394,7 @@ namespace Vland.UI
             if (_slotContainers.TryGetValue(slot, out var cont))
             {
                 var label = cont.Q<Label>(className: "slot__label");
-                if (label != null) label.text = text ?? ( _slotDefaultLabels.TryGetValue(slot, out var def) ? def : string.Empty );
+                if (label != null) label.text = text ?? (_slotDefaultLabels.TryGetValue(slot, out var def) ? def : string.Empty);
             }
         }
     }

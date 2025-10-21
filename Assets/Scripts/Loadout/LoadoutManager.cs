@@ -27,6 +27,12 @@ public class LoadoutManager : MonoBehaviour
         return _current;
     }
 
+    public void Set(LocalLoadout loadout)
+    {
+        _current = loadout ?? new LocalLoadout();
+        SaveAndNotify();
+    }
+
     public void SetSlotWeapon(string weaponId)
     {
         _current.WeaponId = weaponId;
