@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f46262310475b148b4e64d453494e78, type: 3}
   m_Name: Gun
   m_EditorClassIdentifier: 
-  weaponName: gun
+  weaponName: Gun
   weaponType: 4
   attackPower: 25
   attackRange: 17
@@ -22,6 +22,10 @@ MonoBehaviour:
   iconTexture: {fileID: 2800000, guid: a75d106bee05f484d878ccfbbe052cd4, type: 3}
   weaponModelRightHand: {fileID: 8570921939139364386, guid: 9dd315c983d90bd49b67ff1fa981ca4b, type: 3}
   weaponModelLeftHand: {fileID: 0}
+  swingVfxs: []
+  onAttackStartAudioClips: []
+  swingAudioClips: []
+  onHitAudioClips: []
   projectileSpeed: 25
   spawnDistance: 1
   projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}

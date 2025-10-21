@@ -122,6 +122,8 @@ namespace Game.Scripts.Controllers
             }
             else
             {
+                var isPointerOverUi = UiPointerState.IsPointerOverBlockingElement;
+                if (isPointerOverUi) return;
                 Vector3 pos = transform.position;
                 Vector2 mousePos = GetMousePosition();
                 if (mousePos.y >= Screen.height - BorderThickness)

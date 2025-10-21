@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f46262310475b148b4e64d453494e78, type: 3}
   m_Name: Pistols
   m_EditorClassIdentifier: Assembly-CSharp::WeaponRangedData
-  weaponName: pistols
+  weaponName: Pistols
   weaponType: 5
   attackPower: 8
   attackRange: 10
