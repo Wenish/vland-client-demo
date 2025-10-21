@@ -140,7 +140,8 @@ public class LoadoutWindowController : MonoBehaviour
                         id = w.weaponName,
                         name = w.weaponName,
                         icon = w.iconTexture,
-                        slot = LoadoutSlot.Weapon
+                        slot = LoadoutSlot.Weapon,
+                        description = GetWeaponTooltip(w)
                     });
                 }
             }
@@ -156,7 +157,8 @@ public class LoadoutWindowController : MonoBehaviour
                         id = s.skillName,
                         name = s.skillName,
                         icon = s.iconTexture,
-                        slot = LoadoutSlot.Passive
+                        slot = LoadoutSlot.Passive,
+                        description = GetSkillTooltip(s)
                     });
                 }
             }
@@ -172,7 +174,8 @@ public class LoadoutWindowController : MonoBehaviour
                         id = s.skillName,
                         name = s.skillName,
                         icon = s.iconTexture,
-                        slot = LoadoutSlot.Ultimate
+                        slot = LoadoutSlot.Ultimate,
+                        description = GetSkillTooltip(s)
                     });
                 }
             }
@@ -189,13 +192,40 @@ public class LoadoutWindowController : MonoBehaviour
                         id = s.skillName,
                         name = s.skillName,
                         icon = s.iconTexture,
-                        slot = LoadoutSlot.Normal1 // all normals compatible; UI target slot set via _window.SetActiveSlot
+                        slot = LoadoutSlot.Normal1, // all normals compatible; UI target slot set via _window.SetActiveSlot
+                        description = GetSkillTooltip(s)
                     });
                 }
             }
         }
 
         _window.SetItems(items, slot == LoadoutSlot.Normal1 || slot == LoadoutSlot.Normal2 || slot == LoadoutSlot.Normal3 ? LoadoutSlot.Normal1 : slot);
+    }
+
+    private string GetSkillTooltip(SkillData skillData)
+    {
+        var title = $"<size=20><b>{skillData.skillName}</b></size>";
+        var type = $"<size=16>Type: {skillData.skillType}</size>";
+        var cooldown = $"<size=16>Cooldown: {skillData.cooldown}s</size>";
+        var description = $"<size=16>{skillData.description}</size>";
+
+        var text = "";
+        text += $"{title}\n";
+        text += $"{type}\n";
+        text += skillData.cooldown != 0 ? $"{cooldown}\n" : "";
+        text += $"{description}";
+
+        return text;
+    }
+
+    private string GetWeaponTooltip(WeaponData weaponData)
+    {
+        var title = $"<size=20><b>{weaponData.weaponName}</b></size>";
+        var type = $"<size=16>Type: {weaponData.weaponType}</size>";
+        var damage = $"<size=16>Damage: {weaponData.attackPower}</size>";
+        var range = $"<size=16>Range: {weaponData.attackRange}</size>";
+
+        return $"{title}\n{type}\n{damage}\n{range}";
     }
 
     private bool _applyPending;

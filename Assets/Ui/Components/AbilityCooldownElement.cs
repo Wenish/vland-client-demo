@@ -136,6 +136,10 @@ public partial class AbilityCooldownElement : VisualElement
     {
         if (string.IsNullOrEmpty(_tooltipText))
             return;
+        
+        StyleColor backgroundColor = new StyleColor(new Color(0.051f, 0.051f, 0.051f, 0.995f));
+        StyleColor borderColor = new StyleColor(new Color(0.29f, 0.29f, 0.29f, 0.8f));
+        StyleColor textColor = new StyleColor(new Color(0.98f, 0.98f, 0.98f, 1f));
 
         _runtimeTooltip = new Label
         {
@@ -144,12 +148,15 @@ public partial class AbilityCooldownElement : VisualElement
             {
                 position = Position.Absolute,
                 unityTextAlign = TextAnchor.UpperLeft,
-                paddingLeft = 6,
-                paddingRight = 6,
+                minWidth = 180,
+                maxWidth = 300,
+                whiteSpace = WhiteSpace.Normal,
+                paddingLeft = 8,
+                paddingRight = 8,
                 paddingTop = 6,
                 paddingBottom = 6,
-                backgroundColor = new StyleColor(Color.black),
-                color = new StyleColor(Color.white),
+                backgroundColor = backgroundColor,
+                color = textColor,
                 borderTopLeftRadius = 3,
                 borderTopRightRadius = 3,
                 borderBottomLeftRadius = 3,
@@ -158,10 +165,10 @@ public partial class AbilityCooldownElement : VisualElement
                 borderBottomWidth = 2,
                 borderLeftWidth = 2,
                 borderRightWidth = 2,
-                borderTopColor = new StyleColor(Color.yellow),
-                borderBottomColor = new StyleColor(Color.yellow),
-                borderLeftColor = new StyleColor(Color.yellow),
-                borderRightColor = new StyleColor(Color.yellow),
+                borderTopColor = borderColor,
+                borderBottomColor = borderColor,
+                borderLeftColor = borderColor,
+                borderRightColor = borderColor
             }
         };
         _runtimeTooltip.enableRichText = true;

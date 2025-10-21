@@ -20,6 +20,7 @@ namespace Vland.UI
     {
         public string id;         // skill/weapon name
         public string name;       // display name
+        public string description;// description text
         public Texture2D icon;    // icon texture
         public LoadoutSlot slot;  // compatible slot type
     }
@@ -205,7 +206,8 @@ namespace Vland.UI
                 {
                     Icon = it.icon,
                     DisplayName = it.name,
-                    Id = it.id
+                    Id = it.id,
+                    TooltipText = it.description
                 };
                 tile.Clicked += OnTileClicked;
                 _grid.Add(tile);
