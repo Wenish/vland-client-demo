@@ -39,7 +39,7 @@ namespace Vland.UI
         public int RowsBeforeScroll { get => _rowBeforeScroll; set { _rowBeforeScroll = Mathf.Max(1, value); ApplyGridStyle(); } }
 
         [SerializeField, DontCreateProperty]
-        private Vector2 _tileSize = new Vector2(72, 72);
+        private Vector2 _tileSize = new Vector2(82, 82);
         [UxmlAttribute, CreateProperty]
         public Vector2 TileSize { get => _tileSize; set { _tileSize = value; ApplyGridStyle(); } }
 

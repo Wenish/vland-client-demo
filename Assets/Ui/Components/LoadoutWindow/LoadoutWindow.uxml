@@ -1,3 +1,4 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Vland.UI.LoadoutWindow name="LoadoutWindow" class="loadout-window" Columns="4" RowsBeforeScroll="2" />
+    <Style src="project://database/Assets/Ui/Components/LoadoutWindow/LoadoutWindow.uss?fileID=7433441132597879392&amp;guid=fd95136e139f74611ac3c86a490dd7f5&amp;type=3#LoadoutWindow" />
+    <Vland.UI.LoadoutWindow name="LoadoutWindow" Columns="4" RowsBeforeScroll="2" class="loadout-window" />
 </ui:UXML>
