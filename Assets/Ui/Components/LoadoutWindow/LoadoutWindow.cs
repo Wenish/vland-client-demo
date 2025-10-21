@@ -73,6 +73,11 @@ namespace Vland.UI
             _scroll.AddToClassList("loadout-scroll");
             Add(_scroll);
 
+            // Prevent keyboard from scrolling this ScrollView (allow only pointer/touch wheel)
+            // Capture-phase so we can prevent default scrolling even when children have focus.
+            _scroll.RegisterCallback<KeyDownEvent>(OnScrollKeyDownCapture, TrickleDown.TrickleDown);
+            _scroll.RegisterCallback<NavigationMoveEvent>(OnScrollNavigationMoveCapture, TrickleDown.TrickleDown);
+
             _grid = new VisualElement { name = "grid" };
             _grid.AddToClassList("loadout-grid");
             _scroll.Add(_grid);
@@ -82,6 +87,31 @@ namespace Vland.UI
 
             // Ensure Weapon is active when the window first opens (after attaching to panel)
             RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
+        }
+
+        // Block keys that would normally scroll the ScrollView when pressed
+        private void OnScrollKeyDownCapture(KeyDownEvent evt)
+        {
+            switch (evt.keyCode)
+            {
+                case KeyCode.UpArrow:
+                case KeyCode.DownArrow:
+                case KeyCode.LeftArrow:
+                case KeyCode.RightArrow:
+                case KeyCode.PageUp:
+                case KeyCode.PageDown:
+                case KeyCode.Home:
+                case KeyCode.End:
+                case KeyCode.Space:
+                    evt.StopImmediatePropagation();
+                    break;
+            }
+        }
+
+        // Also block UI Toolkit navigation events (e.g., gamepad/keyboard navigation)
+        private void OnScrollNavigationMoveCapture(NavigationMoveEvent evt)
+        {
+            evt.StopImmediatePropagation();
         }
 
         private bool _didInitActive;
