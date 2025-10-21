@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Blessing Of Nature
   skillType: 1
-  description: 
+  description: Every 5 seconds you heal yourself for 5 health.
   cooldown: 0
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 11400000, guid: 94da4e83b3b314fbd9ccba2197d73046, type: 2}
   castTrigger: {fileID: 0}
+  reactiveTriggers: []
   iconTexture: {fileID: 2800000, guid: 77e7428bf01434b48b7b80340775e6f8, type: 3}
