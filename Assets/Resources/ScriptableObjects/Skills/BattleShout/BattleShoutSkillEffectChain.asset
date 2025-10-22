@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: BattleShoutSkillEffectChain
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 2610058591993856085
+  references:
+    version: 2
+    RefIds:
+    - rid: 2610058591993856085
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 0afc2279f91d14150b4f9f18bf99f786, type: 2}
+        children:
+        - rid: 2610058591993856086
+        - rid: 2610058591993856087
+    - rid: 2610058591993856086
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 126b274441b7c4f4fac56ce4ea2f1142, type: 2}
+        children:
+        - rid: 2610058591993856088
+    - rid: 2610058591993856087
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: feba725712a324ce2bf6f13a58d61cb7, type: 2}
+        children: []
+    - rid: 2610058591993856088
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 60a695d3249f64f7d85f0c5e70ac2752, type: 2}
+        children: []

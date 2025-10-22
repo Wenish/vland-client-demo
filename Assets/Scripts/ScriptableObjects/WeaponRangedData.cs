@@ -48,7 +48,8 @@ public class WeaponRangedData : WeaponData
 
     private void OnProjectileUnitHit((UnitController target, UnitController attacker) obj)
     {
-        obj.target.TakeDamage(obj.attacker.currentWeapon.attackPower, obj.attacker);
+        var damage = CalculateDamage(obj.attacker);
+        obj.target.TakeDamage(damage, obj.attacker);
         obj.target.RaiseOnAttackHitReceivedEvent(obj.attacker);
     }
 }

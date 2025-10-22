@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/VFX/TargetArea")]
+[CreateAssetMenu(fileName = "SkillEffectTargetAreaVFX", menuName = "Game/Skills/Effects/VFX/TargetArea")]
 public class SkillEffectTargetAreaVFX : SkillEffectData
 {
     [Tooltip("Same as your TargetLinear range/width")]
