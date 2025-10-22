@@ -1,0 +1,47 @@
+.in-game-menu__panel {
+    background-color: rgba(13, 13, 13, 0.99);
+    padding-top: 14px;
+    padding-right: 8px;
+    padding-bottom: 14px;
+    padding-left: 8px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgba(74, 74, 74, 0.8);
+    border-right-color: rgba(74, 74, 74, 0.8);
+    border-top-color: rgba(74, 74, 74, 0.8);
+    border-bottom-color: rgba(74, 74, 74, 0.8);
+}
+
+.in-game-menu__button {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 32px;
+    padding-left: 32px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    color: rgb(250, 250, 250);
+    background-color: rgb(63, 63, 63);
+    border-left-color: rgba(77, 77, 77, 0.9);
+    border-right-color: rgba(77, 77, 77, 0.9);
+    border-top-color: rgba(77, 77, 77, 0.9);
+    border-bottom-color: rgba(77, 77, 77, 0.9);
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.in-game-menu__button:hover {
+    background-color: rgb(77, 77, 77);
+}
+
+.in-game-menu__button:focus {
+    background-color: rgb(77, 77, 77);
+}

@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/Components/InGameMenu/InGameMenu.uss?fileID=7433441132597879392&amp;guid=f39a9501f50e95b4d9e53e4a95b87102&amp;type=3#InGameMenu" />
+    <ui:VisualElement name="game-menu" style="flex-grow: 1; align-items: center; justify-content: center; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; background-color: rgba(13, 13, 13, 0.8); display: none;">
+        <ui:VisualElement name="panel" class="in-game-menu__panel" style="flex-grow: 0; flex-shrink: 0;">
+            <ui:Label text="Game Menu" style="color: rgb(250, 250, 250); -unity-font-definition: url(&quot;project://database/Assets/Fonts/Lato/Lato-BoldItalic.ttf?fileID=12800000&amp;guid=b3a6efa09efe2434bbd1f56a126b2bb4&amp;type=3#Lato-BoldItalic&quot;); margin-top: 0; margin-right: 0; margin-bottom: 14px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: upper-center;" />
+            <ui:Button text="End Match" name="buttonEndMatch" class="in-game-menu__button" style="margin-bottom: 14px;" />
+            <ui:Button text="Leave Server" name="buttonLeaveServer" class="in-game-menu__button" />
+            <ui:Button text="Stop Server" name="buttonStopServer" class="in-game-menu__button" />
+            <ui:Button text="Exit Game" name="buttonExitGame" class="in-game-menu__button" />
+            <ui:Button text="Return to Game" name="buttonReturnToGame" class="in-game-menu__button" style="margin-top: 14px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
