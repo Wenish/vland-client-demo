@@ -35,15 +35,6 @@ namespace Game.Scripts.Controllers
 
         void Update()
         {
-            // Exit Game  
-            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                Application.Quit();
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#endif
-            }
-
             // Change Camera Type
             if (Keyboard.current != null && Keyboard.current.zKey.wasPressedThisFrame)
             {
