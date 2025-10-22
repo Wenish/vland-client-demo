@@ -42,7 +42,6 @@ public class ZombieGameManager : NetworkBehaviour
 
     void OnDestroy()
     {
-        if (!isServer) return;
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
 
         StopAllCoroutines();

@@ -6,13 +6,8 @@ using UnityEngine.UIElements;
 
 public class InGameMenuController : MonoBehaviour
 {
-    [SerializeField]
     private UIDocument uiDocument;
-
-    [SerializeField]
     private VisualElement inGameMenuRoot;
-
-    [Scene]
     public string LobbySceneName = "LobbyScene";
 
     private Button buttonExitGame;
