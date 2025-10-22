@@ -45,6 +45,11 @@ public class WeaponMeleeData : WeaponData
             }
         }
 
+        var hasHitAnyEnemy = enemiesHit.Count > 0;
+        if (!hasHitAnyEnemy) return;
+
+        var damage = CalculateDamage(attacker);
+
         // If only one enemy was hit, deal damage to that enemy
 
 
@@ -61,7 +66,7 @@ public class WeaponMeleeData : WeaponData
             // Hit as many enemies as maxHits
             for (int i = 0; i < Mathf.Min(maxHits, enemiesHit.Count); i++)
             {
-                enemiesHit[i].TakeDamage(attackPower, attacker);
+                enemiesHit[i].TakeDamage(damage, attacker);
                 enemiesHit[i].RaiseOnAttackHitReceivedEvent(attacker);
             }
 
@@ -69,7 +74,7 @@ public class WeaponMeleeData : WeaponData
         else if (enemiesHit.Count == 1)
         {
             var enemy = enemiesHit[0];
-            enemy.TakeDamage(attackPower, attacker);
+            enemy.TakeDamage(damage, attacker);
             enemy.RaiseOnAttackHitReceivedEvent(attacker);
             return;
         }

@@ -30,6 +30,17 @@ public abstract class WeaponData : ScriptableObject
 
     public abstract void PerformAttack(UnitController attacker);
 
+    public int CalculateDamage(UnitController attacker)
+    {
+
+        var stat = attacker.unitMediator.Stats;
+        Debug.Log($"Attacker {attacker.name} AttackPower stat: {stat.GetStat(StatType.AttackPower)}");
+        var unitAttackPower = Mathf.CeilToInt(attacker.unitMediator.Stats.GetStat(StatType.AttackPower));
+        Debug.Log($"Calculated unitAttackPower: {unitAttackPower}");
+        var damage = attackPower + unitAttackPower;
+        return damage;
+    }
+
     [System.Serializable]
     public class SwingVfxListItem
     {

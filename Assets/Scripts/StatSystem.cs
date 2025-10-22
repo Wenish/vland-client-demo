@@ -19,6 +19,7 @@ public class StatSystem
         baseStats[StatType.TurnSpeed] = 1f;
         baseStats[StatType.DamageReduction] = 0f;
         baseStats[StatType.AttackSpeed] = 1f;
+        baseStats[StatType.AttackPower] = 10f;
     }
 
     public void SetBaseStat(StatType stat, float value)

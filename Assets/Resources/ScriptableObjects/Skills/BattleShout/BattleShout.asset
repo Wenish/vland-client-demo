@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
-  m_Name: ShadowForm
+  m_Name: BattleShout
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
-  skillName: Shadow Form
-  skillType: 2
-  description: You move 10% faster for 15 seconds and take only 50% of incoming damage.
-  cooldown: 45
+  skillName: Battle Shout
+  skillType: 0
+  description: Unleash a powerful shout that inspires you and all nearby allies,
+    increasing attack power by 10% for 10 seconds.
+  cooldown: 30
   castCost: 0
-  canActivateWhileBusy: 1
+  canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 11400000, guid: d54759c25c5be4981a3a4388e21f893e, type: 2}
+  castTrigger: {fileID: 11400000, guid: 6e38e474e21d947c0bc37dba478def80, type: 2}
   reactiveTriggers: []
-  iconTexture: {fileID: 2800000, guid: 4b136b23e3f234551a1bac481d562b37, type: 3}
+  iconTexture: {fileID: 2800000, guid: 93b7aee3af06c4088a3dbcfc1c85f680, type: 3}
