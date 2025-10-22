@@ -44,12 +44,20 @@ public class InGameMenuController : MonoBehaviour
 
         var isOnlyClient = NetworkClient.isConnected && !NetworkServer.active;
         ShowButton(buttonLeaveServer, isOnlyClient);
+        
+        UiPointerState.RegisterBlockingElement(inGameMenuRoot);
 
         buttonExitGame.clicked += ExitGame;
         buttonReturnToGame.clicked += CloseMenu;
         buttonLeaveServer.clicked += LeaveServer;
         buttonStopServer.clicked += StopServer;
         buttonEndMatch.clicked += EndMatch;
+
+    }
+
+    void OnDestroy()
+    {
+        UiPointerState.UnregisterBlockingElement(inGameMenuRoot);
     }
 
     private void Update()
