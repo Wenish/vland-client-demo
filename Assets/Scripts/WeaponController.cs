@@ -11,12 +11,22 @@ public class WeaponController : NetworkBehaviour
     [SerializeField]
     private bool isAttacking;
 
-    public bool IsAttackOnCooldown => NetworkTime.time - lastAttackTime < weaponData.AttackCooldown;
-
-    public float AttackCooldownRemaining => weaponData.AttackCooldown - (float)(NetworkTime.time - lastAttackTime);
-    public float AttackCooldownProgress => (AttackCooldownRemaining / weaponData.AttackCooldown) * 100f;
+    public bool IsAttackOnCooldown => NetworkTime.time - lastAttackTime < AttackCooldown;
+    public float AttackCooldownRemaining => Mathf.Max(0f, AttackCooldown - (float)(NetworkTime.time - lastAttackTime));
+    public float AttackCooldownProgress => (AttackCooldownRemaining / AttackCooldown) * 100f;
+    // Higher attackSpeedMultiplier should result in faster (shorter) cooldowns
+    public float AttackCooldown => (weaponData.attackTime + weaponData.attackSpeed) / Mathf.Max(attackSpeedMultiplier, 0.01f);
 
     private int attackIndex = 0;
+
+    private float attackSpeedMultiplier => attackerMediator.Stats.GetStat(StatType.AttackSpeed);
+
+    private UnitMediator attackerMediator;
+
+    private void Awake()
+    {
+        attackerMediator = GetComponent<UnitMediator>();
+    }
 
     [Server]
     public async Task Attack(UnitController attacker)
@@ -25,7 +35,8 @@ public class WeaponController : NetworkBehaviour
         {
             Debug.LogError("Weapon data is not assigned.");
             return;
-        };
+        }
+        ;
 
         if (isAttacking || IsAttackOnCooldown || attacker.unitActionState.IsActive) return;
 
@@ -34,9 +45,12 @@ public class WeaponController : NetworkBehaviour
 
         lastAttackTime = NetworkTime.time;
 
-        var delay = weaponData.attackTime * 1000;
-        attacker.unitActionState.SetUnitActionState(UnitActionState.ActionType.Attacking, NetworkTime.time, weaponData.attackTime, weaponData.weaponName);
-        StatModifier moveSpeedModifier = new StatModifier() {
+        // Scale attack animation/duration by attack speed (higher speed -> shorter duration)
+        var attackDuration = weaponData.attackTime / Mathf.Max(attackSpeedMultiplier, 0.01f);
+        var delay = attackDuration * 1000;
+        attacker.unitActionState.SetUnitActionState(UnitActionState.ActionType.Attacking, NetworkTime.time, attackDuration, weaponData.weaponName);
+        StatModifier moveSpeedModifier = new StatModifier()
+        {
             Type = StatType.MovementSpeed,
             ModifierType = ModifierType.Percent,
             Value = weaponData.moveSpeedPercentWhileAttacking,
