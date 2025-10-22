@@ -28,9 +28,6 @@ public abstract class WeaponData : ScriptableObject
     public List<AudioListItem> swingAudioClips = new List<AudioListItem>();
     public List<AudioListItem> onHitAudioClips = new List<AudioListItem>();
 
-
-    public float AttackCooldown => attackTime + attackSpeed;
-
     public abstract void PerformAttack(UnitController attacker);
 
     [System.Serializable]

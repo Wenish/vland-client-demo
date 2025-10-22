@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Skills/Effects/Mechanic/BuffStat")]
+[CreateAssetMenu(fileName = "SkillEffectMechanicBuffStat", menuName = "Game/Skills/Effects/Mechanic/BuffStat")]
 public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
 {
     public string buffId;

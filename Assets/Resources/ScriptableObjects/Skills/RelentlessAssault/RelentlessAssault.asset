@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: RelentlessAssault
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Relentless Assault
+  skillType: 1
+  description: Increases attack speed by 33%.
+  cooldown: 0
+  castCost: 0
+  canActivateWhileBusy: 0
+  initTrigger: {fileID: 11400000, guid: 3d2d0f980e6f44dea99dbb69324c67ca, type: 2}
+  castTrigger: {fileID: 0}
+  reactiveTriggers: []
+  iconTexture: {fileID: 2800000, guid: 94f5620184d3a4305ac8c9d5c69a036f, type: 3}

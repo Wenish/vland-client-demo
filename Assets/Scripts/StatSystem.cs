@@ -17,6 +17,8 @@ public class StatSystem
         baseStats[StatType.MovementSpeed] = this.mediator.UnitController.moveSpeed;
         baseStats[StatType.Shield] = this.mediator.UnitController.maxShield;
         baseStats[StatType.TurnSpeed] = 1f;
+        baseStats[StatType.DamageReduction] = 0f;
+        baseStats[StatType.AttackSpeed] = 1f;
     }
 
     public void SetBaseStat(StatType stat, float value)
