@@ -68,5 +68,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f36f6bd33cfe64090dcf4a957e3578, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InGameMenuController
-  uiDocument: {fileID: 0}
-  LobbySceneName: Assets/Scenes/ZombyRoomScene.unity
+  LobbySceneName: ZombyRoomScene

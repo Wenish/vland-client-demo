@@ -18,7 +18,6 @@ public static class UiPointerState
 
         // Start as not hovered
         _registered[element] = false;
-        Debug.Log("Registered blocking element count: " + _registered.Count);
         element.RegisterCallback<PointerEnterEvent>(OnPointerEnter);
         element.RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
         // Ensure we clean up fully if the element is detached while hovered
