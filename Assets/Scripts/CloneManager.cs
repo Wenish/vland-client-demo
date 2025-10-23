@@ -1,10 +1,14 @@
 //
-#if UNITY_EDITOR
+
 using UnityEngine;
+#if UNITY_EDITOR
 using ParrelSync;
+#endif
 
 public class CloneManager : MonoBehaviour
 {
+
+#if UNITY_EDITOR
     public bool isAutoStart;
     public Mirror.NetworkManager _networkManager;
     // Start is called before the first frame update
@@ -12,11 +16,14 @@ public class CloneManager : MonoBehaviour
     {
         if (!isAutoStart) return;
 
-        if (ClonesManager.IsClone()) {
+        if (ClonesManager.IsClone())
+        {
             _networkManager.StartClient();
-        } else {
+        }
+        else
+        {
             _networkManager.StartHost();
         }
     }
-}
 #endif
+}
