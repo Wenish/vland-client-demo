@@ -60,8 +60,6 @@ public class MultiplayerMenuController : MonoBehaviour
 
     public void JoinGame()
     {
-        Debug.Log("Join Game button clicked");
-        // Implement join game logic here
         rootVisualElement.style.display = DisplayStyle.None;
         EventManager.Instance.Publish(new OpenFormJoinGame());
     }
