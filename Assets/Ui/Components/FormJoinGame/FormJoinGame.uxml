@@ -3,11 +3,11 @@
     <ui:VisualElement style="flex-direction: row; flex-grow: 1; align-items: center; justify-content: center;">
         <ui:VisualElement name="formJoinGamePanel" class="form-join-game__panel" style="align-items: stretch;">
             <ui:Label text="Join Game" class="form-join-game__title" />
-            <ui:TextField label="Server Address" placeholder-text="192.168.0.254" name="inputServerAddress" class="form-join-game__input" style="flex-direction: column;" />
-            <ui:TextField label="Port" placeholder-text="7777" name="inputPort" class="form-join-game__input" style="flex-direction: column;" />
+            <ui:TextField label="Server Address" placeholder-text="192.168.0.254" name="inputServerAddress" value="localhost" class="form-join-game__input" style="flex-direction: column;" />
+            <ui:TextField label="Port" placeholder-text="7777" name="inputPort" value="7777" max-length="5" class="form-join-game__input" style="flex-direction: column;" />
             <ui:VisualElement name="VisualElement" style="flex-direction: row; justify-content: flex-end; margin-top: 16px;">
-                <ui:Button text="Cancel" name="buttonCancel" style="flex-grow: 1;" />
-                <ui:Button text="Join Game" name="buttonJoinServer" style="flex-grow: 1;" />
+                <ui:Button text="Cancel" name="buttonCancel" style="flex-grow: 1; -unity-font-definition: url(&quot;project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&amp;guid=526713aa7236b174b9e59134565a177c&amp;type=3#Lato-Regular&quot;);" />
+                <ui:Button text="Join Game" name="buttonJoinGame" style="flex-grow: 1; -unity-font-definition: url(&quot;project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&amp;guid=526713aa7236b174b9e59134565a177c&amp;type=3#Lato-Regular&quot;);" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
