@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/Components/FormJoinGame/FormJoinGame.uss?fileID=7433441132597879392&amp;guid=720baf46bbd88456b862c5d206949e17&amp;type=3#FormJoinGame" />
+    <ui:VisualElement style="flex-direction: row; flex-grow: 1; align-items: center; justify-content: center;">
+        <ui:VisualElement name="formJoinGamePanel" class="form-join-game__panel" style="align-items: stretch;">
+            <ui:Label text="Join Game" class="form-join-game__title" />
+            <ui:TextField label="Server Address" placeholder-text="192.168.0.254" name="inputServerAddress" class="form-join-game__input" style="flex-direction: column;" />
+            <ui:TextField label="Port" placeholder-text="7777" name="inputPort" class="form-join-game__input" style="flex-direction: column;" />
+            <ui:VisualElement name="VisualElement" style="flex-direction: row; justify-content: flex-end; margin-top: 16px;">
+                <ui:Button text="Cancel" name="buttonCancel" style="flex-grow: 1;" />
+                <ui:Button text="Join Game" name="buttonJoinServer" style="flex-grow: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
