@@ -1,4 +1,5 @@
 using Mirror;
+using MyGame.Events.Ui;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -33,6 +34,8 @@ public class MultiplayerMenuController : MonoBehaviour
         buttonServerBrowser.clicked += OpenServerBrowser;
         buttonServerOnly.clicked += StartServerOnly;
         buttonBackToMainMenu.clicked += BackToMainMenu;
+
+        EventManager.Instance.Subscribe<OpenMultiplayerMenu>(HandleOpenMultiplayerMenu);
     }
 
     void OnDestroy()
@@ -42,6 +45,12 @@ public class MultiplayerMenuController : MonoBehaviour
         buttonServerBrowser.clicked -= OpenServerBrowser;
         buttonServerOnly.clicked -= StartServerOnly;
         buttonBackToMainMenu.clicked -= BackToMainMenu;
+        EventManager.Instance.Unsubscribe<OpenMultiplayerMenu>(HandleOpenMultiplayerMenu);
+    }
+
+    private void HandleOpenMultiplayerMenu(OpenMultiplayerMenu game)
+    {
+        rootVisualElement.style.display = DisplayStyle.Flex;
     }
 
     public void HostGame()
@@ -53,6 +62,8 @@ public class MultiplayerMenuController : MonoBehaviour
     {
         Debug.Log("Join Game button clicked");
         // Implement join game logic here
+        rootVisualElement.style.display = DisplayStyle.None;
+        EventManager.Instance.Publish(new OpenFormJoinGame());
     }
 
     public void OpenServerBrowser()
