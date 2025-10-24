@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/Components/FpsDisplay/FpsDisplay.uss?fileID=7433441132597879392&amp;guid=8f329e1d93c3144a99631e0170ebc680&amp;type=3#FpsDisplay" />
+    <ui:VisualElement name="fps-container" picking-mode="Ignore" class="fps-container">
+        <ui:Label name="fps-label" text="FPS: --" picking-mode="Ignore" class="fps-label" />
+    </ui:VisualElement>
+</ui:UXML>
