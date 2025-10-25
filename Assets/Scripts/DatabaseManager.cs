@@ -8,6 +8,7 @@ public class DatabaseManager : MonoBehaviour
     public ModelDatabase modelDatabase;
     public UnitDatabase unitDatabase;
     public SkillDatabase skillDatabase;
+    public ProjectileDatabase projectileDatabase;
 
     private void Awake()
     {

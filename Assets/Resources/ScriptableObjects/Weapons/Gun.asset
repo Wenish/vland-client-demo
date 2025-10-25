@@ -26,6 +26,5 @@ MonoBehaviour:
   onAttackStartAudioClips: []
   swingAudioClips: []
   onHitAudioClips: []
-  projectileSpeed: 25
   spawnDistance: 1
-  projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
+  projectile: {fileID: 11400000, guid: 132800d2a84a84b8ba84c669ea6ee5eb, type: 2}

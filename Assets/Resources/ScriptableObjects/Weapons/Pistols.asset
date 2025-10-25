@@ -28,6 +28,5 @@ MonoBehaviour:
   - soundData: {fileID: 11400000, guid: 7398be1571955447e90529d1c44ef7f8, type: 2}
     pitchOffset: 0.02
   onHitAudioClips: []
-  projectileSpeed: 25
   spawnDistance: 0.5
-  projectile: {fileID: 11400000, guid: 7ee758cd32cdca84dabcf4c048db1daf, type: 2}
+  projectile: {fileID: 11400000, guid: 4a29d47f14973497f8db9f4eb7fe3d93, type: 2}

@@ -52,10 +52,12 @@ public class WeaponGizmoDrawer : MonoBehaviour
 
     void DrawRangedGizmo(Vector3 origin, Vector3 direction, WeaponRangedData ranged)
     {
+        var spawnDistance = ranged.spawnDistance;
+        origin += direction * spawnDistance;
         Gizmos.color = Color.cyan;
-        Gizmos.DrawRay(origin, direction * ranged.attackRange);
+        Gizmos.DrawRay(origin, direction * ranged.projectile.range);
 
-        Vector3 endPoint = origin + direction * ranged.attackRange;
+        Vector3 endPoint = origin + direction * ranged.projectile.range;
         Gizmos.DrawWireSphere(endPoint, 0.2f);
     }
 #endif
