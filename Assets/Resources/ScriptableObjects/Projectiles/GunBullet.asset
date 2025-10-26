@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: GunBullet
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   projectileName: Gun Buller
-  prefab: {fileID: 3311652881673128303, guid: 487a0354ec4664a0f82303ae7502e758, type: 3}
+  prefabBody: {fileID: 3311652881673128303, guid: 487a0354ec4664a0f82303ae7502e758, type: 3}
+  prefabTrail: {fileID: 4761601863319821150, guid: 2025d9f1bc7774d399bc0aa2107d9df9, type: 3}
   maxHits: 1
   speed: 25
   range: 17
+  destroyDelayAfterMaxHits: 0.6

@@ -1,6 +1,8 @@
 using UnityEngine;
 using Mirror;
 using System;
+using System.Collections;
+using UnityEngine.VFX;
 
 public class ProjectileController : NetworkBehaviour
 {
@@ -17,13 +19,31 @@ public class ProjectileController : NetworkBehaviour
     private Vector3 spawn;
 
     Rigidbody rb;
+    Collider cachedCollider;
 
     private GameObject projectileBodyInstance;
+
+    private GameObject projectileTrailInstance;
+
+    [SyncVar(hook = nameof(OnIsDyingChanged))]
+    private bool isDying;
+
+    private Coroutine destroyCoroutine;
 
     public void OnProjectileNameChanged(string oldName, string newName)
     {
         if (isServer) return;
         SetProjectileData(newName);
+    }
+
+    void OnIsDyingChanged(bool _old, bool nowDying)
+    {
+        if (isServer) return; // server handles its own visuals immediately
+        if (nowDying)
+        {
+            HideBodyLocal();
+            StopTrailEmissionLocal();
+        }
     }
 
     private void SetProjectileData(string projectileName)
@@ -41,7 +61,20 @@ public class ProjectileController : NetworkBehaviour
         {
             Destroy(projectileBodyInstance);
         }
-        projectileBodyInstance = Instantiate(projectileData.prefab, transform);
+
+        if (projectileData.prefabBody != null)
+        {
+            projectileBodyInstance = Instantiate(projectileData.prefabBody, transform);
+        }
+
+        if (projectileTrailInstance != null)
+        {
+            Destroy(projectileTrailInstance);
+        }
+        if (projectileData.prefabTrail != null)
+        {
+            projectileTrailInstance = Instantiate(projectileData.prefabTrail, transform);
+        }
     }
 
     [Server]
@@ -54,22 +87,26 @@ public class ProjectileController : NetworkBehaviour
     public void Start()
     {
         SetProjectileData(projectileName);
+        rb = GetComponent<Rigidbody>();
+        cachedCollider = GetComponent<Collider>();
     }
     
 
     // Called when the projectile is spawned
     void OnEnable()
     {
-        rb = GetComponent<Rigidbody>();
+        // rb cached in Start; keep a defensive fetch in case Start hasn't run yet
+        if (rb == null) rb = GetComponent<Rigidbody>();
+        if (cachedCollider == null) cachedCollider = GetComponent<Collider>();
         spawn = transform.position;
-        if(isServer) {
+        if(isServer && !isDying) {
             ApplyForce();
         }
     }
 
     void FixedUpdate()
     {
-        if(isServer) {
+        if(isServer && !isDying) {
             ApplyForce();
         }
     }
@@ -77,7 +114,7 @@ public class ProjectileController : NetworkBehaviour
     // Called every frame
     void LateUpdate()
     {
-        if (isServer) {
+        if (isServer && !isDying) {
             CheckProjectileTravel();
         }
     }
@@ -85,7 +122,7 @@ public class ProjectileController : NetworkBehaviour
     [Server]
     void ApplyForce()
     {
-        if (rb != null)
+        if (rb != null && projectileData != null && !isDying)
         {
             rb.linearVelocity = transform.forward * projectileData.speed;
         }
@@ -102,7 +139,7 @@ public class ProjectileController : NetworkBehaviour
         // If the projectile has travelled its range, destroy it
         if (distanceTravelled >= projectileData.range)
         {
-            DestroySelf();
+            EnterDyingState();
         }
     }
 
@@ -138,10 +175,10 @@ public class ProjectileController : NetworkBehaviour
             hitCount++;
             OnProjectileUnitHit((unit, shooter));
         }
-        
+
         if (HasMaxHitCountReached())
         {
-            DestroySelf();
+            EnterDyingState();
         }
     }
 
@@ -155,6 +192,80 @@ public class ProjectileController : NetworkBehaviour
     {
         OnProjectileDestroyed(this);
         NetworkServer.Destroy(gameObject);
+    }
+
+    [Server]
+    private void EnterDyingState()
+    {
+        if (isDying) return;
+        isDying = true; // triggers client hooks
+
+        // Stop further physics interactions
+        StopPhysics();
+
+        // Hide the body on server as well (clients will via hook)
+        HideBodyLocal();
+    StopTrailEmissionLocal();
+
+        // Schedule destruction after the configured delay
+        float delay = projectileData != null ? projectileData.destroyDelayAfterMaxHits : 0.35f;
+        if (destroyCoroutine != null) StopCoroutine(destroyCoroutine);
+        destroyCoroutine = StartCoroutine(DestroyAfterDelay(delay));
+    }
+
+    private void HideBodyLocal()
+    {
+        if (projectileBodyInstance != null)
+        {
+            projectileBodyInstance.SetActive(false);
+        }
+        // Keep trail alive for visual niceness
+        // Optionally, we could stop emission if it's a ParticleSystem, but request is to keep it visible.
+    }
+
+    private void StopTrailEmissionLocal()
+    {
+        if (projectileTrailInstance == null) return;
+
+        // Prefer VisualEffect (VFX Graph)
+        var vfx = projectileTrailInstance.GetComponentInChildren<VisualEffect>();
+        if (vfx != null)
+        {
+            // Stop spawners; existing particles die naturally
+            vfx.Stop();
+            return;
+        }
+
+        // Fallback to ParticleSystem
+        var ps = projectileTrailInstance.GetComponentInChildren<ParticleSystem>();
+        if (ps != null)
+        {
+            var emission = ps.emission;
+            emission.enabled = false; // stop spawning new particles
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    [Server]
+    private IEnumerator DestroyAfterDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        DestroySelf();
+    }
+
+    [Server]
+    private void StopPhysics()
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+        if (cachedCollider != null)
+        {
+            cachedCollider.enabled = false; // prevent further triggers
+        }
     }
 
     void OnDrawGizmos()

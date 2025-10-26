@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Arrow
   m_EditorClassIdentifier: 
   projectileName: Arrow
-  prefab: {fileID: 5955218331064883768, guid: 29631f73370584d4cb73d641a664a0bb, type: 3}
+  prefabBody: {fileID: 5955218331064883768, guid: 29631f73370584d4cb73d641a664a0bb, type: 3}
+  prefabTrail: {fileID: 7500766500682049583, guid: e7e12f057b53245feaac4d7ff429bbf1, type: 3}
   maxHits: 1
   speed: 22
   range: 12
+  destroyDelayAfterMaxHits: 0.35
