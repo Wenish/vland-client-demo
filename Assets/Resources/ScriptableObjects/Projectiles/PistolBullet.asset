@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PistolBullet
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   projectileName: Pistol Bullet
-  prefab: {fileID: 387828410987678935, guid: d3cfcd8bc367fa44480a05513e44b54d, type: 3}
+  prefab: {fileID: 3311652881673128303, guid: 487a0354ec4664a0f82303ae7502e758, type: 3}
   maxHits: 1
   speed: 25
   range: 10
