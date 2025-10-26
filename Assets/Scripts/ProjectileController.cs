@@ -156,7 +156,7 @@ public class ProjectileController : NetworkBehaviour
     void TriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Wall"))
         {
-            DestroySelf();
+            EnterDyingState();
             return;
         }
 
