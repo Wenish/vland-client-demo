@@ -227,22 +227,40 @@ public class ProjectileController : NetworkBehaviour
     {
         if (projectileTrailInstance == null) return;
 
-        // Prefer VisualEffect (VFX Graph)
-        var vfx = projectileTrailInstance.GetComponentInChildren<VisualEffect>();
-        if (vfx != null)
+        // Stop ALL VisualEffect (VFX Graph) components
+        var vfxs = projectileTrailInstance.GetComponentsInChildren<VisualEffect>(true);
+        if (vfxs != null && vfxs.Length > 0)
         {
-            // Stop spawners; existing particles die naturally
-            vfx.Stop();
-            return;
+            foreach (var vfx in vfxs)
+            {
+                if (vfx == null) continue;
+                // Stop spawners; existing particles die naturally
+                vfx.Stop();
+            }
         }
 
-        // Fallback to ParticleSystem
-        var ps = projectileTrailInstance.GetComponentInChildren<ParticleSystem>();
-        if (ps != null)
+        // Stop ALL ParticleSystem components
+        var particleSystems = projectileTrailInstance.GetComponentsInChildren<ParticleSystem>(true);
+        if (particleSystems != null && particleSystems.Length > 0)
         {
-            var emission = ps.emission;
-            emission.enabled = false; // stop spawning new particles
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            foreach (var ps in particleSystems)
+            {
+                if (ps == null) continue;
+                var emission = ps.emission;
+                emission.enabled = false; // stop spawning new particles
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
+        }
+
+        // Stop ALL TrailRenderers, if present (visual nicety)
+        var trails = projectileTrailInstance.GetComponentsInChildren<TrailRenderer>(true);
+        if (trails != null && trails.Length > 0)
+        {
+            foreach (var tr in trails)
+            {
+                if (tr == null) continue;
+                tr.emitting = false;
+            }
         }
     }
 
