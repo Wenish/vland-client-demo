@@ -15,6 +15,9 @@ MonoBehaviour:
   projectileName: Pistol Bullet
   prefabBody: {fileID: 3311652881673128303, guid: 487a0354ec4664a0f82303ae7502e758, type: 3}
   prefabTrail: {fileID: 4761601863319821150, guid: 2025d9f1bc7774d399bc0aa2107d9df9, type: 3}
+  prefabImpactDefault: {fileID: 320218602114684462, guid: 634c93d700f2145358c6c96e3ebd3964, type: 3}
+  prefabDespawnPoof: {fileID: 2226956900324212963, guid: c46eccdbf0a0c404ca7b29cdb698d2b2, type: 3}
+  prefabMuzzleFlash: {fileID: 0}
   maxHits: 1
   speed: 25
   range: 10

@@ -16,7 +16,8 @@ public class ProjectileController : NetworkBehaviour
 
     private int hitCount = 0;
 
-    private Vector3 spawn;
+    [SyncVar]
+    public Vector3 spawn;
 
     Rigidbody rb;
     Collider cachedCollider;
@@ -90,7 +91,21 @@ public class ProjectileController : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
         cachedCollider = GetComponent<Collider>();
     }
-    
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        // Spawn muzzle flash on server when the object is spawned
+        TrySpawnMuzzleFlashClient();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        // Spawn muzzle flash on each client (including host) when the object becomes ready client-side
+        TrySpawnMuzzleFlashClient();
+    }
+
 
     // Called when the projectile is spawned
     void OnEnable()
@@ -99,14 +114,16 @@ public class ProjectileController : NetworkBehaviour
         if (rb == null) rb = GetComponent<Rigidbody>();
         if (cachedCollider == null) cachedCollider = GetComponent<Collider>();
         spawn = transform.position;
-        if(isServer && !isDying) {
+        if (isServer && !isDying)
+        {
             ApplyForce();
         }
     }
 
     void FixedUpdate()
     {
-        if(isServer && !isDying) {
+        if (isServer && !isDying)
+        {
             ApplyForce();
         }
     }
@@ -114,7 +131,8 @@ public class ProjectileController : NetworkBehaviour
     // Called every frame
     void LateUpdate()
     {
-        if (isServer && !isDying) {
+        if (isServer && !isDying)
+        {
             CheckProjectileTravel();
         }
     }
@@ -136,10 +154,16 @@ public class ProjectileController : NetworkBehaviour
 
         var distanceTravelled = Vector3.Distance(spawn, transform.position);
 
-        // If the projectile has travelled its range, destroy it
-        if (distanceTravelled >= projectileData.range)
+        var hasReachedMaxDistance = distanceTravelled >= projectileData.range;
+
+        if (!hasReachedMaxDistance) return;
+
+        EnterDyingState();
+
+        var hasNothingHit = hitCount == 0;
+        if (projectileData != null && projectileData.prefabDespawnPoof != null && hasNothingHit)
         {
-            EnterDyingState();
+            SpawnDespawnPoof(transform.position, transform.rotation);
         }
     }
 
@@ -153,9 +177,16 @@ public class ProjectileController : NetworkBehaviour
     }
 
     [Server]
-    void TriggerEnter(Collider other) {
+    void TriggerEnter(Collider other)
+    {
         if (other.gameObject.CompareTag("Wall"))
         {
+            // impact on wall
+            if (projectileData != null && projectileData.prefabImpactDefault != null)
+            {
+                Vector3 hitPos = transform.position;
+                SpawnImpactEffect(hitPos, transform.rotation);
+            }
             EnterDyingState();
             return;
         }
@@ -174,6 +205,12 @@ public class ProjectileController : NetworkBehaviour
         {
             hitCount++;
             OnProjectileUnitHit((unit, shooter));
+            // impact on unit
+            if (projectileData != null && projectileData.prefabImpactDefault != null)
+            {
+                Vector3 hitPos = other.ClosestPoint(transform.position);
+                SpawnImpactEffect(hitPos, transform.rotation);
+            }
         }
 
         if (HasMaxHitCountReached())
@@ -205,7 +242,7 @@ public class ProjectileController : NetworkBehaviour
 
         // Hide the body on server as well (clients will via hook)
         HideBodyLocal();
-    StopTrailEmissionLocal();
+        StopTrailEmissionLocal();
 
         // Schedule destruction after the configured delay
         float delay = projectileData != null ? projectileData.destroyDelayAfterMaxHits : 0.35f;
@@ -309,5 +346,112 @@ public class ProjectileController : NetworkBehaviour
         Gizmos.color = new Color(prevColor.r, prevColor.g, prevColor.b, 0.15f);
         Gizmos.DrawSphere(transform.position, radius / 2);
         Gizmos.color = prevColor;
+    }
+
+    // ========= VFX RPCs (spawn locally on every client) =========
+    private bool muzzleFlashSpawned = false;
+    private void TrySpawnMuzzleFlashClient()
+    {
+        if (muzzleFlashSpawned) return;
+        // Resolve data reliably even if local projectileData isn't ready yet
+        ProjectileData data = projectileData;
+        if (data == null)
+        {
+            var db = DatabaseManager.Instance != null ? DatabaseManager.Instance.projectileDatabase : null;
+            if (db != null && !string.IsNullOrEmpty(projectileName))
+            {
+                data = db.GetProjectileByName(projectileName);
+            }
+        }
+        if (data != null && data.prefabMuzzleFlash != null)
+        {
+            SpawnEffectLocal(data.prefabMuzzleFlash, transform.position, transform.rotation);
+            muzzleFlashSpawned = true;
+        }
+    }
+
+    [Server]
+    public void SpawnImpactEffect(Vector3 position, Quaternion rotation)
+    {
+        SpawnEffectLocal(projectileData.prefabImpactDefault, position, rotation);
+        RpcSpawnImpactEffect(position, rotation);
+    }
+
+    [ClientRpc]
+    private void RpcSpawnImpactEffect(Vector3 position, Quaternion rotation)
+    {
+        if (isServer) return;
+        if (projectileData == null) return;
+        if (projectileData.prefabImpactDefault == null) return;
+        SpawnEffectLocal(projectileData.prefabImpactDefault, position, rotation);
+    }
+
+    [Server]
+    public void SpawnDespawnPoof(Vector3 position, Quaternion rotation)
+    {
+        SpawnEffectLocal(projectileData.prefabDespawnPoof, position, rotation);
+        RpcSpawnDespawnPoof(position, rotation);
+    }
+
+    [ClientRpc]
+    private void RpcSpawnDespawnPoof(Vector3 position, Quaternion rotation)
+    {
+        if (isServer) return;
+        if (projectileData == null) return;
+        if (projectileData.prefabDespawnPoof == null) return;
+        SpawnEffectLocal(projectileData.prefabDespawnPoof, position, rotation);
+    }
+
+    private void SpawnEffectLocal(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        if (prefab == null) return;
+        var fx = Instantiate(prefab, position, rotation);
+        float life = CalculateEffectLifetimeSeconds(fx);
+        if (life <= 0f) life = 2f; // reasonable fallback
+        Destroy(fx, life);
+    }
+
+    private float CalculateEffectLifetimeSeconds(GameObject root)
+    {
+        if (root == null) return 0f;
+
+        float maxSeconds = 0f;
+
+        // Consider all particle systems
+        var particleSystems = root.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in particleSystems)
+        {
+            if (ps == null) continue;
+            var main = ps.main;
+            float duration = main.duration;
+            float startLifetime = 0f;
+            switch (main.startLifetime.mode)
+            {
+                case ParticleSystemCurveMode.TwoConstants:
+                    startLifetime = main.startLifetime.constantMax;
+                    break;
+                case ParticleSystemCurveMode.Constant:
+                    startLifetime = main.startLifetime.constant;
+                    break;
+                default:
+                    // approximate by taking the max evaluated value at time 1
+                    startLifetime = main.startLifetime.Evaluate(1f);
+                    break;
+            }
+            maxSeconds = Mathf.Max(maxSeconds, duration + startLifetime);
+        }
+
+        // If VFX Graph is used and no particle systems found, use a small fallback
+        if (maxSeconds <= 0f)
+        {
+            var vfxs = root.GetComponentsInChildren<UnityEngine.VFX.VisualEffect>(true);
+            if (vfxs != null && vfxs.Length > 0)
+            {
+                // No reliable duration API for VFX Graph; fallback
+                maxSeconds = 2f;
+            }
+        }
+
+        return maxSeconds;
     }
 }
