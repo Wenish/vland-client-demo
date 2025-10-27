@@ -351,6 +351,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -984,6 +988,10 @@ PrefabInstance:
     - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
       propertyPath: m_Name
       value: Stone02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1877,6 +1885,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2266,6 +2278,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2451,6 +2467,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2524,6 +2544,10 @@ PrefabInstance:
     - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
       propertyPath: m_Name
       value: Stone02 (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3563,6 +3587,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3805,6 +3833,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4022,6 +4054,10 @@ PrefabInstance:
     - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
       propertyPath: m_Name
       value: Stone02 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4481,6 +4517,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone02 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4665,6 +4705,10 @@ PrefabInstance:
     - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
       propertyPath: m_Name
       value: Stone02 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5757,6 +5801,10 @@ PrefabInstance:
     - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
       propertyPath: m_Name
       value: Stone02 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3386363903852926323, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
