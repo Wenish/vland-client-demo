@@ -707,7 +707,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Gradient, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"colorKeys":[{"color":{"r":0.4399999976158142,"g":0.38054054975509646,"b":0.31513512134552,"a":1.0},"time":0.4147096872329712},{"color":{"r":0.3400000035762787,"g":0.25102806091308596,"b":0.18112149834632874,"a":1.0},"time":0.6029449701309204}],"alphaKeys":[{"alpha":0.13725490868091584,"time":0.0},{"alpha":0.09803921729326248,"time":0.800000011920929},{"alpha":0.0,"time":1.0}],"gradientMode":0}'
+      m_SerializableObject: '{"colorKeys":[{"color":{"r":0.5433428287506104,"g":0.5754909515380859,"b":0.6226415038108826,"a":1.0},"time":0.4147096872329712},{"color":{"r":0.3338821828365326,"g":0.3590775728225708,"b":0.38679248094558718,"a":1.0},"time":0.6029449701309204}],"alphaKeys":[{"alpha":0.2235294133424759,"time":0.0},{"alpha":0.19607843458652497,"time":0.8205844163894653},{"alpha":0.0,"time":1.0}],"gradientMode":0}'
     m_Space: -1
   m_Property:
     name: Color
@@ -1900,7 +1900,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.AnimationCurve, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"frames":[{"time":0.0,"value":1.0,"inTangent":0.0,"outTangent":0.5,"tangentMode":0,"leftTangentMode":2,"rightTangentMode":2,"broken":true},{"time":1.0,"value":1.5,"inTangent":0.5,"outTangent":2.0,"tangentMode":0,"leftTangentMode":2,"rightTangentMode":2,"broken":true}],"preWrapMode":8,"postWrapMode":8,"version":1}'
+      m_SerializableObject: '{"frames":[{"time":0.0,"value":1.0,"inTangent":0.0,"outTangent":1.0,"tangentMode":0,"leftTangentMode":2,"rightTangentMode":2,"broken":true},{"time":1.0,"value":2.0,"inTangent":1.0,"outTangent":2.0,"tangentMode":0,"leftTangentMode":2,"rightTangentMode":2,"broken":true}],"preWrapMode":8,"postWrapMode":8,"version":1}'
     m_Space: -1
   m_Property:
     name: Size
@@ -3361,7 +3361,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.9215686321258545,"y":0.647804319858551,"z":0.5649215579032898}'
+      m_SerializableObject: '{"x":0.8301886916160584,"y":0.8199297785758972,"z":0.8106087446212769}'
     m_Space: -1
   m_Property:
     name: A
@@ -3497,7 +3497,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.6000000238418579,"y":0.573900043964386,"z":0.42600002884864809}'
+      m_SerializableObject: '{"x":0.3679245114326477,"y":0.3659918010234833,"z":0.3557760715484619}'
     m_Space: -1
   m_Property:
     name: B
