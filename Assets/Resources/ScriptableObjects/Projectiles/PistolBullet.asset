@@ -18,7 +18,7 @@ MonoBehaviour:
   prefabImpactDefault: {fileID: 320218602114684462, guid: 634c93d700f2145358c6c96e3ebd3964, type: 3}
   prefabDespawnPoof: {fileID: 2226956900324212963, guid: c46eccdbf0a0c404ca7b29cdb698d2b2, type: 3}
   prefabMuzzleFlash: {fileID: 1658012225758992570, guid: d947bccdf209a6541843b70f5bc9e74c, type: 3}
-  maxHits: 1
+  maxHits: 3
   speed: 25
   range: 10
   destroyDelayAfterMaxHits: 1.5
