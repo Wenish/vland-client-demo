@@ -15,6 +15,9 @@ MonoBehaviour:
   projectileName: Arrow
   prefabBody: {fileID: 5955218331064883768, guid: 29631f73370584d4cb73d641a664a0bb, type: 3}
   prefabTrail: {fileID: 7500766500682049583, guid: e7e12f057b53245feaac4d7ff429bbf1, type: 3}
+  prefabImpactDefault: {fileID: 1654014513538722766, guid: 9581ce81c42d2450eb93fc83dd406478, type: 3}
+  prefabDespawnPoof: {fileID: 8254766657610750384, guid: 554fd7332b3684a3bb1cc6c3b3a35e5c, type: 3}
+  prefabMuzzleFlash: {fileID: 0}
   maxHits: 1
   speed: 22
   range: 12
