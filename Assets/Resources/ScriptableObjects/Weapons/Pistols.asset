@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponRangedData
   weaponName: Pistols
   weaponType: 5
-  attackPower: 8
+  attackPower: 1
   attackRange: 10
   attackTime: 0.4
   attackSpeed: 0
