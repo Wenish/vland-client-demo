@@ -17,7 +17,7 @@ MonoBehaviour:
   prefabTrail: {fileID: 7500766500682049583, guid: e7e12f057b53245feaac4d7ff429bbf1, type: 3}
   prefabImpactDefault: {fileID: 1654014513538722766, guid: 9581ce81c42d2450eb93fc83dd406478, type: 3}
   prefabDespawnPoof: {fileID: 8254766657610750384, guid: 554fd7332b3684a3bb1cc6c3b3a35e5c, type: 3}
-  prefabMuzzleFlash: {fileID: 0}
+  prefabMuzzleFlash: {fileID: 7780323483484502234, guid: 91ca2986c9ce149f9bf431431a5579cd, type: 3}
   maxHits: 1
   speed: 22
   range: 12
