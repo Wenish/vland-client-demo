@@ -160,8 +160,7 @@ public class ProjectileController : NetworkBehaviour
 
         EnterDyingState();
 
-        var hasNothingHit = hitCount == 0;
-        if (projectileData != null && projectileData.prefabDespawnPoof != null && hasNothingHit)
+        if (projectileData != null && projectileData.prefabDespawnPoof != null)
         {
             SpawnDespawnPoof(transform.position, transform.rotation);
         }
