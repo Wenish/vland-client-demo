@@ -31,7 +31,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         Singleton = this;
         GetAllZombieSpawnInScene();
-        ZombiePrefab = MyNetworkRoomManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
+        ZombiePrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
     }
 
     void Start()
@@ -132,14 +132,12 @@ public class ZombieGameManager : NetworkBehaviour
             NetworkServer.Destroy(zombie);
         };
         
-        /*
-        unitController.moveSpeed = Mathf.Max(0, unitController.moveSpeed + UnityEngine.Random.Range(-0.5f, 0.5f));
+        unitController.moveSpeed = Mathf.Max(0, unitController.moveSpeed + UnityEngine.Random.Range(-0.1f, 0.5f));
         var newMaxHealth = unitController.maxHealth;
-        // newMaxHealth += Mathf.Clamp(currentWave * 2, 0, 100);
+        newMaxHealth += currentWave * 2;
 
         unitController.maxHealth = newMaxHealth;
         unitController.health = newMaxHealth;
-        */
         
         zombie.AddComponent<AiZombieController>();
     }
