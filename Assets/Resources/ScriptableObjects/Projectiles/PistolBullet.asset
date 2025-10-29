@@ -19,6 +19,6 @@ MonoBehaviour:
   prefabDespawnPoof: {fileID: 2226956900324212963, guid: c46eccdbf0a0c404ca7b29cdb698d2b2, type: 3}
   prefabMuzzleFlash: {fileID: 1658012225758992570, guid: d947bccdf209a6541843b70f5bc9e74c, type: 3}
   maxHits: 3
-  speed: 30
+  speed: 26
   range: 10
   destroyDelayAfterMaxHits: 1.5
