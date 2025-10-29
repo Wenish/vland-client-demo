@@ -140,19 +140,19 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 0.96
+    m_Value: 1.1
   intensity:
     m_OverrideState: 1
-    m_Value: 13.7
+    m_Value: 2
   scatter:
     m_OverrideState: 1
-    m_Value: 0.1425
+    m_Value: 0.5
   clamp:
     m_OverrideState: 1
     m_Value: 30
   tint:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 0.8701103, b: 0.759434, a: 1}
+    m_Value: {r: 1, g: 0.96296024, b: 0.8537736, a: 1}
   highQualityFiltering:
     m_OverrideState: 0
     m_Value: 1
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb4b772797da9440885e8bd939e9560, type: 3}
   m_Name: ColorCurves
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   master:
     m_OverrideState: 0
     m_Value:
