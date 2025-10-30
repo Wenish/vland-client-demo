@@ -595,7 +595,7 @@ MonoBehaviour:
   modelInstance: {fileID: 0}
   unitMediator: {fileID: 0}
   unitActionState: {fileID: 0}
-  baseTurnSpeed: 20
+  baseTurnSpeed: 40
 --- !u!114 &-6987186403959014264
 MonoBehaviour:
   m_ObjectHideFlags: 0

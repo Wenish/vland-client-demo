@@ -16,7 +16,7 @@ MonoBehaviour:
   skillType: 2
   description: Unleash a rapid barrage of bullets that pierce through enemies, each
     dealing 8 damage.
-  cooldown: 3
+  cooldown: 37
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
