@@ -20,6 +20,6 @@ MonoBehaviour:
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: 662f77ed7ef372c42b56b2c10ff42533, type: 2}
   reactiveTriggers: []
   iconTexture: {fileID: 2800000, guid: e5f35ac6bd48d074185d859211d01d68, type: 3}

@@ -10,6 +10,15 @@ using UnityEngine;
 )]
 public class SkillEffectMechanicChannelData : SkillEffectData
 {
+    public enum ChannelTickMode
+    {
+        // Ticks are evenly spaced with the final tick aligned to the channel end: t = (1..N)/N
+        EvenlySpacedEndAligned,
+        // Ticks include both start (t=0) and end (t=channelDuration). For N>=2, spacing is duration/(N-1).
+        // For N==1, a single tick happens at start.
+        IncludeStartAndEnd,
+    }
+
     [Tooltip("Seconds to channel before continuing.")]
     public float channelDuration = 2f;
 
@@ -20,6 +29,17 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     [Tooltip("Percentage (0-1) of the caster's base turn speed allowed during channel.")]
     [Range(0f, 1f)]
     public float turnSpeedPercent = 0f;
+
+    [Header("Ticking (optional)")]
+    [Tooltip("Optional effect chain to execute periodically during the channel.")]
+    public SkillEffectChainData tickEffect;
+
+    [Tooltip("Number of evenly spaced ticks to execute within channelDuration. 0 disables ticking.")]
+    [Min(0)]
+    public int tickCount = 0;
+
+    [Tooltip("How to schedule ticks during the channel.")]
+    public ChannelTickMode tickMode = ChannelTickMode.EvenlySpacedEndAligned;
 
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
@@ -47,6 +67,28 @@ public class SkillEffectMechanicChannelData : SkillEffectData
         caster.unitMediator.Stats.ApplyModifier(turnSpeedModifier);
 
         float elapsed = 0f;
+
+        // Ticking scheduler state
+        int ticksDone = 0;
+        float tickInterval = 0f;
+        bool hasTicks = tickEffect != null && tickCount > 0 && ctx.skillInstance != null;
+        if (hasTicks)
+        {
+            if (tickMode == ChannelTickMode.EvenlySpacedEndAligned)
+            {
+                // Spread ticks evenly across the duration; final tick at end
+                tickInterval = channelDuration > 0f ? channelDuration / tickCount : 0f;
+            }
+            else // IncludeStartAndEnd
+            {
+                // Include start and end as tick points. For N==1, single tick at start.
+                tickInterval = (tickCount > 1 && channelDuration > 0f) ? channelDuration / (tickCount - 1) : 0f;
+                // Fire initial tick at t=0 immediately
+                ctx.skillInstance.StartCoroutine(tickEffect.ExecuteCoroutine(ctx, targets));
+                ticksDone = 1;
+            }
+        }
+
         while (elapsed < channelDuration)
         {
             if (ctx.IsCancelled)
@@ -54,8 +96,44 @@ public class SkillEffectMechanicChannelData : SkillEffectData
                 break;
             }
 
+            // Advance time first
             elapsed += Time.deltaTime;
+
+            // Schedule ticks as we pass their boundaries to ensure we hit the exact tickCount
+            if (hasTicks && tickInterval >= 0f)
+            {
+                const float EPS = 1e-4f;
+                if (tickMode == ChannelTickMode.EvenlySpacedEndAligned)
+                {
+                    // Boundaries at (i+1)*interval, i in [0..N-1]
+                    while (ticksDone < tickCount && elapsed + EPS >= (ticksDone + 1) * tickInterval)
+                    {
+                        ctx.skillInstance.StartCoroutine(tickEffect.ExecuteCoroutine(ctx, targets));
+                        ticksDone++;
+                    }
+                }
+                else // IncludeStartAndEnd
+                {
+                    // Boundaries at i*interval, i in [0..N-1] (we already fired i=0)
+                    while (ticksDone < tickCount && elapsed + EPS >= (ticksDone) * tickInterval)
+                    {
+                        ctx.skillInstance.StartCoroutine(tickEffect.ExecuteCoroutine(ctx, targets));
+                        ticksDone++;
+                    }
+                }
+            }
+
             yield return null;
+        }
+
+        // If not cancelled, ensure we executed exactly tickCount ticks (catch up for any rounding/last-frame issues)
+        if (!ctx.IsCancelled && tickEffect != null && tickCount > 0 && ctx.skillInstance != null)
+        {
+            while (ticksDone < tickCount)
+            {
+                ctx.skillInstance.StartCoroutine(tickEffect.ExecuteCoroutine(ctx, targets));
+                ticksDone++;
+            }
         }
 
         caster.unitActionState.SetUnitActionStateToIdle();
