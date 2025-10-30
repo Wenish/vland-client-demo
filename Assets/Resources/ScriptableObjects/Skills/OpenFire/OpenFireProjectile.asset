@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f8db645a8b361944bd8c8281b17710d, type: 3}
+  m_Name: OpenFireProjectile
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
+  projectileName: Open Fire
+  prefabBody: {fileID: 3311652881673128303, guid: 487a0354ec4664a0f82303ae7502e758, type: 3}
+  prefabTrail: {fileID: 4761601863319821150, guid: 2025d9f1bc7774d399bc0aa2107d9df9, type: 3}
+  prefabImpactDefault: {fileID: 5605850247623777195, guid: 43d8dbad5ef302b4795b668bf4c5c72c, type: 3}
+  prefabDespawnPoof: {fileID: 0}
+  prefabMuzzleFlash: {fileID: 0}
+  maxHits: 1
+  speed: 30
+  range: 20
+  destroyDelayAfterMaxHits: 0.35

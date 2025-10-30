@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: OpenFire
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Open Fire
+  skillType: 2
+  description: Fires four explosive bullets in quick succession. Each projectile
+    detonates on impact, dealing 28 area damage to all enemies caught in the explosion.
+  cooldown: 4
+  castCost: 0
+  canActivateWhileBusy: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: 3b36c32e83ad2e74bb2680d7d82b9817, type: 2}
+  reactiveTriggers: []
+  iconTexture: {fileID: 0}
