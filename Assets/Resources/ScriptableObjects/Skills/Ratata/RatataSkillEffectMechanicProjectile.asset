@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bbbf5eca398dd340b9780c08f6cce0b, type: 3}
+  m_Name: RatataSkillEffectMechanicProjectile
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicProjectile
+  countsAsCasted: 0
+  projectileData: {fileID: 11400000, guid: 2b3abbd58bd030b439e3e8dcec63c313, type: 2}
+  spawnDistance: 1
+  onHitEffectChain: {fileID: 11400000, guid: cd21f88e257898548b479c555b824e55, type: 2}
