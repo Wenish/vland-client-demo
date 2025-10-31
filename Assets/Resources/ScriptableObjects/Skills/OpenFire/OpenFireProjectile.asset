@@ -15,7 +15,7 @@ MonoBehaviour:
   projectileName: Open Fire
   prefabBody: {fileID: 3311652881673128303, guid: 487a0354ec4664a0f82303ae7502e758, type: 3}
   prefabTrail: {fileID: 4761601863319821150, guid: 2025d9f1bc7774d399bc0aa2107d9df9, type: 3}
-  prefabImpactDefault: {fileID: 5605850247623777195, guid: 43d8dbad5ef302b4795b668bf4c5c72c, type: 3}
+  prefabImpactDefault: {fileID: 4502103682864172148, guid: 97714c0d5674dc7468d80d4e7421dd10, type: 3}
   prefabDespawnPoof: {fileID: 0}
   prefabMuzzleFlash: {fileID: 0}
   maxHits: 1

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: ApplyPoisenSkillEffectChainOnProjectileHit
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
-  - rid: 411962420074381386
+  - rid: 411962420074381387
   references:
     version: 2
     RefIds:
-    - rid: 411962420074381386
+    - rid: 411962420074381387
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
-        effect: {fileID: 11400000, guid: bc02c666c5c0a43d88c202debf9458b9, type: 2}
+        effect: {fileID: 11400000, guid: 9b2dd7be29ece634cbbe7308388ae88a, type: 2}
         children: []

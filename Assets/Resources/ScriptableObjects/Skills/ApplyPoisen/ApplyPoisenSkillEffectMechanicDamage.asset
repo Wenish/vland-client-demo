@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ApplyPoisenSkillEffectMechanicDamage
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
-  amount: 20
+  amount: 2

@@ -16,10 +16,10 @@ MonoBehaviour:
   skillType: 2
   description: Fires four explosive bullets in quick succession. Each projectile
     detonates on impact, dealing 28 area damage to all enemies caught in the explosion.
-  cooldown: 4
+  cooldown: 42
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: 3b36c32e83ad2e74bb2680d7d82b9817, type: 2}
   reactiveTriggers: []
-  iconTexture: {fileID: 0}
+  iconTexture: {fileID: 2800000, guid: e128f59a596dcde4e8c32bd5d072b2f4, type: 3}

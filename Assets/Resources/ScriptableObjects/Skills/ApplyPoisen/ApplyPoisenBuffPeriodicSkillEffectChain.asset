@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ApplyPoisenBuffPeriodicSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicBuffPeriodicSkillEffectChain
   countsAsCasted: 0
-  buffId: 
-  duration: 0
-  tickInterval: 0
-  effectChainDataOnTick: {fileID: 0}
-  uniqueMode: 0
+  buffId: Apply Poisen
+  duration: 15
+  tickInterval: 1
+  effectChainDataOnTick: {fileID: 11400000, guid: 573ad6fd1d44fce42aefe868fdc9e4b6, type: 2}
+  uniqueMode: 1
