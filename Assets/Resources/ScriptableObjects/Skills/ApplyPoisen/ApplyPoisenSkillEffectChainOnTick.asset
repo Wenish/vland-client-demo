@@ -12,7 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
   m_Name: ApplyPoisenSkillEffectChainOnTick
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
-  rootNodes: []
+  rootNodes:
+  - rid: 411962420074381388
+  - rid: 411962420074381389
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 411962420074381388
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: bc02c666c5c0a43d88c202debf9458b9, type: 2}
+        children: []
+    - rid: 411962420074381389
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 43d1c9c2d03482a498dd1c58d3b46691, type: 2}
+        children: []

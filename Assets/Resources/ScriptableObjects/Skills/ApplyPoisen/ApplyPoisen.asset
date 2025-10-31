@@ -21,5 +21,6 @@ MonoBehaviour:
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 0}
-  reactiveTriggers: []
+  reactiveTriggers:
+  - {fileID: 11400000, guid: da8d0213aa4b5314cb093255f8027df1, type: 2}
   iconTexture: {fileID: 2800000, guid: 5218f22c7f2df4c9a8d065e7d2ac703a, type: 3}
