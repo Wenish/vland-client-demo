@@ -4,17 +4,20 @@ public abstract class PeriodicBuff : Buff
 {
     private readonly float _tickInterval;
     private float _tickTimer;
+    private readonly bool _tickOnApply;
     protected PeriodicBuff(
         string buffId,
         float duration,
         float tickInterval,
         UniqueMode     uniqueMode   = UniqueMode.None,
-        UnitMediator   caster       = null
+        UnitMediator   caster       = null,
+        bool           tickOnApply  = false
     ) : base(buffId, duration, uniqueMode, caster)
     {
         if (tickInterval <= 0f)
             throw new ArgumentException("Tick interval must be > 0.", nameof(tickInterval));
         _tickInterval = tickInterval;
+        _tickOnApply = tickOnApply;
     }
     // Expose tick scheduling for handoff between unique buffs
     // Internal so only code within this assembly (e.g., BuffSystem) can adjust it.
@@ -24,7 +27,21 @@ public abstract class PeriodicBuff : Buff
         get => _tickTimer;
         set => _tickTimer = value;
     }
+    // Whether to execute an immediate tick when the buff is applied
+    public bool TickOnApply => _tickOnApply;
     public abstract void OnTick(UnitMediator mediator);
+
+    public override void OnApply(UnitMediator mediator)
+    {
+        base.OnApply(mediator);
+        if (_tickOnApply)
+        {
+            // Execute an immediate tick on apply
+            OnTick(mediator);
+            // Reset scheduling so the next tick occurs after a full interval
+            _tickTimer = 0f;
+        }
+    }
 
     public override bool Update(float deltaTime, UnitMediator mediator)
     {

@@ -14,8 +14,9 @@ public class BuffPeriodicSkillEffectChain : PeriodicBuff
         SkillEffectChainData effectChainDataOnTick,
         CastContext castContext,
         UniqueMode uniqueMode = UniqueMode.None,
-        UnitMediator caster = null
-    ) : base(buffId, duration, tickInterval, uniqueMode, caster)
+        UnitMediator caster = null,
+        bool tickOnApply = false
+    ) : base(buffId, duration, tickInterval, uniqueMode, caster, tickOnApply)
     {
         _effectChainDataOnTick = effectChainDataOnTick;
         _castContext = castContext;
