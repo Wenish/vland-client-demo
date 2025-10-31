@@ -24,10 +24,23 @@ public class BuffSystem
 
     public void AddBuff(Buff buff)
     {
+        // Capture tick remainder from any displaced periodic buff so the new one can inherit it
+        float? donorTickRemainder = null;
+        float? donorTickInterval = null;
+
         // 1) Global uniqueness?
         if (buff.UniqueMode == UniqueMode.Global)
         {
-            foreach (var old in _active.Where(b => b.BuffId == buff.BuffId).ToList())
+            var duplicates = _active.Where(b => b.BuffId == buff.BuffId).ToList();
+            // Capture from first periodic duplicate, if any
+            var donor = duplicates.OfType<PeriodicBuff>().FirstOrDefault();
+            if (donor != null)
+            {
+                donorTickRemainder = donor.TickRemainder;
+                donorTickInterval = donor.TickInterval;
+            }
+
+            foreach (var old in duplicates)
                 RemoveBuff(old);
         }
         // 2) Per-caster uniqueness?
@@ -37,7 +50,24 @@ public class BuffSystem
                 .FirstOrDefault(b => b.BuffId == buff.BuffId
                                   && b.Caster == buff.Caster);
             if (old != null)
+            {
+                if (old is PeriodicBuff oldPeriodic)
+                {
+                    donorTickRemainder = oldPeriodic.TickRemainder;
+                    donorTickInterval = oldPeriodic.TickInterval;
+                }
                 RemoveBuff(old);
+            }
+        }
+
+        // If applicable, transfer tick timing to the new periodic buff before applying
+        if (buff is PeriodicBuff newPeriodic && donorTickRemainder.HasValue)
+        {
+            // Transfer only if intervals match (within epsilon); otherwise keep the new schedule
+            if (!donorTickInterval.HasValue || Math.Abs(newPeriodic.TickInterval - donorTickInterval.Value) < 0.0001f)
+            {
+                newPeriodic.TickRemainder = donorTickRemainder.Value;
+            }
         }
 
         // 3) Now add the new one
