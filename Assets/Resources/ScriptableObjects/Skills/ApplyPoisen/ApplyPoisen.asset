@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Apply Poisen
   skillType: 1
-  description: Your ranged attack poisens the enemy for 5 seconds which deals 2 damage
+  description: Your projectiles poisens the enemy for 15 seconds which deals 2 damage
     per second.
   cooldown: 0
   castCost: 0
+  canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 0}
+  reactiveTriggers: []
   iconTexture: {fileID: 2800000, guid: 5218f22c7f2df4c9a8d065e7d2ac703a, type: 3}

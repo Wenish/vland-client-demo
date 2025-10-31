@@ -203,6 +203,7 @@ public class UnitController : NetworkBehaviour
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
     public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
+    public event Action<(UnitController targetUnit, ProjectileData projectile)> OnProjectileHit = delegate { };
     public event Action OnDied = delegate { };
     public event Action OnRevive = delegate { };
     public UnitMediator unitMediator;
@@ -528,6 +529,21 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer) return;
         OnAttackHitReceived((this, attacker));
+    }
+
+    [Server]
+    public void RaiseOnProjectileHitEvent(UnitController target, ProjectileData projectile)
+    {
+        OnProjectileHit((target, projectile));
+        RpcOnProjectileHit(target, projectile.name);
+    }
+
+    [ClientRpc]
+    public void RpcOnProjectileHit(UnitController target, string projectileName)
+    {
+        if (isServer) return;
+        var projectile = DatabaseManager.Instance.projectileDatabase.GetProjectileByName(projectileName);
+        OnProjectileHit((target, projectile));
     }
 
     private void Die()
