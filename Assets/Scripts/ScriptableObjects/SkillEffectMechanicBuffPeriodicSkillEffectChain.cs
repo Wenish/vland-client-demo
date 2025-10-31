@@ -7,6 +7,7 @@ public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechan
     public string buffId;
     public float duration;
     public float tickInterval;
+    public bool tickOnApply = true;
     public SkillEffectChainData effectChainDataOnTick;
     public UniqueMode uniqueMode = UniqueMode.None;
 
@@ -28,7 +29,8 @@ public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechan
                 effectChainDataOnTick,
                 castContext,
                 uniqueMode,
-                castContext.caster.unitMediator
+                castContext.caster.unitMediator,
+                tickOnApply
             );
             buff.SkillName = castContext.skillInstance.skillData.skillName;
             castContext.skillInstance.ManageBuff(mediator, buff, true);
