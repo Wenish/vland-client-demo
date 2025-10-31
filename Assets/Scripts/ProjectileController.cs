@@ -204,6 +204,10 @@ public class ProjectileController : NetworkBehaviour
         {
             hitCount++;
             OnProjectileUnitHit((unit, shooter));
+            if (shooter != null)
+            {
+                shooter.RaiseOnProjectileHitEvent(unit, projectileData);
+            }
             // impact on unit
             if (projectileData != null && projectileData.prefabImpactDefault != null)
             {
