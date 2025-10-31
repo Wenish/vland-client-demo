@@ -16,6 +16,14 @@ public abstract class PeriodicBuff : Buff
             throw new ArgumentException("Tick interval must be > 0.", nameof(tickInterval));
         _tickInterval = tickInterval;
     }
+    // Expose tick scheduling for handoff between unique buffs
+    // Internal so only code within this assembly (e.g., BuffSystem) can adjust it.
+    internal float TickInterval => _tickInterval;
+    internal float TickRemainder
+    {
+        get => _tickTimer;
+        set => _tickTimer = value;
+    }
     public abstract void OnTick(UnitMediator mediator);
 
     public override bool Update(float deltaTime, UnitMediator mediator)
