@@ -5,6 +5,7 @@ using UnityEngine;
 public class SkillEffectMechanicHealOverTime : SkillEffectMechanic
 {
     public string buffId;
+    public BuffType buffType;
     public ModifierType modifierType;
     public int healAmount;
     public float duration;
@@ -30,7 +31,8 @@ public class SkillEffectMechanicHealOverTime : SkillEffectMechanic
                 healAmount,
                 modifierType,
                 uniqueMode,
-                castContext.caster.unitMediator
+                castContext.caster.unitMediator,
+                buffType
             );
             castContext.skillInstance.ManageBuff(mediator, buff, true);
             Debug.Log($"Applied Heal Over Time to {target.name}: {healAmount} every {tickInterval} seconds.");

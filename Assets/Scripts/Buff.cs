@@ -8,6 +8,7 @@ public abstract class Buff
     public float Duration { get; private set; }
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
+    public BuffType BuffType { get; }
 
     public string SkillName { get; set; }
     public event Action OnRemoved;
@@ -19,7 +20,7 @@ public abstract class Buff
     public float NormalizedRemaining => Duration <= 0f ? 0f : Mathf.Clamp01((Duration - _elapsed) / Duration);
 
     protected Buff(string buffId, float duration, UniqueMode uniqueMode = UniqueMode.None,
-        UnitMediator caster = null)
+        UnitMediator caster = null, BuffType buffType = null)
     {
         if (string.IsNullOrWhiteSpace(buffId))
             throw new ArgumentException("Buff must have a non-empty Id.", nameof(buffId));
@@ -32,6 +33,7 @@ public abstract class Buff
         Duration = duration;
         UniqueMode = uniqueMode;
         Caster = caster;
+        BuffType = buffType;
     }
 
     public void SetDuration(float newDuration)

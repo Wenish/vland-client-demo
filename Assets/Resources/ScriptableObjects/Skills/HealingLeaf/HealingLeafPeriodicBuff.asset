@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: HealingLeafPeriodicBuff
   m_EditorClassIdentifier: 
   countsAsCasted: 1
-  buffId: HealingLeaf
+  buffId: Healing Leaf
+  buffType: {fileID: 11400000, guid: 81c716bac42a948309dbead440942f66, type: 2}
   duration: 9
   tickInterval: 3
   tickOnApply: 0
