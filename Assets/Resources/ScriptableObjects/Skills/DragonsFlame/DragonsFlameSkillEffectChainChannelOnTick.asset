@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: DragonsFlameSkillEffectChainChannelOnTick
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 3978539981753286732
+  references:
+    version: 2
+    RefIds:
+    - rid: 3978539981753286732
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: ecf6ff655028b5248b675b7e8772e543, type: 2}
+        children:
+        - rid: 3978539981753286733
+    - rid: 3978539981753286733
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: c9bf70ed70621974cb1a30798dd93fce, type: 2}
+        children: []
