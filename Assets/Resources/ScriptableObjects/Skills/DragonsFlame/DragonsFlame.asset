@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: DragonsFlame
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Dragon's Flame
+  skillType: 0
+  description: Deals damage in a cone in front of you every 0.25 seconds for 3 seconds.
+  cooldown: 8
+  castCost: 0
+  canActivateWhileBusy: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: e77e797569afcca458dab1c3b875badb, type: 2}
+  reactiveTriggers: []
+  iconTexture: {fileID: 2800000, guid: ab7900ad0972a344aa5e6c834404b87e, type: 3}
