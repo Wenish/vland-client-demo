@@ -16,5 +16,6 @@ MonoBehaviour:
   buffId: HealingLeaf
   duration: 9
   tickInterval: 3
+  tickOnApply: 0
   effectChainDataOnTick: {fileID: 11400000, guid: 41321ad2ecc534262a8c450dd2d8d3a9, type: 2}
   uniqueMode: 2

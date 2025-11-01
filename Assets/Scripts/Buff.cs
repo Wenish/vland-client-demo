@@ -5,7 +5,7 @@ public abstract class Buff
 {
     public string InstanceId { get; }
     public string BuffId { get; }
-    public float Duration { get; }
+    public float Duration { get; private set; }
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
 
@@ -32,6 +32,13 @@ public abstract class Buff
         Duration = duration;
         UniqueMode = uniqueMode;
         Caster = caster;
+    }
+
+    public void SetDuration(float newDuration)
+    {
+        if (newDuration < 0f)
+            throw new ArgumentException("Duration cannot be negative.", nameof(newDuration));
+        Duration = newDuration;
     }
 
     public virtual void OnApply(UnitMediator mediator) { }

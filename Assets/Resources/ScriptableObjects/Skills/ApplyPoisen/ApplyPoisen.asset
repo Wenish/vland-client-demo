@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Apply Poisen
   skillType: 1
-  description: Your projectiles poisens the enemy for 15 seconds which deals 2 damage
-    per second.
+  description: Your projectiles poisens the enemy for 15 seconds which deals 5 damage
+    every 3 seconds.
   cooldown: 0
   castCost: 0
   canActivateWhileBusy: 0

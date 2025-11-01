@@ -67,6 +67,9 @@ public class BuffSystem
             if (!donorTickInterval.HasValue || Math.Abs(newPeriodic.TickInterval - donorTickInterval.Value) < 0.0001f)
             {
                 newPeriodic.TickRemainder = donorTickRemainder.Value;
+                if (newPeriodic.TickOnApply == false) {
+                    newPeriodic.SetDuration(newPeriodic.Duration + (newPeriodic.TickInterval - donorTickRemainder.Value));
+                }
             }
         }
 

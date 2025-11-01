@@ -15,7 +15,7 @@ MonoBehaviour:
   countsAsCasted: 0
   buffId: Apply Poisen
   duration: 15
-  tickInterval: 5
+  tickInterval: 3
   tickOnApply: 0
   effectChainDataOnTick: {fileID: 11400000, guid: 573ad6fd1d44fce42aefe868fdc9e4b6, type: 2}
   uniqueMode: 2
