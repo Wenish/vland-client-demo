@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: SecondWindBuffPeriodicSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicBuffPeriodicSkillEffectChain
   countsAsCasted: 1
-  buffId: SecondWind
+  buffId: Second Wind
+  buffType: {fileID: 11400000, guid: 67202a42a0ea645a697d515d2e89c679, type: 2}
   duration: 5
   tickInterval: 5
+  tickOnApply: 1
   effectChainDataOnTick: {fileID: 11400000, guid: a1452f39f580e984b9f908b5c4dbe8db, type: 2}
   uniqueMode: 0

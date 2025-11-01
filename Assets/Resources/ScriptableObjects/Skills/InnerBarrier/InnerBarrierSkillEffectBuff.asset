@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: InnerBarrierSkillEffectBuff
   m_EditorClassIdentifier: 
   countsAsCasted: 1
-  buffId: InnerBarrier
+  buffId: Inner Barrier
+  buffType: {fileID: 11400000, guid: 81c716bac42a948309dbead440942f66, type: 2}
   statModifiers:
   - Type: 4
     Value: 0.35

@@ -5,6 +5,7 @@ using UnityEngine;
 public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
 {
     public string buffId;
+    public BuffType buffType;
 
     [Header("Stat Modifiers")] 
     [Tooltip("Configure one or more stat modifiers that this buff will apply.")]
@@ -44,7 +45,7 @@ public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
             if (listStatModifiers.Count == 0)
                 continue;
 
-            BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, castContext.caster.unitMediator);
+            BuffStat buff = new BuffStat(buffId, duration, listStatModifiers, uniqueMode, castContext.caster.unitMediator, buffType);
             buff.SkillName = castContext.skillInstance.skillData.skillName;
             castContext.skillInstance.ManageBuff(mediator, buff, true);
         }

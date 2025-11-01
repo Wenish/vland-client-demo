@@ -5,6 +5,7 @@ using UnityEngine;
 public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechanic
 {
     public string buffId;
+    public BuffType buffType;
     public float duration;
     public float tickInterval;
     public bool tickOnApply = true;
@@ -30,7 +31,8 @@ public class SkillEffectMechanicBuffPeriodicSkillEffectChain : SkillEffectMechan
                 castContext,
                 uniqueMode,
                 castContext.caster.unitMediator,
-                tickOnApply
+                tickOnApply,
+                buffType
             );
             buff.SkillName = castContext.skillInstance.skillData.skillName;
             castContext.skillInstance.ManageBuff(mediator, buff, true);

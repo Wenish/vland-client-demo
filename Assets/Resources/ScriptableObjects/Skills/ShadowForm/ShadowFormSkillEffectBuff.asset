@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: ShadowFormSkillEffectBuff
   m_EditorClassIdentifier: 
   countsAsCasted: 1
-  buffId: ShadowForm
+  buffId: Shadow Form
+  buffType: {fileID: 11400000, guid: 63a01db903c604074b68af92109297f3, type: 2}
   statModifiers:
   - Type: 1
     Value: 1.1

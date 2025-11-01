@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: RelentlessAssaultSkillEffectMechanicBuffStat
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicBuffStatData
   countsAsCasted: 0
-  buffId: RelentlessAssault
+  buffId: Relentless Assault
+  buffType: {fileID: 11400000, guid: ca61801674fe74e2cbdaaaf0c8751a74, type: 2}
   statModifiers:
   - Type: 5
     Value: 1.33

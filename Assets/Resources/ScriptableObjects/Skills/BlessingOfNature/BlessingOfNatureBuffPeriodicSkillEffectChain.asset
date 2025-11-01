@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: BlessingOfNatureBuffPeriodicSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicBuffPeriodicSkillEffectChain
   countsAsCasted: 0
-  buffId: BlessingOfNature
+  buffId: Blessing Of Nature
+  buffType: {fileID: 11400000, guid: ca61801674fe74e2cbdaaaf0c8751a74, type: 2}
   duration: Infinity
   tickInterval: 5
+  tickOnApply: 1
   effectChainDataOnTick: {fileID: 11400000, guid: c49dac7595091465eb1a85ba47ac3f12, type: 2}
   uniqueMode: 1

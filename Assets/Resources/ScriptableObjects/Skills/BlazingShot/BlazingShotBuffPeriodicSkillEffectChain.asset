@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicBuffPeriodicSkillEffectChain
   countsAsCasted: 0
   buffId: Blazing Burn
+  buffType: {fileID: 11400000, guid: 0f1f7977f495d4bed8148238f1e28e10, type: 2}
   duration: 3
   tickInterval: 0.25
+  tickOnApply: 1
   effectChainDataOnTick: {fileID: 11400000, guid: afb2cfecf0312eb47bc5f52722941fef, type: 2}
   uniqueMode: 0

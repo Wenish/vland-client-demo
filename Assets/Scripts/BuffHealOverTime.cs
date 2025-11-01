@@ -13,13 +13,15 @@ public class BuffHealOverTime : PeriodicBuff
         float healAmount,
         ModifierType   modifierType  = ModifierType.Flat,
         UniqueMode     uniqueMode    = UniqueMode.None,
-        UnitMediator   caster        = null
+        UnitMediator   caster        = null,
+        BuffType       buffType      = null
     ) : base(
         buffId,
         duration,
         tickInterval,
         uniqueMode,
-        caster
+        caster,
+        buffType
       )
     {
         _healAmount = healAmount;

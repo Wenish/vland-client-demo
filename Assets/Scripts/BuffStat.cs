@@ -9,8 +9,9 @@ public class BuffStat : Buff
         float duration,
         List<StatModifier> mods,
         UniqueMode           uniqueMode = UniqueMode.None,
-        UnitMediator         caster     = null)
-        : base(buffId, duration, uniqueMode, caster)
+        UnitMediator         caster     = null,
+        BuffType             buffType   = null)
+        : base(buffId, duration, uniqueMode, caster, buffType)
     {
         _mods = mods;
     }

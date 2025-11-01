@@ -11,8 +11,9 @@ public abstract class PeriodicBuff : Buff
         float tickInterval,
         UniqueMode     uniqueMode   = UniqueMode.None,
         UnitMediator   caster       = null,
-        bool           tickOnApply  = false
-    ) : base(buffId, duration, uniqueMode, caster)
+        bool           tickOnApply  = false,
+        BuffType       buffType     = null
+    ) : base(buffId, duration, uniqueMode, caster, buffType)
     {
         if (tickInterval <= 0f)
             throw new ArgumentException("Tick interval must be > 0.", nameof(tickInterval));
