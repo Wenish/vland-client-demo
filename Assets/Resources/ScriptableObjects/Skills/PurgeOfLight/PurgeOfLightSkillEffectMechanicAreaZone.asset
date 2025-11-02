@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8580611738aff4bada115ffb265b27, type: 3}
   m_Name: PurgeOfLightSkillEffectMechanicAreaZone
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicAreaZone
-  countsAsCasted: 0
+  countsAsCasted: 1
   areaZoneData: {fileID: 11400000, guid: c68d34f1faf7e4b4995e25395ee20227, type: 2}
   spawnAtAimPoint: 0
   onTickEffect: {fileID: 11400000, guid: e27a98b79ccdbd441b00f1da8bba0fe0, type: 2}

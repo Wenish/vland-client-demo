@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PurgeOfLightSkillEffectMechanicCast
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicCast
   countsAsCasted: 0
-  castDuration: 0.5
+  castDuration: 0.25
   moveSpeedPercent: 0
   turnSpeedPercent: 1
