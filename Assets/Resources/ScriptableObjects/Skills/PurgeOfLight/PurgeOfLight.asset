@@ -16,7 +16,7 @@ MonoBehaviour:
   skillType: 0
   description: Ignite the ground with holy light for 10 seconds, dealing 15 magic
     damage per second to enemies inside.
-  cooldown: 3
+  cooldown: 18
   castCost: 0
   canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
