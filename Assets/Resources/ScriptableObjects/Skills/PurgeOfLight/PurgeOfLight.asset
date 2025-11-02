@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: PurgeOfLight
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Purge of Light
+  skillType: 0
+  description: Ignite the ground with holy light for 10 seconds, dealing 15 magic
+    damage per second to enemies inside.
+  cooldown: 3
+  castCost: 0
+  canActivateWhileBusy: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: 6eb45f26b3430c74f83e420cf8179d6e, type: 2}
+  reactiveTriggers: []
+  iconTexture: {fileID: 2800000, guid: e9e8a1272f6d9d74b9bd6fd324a59d77, type: 3}

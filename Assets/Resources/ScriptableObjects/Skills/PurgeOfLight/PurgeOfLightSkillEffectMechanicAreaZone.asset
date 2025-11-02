@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8580611738aff4bada115ffb265b27, type: 3}
+  m_Name: PurgeOfLightSkillEffectMechanicAreaZone
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicAreaZone
+  countsAsCasted: 0
+  areaZoneData: {fileID: 11400000, guid: c68d34f1faf7e4b4995e25395ee20227, type: 2}
+  spawnAtAimPoint: 0
+  onTickEffect: {fileID: 11400000, guid: e27a98b79ccdbd441b00f1da8bba0fe0, type: 2}
+  skillEffectTarget: {fileID: 11400000, guid: 827c084e7bc4a264bb80c9fd1a6495b4, type: 2}
