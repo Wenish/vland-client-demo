@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: CircleOfRenewal
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Circle of Renewal
+  skillType: 0
+  description: 
+  cooldown: 2
+  castCost: 0
+  canActivateWhileBusy: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: cd7fd31959fcc8f40b625f0d0a49630a, type: 2}
+  reactiveTriggers: []
+  iconTexture: {fileID: 2800000, guid: 796f78e1ff7a8e24eb77c68c1a58e727, type: 3}

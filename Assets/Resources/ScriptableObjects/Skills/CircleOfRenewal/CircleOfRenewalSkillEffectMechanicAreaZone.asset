@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8580611738aff4bada115ffb265b27, type: 3}
+  m_Name: CircleOfRenewalSkillEffectMechanicAreaZone
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicAreaZone
+  countsAsCasted: 1
+  areaZoneData: {fileID: 11400000, guid: 52a959c031927cb4ab237c5d215f20d0, type: 2}
+  spawnAtAimPoint: 1
+  onTickEffect: {fileID: 11400000, guid: f7a1a6aece17f91408b0353aa67c694c, type: 2}
+  skillEffectTarget: {fileID: 11400000, guid: acb4a7b8dd1cdce4a84d8040497f1258, type: 2}

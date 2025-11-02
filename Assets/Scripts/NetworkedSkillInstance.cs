@@ -129,7 +129,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         _runningCastContext = new CastContext(unit, this)
         {
             aimPoint = aimPoint,
-            aimDirection = unit.transform.forward
+            aimRotation = aimPoint.HasValue ? Quaternion.LookRotation(aimPoint.Value - unit.transform.position) : null
         };
         _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
     }    
