@@ -5,6 +5,7 @@ public class CastContext
     public UnitController caster;
     public NetworkedSkillInstance skillInstance;
     public Vector3? aimPoint;
+    public Vector3? aimDirection;
 
     private bool _isCancelled = false;
     public bool IsCancelled => _isCancelled;
