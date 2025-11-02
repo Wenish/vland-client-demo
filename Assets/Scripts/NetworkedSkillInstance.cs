@@ -128,7 +128,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
         _runningCastContext = new CastContext(unit, this)
         {
-            aimPoint = aimPoint
+            aimPoint = aimPoint,
+            aimDirection = unit.transform.forward
         };
         _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
     }    
