@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CircleOfRenewalSkillEffectMechanicCast
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicCast
   countsAsCasted: 0
-  castDuration: 2
-  moveSpeedPercent: 0
-  turnSpeedPercent: 0
+  castDuration: 0.5
+  moveSpeedPercent: 1
+  turnSpeedPercent: 1

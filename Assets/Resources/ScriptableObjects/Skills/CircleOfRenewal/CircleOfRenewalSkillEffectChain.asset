@@ -13,11 +13,17 @@ MonoBehaviour:
   m_Name: CircleOfRenewalSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
-  - rid: 3978540001286422602
+  - rid: 3978540006869303377
   references:
     version: 2
     RefIds:
-    - rid: 3978540001286422602
+    - rid: 3978540006869303377
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 7ff1ebe62ba2ae64d908f8034cd6ca32, type: 2}
+        children:
+        - rid: 3978540006869303378
+    - rid: 3978540006869303378
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: f2d0409d9934fbd41ab1f061d2fff8f5, type: 2}
