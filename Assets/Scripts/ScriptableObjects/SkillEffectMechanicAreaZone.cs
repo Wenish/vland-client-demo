@@ -53,8 +53,20 @@ public class SkillEffectMechanicAreaZone : SkillEffectMechanic
         {
             zone.OnTick -= null;
             zone.OnAreaZoneDestoryed -= null;
+            castContext.skillInstance.OnCleanup -= null;
         };
 
+        if (castContext.skillInstance != null && NetworkServer.active)
+        {
+            castContext.skillInstance.OnCleanup += (skillInstance) =>
+            {
+                if (areaZoneController != null && areaZoneController.isServer)
+                {
+                    areaZoneController.DestroySelf();
+                }
+                castContext.skillInstance.OnCleanup -= null;
+            };
+        }
         // Now initialize and start the zone timeline (will trigger start tick if configured)
         areaZoneController.SetAreaZoneName(areaZoneData.areaZoneName);
     }

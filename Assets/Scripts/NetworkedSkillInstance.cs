@@ -20,6 +20,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     private UnitController unit;
     public UnitController Caster => unit;
     private SkillDatabase skillDatabase;
+    public event Action<NetworkedSkillInstance> OnCleanup;
 
     [SerializeField]
     public readonly List<(UnitMediator target, Buff buff)> appliedBuffs = new();
@@ -322,6 +323,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void Cleanup()
     {
+        OnCleanup?.Invoke(this);
         var buffsToRemove = new List<(UnitMediator target, Buff buff)>(appliedBuffs);
 
         foreach (var (target, buff) in buffsToRemove)
