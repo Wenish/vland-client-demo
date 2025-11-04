@@ -31,6 +31,12 @@ public class PlayerInput : NetworkBehaviour
 
     private ControllerCamera _controllerCamera;
 
+    // When aiming, account for projectile visual spawning 1 unit above the floor
+    // so the forward direction from that height aligns with the cursor on screen.
+    [SerializeField]
+    [Tooltip("Vertical offset (in world units) used for the aim plane when computing yaw. Match projectile spawn height.")]
+    private float aimPlaneHeightOffset = 1f;
+
     void Start()
     {
         _plane = new Plane(Vector3.up, 0);
@@ -199,7 +205,32 @@ public class PlayerInput : NetworkBehaviour
     void CalculateAngle()
     {
         if (!myUnit) return;
-        Vector3 pos = myUnit.transform.position - _mouseWorldPosition;
+        // Cast the cursor ray against a plane at the projectile's spawn height
+        if (_cameraMain == null) return;
+
+        // Build a plane parallel to the ground, passing through (unit.y + offset)
+        float planeY = myUnit.transform.position.y + aimPlaneHeightOffset;
+        Plane aimPlane = new Plane(Vector3.up, new Vector3(0f, planeY, 0f));
+
+        Vector2 pointerPos = Vector2.zero;
+        if (Mouse.current != null)
+        {
+            pointerPos = Mouse.current.position.ReadValue();
+        }
+        else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            pointerPos = Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+
+        Ray ray = _cameraMain.ScreenPointToRay(pointerPos);
+        Vector3 aimPoint = _mouseWorldPosition; // fallback to ground-plane point if ray misses
+        if (aimPlane.Raycast(ray, out float t))
+        {
+            aimPoint = ray.GetPoint(t);
+        }
+
+        // Compute yaw using the same orientation as before (unit - aim) to preserve model-facing convention
+        Vector3 pos = myUnit.transform.position - aimPoint;
         var angle = -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90;
         CmdSetAngle(angle);
     }
