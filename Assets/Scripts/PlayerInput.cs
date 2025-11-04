@@ -328,7 +328,7 @@ public class PlayerInput : NetworkBehaviour
             CmdUseSkill(SkillSlotType.Normal, 1, _mouseWorldPosition);
         }
         if (
-            Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame
+            Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame
 
             )
         {
@@ -336,7 +336,7 @@ public class PlayerInput : NetworkBehaviour
         }
         if (
 
-            Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame
+            Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame
             )
         {
             CmdUseSkill(SkillSlotType.Ultimate, 0, _mouseWorldPosition);
