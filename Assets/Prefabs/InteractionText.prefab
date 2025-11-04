@@ -104,7 +104,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Press C to interact
+  m_text: 'Press F to interact
 
     [Cost: 10 Gold]'
   m_isRightToLeft: 0

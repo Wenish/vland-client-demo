@@ -87,7 +87,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
+            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
             {
                 CmdInteract();
             }

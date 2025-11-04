@@ -76,17 +76,17 @@ public class ZombieModusLogger : MonoBehaviour
         {
             LogKeyboardInput("Skill2", "E");
         }
-        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
         {
-            LogKeyboardInput("Skill3", "R");
+            LogKeyboardInput("Skill3", "C");
+        }
+        if (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
+        {
+            LogKeyboardInput("Skill4", "X");
         }
         if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
         {
-            LogKeyboardInput("Skill4", "F");
-        }
-        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Interact", "C");
+            LogKeyboardInput("Interact", "F");
         }
         if (Keyboard.current != null && (Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed) && Mouse.current.leftButton.wasPressedThisFrame)
         {

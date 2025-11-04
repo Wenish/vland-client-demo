@@ -39,13 +39,13 @@ public class FloatingInteractTextManager : MonoBehaviour
             switch (zone.Zone.interactionType)
             {
                 case InteractionType.OpenGate:
-                    interactionText = "Press C to open the gate";
+                    interactionText = "Press F to open the gate";
                     break;
                 case InteractionType.BuyWeapon:
-                    interactionText = "Press C to buy a weapon";
+                    interactionText = "Press F to buy a weapon";
                     break;
                 default:
-                    interactionText = "Press C to interact";
+                    interactionText = "Press F to interact";
                     break;
             }
             interactionText += $"\n[Cost: {zone.Zone.goldCost} Gold]";
