@@ -222,7 +222,7 @@ public class LoadoutWindowController : MonoBehaviour
     {
         var title = $"<size=20><b>{weaponData.weaponName}</b></size>";
         var type = $"<size=16>Type: {weaponData.weaponType}</size>";
-        var damage = $"<size=16>Damage: {weaponData.attackPower}</size>";
+        var damage = $"<size=16>Damage: +{weaponData.attackPower}</size>";
         var range = $"<size=16>Range: {weaponData.attackRange}</size>";
 
         return $"{title}\n<color=#cccccc>{type}\n{damage}\n{range}</color>";
