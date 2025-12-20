@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80b31033d93a4b0793eeaba76c1bbcf, type: 3}
   m_Name: PreservationSkillEffectMechanicCast
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicCast
-  countsAsCasted: 0
-  castDuration: 2
+  countsAsCasted: 1
+  castDuration: 0.75
   moveSpeedPercent: 0
   turnSpeedPercent: 0

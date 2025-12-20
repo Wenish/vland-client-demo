@@ -16,8 +16,10 @@ MonoBehaviour:
   skillType: 2
   description: Summon a spirit for 60 seconds that heals nearby allies by 20 health
     points every 10 seconds.
-  cooldown: 70
+  cooldown: 20
   castCost: 0
+  canActivateWhileBusy: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: a5eb95dab3141ee4ebd45d05b2910672, type: 2}
+  reactiveTriggers: []
   iconTexture: {fileID: 2800000, guid: 29a96695c13274ef5b2ec61422d1b054, type: 3}
