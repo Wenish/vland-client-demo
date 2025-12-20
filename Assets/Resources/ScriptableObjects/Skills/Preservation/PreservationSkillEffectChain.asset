@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: PreservationSkillEffectChain
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 2448597470637981770
+  references:
+    version: 2
+    RefIds:
+    - rid: 2448597470637981770
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 3a70a4e51f649a64f945b8b8fae2256a, type: 2}
+        children:
+        - rid: 2448597470637981771
+    - rid: 2448597470637981771
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 91250d7abb07b654d88081d3fa8b4666, type: 2}
+        children: []
