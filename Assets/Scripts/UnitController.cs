@@ -691,4 +691,5 @@ public enum UnitType : byte
 {
     Player,
     Zombie,
+    Spirit
 }
