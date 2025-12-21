@@ -18,6 +18,7 @@ MonoBehaviour:
   cooldown: 0
   castCost: 0
   canActivateWhileBusy: 0
+  npcOnly: 1
   initTrigger: {fileID: 11400000, guid: 210228e5701d4914bb7d893dbb68804c, type: 2}
   castTrigger: {fileID: 0}
   reactiveTriggers: []

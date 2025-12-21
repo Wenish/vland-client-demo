@@ -12,6 +12,9 @@ public class SkillData : ScriptableObject
     public int castCost;
     public bool canActivateWhileBusy;
     public WeaponType? requiredWeapon;
+    
+    [Header("Restrictions")]
+    public bool npcOnly;
 
     [Header("Effects")]
     public SkillEffectChainData initTrigger;
