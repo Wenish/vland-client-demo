@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -38,9 +39,29 @@ public class SkillEffectMechanicSpawnUnit : SkillEffectMechanic
         var unitController = unitInstance.GetComponent<UnitController>();
         unitController.SetTeam(castContext.caster.team);
 
+        // Subscribe to death event to despawn the unit after 1 second
+        unitController.OnDied += () => unitController.StartCoroutine(DespawnUnitDelayed(unitInstance));
+
         TrackSpawnAndCullOldest(castContext.caster, unitInstance);
 
         // Additional setup for the spawned unit can be done here
+    }
+
+    [Server]
+    private void DespawnUnit(GameObject unitInstance)
+    {
+        if (unitInstance == null)
+        {
+            return;
+        }
+
+        NetworkServer.Destroy(unitInstance);
+    }
+
+    private IEnumerator DespawnUnitDelayed(GameObject unitInstance)
+    {
+        yield return new WaitForSeconds(1f);
+        DespawnUnit(unitInstance);
     }
 
     private void TrackSpawnAndCullOldest(UnitController caster, GameObject unitInstance)
