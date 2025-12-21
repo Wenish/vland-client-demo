@@ -22,6 +22,7 @@ MonoBehaviour:
   moveSpeed: 0
   weapon: {fileID: 0}
   modelData: {fileID: 11400000, guid: 1ee0162ccdc9e45b1ac3216363fc85db, type: 2}
-  passiveSkills: []
+  passiveSkills:
+  - {fileID: 11400000, guid: 703255db9af23184eb1476d915f9867a, type: 2}
   normalSkills: []
   ultimateSkills: []
