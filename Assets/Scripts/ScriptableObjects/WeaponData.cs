@@ -6,6 +6,9 @@ public abstract class WeaponData : ScriptableObject
     public string weaponName;
     public WeaponType weaponType;
     
+    [Header("Restrictions")]
+    public bool npcOnly;
+    
     [Header("Stats")]
     public int attackPower = 10;
     public float attackRange = 5.0f;

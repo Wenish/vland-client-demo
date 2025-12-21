@@ -133,7 +133,7 @@ public class LoadoutWindowController : MonoBehaviour
         {
             if (_db.weaponDatabase != null)
             {
-                foreach (var w in _db.weaponDatabase.allWeapons.Where(w => w != null))
+                foreach (var w in _db.weaponDatabase.allWeapons.Where(w => w != null && !w.npcOnly))
                 {
                     items.Add(new LoadoutItem
                     {
@@ -150,7 +150,7 @@ public class LoadoutWindowController : MonoBehaviour
         {
             if (_db.skillDatabase != null)
             {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Passive))
+                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Passive && !s.npcOnly))
                 {
                     items.Add(new LoadoutItem
                     {
@@ -167,7 +167,7 @@ public class LoadoutWindowController : MonoBehaviour
         {
             if (_db.skillDatabase != null)
             {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Ultimate))
+                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Ultimate && !s.npcOnly))
                 {
                     items.Add(new LoadoutItem
                     {
@@ -185,7 +185,7 @@ public class LoadoutWindowController : MonoBehaviour
             // normals
             if (_db.skillDatabase != null)
             {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Normal))
+                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Normal && !s.npcOnly))
                 {
                     items.Add(new LoadoutItem
                     {

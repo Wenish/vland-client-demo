@@ -89,7 +89,6 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void TriggerInit()
     {
-        Debug.Log($"Triggering init for skill {skillName} on unit {unit.unitName}");
         if (skillData == null) return;
         if (_runningInitCoroutine != null)
         {
