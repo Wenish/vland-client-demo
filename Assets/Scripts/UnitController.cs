@@ -249,13 +249,21 @@ public class UnitController : NetworkBehaviour
 
         if (isServer)
         {
+            // On initial spawn, set collider state directly without triggering events
+            // Die()/Revive() will be called by gameplay methods (TakeDamage, Heal, SetHealth) when appropriate
             if (health <= 0)
             {
-                Die();
+                if (unitCollider != null)
+                {
+                    unitCollider.isTrigger = true;
+                }
             }
             else
             {
-                Revive();
+                if (unitCollider != null)
+                {
+                    unitCollider.isTrigger = false;
+                }
             }
         }
     }

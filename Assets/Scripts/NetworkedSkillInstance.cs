@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Mirror;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -90,6 +89,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void TriggerInit()
     {
+        Debug.Log($"Triggering init for skill {skillName} on unit {unit.unitName}");
         if (skillData == null) return;
         if (_runningInitCoroutine != null)
         {
@@ -363,7 +363,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         // Stopwatch can’t start/stop inside the main thread yield,
         // so we start it here; we’ll Stop() it after all coroutines.
-        var stopwatch = Stopwatch.StartNew();
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         for (int i = 0; i < total; i++)
         {
