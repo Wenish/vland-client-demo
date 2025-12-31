@@ -117,7 +117,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         var zombieNameToSpawn = UnityEngine.Random.value < 0.8f ? "Infected" : "Crawler";
 
-        var zombie = UnitSpawner.Instance.SpawnUnit(zombieNameToSpawn, spawnPosition, spawnRotation);
+        var zombie = UnitSpawner.Instance.SpawnUnit(zombieNameToSpawn, spawnPosition, spawnRotation, true);
         if (zombie == null)
         {
             Debug.LogError("Failed to spawn zombie.");
@@ -139,7 +139,7 @@ public class ZombieGameManager : NetworkBehaviour
         unitController.maxHealth = newMaxHealth;
         unitController.health = newMaxHealth;
         
-        zombie.AddComponent<AiZombieController>();
+        // zombie.AddComponent<AiZombieController>();
     }
 
     void GetAllZombieSpawnInScene()

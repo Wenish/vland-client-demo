@@ -5,6 +5,7 @@ public class UnitSpawner : NetworkBehaviour
 {
     public static UnitSpawner Instance { get; private set; }
     public GameObject unitPrefab;
+    public GameObject unitNpcPrefab;
 
     private void Awake()
     {
@@ -16,10 +17,11 @@ public class UnitSpawner : NetworkBehaviour
 
         Instance = this;
         unitPrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
+        unitNpcPrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "UnitNpc");
     }
 
     [Server]
-    public GameObject SpawnUnit(string unitName, Vector3 position, Quaternion rotation)
+    public GameObject SpawnUnit(string unitName, Vector3 position, Quaternion rotation, bool isNpc = false)
     {
         UnitData unitData = DatabaseManager.Instance.unitDatabase.GetUnitByName(unitName);
         if (unitData == null)
@@ -27,14 +29,15 @@ public class UnitSpawner : NetworkBehaviour
             Debug.LogError($"Unit {unitName} not found in database.");
             return null;
         }
-        return Spawn(unitData, position, rotation);
+        return Spawn(unitData, position, rotation, isNpc);
     }
 
     [Server]
-    public GameObject Spawn(UnitData unitData, Vector3 position, Quaternion rotation)
+    public GameObject Spawn(UnitData unitData, Vector3 position, Quaternion rotation, bool isNpc = false)
     {
-        GameObject unitInstance = Instantiate(unitPrefab, position, rotation);
-        unitInstance.name = $"Unit ({unitData.unitName})";
+        GameObject prefabToUse = isNpc ? unitNpcPrefab : unitPrefab;
+        GameObject unitInstance = Instantiate(prefabToUse, position, rotation);
+        unitInstance.name = $"{prefabToUse.name} ({unitData.unitName})";
         UnitController unitController = unitInstance.GetComponent<UnitController>();
 
         if (unitController != null)
