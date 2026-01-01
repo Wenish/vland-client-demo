@@ -114,7 +114,7 @@ public class UnitController : NetworkBehaviour
     [SyncVar(hook = nameof(OnWeaponNameChanged))]
     public string weaponName;
     public WeaponData currentWeapon;
-    public WeaponController weaponController;
+    private WeaponController weaponController;
     public event Action<UnitController> OnWeaponChange = delegate { };
 
     private void OnWeaponNameChanged(string oldWeaponName, string newWeaponName)
@@ -206,7 +206,9 @@ public class UnitController : NetworkBehaviour
     public event Action<(UnitController targetUnit, ProjectileData projectile)> OnProjectileHit = delegate { };
     public event Action OnDied = delegate { };
     public event Action OnRevive = delegate { };
+    [HideInInspector]
     public UnitMediator unitMediator;
+    [HideInInspector]
     public UnitActionState unitActionState;
 
     void Awake()
