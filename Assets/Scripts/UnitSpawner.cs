@@ -64,6 +64,17 @@ public class UnitSpawner : NetworkBehaviour
         foreach (var skill in unitData.ultimateSkills)
             unitController.unitMediator.Skills.AddSkill(SkillSlotType.Ultimate, skill.skillName);
 
+                    
+
+        if (isNpc && unitData.behaviourProfile != null)
+        {
+            var npcBehaviourExecutor = unitInstance.GetComponent<NPCBehaviour.BehaviourExecutor>();
+            if (npcBehaviourExecutor != null)
+            {
+                npcBehaviourExecutor.SetBehaviourProfile(unitData.behaviourProfile);
+            }
+        }
+
         return unitInstance;
     }
 }

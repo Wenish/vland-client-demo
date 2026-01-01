@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6dd4f26be36a4da5595b9d14f4dfb, type: 3}
+  m_Name: DefaultBehaviourProfile
+  m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.BehaviourProfile
+  profileName: 
+  profileDescription: 
+  initialState: {fileID: 11400000, guid: e0c2a164d3c94b648b370b8785cefecc, type: 2}
+  availableStates:
+  - {fileID: 11400000, guid: e0c2a164d3c94b648b370b8785cefecc, type: 2}
+  globalTransitions: []
