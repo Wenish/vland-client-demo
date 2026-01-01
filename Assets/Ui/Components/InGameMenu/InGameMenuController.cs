@@ -123,6 +123,16 @@ public class InGameMenuController : MonoBehaviour
     {
         // Ensure menu is closed and input unblocked before switching scenes
         CloseMenu();
-        NetworkManager.singleton.ServerChangeScene(LobbySceneName);
+
+        // Use NetworkRoomManager to properly return to lobby scene
+        if (NetworkManager.singleton is NetworkRoomManager roomManager)
+        {
+            // ServerChangeScene to the offline scene (lobby) will properly reset the room
+            roomManager.ServerChangeScene(roomManager.RoomScene);
+        }
+        else
+        {
+            NetworkManager.singleton.ServerChangeScene(LobbySceneName);
+        }
     }
 }
