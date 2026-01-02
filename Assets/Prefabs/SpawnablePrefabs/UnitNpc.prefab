@@ -482,6 +482,8 @@ GameObject:
   - component: {fileID: -4208733349736724816}
   - component: {fileID: 8437615050127335106}
   - component: {fileID: 5067243867581461561}
+  - component: {fileID: 6304353209857737466}
+  - component: {fileID: -4236440161288722593}
   - component: {fileID: -3108773104642818051}
   - component: {fileID: -135528591289134065}
   - component: {fileID: -8639825436896791559}
@@ -590,7 +592,6 @@ MonoBehaviour:
   moveSpeed: 5
   weaponName: 
   currentWeapon: {fileID: 0}
-  weaponController: {fileID: 0}
   modelName: 
   modelData: {fileID: 0}
   modelInstance: {fileID: 0}
@@ -772,6 +773,50 @@ MonoBehaviour:
   behaviourProfile: {fileID: 11400000, guid: cb6dea369d12a4e4fb32054d770261aa, type: 2}
   debugMode: 0
   transitionCheckInterval: 0.2
+--- !u!114 &6304353209857737466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aaf893b605a3cf498926b8d56e15f5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.BehaviourDebugDisplay
+  currentState: None
+  timeInState: 0
+  currentTarget: None
+  distanceToTarget: 0
+  healthPercent: 1
+  isMoving: 0
+  availableSkillCount: 0
+  showGizmos: 1
+  showLabels: 1
+--- !u!114 &-4236440161288722593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321437018096114333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6eff1282ed37db419c6eb7fc54774eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.ThreatManager
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  enableThreat: 1
+  threatDecayRate: 1
+  maxThreat: 1000
+  threatRange: 50
+  damageThreatMultiplier: 1
+  healingGeneratesThreat: 0
+  healingThreatMultiplier: 0.5
+  debugMode: 0
 --- !u!114 &-3108773104642818051
 MonoBehaviour:
   m_ObjectHideFlags: 0

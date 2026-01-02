@@ -16,6 +16,7 @@ This is a fully server-authoritative, data-driven NPC behaviour system for Unity
 6. **BehaviourExecutor** - Server-side component that runs the behaviour logic
 7. **SkillSelector** - Strategies for choosing which skills to use
 8. **HealthPhaseManager** - Boss fight phase system based on health thresholds
+9. **ThreatManager** - Optional threat/aggro system for dynamic target prioritization
 
 ### Design Principles
 
@@ -24,6 +25,7 @@ This is a fully server-authoritative, data-driven NPC behaviour system for Unity
 - **Stateless ScriptableObjects**: Runtime data lives in BehaviourContext, not in assets
 - **Modular**: Easy to add new states, conditions, and selectors
 - **Reusable**: Components can be mixed and matched across different NPCs
+- **Threat-Aware**: Optional threat system for MMO-style aggro mechanics
 
 ## Getting Started
 
@@ -333,15 +335,32 @@ Assets/Scripts/NPCBehaviour/
 │   ├── HasTargetCondition.cs
 │   ├── RandomChanceCondition.cs
 │   ├── EnemyCountCondition.cs
-│   └── CompositeCondition.cs
-└── SkillSelectors/
-    ├── SkillSelector.cs
-    ├── FirstAvailableSkillSelector.cs
-    ├── DistanceBasedSkillSelector.cs
-    ├── HealthBasedSkillSelector.cs
-    ├── RandomWeightedSkillSelector.cs
-    └── PrioritySkillSelector.cs
+│   ├── CompositeCondition.cs
+│   ├── HighestThreatCondition.cs
+│   └── ThreatThresholdCondition.cs
+├── SkillSelectors/
+│   ├── SkillSelector.cs
+│   ├── FirstAvailableSkillSelector.cs
+│   ├── DistanceBasedSkillSelector.cs
+│   ├── HealthBasedSkillSelector.cs
+│   ├── RandomWeightedSkillSelector.cs
+│   └── PrioritySkillSelector.cs
+├── ThreatTable.cs
+└── ThreatManager.cs
 ```
+
+## Threat System (Optional)
+
+The system includes an optional threat/aggro system for MMO-style combat. NPCs can track which targets are most threatening and prioritize them accordingly.
+
+**Key Features:**
+- Automatic threat generation from damage/healing
+- Threat decay over time and distance
+- Taunt mechanics
+- Threat-based targeting in Chase/Attack states
+- Threat-based conditions for transitions
+
+See [THREAT_SYSTEM.md](THREAT_SYSTEM.md) for complete documentation.
 
 ## Best Practices
 
@@ -352,6 +371,7 @@ Assets/Scripts/NPCBehaviour/
 5. **Reuse Components**: Create a library of conditions and selectors to reuse
 6. **Document Profiles**: Use the description fields to explain behaviour intent
 7. **Profile Performance**: Monitor transition check frequency in production
+8. **Threat System**: Add ThreatManager for dynamic target prioritization
 
 ## Credits
 

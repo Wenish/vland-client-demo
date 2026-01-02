@@ -18,4 +18,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 49144cce5e4647e4788f348abfcd8d6b, type: 2}
   skillSelector: {fileID: 11400000, guid: a66296a3f845f234fb8fe22340f4e1a8, type: 2}
   skillCooldown: 1
+  autoAttackCooldown: 0.5
   faceTarget: 1
+  updateThreatTarget: 1
+  threatUpdateInterval: 1

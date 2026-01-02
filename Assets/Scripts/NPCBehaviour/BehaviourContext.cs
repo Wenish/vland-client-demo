@@ -15,6 +15,7 @@ namespace NPCBehaviour
         public UnitController Unit { get; private set; }
         public UnitMediator Mediator { get; private set; }
         public Transform Transform { get; private set; }
+        public ThreatManager ThreatManager { get; private set; }
         
         // Current behaviour state
         public BehaviourState CurrentState { get; set; }
@@ -44,6 +45,7 @@ namespace NPCBehaviour
             Unit = unit;
             Mediator = unit.GetComponent<UnitMediator>();
             Transform = unit.transform;
+            ThreatManager = unit.GetComponent<ThreatManager>();
             CurrentPath = new NavMeshPath();
             AvailableSkills = new List<NetworkedSkillInstance>();
         }
@@ -115,6 +117,27 @@ namespace NPCBehaviour
                 }
             }
             return result;
+        }
+
+        // Threat helpers
+        public bool HasThreatSystem => ThreatManager != null && ThreatManager.IsEnabled;
+
+        public UnitController GetHighestThreatTarget()
+        {
+            if (!HasThreatSystem) return null;
+            return ThreatManager.GetHighestThreatTarget();
+        }
+
+        public float GetThreat(UnitController target)
+        {
+            if (!HasThreatSystem || target == null) return 0f;
+            return ThreatManager.GetThreat(target);
+        }
+
+        public int GetThreatTargetCount()
+        {
+            if (!HasThreatSystem) return 0;
+            return ThreatManager.ThreatTargetCount;
         }
     }
 }

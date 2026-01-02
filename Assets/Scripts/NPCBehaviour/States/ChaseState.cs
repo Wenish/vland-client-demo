@@ -26,6 +26,9 @@ namespace NPCBehaviour
         [Tooltip("Prioritize closest target")]
         public bool prioritizeClosest = true;
 
+        [Tooltip("Use threat-based targeting if ThreatManager is available")]
+        public bool useThreatTargeting = true;
+
         [Header("Movement")]
         [Tooltip("How close to get to target before stopping")]
         public float stoppingDistance = 2f;
@@ -82,6 +85,22 @@ namespace NPCBehaviour
 
         private void FindTarget(BehaviourContext context)
         {
+            // Try threat-based targeting first if enabled and available
+            if (useThreatTargeting && context.HasThreatSystem)
+            {
+                var threatTarget = context.GetHighestThreatTarget();
+                if (threatTarget != null && !threatTarget.IsDead)
+                {
+                    float distance = Vector3.Distance(context.Position, threatTarget.transform.position);
+                    if (distance <= detectionRange)
+                    {
+                        context.CurrentTarget = threatTarget;
+                        return;
+                    }
+                }
+            }
+
+            // Fallback to standard targeting
             var allUnits = Object.FindObjectsByType<UnitController>(FindObjectsSortMode.None);
             var enemies = allUnits
                 .Where(u => u != null && u != context.Unit && u.team != context.Team && !u.IsDead)

@@ -28,16 +28,38 @@ namespace NPCBehaviour
         [Tooltip("Should the NPC face its target while attacking?")]
         public bool faceTarget = true;
 
+        [Tooltip("Re-evaluate threat target periodically")]
+        public bool updateThreatTarget = false;
+
+        [Tooltip("How often to update threat target (in seconds)")]
+        public float threatUpdateInterval = 1f;
+
         public override void OnEnter(BehaviourContext context)
         {
             context.LastSkillUseTime = 0f;
             context.LastAttackTime = 0f;
             context.RefreshAvailableSkills();
+            context.SetStateData("lastThreatUpdate", 0f);
         }
 
         public override bool OnUpdate(BehaviourContext context, float deltaTime)
         {
             context.TimeInState += deltaTime;
+
+            // Re-evaluate threat target if enabled
+            if (updateThreatTarget && context.HasThreatSystem)
+            {
+                float lastUpdate = context.GetStateData("lastThreatUpdate", 0f);
+                if (Time.time - lastUpdate >= threatUpdateInterval)
+                {
+                    var threatTarget = context.GetHighestThreatTarget();
+                    if (threatTarget != null && !threatTarget.IsDead)
+                    {
+                        context.CurrentTarget = threatTarget;
+                    }
+                    context.SetStateData("lastThreatUpdate", Time.time);
+                }
+            }
 
             // No target = exit state
             if (context.CurrentTarget == null || context.CurrentTarget.IsDead)

@@ -648,15 +648,270 @@ executor.TransitionToState(fleeState);
 
 ---
 
+## Threat System API
+
+### ThreatTable
+
+Core data structure for tracking threat values.
+
+```csharp
+public class ThreatTable
+{
+    public ThreatTable(float decayRate, float maxThreat, float threatRange);
+    
+    // Threat manipulation
+    public void AddThreat(UnitController unit, float amount);
+    public void SetThreat(UnitController unit, float amount);
+    public void RemoveThreat(UnitController unit, float amount);
+    public void ClearThreat(UnitController unit);
+    public void ClearAll();
+    
+    // Queries
+    public float GetThreat(UnitController unit);
+    public UnitController GetHighestThreatTarget(bool requiresLOS, Vector3 origin, LayerMask losLayerMask);
+    public List<UnitController> GetUnitsAboveThreat(float threshold);
+    public List<UnitController> GetAllTargetsByThreat();
+    public List<(UnitController unit, float threat)> GetThreatList();
+    public bool HasThreat(UnitController unit);
+    public int GetThreatCount();
+    
+    // Advanced
+    public void Update(float deltaTime, Vector3 npcPosition);
+    public void ScaleAllThreat(float multiplier);
+    public void TransferThreat(UnitController from, UnitController to, float percentage);
+    
+    // Configuration
+    public float DecayRate { get; set; }
+    public float MaxThreat { get; set; }
+    public float ThreatRange { get; set; }
+}
+```
+
+**Key Methods:**
+
+- `AddThreat()` - Increase threat for a target
+- `GetHighestThreatTarget()` - Get target with most threat
+- `ScaleAllThreat()` - Multiply all threat by factor (for AoE reduction)
+- `TransferThreat()` - Move threat between targets (tank swaps)
+- `Update()` - Apply decay and cleanup (call every frame)
+
+---
+
+### ThreatManager
+
+MonoBehaviour component for managing NPC threat.
+
+```csharp
+[RequireComponent(typeof(UnitController))]
+public class ThreatManager : NetworkBehaviour
+{
+    // Configuration
+    public bool enableThreat;
+    public float threatDecayRate;
+    public float maxThreat;
+    public float threatRange;
+    public float damageThreatMultiplier;
+    public bool healingGeneratesThreat;
+    public float healingThreatMultiplier;
+    
+    // Properties
+    public ThreatTable ThreatTable { get; }
+    public bool IsEnabled { get; }
+    public int ThreatTargetCount { get; }
+    
+    // Threat manipulation
+    public void AddThreat(UnitController target, float amount);
+    public void RemoveThreat(UnitController target, float amount);
+    public void ClearThreat(UnitController target);
+    public void ClearAllThreat();
+    public float GetThreat(UnitController target);
+    public UnitController GetHighestThreatTarget();
+    
+    // Special mechanics
+    public void Taunt(UnitController taunter, float duration);
+    public void TransferThreat(UnitController from, UnitController to, float percentage);
+    public void ScaleAllThreat(float multiplier);
+    
+    // Skill integration
+    public void OnDamageDealt(UnitController target, float damage, float threatMultiplier);
+    public void OnHealingDealt(UnitController healTarget, float healAmount);
+    
+    // Configuration
+    public void SetThreatEnabled(bool enabled);
+    public void ConfigureThreat(float decayRate, float maxThreat, float range);
+}
+```
+
+**Usage Example:**
+
+```csharp
+// Add ThreatManager to NPC
+ThreatManager threatMgr = npc.AddComponent<ThreatManager>();
+threatMgr.enableThreat = true;
+threatMgr.threatDecayRate = 2f;
+threatMgr.maxThreat = 1000f;
+
+// When dealing damage
+threatMgr.OnDamageDealt(target, damageAmount, threatMultiplier: 2.0f);
+
+// Tank taunt
+threatMgr.Taunt(tankUnit);
+
+// Check highest threat
+UnitController highestThreat = threatMgr.GetHighestThreatTarget();
+```
+
+---
+
+### BehaviourContext - Threat Helpers
+
+Added threat convenience methods:
+
+```csharp
+public class BehaviourContext
+{
+    public ThreatManager ThreatManager { get; }
+    
+    // Threat helpers
+    public bool HasThreatSystem { get; }
+    public UnitController GetHighestThreatTarget();
+    public float GetThreat(UnitController target);
+    public int GetThreatTargetCount();
+}
+```
+
+**Usage in States:**
+
+```csharp
+public override bool OnUpdate(BehaviourContext context, float deltaTime)
+{
+    if (context.HasThreatSystem)
+    {
+        var target = context.GetHighestThreatTarget();
+        if (target != null)
+        {
+            context.CurrentTarget = target;
+        }
+    }
+    return true;
+}
+```
+
+---
+
+### Threat Conditions
+
+#### HighestThreatCondition
+
+Checks if highest threat target exists or matches current target.
+
+```csharp
+[CreateAssetMenu(menuName = "Game/NPC Behaviour/Conditions/Highest Threat")]
+public class HighestThreatCondition : BehaviourCondition
+{
+    public bool checkCurrentTarget;
+    public bool updateCurrentTarget;
+    
+    public override bool Evaluate(BehaviourContext context);
+}
+```
+
+**Configuration:**
+- `checkCurrentTarget = true`: Validates current target is highest threat
+- `checkCurrentTarget = false`: Just checks if any target has threat
+- `updateCurrentTarget = true`: Sets context.CurrentTarget to highest threat
+
+---
+
+#### ThreatThresholdCondition
+
+Checks threat values against thresholds.
+
+```csharp
+public enum ThresholdMode
+{
+    TargetAboveThreshold,    // Specific target's threat
+    AnyAboveThreshold,       // Any target's threat
+    TotalTargetCount,        // Number of targets
+    HighestThreatValue       // Highest threat value
+}
+
+[CreateAssetMenu(menuName = "Game/NPC Behaviour/Conditions/Threat Threshold")]
+public class ThreatThresholdCondition : BehaviourCondition
+{
+    public ThresholdMode mode;
+    public ComparisonType comparison;
+    public float threshold;
+    public bool useCurrentTarget;
+    
+    public override bool Evaluate(BehaviourContext context);
+}
+```
+
+**Example Usage:**
+
+```csharp
+// Check if more than 5 enemies have threat
+mode = ThresholdMode.TotalTargetCount;
+comparison = ComparisonType.GreaterThan;
+threshold = 5f;
+
+// Check if current target has > 100 threat
+mode = ThresholdMode.TargetAboveThreshold;
+comparison = ComparisonType.GreaterThan;
+threshold = 100f;
+useCurrentTarget = true;
+```
+
+---
+
+### Updated States with Threat Support
+
+#### ChaseState
+
+```csharp
+public class ChaseState : BehaviourState
+{
+    public bool useThreatTargeting = true;
+    // ... other properties
+}
+```
+
+When `useThreatTargeting = true`, automatically targets highest threat enemy.
+
+#### AttackState
+
+```csharp
+public class AttackState : BehaviourState
+{
+    public bool updateThreatTarget = false;
+    public float threatUpdateInterval = 1f;
+    // ... other properties
+}
+```
+
+When `updateThreatTarget = true`, periodically switches to highest threat target.
+
+---
+
 ## Performance Notes
 
 - **Transition Check:** Expensive operation, default interval is 0.2s
 - **Path Calculation:** Done each frame in chase/flee states
 - **Target Finding:** Done periodically in chase state (default 0.5s)
 - **NavMesh Sampling:** Used in patrol/flee states
+- **Threat Updates:** ThreatTable.Update() called every frame per NPC
+- **Threat Decay:** Linear decay per frame, negligible cost
+- **Threat Queries:** Dictionary lookups, O(1) access
 
-For 50+ NPCs, consider increasing transition check intervals or reducing detection ranges.
+For 50+ NPCs, consider:
+- Increasing transition check intervals
+- Reducing detection/threat ranges
+- Disabling threat decay for static threats
+- Using longer threat update intervals
 
 ---
 
 This API reference covers all public methods and properties. For implementation details, consult the source code documentation within each class.
+
+For complete threat system documentation, see [THREAT_SYSTEM.md](THREAT_SYSTEM.md).

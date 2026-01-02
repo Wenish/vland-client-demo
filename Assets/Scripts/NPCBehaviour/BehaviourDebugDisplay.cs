@@ -33,6 +33,22 @@ namespace NPCBehaviour
         [SerializeField, Tooltip("Available skills count")]
         private int availableSkillCount = 0;
 
+        [Header("Threat Info (if ThreatManager exists)")]
+        [SerializeField, Tooltip("Threat system enabled")]
+        private bool hasThreatSystem = false;
+
+        [SerializeField, Tooltip("Number of threat targets")]
+        private int threatTargetCount = 0;
+
+        [SerializeField, Tooltip("Highest threat target")]
+        private string highestThreatTarget = "None";
+
+        [SerializeField, Tooltip("Highest threat value")]
+        private float highestThreatValue = 0f;
+
+        [SerializeField, Tooltip("Current target threat value")]
+        private float currentTargetThreat = 0f;
+
         [Header("Settings")]
         [SerializeField]
         private bool showGizmos = true;
@@ -63,6 +79,40 @@ namespace NPCBehaviour
             healthPercent = context.HealthPercent;
             isMoving = context.IsMoving;
             availableSkillCount = context.AvailableSkills != null ? context.AvailableSkills.Count : 0;
+
+            // Update threat info
+            hasThreatSystem = context.HasThreatSystem;
+            if (hasThreatSystem)
+            {
+                threatTargetCount = context.GetThreatTargetCount();
+                var topTarget = context.GetHighestThreatTarget();
+                if (topTarget != null)
+                {
+                    highestThreatTarget = topTarget.name;
+                    highestThreatValue = context.GetThreat(topTarget);
+                }
+                else
+                {
+                    highestThreatTarget = "None";
+                    highestThreatValue = 0f;
+                }
+
+                if (context.CurrentTarget != null)
+                {
+                    currentTargetThreat = context.GetThreat(context.CurrentTarget);
+                }
+                else
+                {
+                    currentTargetThreat = 0f;
+                }
+            }
+            else
+            {
+                threatTargetCount = 0;
+                highestThreatTarget = "None";
+                highestThreatValue = 0f;
+                currentTargetThreat = 0f;
+            }
         }
 
         private void OnDrawGizmos()
@@ -108,6 +158,22 @@ namespace NPCBehaviour
                 {
                     label += $"\nTarget: {context.CurrentTarget.name}";
                     label += $"\nDist: {distanceToTarget:F1}";
+                }
+
+                // Add threat info if available
+                if (hasThreatSystem)
+                {
+                    label += $"\n--- Threat ---";
+                    label += $"\nTargets: {threatTargetCount}";
+                    if (context.CurrentTarget != null)
+                    {
+                        label += $"\nCur Threat: {currentTargetThreat:F0}";
+                    }
+                    if (highestThreatTarget != "None")
+                    {
+                        label += $"\nTop: {highestThreatTarget}";
+                        label += $"\nTop Threat: {highestThreatValue:F0}";
+                    }
                 }
 
                 UnityEditor.Handles.Label(labelPos, label);
