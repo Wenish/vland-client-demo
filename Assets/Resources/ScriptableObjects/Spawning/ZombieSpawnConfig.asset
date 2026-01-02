@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7e77027f99e9e5468d7358e8bdb9abc, type: 3}
   m_Name: ZombieSpawnConfig
   m_EditorClassIdentifier: Assembly-CSharp::SpawnConfigurationMob
-  unitData: {fileID: 11400000, guid: f7f015471a4aa9844bf99b8a68aef34a, type: 2}
+  unitData: {fileID: 11400000, guid: ecd2f2d2a21a3814d84b2d4a941ba6a8, type: 2}
   spawnHeightOffset: 0
   initialSpawnDelay: 0
   areaType: 0
@@ -23,8 +23,8 @@ MonoBehaviour:
     m_Bits: 1
   autoCleanupCorpse: 1
   corpseCleanupDelay: 5
-  spawnCount: 2
-  maxActiveUnits: 2
+  spawnCount: 1
+  maxActiveUnits: 1
   spawnInterval: 60
   enableRespawn: 1
   respawnDelay: 7

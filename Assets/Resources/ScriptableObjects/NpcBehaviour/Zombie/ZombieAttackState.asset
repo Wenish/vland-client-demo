@@ -21,4 +21,4 @@ MonoBehaviour:
   autoAttackCooldown: 0.5
   faceTarget: 1
   updateThreatTarget: 1
-  threatUpdateInterval: 1
+  threatUpdateInterval: 0
