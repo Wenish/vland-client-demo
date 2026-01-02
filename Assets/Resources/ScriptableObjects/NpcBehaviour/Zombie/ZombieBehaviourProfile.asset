@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6dd4f26be36a4da5595b9d14f4dfb, type: 3}
+  m_Name: ZombieBehaviourProfile
+  m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.BehaviourProfile
+  profileName: 
+  profileDescription: 
+  initialState: {fileID: 11400000, guid: b9c47b72854dfbe46bb14341e76da641, type: 2}
+  availableStates:
+  - {fileID: 11400000, guid: b9c47b72854dfbe46bb14341e76da641, type: 2}
+  - {fileID: 11400000, guid: 9a4d7e0d8cfa7204c80b25d905f208cc, type: 2}
+  globalTransitions:
+  - {fileID: 11400000, guid: 78f0a08daf11ce843a504bb0f01ebc90, type: 2}

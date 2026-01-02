@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using NPCBehaviour;
 
 [CreateAssetMenu(fileName = "NewUnit", menuName = "Game/Unit/Unit")]
 public class UnitData : ScriptableObject
@@ -25,4 +26,7 @@ public class UnitData : ScriptableObject
     public List<SkillData> passiveSkills = new List<SkillData>();
     public List<SkillData> normalSkills = new List<SkillData>();
     public List<SkillData> ultimateSkills = new List<SkillData>();
+
+    [Header("AI Behaviour")]
+    public BehaviourProfile behaviourProfile;
 }

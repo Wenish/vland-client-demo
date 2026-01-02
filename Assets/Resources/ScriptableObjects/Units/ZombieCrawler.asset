@@ -25,3 +25,4 @@ MonoBehaviour:
   passiveSkills: []
   normalSkills: []
   ultimateSkills: []
+  behaviourProfile: {fileID: 11400000, guid: 62a5a74123b234f4f8b7c3d374e42d70, type: 2}
