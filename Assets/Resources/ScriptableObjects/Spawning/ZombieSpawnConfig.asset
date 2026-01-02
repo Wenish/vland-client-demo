@@ -15,17 +15,19 @@ MonoBehaviour:
   unitData: {fileID: 11400000, guid: f7f015471a4aa9844bf99b8a68aef34a, type: 2}
   spawnHeightOffset: 0
   initialSpawnDelay: 0
-  areaType: 1
+  areaType: 0
   spawnRadius: 5
   alignToGround: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
-  spawnCount: 3
-  maxActiveUnits: 10
-  spawnInterval: 5
+  autoCleanupCorpse: 1
+  corpseCleanupDelay: 5
+  spawnCount: 2
+  maxActiveUnits: 2
+  spawnInterval: 60
   enableRespawn: 1
-  respawnDelay: 15
+  respawnDelay: 7
   useWaves: 0
   unitsPerWave: 3
   waveCooldown: 30
