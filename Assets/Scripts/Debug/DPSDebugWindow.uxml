@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="dps-window" class="dps-window">
+        <ui:VisualElement name="dps-header" class="dps-header">
+            <ui:Label text="DPS Monitor" name="dps-title" class="dps-title" />
+            <ui:Label text="Initializing..." name="dps-status" class="dps-status" />
+        </ui:VisualElement>
+        <ui:VisualElement name="dps-content" class="dps-content">
+            <ui:ScrollView name="dps-list" class="dps-list" mode="Vertical" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
