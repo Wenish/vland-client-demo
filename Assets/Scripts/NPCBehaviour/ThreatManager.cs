@@ -1,4 +1,5 @@
 using Mirror;
+using MyGame.Events;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -49,7 +50,6 @@ namespace NPCBehaviour
         // Runtime
         private ThreatTable _threatTable;
         private UnitController _unit;
-        private float _lastHealthValue;
         private bool _isInitialized;
 
         // Public properties
@@ -71,9 +71,6 @@ namespace NPCBehaviour
 
             // Update threat table (decay, cleanup)
             _threatTable.Update(Time.deltaTime, transform.position);
-
-            // Track damage/healing
-            TrackHealthChanges();
         }
 
         private void OnDestroy()
@@ -81,6 +78,9 @@ namespace NPCBehaviour
             if (_isInitialized)
             {
                 _threatTable?.ClearAll();
+                
+                // Unsubscribe from events
+                EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
             }
         }
 
@@ -100,8 +100,10 @@ namespace NPCBehaviour
             }
 
             _threatTable = new ThreatTable(threatDecayRate, maxThreat, threatRange);
-            _lastHealthValue = _unit.health;
             _isInitialized = true;
+            
+            // Subscribe to damage events via EventManager
+            EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
 
             if (debugMode)
                 Debug.Log($"[ThreatManager] Initialized on {gameObject.name}");
@@ -235,71 +237,26 @@ namespace NPCBehaviour
 
         #region Automatic Threat Generation
 
-        private void TrackHealthChanges()
+        /// <summary>
+        /// Handles damage events and adds threat to the attacker.
+        /// </summary>
+        private void OnUnitDamaged(UnitDamagedEvent evt)
         {
-            float currentHealth = _unit.health;
-            float healthDelta = currentHealth - _lastHealthValue;
-
-            if (Mathf.Abs(healthDelta) > 0.1f)
-            {
-                if (healthDelta < 0f) // Damage taken
-                {
-                    OnDamageTaken(Mathf.Abs(healthDelta));
-                }
-                else if (healthDelta > 0f && healingGeneratesThreat) // Healing received
-                {
-                    OnHealingReceived(healthDelta);
-                }
-            }
-
-            _lastHealthValue = currentHealth;
-        }
-
-        private void OnDamageTaken(float damageAmount)
-        {
-            // Try to find who damaged us
-            // Note: For a more robust system, you'd want to track the damage source
-            // This is a simplified version that adds threat to the nearest enemy
-            var attacker = FindNearestEnemy();
-            if (attacker != null)
-            {
-                float threat = damageAmount * damageThreatMultiplier;
-                AddThreat(attacker, threat);
-            }
-        }
-
-        private void OnHealingReceived(float healAmount)
-        {
-            // Add threat to the healer (if we could track them)
-            // For now, this is a placeholder
-            var nearestEnemy = FindNearestEnemy();
-            if (nearestEnemy != null)
-            {
-                float threat = healAmount * healingThreatMultiplier;
-                AddThreat(nearestEnemy, threat);
-            }
-        }
-
-        private UnitController FindNearestEnemy()
-        {
-            var allUnits = FindObjectsByType<UnitController>(FindObjectsSortMode.None);
-            UnitController nearest = null;
-            float nearestDistance = float.MaxValue;
-
-            foreach (var unit in allUnits)
-            {
-                if (unit == null || unit == _unit || unit.IsDead) continue;
-                if (unit.team == _unit.team) continue;
-
-                float distance = Vector3.Distance(transform.position, unit.transform.position);
-                if (distance < nearestDistance && distance <= threatRange)
-                {
-                    nearest = unit;
-                    nearestDistance = distance;
-                }
-            }
-
-            return nearest;
+            // Only process if this is damage to THIS unit
+            if (evt.Unit != _unit) return;
+            
+            if (!isServer || !enableThreat || !_isInitialized) return;
+            
+            var attacker = evt.Attacker;
+            if (attacker == null || attacker.IsDead) return;
+            if (attacker.team == _unit.team) return; // No threat for allies
+            
+            // Add threat based on damage dealt
+            float threat = evt.DamageAmount * damageThreatMultiplier;
+            AddThreat(attacker, threat);
+            
+            if (debugMode)
+                Debug.Log($"[ThreatManager] {attacker.name} dealt {evt.DamageAmount} damage to {_unit.name}, gained {threat} threat (Total: {_threatTable.GetThreat(attacker)})");
         }
 
         #endregion
