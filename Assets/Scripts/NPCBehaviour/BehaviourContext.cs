@@ -16,6 +16,7 @@ namespace NPCBehaviour
         public UnitMediator Mediator { get; private set; }
         public Transform Transform { get; private set; }
         public ThreatManager ThreatManager { get; private set; }
+        public Vector3 SpawnPosition { get; set; }
         
         // Current behaviour state
         public BehaviourState CurrentState { get; set; }
@@ -46,6 +47,7 @@ namespace NPCBehaviour
             Mediator = unit.GetComponent<UnitMediator>();
             Transform = unit.transform;
             ThreatManager = unit.GetComponent<ThreatManager>();
+            SpawnPosition = unit.transform.position;
             CurrentPath = new NavMeshPath();
             AvailableSkills = new List<NetworkedSkillInstance>();
         }
@@ -77,9 +79,9 @@ namespace NPCBehaviour
 
         // Convenience properties
         public Vector3 Position => Transform.position;
-        public float Health => Unit.health;
-        public float MaxHealth => Unit.maxHealth;
-        public float HealthPercent => MaxHealth > 0 ? (Health / MaxHealth) : 0f;
+        public int Health => Unit.health;
+        public int MaxHealth => Unit.maxHealth;
+        public float HealthPercent => MaxHealth > 0 ? ((float)Health / MaxHealth) : 0f;
         public bool IsDead => Unit.IsDead;
         public int Team => Unit.team;
 
