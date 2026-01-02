@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -163,16 +164,19 @@ namespace NPCBehaviour
                 // Add threat info if available
                 if (hasThreatSystem)
                 {
-                    label += $"\n--- Threat ---";
+                    label += $"\n--- Threat Table ---";
                     label += $"\nTargets: {threatTargetCount}";
-                    if (context.CurrentTarget != null)
+                    
+                    // Get all threat targets sorted by threat value
+                    var threatTargets = context.ThreatManager.ThreatTable.GetAllTargetsByThreat();
+                    if (threatTargets != null && threatTargets.Count > 0)
                     {
-                        label += $"\nCur Threat: {currentTargetThreat:F0}";
-                    }
-                    if (highestThreatTarget != "None")
-                    {
-                        label += $"\nTop: {highestThreatTarget}";
-                        label += $"\nTop Threat: {highestThreatValue:F0}";
+                        foreach (var target in threatTargets)
+                        {
+                            float threat = context.GetThreat(target);
+                            string marker = target == context.CurrentTarget ? " *" : "";
+                            label += $"\n  {target.name}: {threat:F0}{marker}";
+                        }
                     }
                 }
 
