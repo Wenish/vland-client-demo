@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/Components/RoomLobby/RoomLobby.uss?fileID=7433441132597879392&amp;guid=511be4b3819089147be469f5b687b325&amp;type=3#RoomLobby" />
+    <ui:VisualElement name="roomLobbyRoot" class="room-lobby__root" style="align-items: flex-start; justify-content: flex-start;">
+        <ui:VisualElement class="room-lobby__panel">
+            <ui:VisualElement class="room-lobby__header">
+                <ui:Label name="title" text="Room" class="room-lobby__title" />
+                <ui:Label name="subtitle" text="Waiting for players…" class="room-lobby__subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="room-lobby__content">
+                <ui:Label text="Players" class="room-lobby__section-title" />
+                <ui:ListView name="playerList" selection-type="None" show-border="false" show-foldout-header="false" show-add-remove-footer="false" reorderable="false" virtualization-method="DynamicHeight" class="room-lobby__player-list" />
+            </ui:VisualElement>
+            <ui:VisualElement class="room-lobby__footer">
+                <ui:Label name="localStatus" text="Not Ready" class="room-lobby__status" />
+                <ui:Button name="readyButton" text="Ready" class="room-lobby__button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,218 @@
+.room-lobby__root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+.room-lobby__panel {
+    flex-direction: column;
+    align-items: stretch;
+    width: 420px;
+    min-height: 300px;
+    max-height: 90%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: rgba(13, 13, 13, 0.98);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(74, 74, 74, 0.8);
+    border-right-color: rgba(74, 74, 74, 0.8);
+    border-top-color: rgba(74, 74, 74, 0.8);
+    border-bottom-color: rgba(74, 74, 74, 0.8);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.room-lobby__header {
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+}
+
+.room-lobby__title {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 32px;
+    color: rgb(250, 250, 250);
+}
+
+.room-lobby__subtitle {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 14px;
+    color: rgba(230, 230, 230, 0.78);
+    margin-top: 4px;
+}
+
+.room-lobby__content {
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.room-lobby__section-title {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 16px;
+    color: rgba(250, 250, 250, 0.9);
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.room-lobby__player-list {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.room-lobby__footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    margin-top: 8px;
+}
+
+.room-lobby__status {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 14px;
+    color: rgba(250, 250, 250, 0.86);
+}
+
+.room-lobby__button {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 14px;
+    padding-left: 28px;
+    padding-right: 28px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: rgb(250, 250, 250);
+    background-color: rgb(63, 63, 63);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(77, 77, 77, 0.9);
+    border-right-color: rgba(77, 77, 77, 0.9);
+    border-top-color: rgba(77, 77, 77, 0.9);
+    border-bottom-color: rgba(77, 77, 77, 0.9);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.room-lobby__button:hover {
+    background-color: rgb(77, 77, 77);
+}
+
+.room-lobby__button--ready {
+    background-color: rgba(24, 110, 64, 0.95);
+    border-left-color: rgba(24, 110, 64, 0.95);
+    border-right-color: rgba(24, 110, 64, 0.95);
+    border-top-color: rgba(24, 110, 64, 0.95);
+    border-bottom-color: rgba(24, 110, 64, 0.95);
+}
+
+.room-lobby__button--ready:hover {
+    background-color: rgba(30, 130, 76, 0.95);
+}
+
+.room-lobby__row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 6px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(255, 255, 255, 0.07);
+    border-right-color: rgba(255, 255, 255, 0.07);
+    border-top-color: rgba(255, 255, 255, 0.07);
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.room-lobby__row--local {
+    background-color: rgba(150, 190, 186, 0.1);
+    border-left-color: rgba(150, 190, 186, 0.18);
+    border-right-color: rgba(150, 190, 186, 0.18);
+    border-top-color: rgba(150, 190, 186, 0.18);
+    border-bottom-color: rgba(150, 190, 186, 0.18);
+}
+
+.room-lobby__row-left {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.room-lobby__dot {
+    width: 10px;
+    height: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin-right: 10px;
+    background-color: rgba(160, 160, 160, 0.65);
+}
+
+.room-lobby__dot--ready {
+    background-color: rgba(46, 187, 104, 0.95);
+}
+
+.room-lobby__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 16px;
+    color: rgba(250, 250, 250, 0.92);
+}
+
+.room-lobby__tag {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 12px;
+    color: rgba(250, 250, 250, 0.65);
+    margin-left: 8px;
+}
+
+.room-lobby__state {
+    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
+    font-size: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-top-left-radius: 999px;
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
+    border-bottom-left-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgba(250, 250, 250, 0.72);
+}
+
+.room-lobby__state--ready {
+    background-color: rgba(46, 187, 104, 0.14);
+    color: rgba(46, 187, 104, 0.95);
+}
