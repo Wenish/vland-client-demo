@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 417eea04b5135b841a5a2af06f92c5a5, type: 3}
-  m_Name: BasicMobTransitionPatrolToChase
+  m_Name: BasicMobTransitionIdleToChase
   m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.BehaviourTransition
   targetState: {fileID: 11400000, guid: 3168570208612cf43acfb8d6ee3ce6f9, type: 2}
   conditions:
-  - {fileID: 11400000, guid: 2955ffc7db9f14341b2be1f20b4a38a0, type: 2}
+  - {fileID: 11400000, guid: e4b2b32149aec3e45a79938bfe906f75, type: 2}
   priority: 5

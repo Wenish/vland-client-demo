@@ -16,8 +16,9 @@ MonoBehaviour:
   description: 
   transitions:
   - {fileID: 11400000, guid: 12d531db05c01664994ad953ea6f09f1, type: 2}
+  - {fileID: 11400000, guid: 0302d3f549e63f546bec43708fe18595, type: 2}
   targetUpdateInterval: 0.5
-  detectionRange: 10
+  detectionRange: 35
   prioritizeClosest: 1
   useThreatTargeting: 1
   stoppingDistance: 1.5
