@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fa89d05da12944ca79cfc8de13a582, type: 3}
+  m_Name: BasicMobConditionCompositeTargetToChase
+  m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.CompositeCondition
+  description: 
+  logicType: 1
+  conditions:
+  - {fileID: 11400000, guid: 9edb80f6fac2a9f4c8c2d6fd1e00df64, type: 2}
+  - {fileID: 11400000, guid: 2955ffc7db9f14341b2be1f20b4a38a0, type: 2}

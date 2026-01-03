@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace NPCBehaviour
 {
@@ -27,7 +28,7 @@ namespace NPCBehaviour
         [Tooltip("Should we clear threat when resetting?")]
         public bool clearThreat = true;
 
-        [Tooltip("Should we heal to full when reaching spawn?")]
+        [Tooltip("Should we heal to full health on reset?")]
         public bool healOnReset = true;
 
         public override void OnEnter(BehaviourContext context)
@@ -51,12 +52,10 @@ namespace NPCBehaviour
             Vector3 directionToSpawn = (context.SpawnPosition - context.Position).normalized;
             float distanceToSpawn = Vector3.Distance(context.Position, context.SpawnPosition);
 
-            // Move back to spawn
+            // Move back to spawn using NavMesh
             if (distanceToSpawn > stoppingDistance)
             {
-                // Set input for movement
-                context.Unit.horizontalInput = directionToSpawn.x;
-                context.Unit.verticalInput = directionToSpawn.z;
+                MoveTowardsSpawn(context);
                 context.IsMoving = true;
             }
             else
@@ -79,6 +78,12 @@ namespace NPCBehaviour
 
         public override void OnExit(BehaviourContext context)
         {
+            // Clear threat/aggro
+            if (clearThreat && context.HasThreatSystem)
+            {
+                context.ThreatManager.ClearAllThreat();
+            }
+
             context.Unit.horizontalInput = 0f;
             context.Unit.verticalInput = 0f;
             context.IsMoving = false;
@@ -96,5 +101,36 @@ namespace NPCBehaviour
 
             return null;
         }
+
+        private void MoveTowardsSpawn(BehaviourContext context)
+            {
+                Vector3 spawnPos = context.SpawnPosition;
+                context.CurrentDestination = spawnPos;
+
+                // Calculate path to spawn
+                NavMesh.CalculatePath(context.Position, spawnPos, NavMesh.AllAreas, context.CurrentPath);
+
+                if (context.CurrentPath.corners.Length < 2)
+                {
+                    context.Unit.horizontalInput = 0f;
+                    context.Unit.verticalInput = 0f;
+                    return;
+                }
+
+                // Get next waypoint
+                Vector3 nextWaypoint = context.CurrentPath.corners[1];
+
+                // Move towards next waypoint
+                Vector3 direction = nextWaypoint - context.Position;
+                direction.y = 0f;
+                direction.Normalize();
+
+                context.Unit.horizontalInput = direction.x;
+                context.Unit.verticalInput = direction.z;
+
+                // Set facing direction
+                float moveAngle = -Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg - 90f + 180f;
+                context.Unit.angle = moveAngle;
+            }
     }
 }
