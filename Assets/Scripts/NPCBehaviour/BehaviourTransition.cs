@@ -7,7 +7,7 @@ namespace NPCBehaviour
     /// Defines a transition between behaviour states.
     /// Transitions are data-driven and can have multiple conditions (all must be true).
     /// </summary>
-    [CreateAssetMenu(fileName = "NewTransition", menuName = "Game/NPC Behaviour/Transition")]
+    [CreateAssetMenu(fileName = "Transition", menuName = "Game/NPC Behaviour/Transition")]
     public class BehaviourTransition : ScriptableObject
     {
         [Header("Transition")]

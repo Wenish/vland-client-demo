@@ -7,7 +7,7 @@ namespace NPCBehaviour
     /// Idle state where NPC does nothing and waits.
     /// Can be used as a default state or for stationary NPCs.
     /// </summary>
-    [CreateAssetMenu(fileName = "IdleState", menuName = "Game/NPC Behaviour/States/Idle")]
+    [CreateAssetMenu(fileName = "StateIdle", menuName = "Game/NPC Behaviour/States/Idle")]
     public class IdleState : BehaviourState
     {
         [Header("Idle Behaviour")]

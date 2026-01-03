@@ -7,7 +7,7 @@ namespace NPCBehaviour
     /// Attack state where NPC uses skills on target.
     /// Uses SkillSelector to choose which skill to use.
     /// </summary>
-    [CreateAssetMenu(fileName = "AttackState", menuName = "Game/NPC Behaviour/States/Attack")]
+    [CreateAssetMenu(fileName = "StateAttack", menuName = "Game/NPC Behaviour/States/Attack")]
     public class AttackState : BehaviourState
     {
         [Header("Attack Behaviour")]
