@@ -87,7 +87,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  showRoomGUI: 1
+  showRoomGUI: 0
   minPlayers: 1
   roomPlayerPrefab: {fileID: 4527370824861600523, guid: 0bef46d7497fa2443a6b6b498434a557, type: 3}
   RoomScene: Assets/Scenes/ZombyRoomScene.unity

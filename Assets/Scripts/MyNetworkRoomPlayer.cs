@@ -14,6 +14,12 @@ using Mirror;
 /// </summary>
 public class MyNetworkRoomPlayer : NetworkRoomPlayer
 {
+    /// <summary>
+    /// The player's display name, synced to all clients.
+    /// </summary>
+    [SyncVar]
+    public string nickName = "";
+
     #region Start & Stop Callbacks
 
     /// <summary>
@@ -45,7 +51,26 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
     /// Called when the local player object has been set up.
     /// <para>This happens after OnStartClient(), as it is triggered by an ownership message from the server. This is an appropriate place to activate components or functionality that should only be active for the local player, such as cameras and input.</para>
     /// </summary>
-    public override void OnStartLocalPlayer() { }
+    public override void OnStartLocalPlayer()
+    {
+        // Send nickname to server so it syncs to all clients
+        string localNickname = ApplicationSettings.Instance?.Nickname;
+        if (!string.IsNullOrWhiteSpace(localNickname))
+        {
+            CmdSetNickName(localNickname);
+        }
+    }
+
+    [Command]
+    private void CmdSetNickName(string newNickName)
+    {
+        // Sanitize and validate on server
+        string sanitized = (newNickName ?? "").Trim();
+        if (sanitized.Length > 30)
+            sanitized = sanitized.Substring(0, 30);
+        
+        nickName = sanitized;
+    }
 
     /// <summary>
     /// This is invoked on behaviours that have authority, based on context and <see cref="NetworkIdentity.hasAuthority">NetworkIdentity.hasAuthority</see>.

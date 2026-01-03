@@ -3971,6 +3971,78 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2717105077132955593, guid: 78c2259b9919e416b990805fadf12f82, type: 3}
   m_PrefabInstance: {fileID: 1380161192}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1381927144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1381927147}
+  - component: {fileID: 1381927146}
+  - component: {fileID: 1381927145}
+  m_Layer: 0
+  m_Name: UiDocumentRoomLobby
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1381927145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381927144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79e1dbb70b13e784e90dc88eecad04d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.RoomLobby.RoomLobbyController
+  roomLobbyUxml: {fileID: 9197481963319205126, guid: c88e826af6f228e418ebb9f2494f8188, type: 3}
+  roomLobbyUss: {fileID: 7433441132597879392, guid: 511be4b3819089147be469f5b687b325, type: 3}
+  panelSettings: {fileID: 11400000, guid: 4430eaa22e4440149b9be804527f4244, type: 2}
+  refreshIntervalSeconds: 0.2
+--- !u!114 &1381927146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381927144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 4430eaa22e4440149b9be804527f4244, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 10
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &1381927147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381927144}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1386574153
 GameObject:
   m_ObjectHideFlags: 0
@@ -6670,3 +6742,4 @@ SceneRoots:
   - {fileID: 553854059}
   - {fileID: 1019430616}
   - {fileID: 483945542}
+  - {fileID: 1381927147}
