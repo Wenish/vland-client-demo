@@ -7,7 +7,7 @@ namespace NPCBehaviour
     /// <summary>
     /// Patrol state where NPC moves between waypoints or in a random pattern.
     /// </summary>
-    [CreateAssetMenu(fileName = "PatrolState", menuName = "Game/NPC Behaviour/States/Patrol")]
+    [CreateAssetMenu(fileName = "StatePatrol", menuName = "Game/NPC Behaviour/States/Patrol")]
     public class PatrolState : BehaviourState
     {
         [Header("Patrol Behaviour")]

@@ -9,7 +9,7 @@ namespace NPCBehaviour
     /// Flee state where NPC runs away from threats.
     /// Useful for low-health behaviour or scared NPCs.
     /// </summary>
-    [CreateAssetMenu(fileName = "FleeState", menuName = "Game/NPC Behaviour/States/Flee")]
+    [CreateAssetMenu(fileName = "StateFlee", menuName = "Game/NPC Behaviour/States/Flee")]
     public class FleeState : BehaviourState
     {
         [Header("Flee Behaviour")]

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -9,9 +10,13 @@ namespace NPCBehaviour
     /// - Heals to full health
     /// - Returns to spawn position
     /// </summary>
-    [CreateAssetMenu(fileName = "ResetState", menuName = "Game/NPC Behaviour/States/Reset")]
+    [CreateAssetMenu(fileName = "StateReset", menuName = "Game/NPC Behaviour/States/Reset")]
     public class ResetState : BehaviourState
     {
+        [Header("Transitions")]
+        [Tooltip("Transitions from this state (typically back to Idle)")]
+        public List<BehaviourTransition> transitions = new();
+
         [Header("Reset Behaviour")]
         [Tooltip("How fast to move back to spawn (units per second)")]
         public float resetSpeed = 5f;
@@ -53,22 +58,23 @@ namespace NPCBehaviour
                 context.Unit.horizontalInput = directionToSpawn.x;
                 context.Unit.verticalInput = directionToSpawn.z;
                 context.IsMoving = true;
-                return true;
+            }
+            else
+            {
+                // Reached spawn - stop moving
+                context.Unit.horizontalInput = 0f;
+                context.Unit.verticalInput = 0f;
+                context.IsMoving = false;
             }
 
-            // Reached spawn - stop moving
-            context.Unit.horizontalInput = 0f;
-            context.Unit.verticalInput = 0f;
-            context.IsMoving = false;
-
             // Heal to full if configured
-            if (healOnReset && context.Health < context.MaxHealth)
+            if ( healOnReset && context.Health < context.MaxHealth)
             {
                 context.Unit.Heal(context.MaxHealth, context.Unit);
             }
 
-            // Exit state to return to Idle
-            return false;
+            // Stay in this state - let transitions handle exit
+            return true;
         }
 
         public override void OnExit(BehaviourContext context)
@@ -76,6 +82,19 @@ namespace NPCBehaviour
             context.Unit.horizontalInput = 0f;
             context.Unit.verticalInput = 0f;
             context.IsMoving = false;
+        }
+
+        public override BehaviourTransition EvaluateTransitions(BehaviourContext context)
+        {
+            foreach (var transition in transitions)
+            {
+                if (transition != null && transition.CanTransition(context))
+                {
+                    return transition;
+                }
+            }
+
+            return null;
         }
     }
 }

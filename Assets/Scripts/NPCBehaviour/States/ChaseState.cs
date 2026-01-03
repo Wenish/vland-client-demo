@@ -9,7 +9,7 @@ namespace NPCBehaviour
     /// Chase state where NPC pursues a target.
     /// Automatically finds and follows enemies.
     /// </summary>
-    [CreateAssetMenu(fileName = "ChaseState", menuName = "Game/NPC Behaviour/States/Chase")]
+    [CreateAssetMenu(fileName = "StateChase", menuName = "Game/NPC Behaviour/States/Chase")]
     public class ChaseState : BehaviourState
     {
         [Header("Chase Behaviour")]

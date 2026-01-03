@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38befedbb8970ec47ab41d7a33880b84, type: 3}
-  m_Name: ZombieChaseState
+  m_Name: BasicMobStateChase
   m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.ChaseState
   stateId: 
   description: 
   transitions:
-  - {fileID: 11400000, guid: c295a57b8a7519c429fa46fe2af18049, type: 2}
+  - {fileID: 11400000, guid: 12d531db05c01664994ad953ea6f09f1, type: 2}
   targetUpdateInterval: 0.5
-  detectionRange: 10000
+  detectionRange: 10
   prioritizeClosest: 1
   useThreatTargeting: 1
-  stoppingDistance: 2
+  stoppingDistance: 1.5

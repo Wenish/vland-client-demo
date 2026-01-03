@@ -7,7 +7,7 @@ namespace NPCBehaviour
     /// A behaviour profile defines which states an NPC can use and the transitions between them.
     /// Profiles are data-driven and can be swapped at runtime for dynamic behaviour changes.
     /// </summary>
-    [CreateAssetMenu(fileName = "NewBehaviourProfile", menuName = "Game/NPC Behaviour/Behaviour Profile")]
+    [CreateAssetMenu(fileName = "BehaviourProfile", menuName = "Game/NPC Behaviour/Behaviour Profile")]
     public class BehaviourProfile : ScriptableObject
     {
         [Header("Profile Info")]
