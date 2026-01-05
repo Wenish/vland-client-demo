@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7df293297139f3c4cb4dad9a59ba8c3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Debug.DPSDebugWindow
-  showWindow: 1
+  showWindow: 0
   updateFrequency: 2
   enableKeyboardToggle: 1
   maxUnitsToDisplay: 10

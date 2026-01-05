@@ -16,7 +16,7 @@ namespace ShadowInfection.Debug
         [Header("Configuration")]
         [Tooltip("Enable/disable the DPS window")]
         [SerializeField]
-        private bool showWindow = true;
+        private bool showWindow = false;
 
         [Tooltip("Update frequency (times per second)")]
         [SerializeField]
