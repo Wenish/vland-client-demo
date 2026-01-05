@@ -175,7 +175,7 @@ namespace NPCBehaviour
             context.Unit.verticalInput = direction.z;
 
             // Set facing direction
-            float angle = -Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg - 90f;
+            float angle = -Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg - 90f + 180f;
             context.Unit.angle = angle;
 
             return false;

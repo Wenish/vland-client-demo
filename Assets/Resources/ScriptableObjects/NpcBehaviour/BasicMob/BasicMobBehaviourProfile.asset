@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.BehaviourProfile
   profileName: 
   profileDescription: 
-  initialState: {fileID: 11400000, guid: b4dac92f01a84e84280a07819d85de79, type: 2}
+  initialState: {fileID: 11400000, guid: f74f70dd47ba9dd4cbd08546725c1e1d, type: 2}
   availableStates:
-  - {fileID: 11400000, guid: b4dac92f01a84e84280a07819d85de79, type: 2}
+  - {fileID: 11400000, guid: f74f70dd47ba9dd4cbd08546725c1e1d, type: 2}
   - {fileID: 11400000, guid: daf315917a42126469a11e12ca4583a4, type: 2}
   - {fileID: 11400000, guid: 3168570208612cf43acfb8d6ee3ce6f9, type: 2}
   - {fileID: 11400000, guid: ce738011c34e67f4db0951efd08a9a69, type: 2}

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 417eea04b5135b841a5a2af06f92c5a5, type: 3}
-  m_Name: BasicMobTransitionResetToIdle
+  m_Name: BasicMobTransitionResetToWander
   m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.BehaviourTransition
-  targetState: {fileID: 11400000, guid: b4dac92f01a84e84280a07819d85de79, type: 2}
+  targetState: {fileID: 11400000, guid: f74f70dd47ba9dd4cbd08546725c1e1d, type: 2}
   conditions:
   - {fileID: 11400000, guid: edbb8a327e5470e4f9bbd2c4388ca49f, type: 2}
   priority: 0
