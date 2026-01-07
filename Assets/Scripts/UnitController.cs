@@ -201,6 +201,7 @@ public class UnitController : NetworkBehaviour
     public event Action<(UnitController attacker, int attackIndex)> OnAttackSwing = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnAttackHitReceived = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
+    public event Action<(UnitController target, UnitController attacker)> OnAfterTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
     public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
     public event Action<(UnitController targetUnit, ProjectileData projectile)> OnProjectileHit = delegate { };
@@ -414,6 +415,7 @@ public class UnitController : NetworkBehaviour
             }
             else
             {
+                OnAfterTakeDamageEvent(damage, attacker);
                 return;
             }
         }
@@ -428,6 +430,7 @@ public class UnitController : NetworkBehaviour
             OnKillEvent(attacker);
             Die();
         }
+        OnAfterTakeDamageEvent(damage, attacker);
     }
 
     private float GetIncomingDamageMultiplier()
@@ -469,6 +472,20 @@ public class UnitController : NetworkBehaviour
         if (isServer) return;
         OnTakeDamage((this, attacker));
         EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
+    }
+
+    [Server]
+    public void OnAfterTakeDamageEvent(int damage, UnitController attacker)
+    {
+        OnAfterTakeDamage((this, attacker));
+        RpcOnAfterTakenDamage(damage, attacker);
+    }
+
+    [ClientRpc]
+    public void RpcOnAfterTakenDamage(int damage, UnitController attacker)
+    {
+        if (isServer) return;
+        OnAfterTakeDamage((this, attacker));
     }
 
     [Server]

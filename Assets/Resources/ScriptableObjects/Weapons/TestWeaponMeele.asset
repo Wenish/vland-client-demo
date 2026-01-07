@@ -16,7 +16,7 @@ MonoBehaviour:
   weaponType: 0
   npcOnly: 1
   attackPower: 0
-  attackRange: 0
+  attackRange: 2
   attackTime: 0.5
   attackSpeed: 2
   moveSpeedPercentWhileAttacking: 0.5
