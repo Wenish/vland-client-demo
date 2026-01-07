@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
-  m_Name: ThreateningPresenceSkillEffectChain
+  m_Name: ThreateningPresenceSkillEffectChainOnTick
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
-  - rid: 9134735082298540128
-  - rid: 9134735082298540139
+  - rid: 9134735082298540144
   references:
     version: 2
     RefIds:
-    - rid: 9134735082298540128
+    - rid: 9134735082298540144
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
-        effect: {fileID: 11400000, guid: 6841014d91bb68d47a2277751e5602af, type: 2}
-        children: []
-    - rid: 9134735082298540139
+        effect: {fileID: 11400000, guid: 0faddff11c3ec5a4eb7069848f0440e7, type: 2}
+        children:
+        - rid: 9134735082298540145
+    - rid: 9134735082298540145
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
-        effect: {fileID: 11400000, guid: 1e89dee764861374c86ecf45b66a08ab, type: 2}
+        effect: {fileID: 11400000, guid: 09c9738beb268504cae75e549180986a, type: 2}
         children: []

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ThreateningPresenceSkillEffectMechanicBuffStat
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicBuffStatData
   countsAsCasted: 0
-  buffId: ThreateningPresence
+  buffId: ThreateningPresenceStats
   buffType: {fileID: 11400000, guid: ca61801674fe74e2cbdaaaf0c8751a74, type: 2}
   statModifiers:
   - Type: 0
