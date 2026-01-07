@@ -23,6 +23,7 @@ public class ReactiveTriggerRunner : NetworkBehaviour
     {
         _skill = skill;
         _triggers = triggers != null ? new List<SkillEventTriggerData>(triggers) : new List<SkillEventTriggerData>();
+        UnsubscribeAll();
         // Subscribe now if appropriate
         SubscribeAll();
     }

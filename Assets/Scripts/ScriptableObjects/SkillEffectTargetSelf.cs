@@ -4,23 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SkillEffectTargetSelf", menuName = "Game/Skills/Effects/Target/Self")]
-public class SkillEffectTargetSelf : SkillEffectData
+public class SkillEffectTargetSelf : SkillEffectTarget
 {
-    public override SkillEffectType EffectType { get; } = SkillEffectType.Target;
-    public override IEnumerator Execute(
-            CastContext castContext,
-            List<UnitController> targets,
-            Action<List<UnitController>> onComplete
-        )
+    // Ensure sensible defaults when creating this asset: target self only
+    private void OnValidate()
     {
-        var nextTargets = GetTargets(castContext, targets);
-        // Signal that we’re done and hand back the found units
-        onComplete(nextTargets);
-        // End the coroutine
-        yield break;
+        // Force self targeting for this effect type
+        teamMask = TargetTeam.Self;
+        // lifeMask is inherited and exposed; user can set Alive, Dead, or both (Either)
     }
-    public List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
+
+    public override List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
     {
-        return new List<UnitController> { castContext.caster };
+        var caster = castContext?.caster;
+        if (caster == null)
+        {
+            return new List<UnitController>(0);
+        }
+
+        var collected = new List<UnitController> { caster };
+        var filtered = ApplyCommonFilters(castContext, collected);
+        return new List<UnitController>(filtered);
     }
 }
