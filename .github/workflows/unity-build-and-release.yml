@@ -5,27 +5,49 @@ on:
   push:
     tags:
       - "v*"
+
   # Allow manual runs too
   workflow_dispatch:
 
 jobs:
   build:
     name: Build ${{ matrix.targetPlatform }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     strategy:
       fail-fast: false
       matrix:
         targetPlatform:
-          - StandaloneWindows64   # Windows 64-bit
-          - StandaloneLinux64     # Linux 64-bit
-          - StandaloneOSX         # macOS (Intel/Universal per your Unity settings)
+          - StandaloneWindows64
+          - StandaloneLinux64
+          - StandaloneOSX
+
     steps:
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true
+          lfs: false
 
+      # 2. Disk space before cleanup (debug)
+      - name: Disk space before cleanup
+        run: df -h
+
+      # 3. FREE DISK SPACE (critical for Unity Docker images)
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+          sudo docker system prune -af
+
+      # 4. Disk space after cleanup (debug)
+      - name: Disk space after cleanup
+        run: df -h
+
+      # 5. Cache Unity Library
       - name: Cache Library
         uses: actions/cache@v3
         with:
@@ -34,15 +56,14 @@ jobs:
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
             Library-
-      
+
+      # 6. Extract version from tag
       - name: Extract version from tag
         id: version
         shell: bash
         run: |
-          # Für Tag-Runs (z.B. v0.2.4) -> 0.2.4
           if [[ "${GITHUB_REF_TYPE}" == "tag" && -n "${GITHUB_REF_NAME}" ]]; then
             ref="${GITHUB_REF_NAME}"
-          # Fallback für workflow_dispatch: nimm den letzten Tag oder 0.0.0
           elif git describe --tags --abbrev=0 >/dev/null 2>&1; then
             ref="$(git describe --tags --abbrev=0)"
           else
@@ -51,6 +72,7 @@ jobs:
           ver="${ref#v}"
           echo "version=$ver" >> "$GITHUB_OUTPUT"
 
+      # 7. Build with Unity
       - name: Build with Unity
         id: buildStep
         uses: game-ci/unity-builder@v4
@@ -60,17 +82,17 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-          # Semantic uses your git tags/commits to version the Player
           versioning: Semantic
-          buildName: "Shadow Infection"  # Customize as needed
-          # (Optional) customize buildName, buildPath, etc.
+          buildName: "Shadow Infection"
 
+      # 8. Zip build
       - name: Zip build
         run: |
           mkdir -p artifacts
           cd build/${{ matrix.targetPlatform }}
           zip -r "../../artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip" .
 
+      # 9. Upload artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -81,7 +103,8 @@ jobs:
   release:
     name: Create/Update GitHub Release
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     steps:
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
@@ -92,7 +115,6 @@ jobs:
       - name: Show files
         run: ls -lah dist
 
-      # Attaches to the release for the current tag (creates it if missing)
       - name: Publish release assets
         uses: softprops/action-gh-release@v2
         with:
