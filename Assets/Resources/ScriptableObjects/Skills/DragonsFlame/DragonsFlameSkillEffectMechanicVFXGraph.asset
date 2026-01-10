@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: DragonsFlameSkillEffectMechanicVFXGraph
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicVFXGraph
   countsAsCasted: 0
+  enabled: 1
   vfxPrefab: {fileID: 3123350616984136062, guid: 324994005dfa86d4395863bc602b3f3d, type: 3}
   duration: 3
   lifetime: 1
