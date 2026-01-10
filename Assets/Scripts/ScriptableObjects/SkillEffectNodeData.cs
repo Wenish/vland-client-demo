@@ -16,6 +16,9 @@ public class SkillEffectNodeData
     {
         if (effect == null) yield break;
 
+        // If effect is disabled, skip it and its children
+        if (!effect.enabled) yield break;
+
         List<UnitController> nextTargets = null;
         bool finished = false;
 
