@@ -282,7 +282,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
                 visualEffect.SetFloat("Lifetime", lifetime);
             }
         }
-        Destroy(vfxInstance, duration);
+        Destroy(vfxInstance, duration + lifetime);
     }
 
     private static bool TryGetNetworkIdentity(uint netId, out NetworkIdentity identity)

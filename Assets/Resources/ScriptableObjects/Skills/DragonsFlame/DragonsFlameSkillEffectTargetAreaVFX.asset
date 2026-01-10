@@ -17,6 +17,6 @@ MonoBehaviour:
   width: 64
   offset: {x: 0, y: 0}
   material: {fileID: 2100000, guid: fb286a30a51c44470ac6120d1d2f1518, type: 2}
-  duration: 3
+  duration: 0
   shape: 2
   attachToTarget: 1
