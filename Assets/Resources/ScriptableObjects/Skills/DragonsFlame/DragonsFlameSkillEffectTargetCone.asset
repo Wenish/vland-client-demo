@@ -19,7 +19,7 @@ MonoBehaviour:
   maxTargets: 0
   randomizeOrder: 0
   sortByDistance: 1
-  range: 6
+  range: 7
   angle: 64
   unitLayer:
     serializedVersion: 2
