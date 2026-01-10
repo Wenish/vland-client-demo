@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicVFXGraph
   countsAsCasted: 0
   enabled: 1
-  vfxPrefab: {fileID: 8437746579173084844, guid: d59c0be74eb0a4edbb30d686cc4c8b95, type: 3}
-  duration: 1
+  vfxPrefab: {fileID: 8510531396647808013, guid: 2fd048e1fd5469b4fb0522afadd86a18, type: 3}
+  duration: 0.2
   lifetime: 1
   attachToTarget: 1
