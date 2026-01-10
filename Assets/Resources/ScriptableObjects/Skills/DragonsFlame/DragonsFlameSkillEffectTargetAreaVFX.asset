@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DragonsFlameSkillEffectTargetAreaVFX
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectTargetAreaVFX
   countsAsCasted: 0
-  range: 6
+  range: 7
   width: 64
   offset: {x: 0, y: 0}
   material: {fileID: 2100000, guid: fb286a30a51c44470ac6120d1d2f1518, type: 2}
