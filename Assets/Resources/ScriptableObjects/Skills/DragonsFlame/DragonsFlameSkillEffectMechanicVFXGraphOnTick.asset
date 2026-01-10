@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
-  m_Name: DragonsFlameSkillEffectMechanicVFXGraph
+  m_Name: DragonsFlameSkillEffectMechanicVFXGraphOnTick
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicVFXGraph
   countsAsCasted: 0
   enabled: 1
-  vfxPrefab: {fileID: 3123350616984136062, guid: 324994005dfa86d4395863bc602b3f3d, type: 3}
-  duration: 3
+  vfxPrefab: {fileID: 8510531396647808013, guid: 2fd048e1fd5469b4fb0522afadd86a18, type: 3}
+  duration: 0.2
   lifetime: 1
   attachToTarget: 1
