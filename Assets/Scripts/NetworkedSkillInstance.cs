@@ -24,6 +24,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [SerializeField]
     public readonly List<(UnitMediator target, Buff buff)> appliedBuffs = new();
 
+    private readonly List<GameObject> _spawnedVfxInstances = new();
+
     public void Initialize(string name, UnitController unitRef)
     {
         skillName = name;
@@ -109,6 +111,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
             StopCoroutine(_runningInitCoroutine);
             _runningInitCoroutine = null;
         }
+        Rpc_CleanupSpawnedVfx();
     }
 
     private Coroutine _runningCastCoroutine;
@@ -144,6 +147,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
             StopCoroutine(_runningCastCoroutine);
             _runningCastCoroutine = null;
         }
+        Rpc_CleanupSpawnedVfx();
     }
 
     [Server]
@@ -173,6 +177,34 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         appliedBuffs.Remove((mediator, buff));
         buff.OnRemoved -= () => RemoveManagedBuff(mediator, buff);
+    }
+
+    private void TrackVfxInstance(GameObject instance)
+    {
+        if (instance == null) return;
+        _spawnedVfxInstances.Add(instance);
+    }
+
+    private void CleanupLocalVfx()
+    {
+        for (int i = _spawnedVfxInstances.Count - 1; i >= 0; i--)
+        {
+            var go = _spawnedVfxInstances[i];
+            if (go == null)
+            {
+                _spawnedVfxInstances.RemoveAt(i);
+                continue;
+            }
+
+            var visualEffect = go.GetComponent<VisualEffect>();
+            if (visualEffect != null)
+            {
+                visualEffect.Stop();
+            }
+
+            Destroy(go);
+            _spawnedVfxInstances.RemoveAt(i);
+        }
     }
 
     [ClientRpc(includeOwner = true)]
@@ -240,7 +272,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
                 break;
         }
 
-        MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, materialPropertyBlock, attachToTarget ? target : null);
+        var vfxInstance = MeshVFXSpawner.Spawn(mesh, mat, localPos, localRot, duration, materialPropertyBlock, attachToTarget ? target : null);
+        TrackVfxInstance(vfxInstance);
     }
 
     [ClientRpc(includeOwner = true)]
@@ -282,7 +315,14 @@ public class NetworkedSkillInstance : NetworkBehaviour
                 visualEffect.SetFloat("Lifetime", lifetime);
             }
         }
+        TrackVfxInstance(vfxInstance);
         Destroy(vfxInstance, duration + lifetime);
+    }
+
+    [ClientRpc(includeOwner = true)]
+    public void Rpc_CleanupSpawnedVfx()
+    {
+        CleanupLocalVfx();
     }
 
     private static bool TryGetNetworkIdentity(uint netId, out NetworkIdentity identity)
@@ -323,6 +363,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     public void Cleanup()
     {
         OnCleanup?.Invoke(this);
+        Rpc_CleanupSpawnedVfx();
         var buffsToRemove = new List<(UnitMediator target, Buff buff)>(appliedBuffs);
 
         foreach (var (target, buff) in buffsToRemove)
@@ -342,6 +383,11 @@ public class NetworkedSkillInstance : NetworkBehaviour
             _reactiveRunner = GetComponent<ReactiveTriggerRunner>();
         }
         _reactiveRunner.Initialize(this, skillData.reactiveTriggers);
+    }
+
+    private void OnDestroy()
+    {
+        CleanupLocalVfx();
     }
 
     [ContextMenu("Benchmark Cast 10,000x (Coroutine)")]

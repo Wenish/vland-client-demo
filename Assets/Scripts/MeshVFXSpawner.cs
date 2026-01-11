@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class MeshVFXSpawner
 {
-    public static void Spawn(
+    public static GameObject Spawn(
         Mesh mesh,
         Material mat,
         Vector3 position,
@@ -33,6 +33,8 @@ public static class MeshVFXSpawner
         mr.SetPropertyBlock(materialPropertyBlock);
 
         Object.Destroy(go, duration);
+
+        return go;
     }
 }
 
