@@ -201,6 +201,7 @@ public class UnitController : NetworkBehaviour
     public event Action<(UnitController attacker, int attackIndex)> OnAttackSwing = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnAttackHitReceived = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
+    public event Action<UnitController> OnActionInterrupted = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnAfterTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
     public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
@@ -447,6 +448,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void OnKillEvent(UnitController killer)
     {
+        InterruptAction();
         EventManager.Instance.Publish(new UnitDiedEvent(this, killer));
         RpcOnKill(this, killer);
     }
@@ -711,6 +713,39 @@ public class UnitController : NetworkBehaviour
         // Safety timeout: expected dash duration + small fudge
         float expectedDuration = (_dashSpeed > 0f) ? (_dashDistance / _dashSpeed) : 0f;
         _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration + 0.1f);
+    }
+
+    /// <summary>
+    /// Interrupts any ongoing action (attack, skill cast, channel, etc.)
+    /// Only callable by the server.
+    /// </summary>
+    [Server]
+    public void InterruptAction()
+    {
+        // Clear the current action state
+        if (unitActionState != null && unitActionState.IsActive)
+        {
+            unitActionState.SetUnitActionStateToIdle();
+        }
+
+        // Signal the weapon controller to stop attacking
+        if (weaponController != null)
+        {
+            weaponController.CancelAttack();
+        }
+
+        // Raise the interrupt event for any subscribed listeners (e.g., skills, abilities)
+        OnActionInterrupted(this);
+
+        // Network the interrupt to all clients
+        RpcOnActionInterrupted();
+    }
+
+    [ClientRpc]
+    private void RpcOnActionInterrupted()
+    {
+        if (isServer) return;
+        OnActionInterrupted(this);
     }
 }
 

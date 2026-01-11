@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Mirror;
 using UnityEngine;
@@ -22,6 +23,7 @@ public class WeaponController : NetworkBehaviour
     private float attackSpeedMultiplier => attackerMediator.Stats.GetStat(StatType.AttackSpeed);
 
     private UnitMediator attackerMediator;
+    private CancellationTokenSource attackCancellationTokenSource;
 
     private void Awake()
     {
@@ -40,6 +42,10 @@ public class WeaponController : NetworkBehaviour
 
         if (isAttacking || IsAttackOnCooldown || attacker.unitActionState.IsActive) return;
 
+        // Create a new cancellation token for this attack
+        attackCancellationTokenSource = new CancellationTokenSource();
+        CancellationToken cancellationToken = attackCancellationTokenSource.Token;
+
         isAttacking = true;
         attacker.RaiseOnAttackStartEvent(attackIndex);
 
@@ -56,7 +62,19 @@ public class WeaponController : NetworkBehaviour
             Value = weaponData.moveSpeedPercentWhileAttacking,
         };
         attacker.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
-        await Task.Delay((int)delay);
+        
+        try
+        {
+            await Task.Delay((int)delay, cancellationToken);
+        }
+        catch (TaskCanceledException)
+        {
+            // Attack was interrupted
+            attacker.unitActionState.SetUnitActionStateToIdle();
+            attacker.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
+            isAttacking = false;
+            return;
+        }
 
         if (attacker == null) return;
         attacker.unitActionState.SetUnitActionStateToIdle();
@@ -71,5 +89,19 @@ public class WeaponController : NetworkBehaviour
         attacker.RaiseOnAttackSwingEvent(attackIndex);
         isAttacking = false;
         attackIndex = (attackIndex + 1) % 2;
+    }
+
+    /// <summary>
+    /// Cancels the current attack if one is in progress.
+    /// </summary>
+    public void CancelAttack()
+    {
+        if (attackCancellationTokenSource != null && !attackCancellationTokenSource.Token.IsCancellationRequested)
+        {
+            attackCancellationTokenSource.Cancel();
+            attackCancellationTokenSource.Dispose();
+            attackCancellationTokenSource = null;
+        }
+        isAttacking = false;
     }
 }
