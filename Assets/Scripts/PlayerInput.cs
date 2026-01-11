@@ -103,6 +103,7 @@ public class PlayerInput : NetworkBehaviour
             InputPressingFire1();
             CalculateAngle();
             InputUseSkills();
+            InputInterrupt();
         }
 
         if (isServer)
@@ -374,6 +375,15 @@ public class PlayerInput : NetworkBehaviour
         }
     }
 
+    [Client]
+    public void InputInterrupt()
+    {
+        if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame)
+        {
+            CmdInterruptMyUnit();
+        }
+    }
+
     // Helpers
     [Client]
     private static bool IsAltPressed()
@@ -386,6 +396,15 @@ public class PlayerInput : NetworkBehaviour
     public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {
         _myUnitController.unitMediator.Skills.CastSkill(slot, index, aimPoint);
+    }
+
+    [Command]
+    public void CmdInterruptMyUnit()
+    {
+        if (_myUnitController != null)
+        {
+            _myUnitController.InterruptAction();
+        }
     }
 
     [Command]

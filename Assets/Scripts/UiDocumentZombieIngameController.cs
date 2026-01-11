@@ -79,6 +79,17 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
         EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
         EventManager.Instance.Unsubscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
+        
+        if (_myPlayerUnitController != null)
+        {
+            _myPlayerUnitController.OnWeaponChange -= OnWeaponChange;
+            _myPlayerUnitController.OnActionInterrupted -= HandleOnActionInterrupted;
+        }
+        
+        if (_myPlayerUnitActionState != null)
+        {
+            _myPlayerUnitActionState.OnActionStateChanged -= HandleOnActionStateChanged;
+        }
     }
 
     void Update()
@@ -307,6 +318,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         OnWeaponChange(_myPlayerUnitController);
         _myPlayerUnitController.OnWeaponChange += OnWeaponChange;
         _myPlayerUnitActionState.OnActionStateChanged += HandleOnActionStateChanged;
+        _myPlayerUnitController.OnActionInterrupted += HandleOnActionInterrupted;
 
         var localPlayerController = FindObjectsByType<PlayerController>(FindObjectsSortMode.None).FirstOrDefault(pc => pc.isLocalPlayer);
         if (localPlayerController != null)
@@ -335,6 +347,26 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             _fadeOutCoroutine = null;
         }
         _castbarCoroutine = StartCoroutine(ChangeCastbar(_myPlayerUnitActionState.state));
+    }
+
+    private void HandleOnActionInterrupted(UnitController unitController)
+    {
+        if (unitController != _myPlayerUnitController) return;
+
+        // Stop the castbar if it's active
+        if (_castbarCoroutine != null)
+        {
+            StopCoroutine(_castbarCoroutine);
+            _castbarCoroutine = null;
+        }
+        if (_fadeOutCoroutine != null)
+        {
+            StopCoroutine(_fadeOutCoroutine);
+            _fadeOutCoroutine = null;
+        }
+
+        // Fade out the castbar nicely
+        _fadeOutCoroutine = StartCoroutine(FadeOutPlayerCastbar(0.3f));
     }
 
     private IEnumerator ChangeCastbar(UnitActionState.ActionStateData actionStateData)

@@ -17,6 +17,7 @@ public class SkillSystem : NetworkBehaviour
     {
         unit = GetComponent<UnitController>();
         unit.OnRevive += OnUnitRevive;
+        unit.OnActionInterrupted += OnActionInterrupted;
     }
 
     private void Awake()
@@ -33,6 +34,7 @@ public class SkillSystem : NetworkBehaviour
     {
         if (!isServer) return;
         unit.OnRevive -= OnUnitRevive;
+        unit.OnActionInterrupted -= OnActionInterrupted;
     }
 
     [Server]
@@ -190,6 +192,31 @@ public class SkillSystem : NetworkBehaviour
                 if (string.IsNullOrWhiteSpace(name)) continue;
                 AddSkill(SkillSlotType.Ultimate, name);
             }
+        }
+    }
+
+    /// <summary>
+    /// Called when the unit's action is interrupted.
+    /// Cancels any active skill casts.
+    /// </summary>
+    [Server]
+    private void OnActionInterrupted(UnitController interruptedUnit)
+    {
+        if (interruptedUnit != unit) return;
+
+        // Cancel active skill casts from all skill types
+        foreach (var skill in normalSkills)
+        {
+            skill.CancelCast();
+        }
+        foreach (var skill in ultimateSkills)
+        {
+            skill.CancelCast();
+        }
+        // Passive skills typically don't have casts, but include for completeness
+        foreach (var skill in passiveSkills)
+        {
+            skill.CancelCast();
         }
     }
 }
