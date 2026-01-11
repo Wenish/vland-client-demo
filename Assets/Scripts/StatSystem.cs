@@ -47,6 +47,25 @@ public class StatSystem
         OnStatChanged?.Invoke(mod.Type);
     }
 
+    // Clears all active stat modifiers and notifies listeners for affected stats
+    public void ClearAllModifiers()
+    {
+        if (modifiers.Count == 0) return;
+
+        var affectedTypes = new HashSet<StatType>();
+        foreach (var mod in modifiers)
+        {
+            affectedTypes.Add(mod.Type);
+        }
+
+        modifiers.Clear();
+
+        foreach (var type in affectedTypes)
+        {
+            OnStatChanged?.Invoke(type);
+        }
+    }
+
     public float GetStat(StatType stat)
     {
         float value = baseStats.ContainsKey(stat) ? baseStats[stat] : 0;
