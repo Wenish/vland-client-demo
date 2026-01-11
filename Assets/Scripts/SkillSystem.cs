@@ -159,8 +159,16 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     public void ReplaceLoadout(IEnumerable<string> passive, IEnumerable<string> normal, IEnumerable<string> ultimate)
     {
+        unit.InterruptAction();
+        
         // Remove everything first
         ClearAllSkills();
+
+        // Clean reset of any lingering stat modifiers (e.g., from channel mechanics)
+        if (unit != null && unit.unitMediator != null && unit.unitMediator.Stats != null)
+        {
+            unit.unitMediator.Stats.ClearAllModifiers();
+        }
 
         // Add passives
         if (passive != null)
