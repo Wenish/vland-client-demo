@@ -205,26 +205,49 @@ public class SkillSystem : NetworkBehaviour
 
     /// <summary>
     /// Called when the unit's action is interrupted.
-    /// Cancels any active skill casts.
+    /// Cancels only the skill that is currently casting or channeling.
     /// </summary>
     [Server]
-    private void OnActionInterrupted(UnitController interruptedUnit)
+    private void OnActionInterrupted((UnitController interruptedUnit, UnitActionState.ActionStateData interruptedAction) data)
     {
-        if (interruptedUnit != unit) return;
+        if (data.interruptedUnit != unit) return;
 
-        // Cancel active skill casts from all skill types
+        // Only cancel the skill that is currently casting or channeling
+        var actionState = data.interruptedAction;
+        if (actionState.type != UnitActionState.ActionType.Casting && 
+            actionState.type != UnitActionState.ActionType.Channeling)
+        {
+            return;
+        }
+
+        var activeSkillName = actionState.name;
+        if (string.IsNullOrEmpty(activeSkillName)) return;
+
+        // Find and cancel only the matching skill
         foreach (var skill in normalSkills)
         {
-            skill.CancelCast();
+            if (skill.skillName == activeSkillName)
+            {
+                skill.CancelCast();
+                return;
+            }
         }
         foreach (var skill in ultimateSkills)
         {
-            skill.CancelCast();
+            if (skill.skillName == activeSkillName)
+            {
+                skill.CancelCast();
+                return;
+            }
         }
         // Passive skills typically don't have casts, but include for completeness
         foreach (var skill in passiveSkills)
         {
-            skill.CancelCast();
+            if (skill.skillName == activeSkillName)
+            {
+                skill.CancelCast();
+                return;
+            }
         }
     }
 }

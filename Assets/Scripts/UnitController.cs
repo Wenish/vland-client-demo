@@ -201,7 +201,7 @@ public class UnitController : NetworkBehaviour
     public event Action<(UnitController attacker, int attackIndex)> OnAttackSwing = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnAttackHitReceived = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnTakeDamage = delegate { };
-    public event Action<UnitController> OnActionInterrupted = delegate { };
+    public event Action<(UnitController target, UnitActionState.ActionStateData interruptedAction)> OnActionInterrupted = delegate { };
     public event Action<(UnitController target, UnitController attacker)> OnAfterTakeDamage = delegate { };
     public event Action<UnitController> OnHealed = delegate { };
     public event Action<(UnitController caster, int amount)> OnShielded = delegate { };
@@ -722,6 +722,12 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void InterruptAction()
     {
+        var isActionToInterrupt = unitActionState != null && unitActionState.IsActive;
+
+        // Dont interrupt if there's no action ongoing
+        if (!isActionToInterrupt) return;
+        
+        var interruptedAction = unitActionState.state;
         // Clear the current action state
         if (unitActionState != null && unitActionState.IsActive)
         {
@@ -735,17 +741,17 @@ public class UnitController : NetworkBehaviour
         }
 
         // Raise the interrupt event for any subscribed listeners (e.g., skills, abilities)
-        OnActionInterrupted(this);
+        OnActionInterrupted((this, interruptedAction));
 
         // Network the interrupt to all clients
-        RpcOnActionInterrupted();
+        RpcOnActionInterrupted(interruptedAction);
     }
 
     [ClientRpc]
-    private void RpcOnActionInterrupted()
+    private void RpcOnActionInterrupted(UnitActionState.ActionStateData interruptedAction)
     {
         if (isServer) return;
-        OnActionInterrupted(this);
+        OnActionInterrupted((this, interruptedAction));
     }
 }
 
