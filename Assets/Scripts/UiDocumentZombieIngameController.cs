@@ -349,9 +349,9 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _castbarCoroutine = StartCoroutine(ChangeCastbar(_myPlayerUnitActionState.state));
     }
 
-    private void HandleOnActionInterrupted(UnitController unitController)
+    private void HandleOnActionInterrupted((UnitController unitController, UnitActionState.ActionStateData interruptedAction) data)
     {
-        if (unitController != _myPlayerUnitController) return;
+        if (data.unitController != _myPlayerUnitController) return;
 
         // Stop the castbar if it's active
         if (_castbarCoroutine != null)
