@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
   m_Name: LetHellRain
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
-  skillName: LetHellRain
+  skillName: Let Hell Rain
   skillType: 2
   description: Calls down a meteor storm for 8 seconds, damaging all enemies in the
     area.
-  cooldown: 50
+  cooldown: 70
   castCost: 0
   canActivateWhileBusy: 0
   npcOnly: 0
