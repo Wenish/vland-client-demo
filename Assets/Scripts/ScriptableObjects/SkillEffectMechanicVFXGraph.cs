@@ -16,15 +16,25 @@ public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
     [Tooltip("If true, the VFX will be parented to the target unit's transform")]
     public bool attachToTarget = true;
 
+    [Tooltip("Spawn VFX at the aim point when available (uses CastContext.aimPoint/aimRotation)")]
+    public bool spawnAtAimPoint = false;
+
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
         foreach (var target in targets)
         {
             if (Mirror.NetworkServer.active && vfxPrefab != null)
             {
-                Vector3 position = target.transform.position;
-                Quaternion rotation = target.transform.rotation;
+                Vector3 position = (spawnAtAimPoint && castContext.aimPoint.HasValue)
+                    ? castContext.aimPoint.Value
+                    : target.transform.position;
+                Quaternion rotation = (spawnAtAimPoint && castContext.aimRotation.HasValue)
+                    ? castContext.aimRotation.Value
+                    : target.transform.rotation;
                 uint targetNetId = target.netId;
+
+                // If spawning at aim point, avoid parenting so the VFX stays at world position
+                bool shouldAttach = attachToTarget && !(spawnAtAimPoint && castContext.aimPoint.HasValue);
 
                 // Call a networked RPC to spawn the VFX on all clients
                 castContext.skillInstance.Rpc_SpawnVFXGraphPrefab(
@@ -32,7 +42,7 @@ public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
                     rotation,
                     duration,
                     lifetime,
-                    attachToTarget,
+                    shouldAttach,
                     targetNetId,
                     vfxPrefab.name
                 );
