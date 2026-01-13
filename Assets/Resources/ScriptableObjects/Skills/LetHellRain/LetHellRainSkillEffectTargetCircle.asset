@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectTargetCircle
   countsAsCasted: 0
   enabled: 1
-  teamMask: -1
+  teamMask: 4
   lifeMask: 1
   distinct: 1
   maxTargets: 0
   randomizeOrder: 0
-  sortByDistance: 1
+  sortByDistance: 0
   radius: 8
-  includeInitialTargets: 1
+  includeInitialTargets: 0
   unitLayer:
     serializedVersion: 2
     m_Bits: 8
