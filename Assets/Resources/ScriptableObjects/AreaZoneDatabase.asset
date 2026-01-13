@@ -15,3 +15,4 @@ MonoBehaviour:
   allAreaZones:
   - {fileID: 11400000, guid: 52a959c031927cb4ab237c5d215f20d0, type: 2}
   - {fileID: 11400000, guid: c68d34f1faf7e4b4995e25395ee20227, type: 2}
+  - {fileID: 11400000, guid: 0888c6a6d509f444d844dbb327de95da, type: 2}

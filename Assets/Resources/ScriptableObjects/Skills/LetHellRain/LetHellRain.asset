@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: LetHellRain
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: LetHellRain
+  skillType: 2
+  description: Calls down a meteor storm for 8 seconds, damaging all enemies in the
+    area.
+  cooldown: 50
+  castCost: 0
+  canActivateWhileBusy: 0
+  npcOnly: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: cede286c9f4de471e9e79d345749aa1d, type: 2}
+  reactiveTriggers: []
+  iconTexture: {fileID: 2800000, guid: c4641d138b3e049f18a1fefcd9bfe734, type: 3}
