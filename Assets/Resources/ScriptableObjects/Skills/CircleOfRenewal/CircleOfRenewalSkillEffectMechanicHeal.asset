@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: CircleOfRenewalSkillEffectMechanicHeal
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicHeal
   countsAsCasted: 0
+  enabled: 1
   mode: 0
-  healAmount: 5
+  healAmount: 6
