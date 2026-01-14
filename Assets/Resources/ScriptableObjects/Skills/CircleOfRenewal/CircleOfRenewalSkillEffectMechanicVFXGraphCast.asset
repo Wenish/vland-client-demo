@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f03a24b84c47456c9ace0130bc42f23, type: 3}
+  m_Name: CircleOfRenewalSkillEffectMechanicVFXGraphCast
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicVFXGraph
+  countsAsCasted: 0
+  enabled: 1
+  vfxPrefab: {fileID: 2224408289549157292, guid: f94ed8795b66441d08739ee1bd3ef598, type: 3}
+  duration: 0.5
+  lifetime: 1
+  attachToTarget: 0
+  spawnAtAimPoint: 1
