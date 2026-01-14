@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
-  m_Name: HealingLeaf
-  m_EditorClassIdentifier: 
-  skillName: Healing Leaf
+  m_Name: TotemOfNature
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Totem Of Nature
   skillType: 0
-  description: Heals over Time
-  cooldown: 3
+  description: Place a totam, which grants a healing buff.
+  cooldown: 15
   castCost: 0
   canActivateWhileBusy: 0
   npcOnly: 0
   initTrigger: {fileID: 0}
-  castTrigger: {fileID: 11400000, guid: f1709d739b738412eab25f42b4d50ab6, type: 2}
+  castTrigger: {fileID: 11400000, guid: a5eb95dab3141ee4ebd45d05b2910672, type: 2}
   reactiveTriggers: []
-  iconTexture: {fileID: 2800000, guid: b00daef0d88b9b048a383d3c7322b3fd, type: 3}
+  iconTexture: {fileID: 2800000, guid: 6dd19e28c1d7a0c4faa28d172931ada2, type: 3}
