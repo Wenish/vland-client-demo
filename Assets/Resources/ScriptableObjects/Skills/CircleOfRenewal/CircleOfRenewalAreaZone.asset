@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AreaZoneData
   areaZoneName: Circle of Renewal
   duration: 12
-  tickCount: 13
+  tickCount: 25
   tickMode: 1
   prefabVisual: {fileID: 6139030506892133997, guid: 9ad6eb3d348aa3547a0e546ee8056fe2, type: 3}

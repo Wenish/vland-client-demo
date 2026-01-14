@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: HealingLeafHealFor20
   m_EditorClassIdentifier: 
   countsAsCasted: 1
-  healAmount: 20
+  enabled: 1
+  mode: 0
+  healAmount: 12
