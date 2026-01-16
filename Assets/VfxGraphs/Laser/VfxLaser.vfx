@@ -37,10 +37,10 @@ MonoBehaviour:
   categories: []
   uiBounds:
     serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1518
-    height: 2830
+    x: 625
+    y: 689
+    width: 918
+    height: 2166
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -359,7 +359,7 @@ MonoBehaviour:
   enableRayTracing: 0
   decimationFactor: 1
   raytracedScaleMode: 0
-  needsOwnSort: 1
+  needsOwnSort: 0
   needsOwnAabbBuffer: 0
   m_Topology:
     rid: 934122299777351773
@@ -409,7 +409,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Color, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"r":0.38064250349998476,"g":3.0083906650543215,"b":0.1417565494775772,"a":1.0}'
+      m_SerializableObject: '{"r":3.0083909034729006,"g":0.16898605227470399,"b":0.1417565494775772,"a":1.0}'
     m_Space: -1
   m_Property:
     name: _Color
@@ -2039,7 +2039,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
@@ -2312,7 +2312,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 850, y: 2177}
+  m_UIPosition: {x: 832, y: 2157}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
