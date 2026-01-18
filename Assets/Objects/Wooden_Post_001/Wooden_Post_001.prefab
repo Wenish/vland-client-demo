@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 5461499865688395285}
   - component: {fileID: 8816906007712441109}
   - component: {fileID: 6720907208526646052}
+  - component: {fileID: 7977998993514924949}
   m_Layer: 0
   m_Name: Wooden_Post_001
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,3 +91,24 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7977998993514924949
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9124828412113532420}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.36678502, y: 1.4991218, z: 0.4189225}
+  m_Center: {x: 0.00065630674, y: 0.00011318922, z: -0.00016446412}
