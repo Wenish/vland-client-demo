@@ -14,7 +14,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: VCL
   productName: Shadow Infection - Alpha
-  defaultCursor: {fileID: 2800000, guid: 07cd5409796cd2142b4a44b7b61d6410, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 335cafe49dc345440aa63884da13ba80, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_ShowUnitySplashScreen: 1
