@@ -25,6 +25,7 @@
     border-left-width: 0;
     transition-duration: 0.3s;
     transition-timing-function: ease-out;
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
 }
 
 .main-menu-button:hover {
