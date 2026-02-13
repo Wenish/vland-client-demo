@@ -16,6 +16,7 @@
     border-right-color: rgba(74, 74, 74, 0.8);
     border-top-color: rgba(74, 74, 74, 0.8);
     border-bottom-color: rgba(74, 74, 74, 0.8);
+    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
 }
 
 .multiplayer-menu__button {
@@ -36,6 +37,7 @@
     border-bottom-color: rgba(77, 77, 77, 0.9);
     margin-top: 3px;
     margin-bottom: 3px;
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32") 0 0;
 }
 
 .multiplayer-menu__button:hover {

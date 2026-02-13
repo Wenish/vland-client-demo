@@ -1,27 +1,27 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
-    <Style src="project://database/Assets/Ui/PageSettings.uss?fileID=7433441132597879392&amp;guid=c0d125950126a4907bf9909cff1baa2d&amp;type=3#PageSettings" />
-    <engine:VisualElement name="PageSettings" class="page-content">
-        <engine:Label text="SETTINGS" class="page-title" />
-        <engine:VisualElement name="VisualElement" class="audio-container" style="color: rgb(255, 255, 255); align-items: stretch; flex-direction: column;">
-            <engine:TextField label="Nickname" placeholder-text="No Nickname" max-length="20" name="TextFieldNickname" />
-            <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
-                <engine:Toggle label="Audio" value="true" toggle-on-label-click="true" name="ToggleAudio" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
+    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu"/>
+    <Style src="project://database/Assets/Ui/PageSettings.uss?fileID=7433441132597879392&amp;guid=c0d125950126a4907bf9909cff1baa2d&amp;type=3#PageSettings"/>
+    <engine:VisualElement name="PageSettings" class="page-content" style="cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+        <engine:Label text="SETTINGS" class="page-title"/>
+        <engine:VisualElement name="VisualElement" class="audio-container" style="color: rgb(255, 255, 255); align-items: stretch; flex-direction: column; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+            <engine:TextField label="Nickname" placeholder-text="No Nickname" max-length="20" name="TextFieldNickname"/>
+            <engine:VisualElement name="VisualElement" style="flex-grow: 1; align-items: flex-start; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+                <engine:Toggle label="Audio" value="true" toggle-on-label-click="true" name="ToggleAudio" style="flex-wrap: nowrap; flex-direction: row; width: auto;"/>
             </engine:VisualElement>
-            <engine:SliderInt label="Master" value="100" high-value="100" fill="true" name="SliderAudioMaster" low-value="0" class="input-slider" />
-            <engine:SliderInt label="Music" value="0" high-value="100" fill="true" name="SliderAudioMusic" low-value="0" class="input-slider" />
-            <engine:SliderInt label="SFX" value="0" high-value="100" fill="true" name="SliderAudioSfx" low-value="0" class="input-slider" />
-            <engine:SliderInt label="UI" value="0" high-value="100" fill="true" name="SliderAudioUi" low-value="0" class="input-slider" />
-            <engine:SliderInt label="Voice" value="0" high-value="100" fill="true" name="SliderAudioVoice" low-value="0" class="input-slider" />
-            <engine:SliderInt label="Ambient" value="0" high-value="100" fill="true" name="SliderAudioAmbient" low-value="0" class="input-slider" />
-            <engine:VisualElement style="flex-grow: 1; align-items: flex-start;">
-                <engine:Toggle label="Fullscreen" value="true" toggle-on-label-click="true" name="ToggleWindowFullscreen" style="flex-wrap: nowrap; flex-direction: row; width: auto;" />
+            <engine:SliderInt label="Master" value="100" high-value="100" fill="true" name="SliderAudioMaster" low-value="0" class="input-slider"/>
+            <engine:SliderInt label="Music" value="0" high-value="100" fill="true" name="SliderAudioMusic" low-value="0" class="input-slider"/>
+            <engine:SliderInt label="SFX" value="0" high-value="100" fill="true" name="SliderAudioSfx" low-value="0" class="input-slider"/>
+            <engine:SliderInt label="UI" value="0" high-value="100" fill="true" name="SliderAudioUi" low-value="0" class="input-slider"/>
+            <engine:SliderInt label="Voice" value="0" high-value="100" fill="true" name="SliderAudioVoice" low-value="0" class="input-slider"/>
+            <engine:SliderInt label="Ambient" value="0" high-value="100" fill="true" name="SliderAudioAmbient" low-value="0" class="input-slider"/>
+            <engine:VisualElement style="flex-grow: 1; align-items: flex-start; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+                <engine:Toggle label="Fullscreen" value="true" toggle-on-label-click="true" name="ToggleWindowFullscreen" style="flex-wrap: nowrap; flex-direction: row; width: auto;"/>
             </engine:VisualElement>
-            <engine:DropdownField label="Resolution" name="DropdownFieldResolution" choices="1920 x 1080," />
+            <engine:DropdownField label="Resolution" name="DropdownFieldResolution" choices="1920 x 1080,"/>
         </engine:VisualElement>
         <engine:VisualElement name="VisualElement">
-            <engine:Button text="Reset to default" name="ButtonResetSettings" class="main-menu-button" style="font-size: 22px;" />
-            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" style="font-size: 22px;" />
+            <engine:Button text="Reset to default" name="ButtonResetSettings" class="main-menu-button" style="font-size: 22px;"/>
+            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" style="font-size: 22px;"/>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

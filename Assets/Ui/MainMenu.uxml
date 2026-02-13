@@ -1,15 +1,15 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Template name="PageMainMenu" src="project://database/Assets/Ui/PageMainMenu.uxml?fileID=9197481963319205126&amp;guid=541b610f67bc90242ae0232715c11568&amp;type=3#PageMainMenu" />
-    <engine:Template name="PageSettings" src="project://database/Assets/Ui/PageSettings.uxml?fileID=9197481963319205126&amp;guid=1f3aeb5b20de83a44a8466f56a4cbc9a&amp;type=3#PageSettings" />
-    <engine:Template name="PageCredits" src="project://database/Assets/Ui/PageCredits.uxml?fileID=9197481963319205126&amp;guid=60a6157fc5604904e90fe02ac4e3a839&amp;type=3#PageCredits" />
-    <engine:Template name="Watermark" src="project://database/Assets/Ui/Watermark.uxml?fileID=9197481963319205126&amp;guid=2e6195103ecfc59408187e312fdea584&amp;type=3#Watermark" />
-    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
-    <engine:VisualElement name="Background" />
-    <engine:VisualElement name="PageContainer" class="page-container">
-        <engine:Instance template="PageMainMenu" name="PageMainMenu" style="display: flex;" />
-        <engine:Instance template="PageSettings" name="PageSettings" style="display: none; width: 100%; height: 100%;" />
-        <engine:Instance template="PageCredits" name="PageCredits" style="display: none; width: 100%; height: 100%;" />
+    <engine:Template name="PageCredits" src="project://database/Assets/Ui/PageCredits.uxml?fileID=9197481963319205126&amp;guid=60a6157fc5604904e90fe02ac4e3a839&amp;type=3#PageCredits"/>
+    <engine:Template name="PageMainMenu" src="project://database/Assets/Ui/PageMainMenu.uxml?fileID=9197481963319205126&amp;guid=541b610f67bc90242ae0232715c11568&amp;type=3#PageMainMenu"/>
+    <engine:Template name="PageSettings" src="project://database/Assets/Ui/PageSettings.uxml?fileID=9197481963319205126&amp;guid=1f3aeb5b20de83a44a8466f56a4cbc9a&amp;type=3#PageSettings"/>
+    <engine:Template name="Watermark" src="project://database/Assets/Ui/Watermark.uxml?fileID=9197481963319205126&amp;guid=2e6195103ecfc59408187e312fdea584&amp;type=3#Watermark"/>
+    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu"/>
+    <engine:VisualElement name="Background" style="cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);"/>
+    <engine:VisualElement name="PageContainer" class="page-container" style="cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+        <engine:Instance template="PageMainMenu" name="PageMainMenu" style="display: flex; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);"/>
+        <engine:Instance template="PageSettings" name="PageSettings" style="display: none; width: 100%; height: 100%; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);"/>
+        <engine:Instance template="PageCredits" name="PageCredits" style="display: none; width: 100%; height: 100%; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);"/>
     </engine:VisualElement>
-    <engine:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;" />
-    <engine:Label picking-mode="Ignore" name="LabelVersionNumber" text="v0.1" style="white-space: nowrap; position: absolute; right: 0; bottom: 0; color: rgb(153, 153, 153); padding-right: 30px;" />
+    <engine:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>
+    <engine:Label picking-mode="Ignore" name="LabelVersionNumber" text="v0.1" style="white-space: nowrap; position: absolute; right: 0; bottom: 0; color: rgb(153, 153, 153); padding-right: 30px;"/>
 </engine:UXML>
