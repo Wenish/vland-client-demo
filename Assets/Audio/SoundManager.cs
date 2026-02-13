@@ -78,6 +78,12 @@ public class SoundManager : MonoBehaviour
         source.pitch = soundData.pitch + pitchOffset;
         source.spatialBlend = soundData.isSpatial ? 1f : 0f;
 
+        // If UI sound, persist across scene loads
+        if (soundData.mixerGroup != null && soundData.mixerGroup.name.Contains("UI"))
+        {
+            DontDestroyOnLoad(go);
+        }
+
         source.Play();
         Destroy(go, soundData.clip.length / source.pitch); // Cleanup
     }
