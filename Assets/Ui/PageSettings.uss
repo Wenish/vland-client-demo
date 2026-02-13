@@ -6,6 +6,7 @@
     padding-right: 12px;
     padding-bottom: 12px;
     padding-left: 12px;
+    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
 }
 
 .unity-base-field {
@@ -19,6 +20,10 @@
     border-bottom-left-radius: 2px;
     margin-left: 0;
     margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
 }
 
 .unity-toggle .unity-toggle__checkmark {
@@ -169,7 +174,7 @@ SliderInt .unity-base-slider__dragger {
 }
 
 .unity-base-text-field__input--placeholder {
-    color: rgba(214, 214, 214, 1);
+    color: rgb(214, 214, 214);
 }
 
 .unity-base-text-field__input:hover {
@@ -178,4 +183,40 @@ SliderInt .unity-base-slider__dragger {
 
 .unity-base-text-field:focus .unity-base-text-field__input {
     border-color: rgb(111, 202, 192);
+}
+
+.unity-text-element__selectable {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-slider__drag-container {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-field__input {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-slider .unity-base-slider__tracker {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-slider__fill {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-slider__dragger-border {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-slider__dragger {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-popup-field__arrow {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.unity-base-popup-field__text {
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
 }

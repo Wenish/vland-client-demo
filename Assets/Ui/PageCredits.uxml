@@ -1,14 +1,14 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu" />
-    <engine:VisualElement name="PageCredits" class="page-content" style="align-items: center; justify-content: space-between; flex-grow: 1;">
-        <engine:Label text="CREDITS" class="page-title" />
-        <engine:VisualElement style="flex-grow: 1; align-items: center; justify-content: center;">
-            <engine:Label text="SHADOW INFECTION" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 36px; letter-spacing: 1px;" />
-            <engine:Label text="A Game By" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 28px;" />
-            <engine:Label text="Jonas Voland" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 36px;" />
+    <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu"/>
+    <engine:VisualElement name="PageCredits" class="page-content" style="align-items: center; justify-content: space-between; flex-grow: 1; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+        <engine:Label text="CREDITS" class="page-title"/>
+        <engine:VisualElement style="flex-grow: 1; align-items: center; justify-content: center; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+            <engine:Label text="SHADOW INFECTION" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 36px; letter-spacing: 1px;"/>
+            <engine:Label text="A Game By" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 28px;"/>
+            <engine:Label text="Jonas Voland" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Regular.ttf?fileID=12800000&amp;guid=ce646cca2fb29a048ba0a0d4055e999d&amp;type=3#CinzelDecorative-Regular&quot;); color: rgb(255, 255, 255); font-size: 36px;"/>
         </engine:VisualElement>
-        <engine:VisualElement>
-            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" style="font-size: 22px;" />
+        <engine:VisualElement style="cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
+            <engine:Button text="Back To Menu" name="ButtonBackToMenu" class="main-menu-button" style="font-size: 22px;"/>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

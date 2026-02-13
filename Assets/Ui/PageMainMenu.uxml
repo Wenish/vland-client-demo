@@ -1,8 +1,8 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu"/>
-    <engine:VisualElement name="PageMainMenu" class="page-content">
+    <engine:VisualElement name="PageMainMenu" class="page-content" style="cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
         <engine:Label text="SHADOW  INFECTION" class="page-title"/>
-        <engine:VisualElement>
+        <engine:VisualElement name="VisualElement" style="cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
             <engine:Button text="Play" name="ButtonStartGame" class="main-menu-button"/>
             <engine:Button text="Settings" name="ButtonSettings" class="main-menu-button"/>
             <engine:Button text="Credits" name="ButtonCredits" class="main-menu-button"/>

@@ -1,13 +1,13 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Ui/Components/MultiplayerMenu/MultiplayerMenu.uss?fileID=7433441132597879392&amp;guid=01e26c624bb3744028990e2b93c31395&amp;type=3#MultiplayerMenu" />
-    <ui:VisualElement style="flex-grow: 1; justify-content: center; align-self: center;">
+    <Style src="project://database/Assets/Ui/Components/MultiplayerMenu/MultiplayerMenu.uss?fileID=7433441132597879392&amp;guid=01e26c624bb3744028990e2b93c31395&amp;type=3#MultiplayerMenu"/>
+    <ui:VisualElement name="VisualElement" style="flex-grow: 1; justify-content: center; align-self: center; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
         <ui:VisualElement name="panel" class="multiplayer-menu__panel">
-            <ui:Label text="Multiplayer Menu" style="color: rgb(250, 250, 250); -unity-font-definition: url(&quot;project://database/Assets/Fonts/Lato/Lato-BoldItalic.ttf?fileID=12800000&amp;guid=b3a6efa09efe2434bbd1f56a126b2bb4&amp;type=3#Lato-BoldItalic&quot;); margin-top: 0; margin-right: 0; margin-bottom: 14px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: upper-center;" />
-            <ui:Button text="Host Game" name="buttonHostGame" class="multiplayer-menu__button" />
-            <ui:Button text="Join Game" name="buttonJoinGame" class="multiplayer-menu__button" />
-            <ui:Button text="Server Browser" name="buttonServerBrowser" class="multiplayer-menu__button" style="display: none;" />
-            <ui:Button text="Server Only" name="buttonServerOnly" class="multiplayer-menu__button" style="margin-top: 14px;" />
-            <ui:Button text="Back to Main Menu" name="buttonBackToMainMenu" class="multiplayer-menu__button" style="margin-top: 14px;" />
+            <ui:Label text="Multiplayer Menu" style="color: rgb(250, 250, 250); -unity-font-definition: url(&quot;project://database/Assets/Fonts/Lato/Lato-BoldItalic.ttf?fileID=12800000&amp;guid=b3a6efa09efe2434bbd1f56a126b2bb4&amp;type=3#Lato-BoldItalic&quot;); margin-top: 0; margin-right: 0; margin-bottom: 14px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: upper-center; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);"/>
+            <ui:Button text="Host Game" name="buttonHostGame" class="multiplayer-menu__button"/>
+            <ui:Button text="Join Game" name="buttonJoinGame" class="multiplayer-menu__button"/>
+            <ui:Button text="Server Browser" name="buttonServerBrowser" class="multiplayer-menu__button" style="display: none;"/>
+            <ui:Button text="Server Only" name="buttonServerOnly" class="multiplayer-menu__button" style="margin-top: 14px;"/>
+            <ui:Button text="Back to Main Menu" name="buttonBackToMainMenu" class="multiplayer-menu__button" style="margin-top: 14px;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
