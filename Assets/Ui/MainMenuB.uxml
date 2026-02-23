@@ -1,0 +1,21 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase"/>
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement style="height: 50%; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ.png?fileID=2800000&amp;guid=335cafe49dc345440aa63884da13ba80&amp;type=3#CursorDefaultAlternativ&quot;);">
+            <ui:Image source="project://database/Assets/Art/Logo/ShadowInfection_Logo_Text.png?fileID=21300000&amp;guid=70fe5e7c805cbef4d98e970274a5fe92&amp;type=3#ShadowInfection_Logo_Text" scale-mode="ScaleToFit"/>
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; align-items: center;">
+            <ui:VisualElement style="align-items: stretch; width: 274px;">
+                <ui:VisualElement name="ButtonContainer" class="button-container" style="flex-grow: 1;">
+                    <ui:Button text="Play" style="min-width: 100%; color: rgba(254, 221, 183, 0);"/>
+                    <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; position: absolute; align-items: center; align-self: flex-start; justify-content: space-around; flex-direction: column; width: 100%; height: 100%;">
+                        <ui:Label text="Play" picking-mode="Ignore" class="button-label" style="font-size: 36px; -unity-font-definition: url(&quot;project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Black.ttf?fileID=12800000&amp;guid=f13b298bab6786d4398e8986979e60cf&amp;type=3#CinzelDecorative-Black&quot;); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; position: relative; top: auto; left: auto; right: auto; bottom: auto;"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Button text="Settings"/>
+                <ui:Button text="Credits"/>
+                <ui:Button text="Quit Game"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

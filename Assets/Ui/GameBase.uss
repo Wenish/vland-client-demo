@@ -1,0 +1,63 @@
+:root {
+    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
+}
+
+* {
+    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
+}
+
+.unity-button {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    font-size: 36px;
+    color: rgb(254, 221, 183);
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Black.ttf?fileID=12800000&guid=f13b298bab6786d4398e8986979e60cf&type=3#CinzelDecorative-Black");
+    border-top-width: 4px;
+    border-right-width: 4px;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+    -unity-material: url("project://database/Assets/Ui/Button.shadergraph?fileID=-876546973899608171&guid=685800311cf4fbe45b7ebd1e950d4523&type=3#Button") prop("_BackgroundTop" rgb(2, 19, 52)) prop("_BackgroundBottom" rgb(1, 11, 31));
+    transition-duration: 0.3s;
+}
+
+.unity-button:hover {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    font-size: 36px;
+    -unity-material: url("project://database/Assets/Ui/Button.shadergraph?fileID=-876546973899608171&guid=685800311cf4fbe45b7ebd1e950d4523&type=3#Button") prop("_BackgroundTop" rgb(2, 19, 52)) prop("_BackgroundBottom" rgb(2, 15, 42));
+    color: rgb(255, 244, 231);
+    border-top-width: 4px;
+    border-right-width: 4px;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+    filter: blur(4);
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.button-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+}
+
+.button-container .button-label {
+    color: rgb(254, 221, 183);
+    transition-duration: 0.3s;
+}
+
+.button-container:hover .button-label {
+    color: rgb(255, 244, 231);
+    transition-duration: 0.3s;
+}
