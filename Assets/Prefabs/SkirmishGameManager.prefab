@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5390231377991051438
+--- !u!1 &519688427242696374
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4700079333637504917}
-  - component: {fileID: 6656760867327689927}
-  - component: {fileID: 8262049195024861856}
+  - component: {fileID: 5120058654777461915}
+  - component: {fileID: 1639633060690195172}
+  - component: {fileID: 6270395013986368868}
   m_Layer: 0
-  m_Name: AreaZone
+  m_Name: SkirmishGameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4700079333637504917
+--- !u!4 &5120058654777461915
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5390231377991051438}
+  m_GameObject: {fileID: 519688427242696374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,37 +33,45 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6656760867327689927
+--- !u!114 &1639633060690195172
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5390231377991051438}
+  m_GameObject: {fileID: 519688427242696374}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 525471575a40d594ebe9207f1dc339c7, type: 3}
+  m_Script: {fileID: 11500000, guid: b7d5f1222f093ef4383f9c93fd4cc4ec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AreaZoneController
+  m_EditorClassIdentifier: Assembly-CSharp::SkirmishGameManager
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  areaZoneName: 
-  caster: {fileID: 0}
---- !u!114 &8262049195024861856
+  teamSpawns: []
+  preRoundCountdownSeconds: 5
+  postRoundDelaySeconds: 3
+  targetRoundWins: 3
+  returnToLobbyDelaySeconds: 10
+  CurrentRound: 0
+  CurrentRoundState: 0
+  CountdownRemaining: 0
+  MatchEnded: 0
+  MatchWinnerTeam: -1
+--- !u!114 &6270395013986368868
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5390231377991051438}
+  m_GameObject: {fileID: 519688427242696374}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 0
+  _assetId: 1391740677
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

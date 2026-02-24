@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class UnitAnimationController : MonoBehaviour
 {
     public float maxSpeed = 5f;
@@ -7,11 +8,11 @@ public class UnitAnimationController : MonoBehaviour
     Animator animator;
 
     void Awake() {
-        unitController = GetComponentInParent<UnitController>();
         animator = GetComponent<Animator>();
-        if (unitController == null || animator == null)
+        unitController = GetComponentInParent<UnitController>();
+        if (unitController == null)
         {
-            Debug.LogError("UnitAnimationController: Missing UnitController or Animator reference.", this);
+            Debug.LogWarning("UnitAnimationController: Missing UnitController reference.", this);
             enabled = false;
             return;
         }

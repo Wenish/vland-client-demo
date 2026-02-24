@@ -18,7 +18,7 @@ public class UnitModelWeaponEquipper : MonoBehaviour
         unitController = GetComponentInParent<UnitController>();
         if (unitController == null)
         {
-            Debug.LogError("UnitModelWeaponEquipper must be a child of a GameObject with a UnitController component.");
+            Debug.LogWarning("UnitModelWeaponEquipper must be a child of a GameObject with a UnitController component.");
             return;
         }
         EquipWeapon(unitController.currentWeapon);
