@@ -96,6 +96,7 @@ public class SkirmishHudPresenter : MonoBehaviour
             scoreLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
             scoreLabel.style.fontSize = 15;
             scoreLabel.style.marginBottom = 2;
+            scoreLabel.style.color = Color.white;
             _scoresContainer.Add(scoreLabel);
             _teamScoreLabels.Add(scoreLabel);
         }
