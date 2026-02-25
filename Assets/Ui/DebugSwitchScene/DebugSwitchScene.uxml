@@ -1,8 +1,11 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement style="flex-grow: 1; align-items: center; justify-content: center;">
         <ui:VisualElement style="flex-grow: 1; justify-content: center; align-items: stretch;">
-            <ui:Button text="Zombie Map" name="ZombieMap"/>
-            <ui:Button text="Skirmish Map" name="SkirmishMap"/>
+            <ui:Button text="Zombie Map" name="ButtonZombieMap"/>
+            <ui:Button text="Skirmish A Map" name="ButtonSkirmishAMap"/>
+            <ui:Button text="Skirmish B Map" name="ButtonSkirmishBMap"/>
+            <ui:Button text="Skirmish C Map" name="ButtonSkirmishCMap"/>
+            <ui:Button text="Skirmish D Map" name="ButtonSkirmishDMap"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
