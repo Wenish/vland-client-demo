@@ -116,12 +116,14 @@ public class DebugSwitchSceneController : MonoBehaviour
     private void ZombieMapButtonClicked()
     {
         Debug.Log("Zombie Map Button Clicked - Load Zombie Map Scene");
-        NetworkManager.singleton.ServerChangeScene("ZombyGameScene");
+        NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
+        networkRoomManager.GameplayScene = "ZombyGameScene";
     }
 
     private void SkirmishMapButtonClicked()
     {
         Debug.Log("Skirmish Map Button Clicked - Load Skirmish Map Scene");
-        NetworkManager.singleton.ServerChangeScene("GameSkirmish1Scene");
+        NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
+        networkRoomManager.GameplayScene = "GameSkirmish1Scene";
     }
 }
