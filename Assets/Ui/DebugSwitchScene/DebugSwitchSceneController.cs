@@ -9,8 +9,11 @@ public class DebugSwitchSceneController : MonoBehaviour
     private UIDocument uiDocument;
     public Key toggleKey = Key.F4;
 
-    private Button ZombieMapButton;
-    private Button SkirmishMapButton;
+    private Button ButtonZombieMap;
+    private Button ButtonSkirmishAMap;
+    private Button ButtonSkirmishBMap;
+    private Button ButtonSkirmishCMap;
+    private Button ButtonSkirmishDMap;
     void Awake()
     {
         uiDocument = GetComponent<UIDocument>();
@@ -25,15 +28,27 @@ public class DebugSwitchSceneController : MonoBehaviour
             Debug.LogWarning("DebugSwitchSceneController: rootVisualElement is null.");
             return;
         }
-        ZombieMapButton = rootVisualElement.Q<Button>("ZombieMap");
-        if (ZombieMapButton == null)
+        ButtonZombieMap = rootVisualElement.Q<Button>("ButtonZombieMap");
+        if (ButtonZombieMap == null)
         {
-            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'ZombieMap' in UXML.");
+            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'ButtonZombieMap' in UXML.");
         }
-        SkirmishMapButton = rootVisualElement.Q<Button>("SkirmishMap");
-        if (SkirmishMapButton == null)
+        ButtonSkirmishAMap = rootVisualElement.Q<Button>("ButtonSkirmishAMap");
+        if (ButtonSkirmishAMap == null)
         {
-            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'SkirmishMap' in UXML.");
+            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'ButtonSkirmishAMap' in UXML.");
+        }
+        ButtonSkirmishBMap = rootVisualElement.Q<Button>("ButtonSkirmishBMap");
+        if (ButtonSkirmishBMap == null) {
+            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'ButtonSkirmishBMap' in UXML.");
+        }
+        ButtonSkirmishCMap = rootVisualElement.Q<Button>("ButtonSkirmishCMap");
+        if (ButtonSkirmishCMap == null) {
+            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'ButtonSkirmishCMap' in UXML.");
+        }
+        ButtonSkirmishDMap = rootVisualElement.Q<Button>("ButtonSkirmishDMap");
+        if (ButtonSkirmishDMap == null) {
+            Debug.LogWarning("DebugSwitchSceneController: Could not find Button named 'ButtonSkirmishDMap' in UXML.");
         }
 
         HideWindow();
@@ -94,22 +109,40 @@ public class DebugSwitchSceneController : MonoBehaviour
 
     void OnEnable()
     {
-        if (ZombieMapButton != null)        {
-            ZombieMapButton.clicked += ZombieMapButtonClicked;
+        if (ButtonZombieMap != null)        {
+            ButtonZombieMap.clicked += ZombieMapButtonClicked;
             Debug.Log("Subscribed to Zombie Map Button Click");
         }
-        if (SkirmishMapButton != null)        {
-            SkirmishMapButton.clicked += SkirmishMapButtonClicked;
+        if (ButtonSkirmishAMap != null)        {
+            ButtonSkirmishAMap.clicked += SkirmishAMapButtonClicked;
+        }
+        if (ButtonSkirmishBMap != null)        {
+            ButtonSkirmishBMap.clicked += SkirmishBMapButtonClicked;
+        }
+        if (ButtonSkirmishCMap != null)        {
+            ButtonSkirmishCMap.clicked += SkirmishCMapButtonClicked;
+        }
+        if (ButtonSkirmishDMap != null)        {
+            ButtonSkirmishDMap.clicked += SkirmishDMapButtonClicked;
         }
     }
 
     void OnDisable()
     {
-        if (ZombieMapButton != null)        {
-            ZombieMapButton.clicked -= ZombieMapButtonClicked;
+        if (ButtonZombieMap != null)        {
+            ButtonZombieMap.clicked -= ZombieMapButtonClicked;
         }
-        if (SkirmishMapButton != null)        {
-            SkirmishMapButton.clicked -= SkirmishMapButtonClicked;
+        if (ButtonSkirmishAMap != null)        {
+            ButtonSkirmishAMap.clicked -= SkirmishAMapButtonClicked;
+        }
+        if (ButtonSkirmishBMap != null)        {
+            ButtonSkirmishBMap.clicked -= SkirmishBMapButtonClicked;
+        }
+        if (ButtonSkirmishCMap != null)        {
+            ButtonSkirmishCMap.clicked -= SkirmishCMapButtonClicked;
+        }
+        if (ButtonSkirmishDMap != null)        {
+            ButtonSkirmishDMap.clicked -= SkirmishDMapButtonClicked;
         }
     }
 
@@ -120,10 +153,28 @@ public class DebugSwitchSceneController : MonoBehaviour
         networkRoomManager.GameplayScene = "ZombyGameScene";
     }
 
-    private void SkirmishMapButtonClicked()
+    private void SkirmishAMapButtonClicked()
     {
-        Debug.Log("Skirmish Map Button Clicked - Load Skirmish Map Scene");
+        Debug.Log("Skirmish A Map Button Clicked - Load Skirmish A Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "GameSkirmish1Scene";
+        networkRoomManager.GameplayScene = "GameSkirmishAScene";
+    }
+    private void SkirmishBMapButtonClicked()
+    {
+        Debug.Log("Skirmish B Map Button Clicked - Load Skirmish B Map Scene");
+        NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
+        networkRoomManager.GameplayScene = "GameSkirmishBScene";
+    }
+    private void SkirmishCMapButtonClicked()
+    {
+        Debug.Log("Skirmish C Map Button Clicked - Load Skirmish C Map Scene");
+        NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
+        networkRoomManager.GameplayScene = "GameSkirmishCScene";
+    }
+    private void SkirmishDMapButtonClicked()
+    {
+        Debug.Log("Skirmish D Map Button Clicked - Load Skirmish D Map Scene");
+        NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
+        networkRoomManager.GameplayScene = "GameSkirmishDScene";
     }
 }
