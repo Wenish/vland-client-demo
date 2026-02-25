@@ -36,6 +36,9 @@ public class SkirmishGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnMatchWinnerTeamChanged))]
     public int MatchWinnerTeam = -1;
 
+    public int TeamCount => teamSpawns?.Count ?? 0;
+    public int TargetRoundWins => targetRoundWins;
+
     public event Action<int> OnRoundChanged = delegate { };
     public event Action<RoundState> OnRoundStateChanged = delegate { };
     public event Action<float> OnCountdownChanged = delegate { };
