@@ -6,6 +6,7 @@ public class PlayerLoadout : NetworkBehaviour
 {
 
     private PlayerInput _playerInput;
+    private Coroutine _deferredSyncCoroutine;
 
     private LoadoutManager _loadoutManager = LoadoutManager.Instance;
 
@@ -20,22 +21,86 @@ public class PlayerLoadout : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        // start a short coroutine that waits until the local unit is ready, then sends the command
-        CmdRequestSetName(ApplicationSettings.Instance.Nickname);
-        var currentLoadout = _loadoutManager.Get();
-        HandleLocalLoadoutChanged(currentLoadout);
-
+        EnsurePlayerInput();
         _loadoutManager.OnLoadoutChanged += HandleLocalLoadoutChanged;
+        RestartDeferredSync();
     }
 
     public override void OnStopLocalPlayer()
     {
         _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
+
+        if (_deferredSyncCoroutine != null)
+        {
+            StopCoroutine(_deferredSyncCoroutine);
+            _deferredSyncCoroutine = null;
+        }
     }
 
     public void HandleLocalLoadoutChanged(LocalLoadout newLoadout)
     {
         if (!isLocalPlayer) return;
+
+        EnsurePlayerInput();
+        if (_playerInput == null || _playerInput.myUnit == null)
+        {
+            RestartDeferredSync();
+            return;
+        }
+
+        SendLoadoutToServer(newLoadout);
+    }
+
+    private void EnsurePlayerInput()
+    {
+        if (_playerInput != null) return;
+
+        _playerInput = GetComponent<PlayerInput>();
+        if (_playerInput == null)
+        {
+            Debug.LogError("PlayerInput component missing on PlayerLoadout object.");
+        }
+    }
+
+    private void RestartDeferredSync()
+    {
+        if (!isLocalPlayer) return;
+
+        if (_deferredSyncCoroutine != null)
+        {
+            StopCoroutine(_deferredSyncCoroutine);
+        }
+
+        _deferredSyncCoroutine = StartCoroutine(DeferredSyncWhenUnitReady());
+    }
+
+    private System.Collections.IEnumerator DeferredSyncWhenUnitReady()
+    {
+        while (isLocalPlayer)
+        {
+            EnsurePlayerInput();
+            if (_playerInput != null && _playerInput.myUnit != null)
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (!isLocalPlayer)
+        {
+            _deferredSyncCoroutine = null;
+            yield break;
+        }
+
+        CmdRequestSetName(ApplicationSettings.Instance.Nickname);
+        SendLoadoutToServer(_loadoutManager.Get());
+        _deferredSyncCoroutine = null;
+    }
+
+    private void SendLoadoutToServer(LocalLoadout newLoadout)
+    {
+        if (newLoadout == null) return;
 
         CmdRequestSetLoadout(
             newLoadout.UnitName,
