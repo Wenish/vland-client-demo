@@ -3236,6 +3236,10 @@ PrefabInstance:
       value: SkirmishGameManager
       objectReference: {fileID: 0}
     - target: {fileID: 1639633060690195172, guid: ec470a3bc3c6b4c45ae1dce3a26fabe9, type: 3}
+      propertyPath: targetRoundWins
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1639633060690195172, guid: ec470a3bc3c6b4c45ae1dce3a26fabe9, type: 3}
       propertyPath: teamSpawns.Array.size
       value: 2
       objectReference: {fileID: 0}
