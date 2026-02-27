@@ -285,6 +285,63 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!1001 &107018851
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104144382701503318, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8561578382842612223, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
+      propertyPath: m_Name
+      value: UIDocumentCastleSiege
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2c3a3f14df4d4f9fbc3b1a49d86a0f3f, type: 3}
 --- !u!1 &126081830
 GameObject:
   m_ObjectHideFlags: 0
@@ -6196,3 +6253,4 @@ SceneRoots:
   - {fileID: 4395650355972530466}
   - {fileID: 2055121009}
   - {fileID: 908741690}
+  - {fileID: 107018851}

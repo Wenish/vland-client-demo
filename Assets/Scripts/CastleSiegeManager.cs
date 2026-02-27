@@ -62,6 +62,7 @@ public class CastleSiegeManager : NetworkBehaviour
     private bool _lordsSpawned = false;
 
     public bool IsInGame => CurrentPhase == MatchPhase.InGame;
+    public int TeamCount => mapConfig != null ? Mathf.Max(0, mapConfig.TeamCount) : 0;
 
     private void Awake()
     {
