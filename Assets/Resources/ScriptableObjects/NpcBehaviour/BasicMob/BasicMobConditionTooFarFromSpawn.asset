@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BasicMobConditionTooFarFromSpawn
   m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.TooFarFromSpawnCondition
   description: 
-  resetDistance: 30
+  resetDistance: 15
