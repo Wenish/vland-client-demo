@@ -6,6 +6,7 @@
             <ui:Button text="Skirmish B Map" name="ButtonSkirmishBMap"/>
             <ui:Button text="Skirmish C Map" name="ButtonSkirmishCMap"/>
             <ui:Button text="Skirmish D Map" name="ButtonSkirmishDMap"/>
+            <ui:Button text="Castle Siege A Map" name="ButtonCastleSiegeAMap"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
