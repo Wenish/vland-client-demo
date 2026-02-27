@@ -38,6 +38,7 @@ public class CastleSiegeManager : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnWinnerChanged))]
     public int WinnerTeamId = -1;
 
+    public event Action<MatchPhase> OnMatchPhaseChanged = delegate { };
     public event Action OnPlayerJoined = delegate { };
     public event Action OnPlayerLeft = delegate { };
     public event Action<UnitController> OnUnitDied = delegate { };
@@ -81,7 +82,7 @@ public class CastleSiegeManager : NetworkBehaviour
 
         if (!ValidateMapConfig())
         {
-            CurrentPhase = MatchPhase.MatchEnded;
+            SetPhase(MatchPhase.MatchEnded);
             return;
         }
 
@@ -193,7 +194,7 @@ public class CastleSiegeManager : NetworkBehaviour
     [Server]
     private IEnumerator ServerMatchLoop()
     {
-        CurrentPhase = MatchPhase.Setup;
+        SetPhase(MatchPhase.Setup);
         WinnerTeamId = -1;
         _inGameStartServerTime = -1d;
         _lordsSpawned = false;
@@ -211,12 +212,12 @@ public class CastleSiegeManager : NetworkBehaviour
 
         if (!isServer) yield break;
 
-        CurrentPhase = MatchPhase.Warmup;
+        SetPhase(MatchPhase.Warmup);
         yield return RunPhaseTimer(mapConfig.WarmupSeconds);
 
         if (!isServer) yield break;
 
-        CurrentPhase = MatchPhase.Countdown;
+        SetPhase(MatchPhase.Countdown);
         yield return RunPhaseTimer(mapConfig.StartCountdownSeconds);
 
         if (!isServer) yield break;
@@ -265,7 +266,7 @@ public class CastleSiegeManager : NetworkBehaviour
     [Server]
     private void TransitionToInGame()
     {
-        CurrentPhase = MatchPhase.InGame;
+        SetPhase(MatchPhase.InGame);
         _inGameStartServerTime = NetworkTime.time;
         PhaseRemainingSeconds = 0f;
 
@@ -317,12 +318,7 @@ public class CastleSiegeManager : NetworkBehaviour
                 }
                 continue;
             }
-
-            if (CurrentPhase == MatchPhase.Warmup || CurrentPhase == MatchPhase.Countdown)
-            {
-                var spawn = GetNearestTeamPlayerSpawn(assignedTeamId, unitController.transform.position);
-                RespawnPlayerAtSpawn(unitController, spawn);
-            }
+            
         }
 
         HandleDisconnectedPlayers(activeConnectionIds);
@@ -596,8 +592,64 @@ public class CastleSiegeManager : NetworkBehaviour
         }
 
         WinnerTeamId = aliveTeams[0];
-        CurrentPhase = MatchPhase.MatchEnded;
+        SetPhase(MatchPhase.MatchEnded);
         OnMatchWinner(WinnerTeamId);
+    }
+
+    private void SetPhase(MatchPhase newPhase)
+    {
+        if (CurrentPhase == newPhase)
+        {
+            return;
+        }
+
+        CurrentPhase = newPhase;
+
+        if (NetworkServer.active && (newPhase == MatchPhase.Warmup || newPhase == MatchPhase.Countdown))
+        {
+            RespawnAllActivePlayersToTeamSpawns();
+        }
+
+        if (NetworkServer.active)
+        {
+            OnMatchPhaseChanged(newPhase);
+        }
+    }
+
+    [Server]
+    private void RespawnAllActivePlayersToTeamSpawns()
+    {
+        if (PlayerUnitsManager.Instance == null)
+        {
+            return;
+        }
+
+        foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+        {
+            if (playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            if (!_connectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int assignedTeamId))
+            {
+                continue;
+            }
+
+            if (_eliminatedTeams.Contains(assignedTeamId))
+            {
+                continue;
+            }
+
+            var unitController = playerUnit.Unit.GetComponent<UnitController>();
+            if (unitController == null)
+            {
+                continue;
+            }
+
+            var spawn = GetNearestTeamPlayerSpawn(assignedTeamId, unitController.transform.position);
+            RespawnPlayerAtSpawn(unitController, spawn);
+        }
     }
 
     [Server]
@@ -788,6 +840,12 @@ public class CastleSiegeManager : NetworkBehaviour
 
     private void HookOnPhaseChanged(MatchPhase oldValue, MatchPhase newValue)
     {
+        if (NetworkServer.active)
+        {
+            return;
+        }
+
+        OnMatchPhaseChanged(newValue);
     }
 
     private void HookOnPhaseRemainingChanged(float oldValue, float newValue)
