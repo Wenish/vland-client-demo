@@ -36,6 +36,15 @@ public class SkirmishGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnMatchWinnerTeamChanged))]
     public int MatchWinnerTeam = -1;
 
+    [SyncVar]
+    private int LastRoundWinnerTeam = -1;
+
+    [SyncVar]
+    private bool LastRoundWasDraw = false;
+
+    [SyncVar(hook = nameof(HookOnRoundResolutionSequenceChanged))]
+    private int RoundResolutionSequence = 0;
+
     public int TeamCount => teamSpawns?.Count ?? 0;
     public int TargetRoundWins => targetRoundWins;
 
@@ -49,6 +58,84 @@ public class SkirmishGameManager : NetworkBehaviour
     private readonly SyncDictionary<int, int> _teamRoundWins = new SyncDictionary<int, int>();
     private Coroutine _roundLoopCoroutine;
     private Coroutine _returnToLobbyCoroutine;
+    private bool _hasRaisedMatchEndedEvent;
+    private int _lastRaisedMatchWinnerTeam = -1;
+    private int _lastRaisedRoundResolutionSequence;
+
+    private void ResetRoundEndedEventState()
+    {
+        _lastRaisedRoundResolutionSequence = 0;
+    }
+
+    private void RaiseRoundEndedIfNeeded(int resolutionSequence, int winnerTeam, bool isDraw)
+    {
+        if (resolutionSequence <= _lastRaisedRoundResolutionSequence)
+        {
+            return;
+        }
+
+        _lastRaisedRoundResolutionSequence = resolutionSequence;
+        OnRoundEnded((winnerTeam, isDraw));
+    }
+
+    private void ResetMatchEndedEventState()
+    {
+        _hasRaisedMatchEndedEvent = false;
+        _lastRaisedMatchWinnerTeam = -1;
+    }
+
+    private void RaiseMatchEndedIfNeeded(int winnerTeam)
+    {
+        if (winnerTeam < 0)
+        {
+            return;
+        }
+
+        if (_hasRaisedMatchEndedEvent && _lastRaisedMatchWinnerTeam == winnerTeam)
+        {
+            return;
+        }
+
+        _hasRaisedMatchEndedEvent = true;
+        _lastRaisedMatchWinnerTeam = winnerTeam;
+        OnMatchEnded(winnerTeam);
+    }
+
+    [Server]
+    private void SetCurrentRound(int value)
+    {
+        if (CurrentRound == value) return;
+        CurrentRound = value;
+
+        if (isServerOnly)
+        {
+            OnRoundChanged(value);
+        }
+    }
+
+    [Server]
+    private void SetRoundState(RoundState value)
+    {
+        if (CurrentRoundState == value) return;
+        CurrentRoundState = value;
+
+        if (isServerOnly)
+        {
+            OnRoundStateChanged(value);
+        }
+    }
+
+    [Server]
+    private void SetCountdownRemaining(float value)
+    {
+        if (Mathf.Approximately(CountdownRemaining, value)) return;
+        CountdownRemaining = value;
+
+        if (isServerOnly)
+        {
+            OnCountdownChanged(value);
+        }
+    }
 
     private void Awake()
     {
@@ -59,6 +146,15 @@ public class SkirmishGameManager : NetworkBehaviour
             return;
         }
         Instance = this;
+        ResetMatchEndedEventState();
+        ResetRoundEndedEventState();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        ResetMatchEndedEventState();
+        ResetRoundEndedEventState();
     }
 
     public override void OnStartServer()
@@ -66,6 +162,11 @@ public class SkirmishGameManager : NetworkBehaviour
         base.OnStartServer();
 
         _teamRoundWins.Clear();
+        ResetMatchEndedEventState();
+        ResetRoundEndedEventState();
+        LastRoundWinnerTeam = -1;
+        LastRoundWasDraw = false;
+        RoundResolutionSequence = 0;
 
         if (teamSpawns == null || teamSpawns.Count == 0)
         {
@@ -100,6 +201,8 @@ public class SkirmishGameManager : NetworkBehaviour
 
         _connectionTeamAssignments.Clear();
         _teamRoundWins.Clear();
+        ResetMatchEndedEventState();
+        ResetRoundEndedEventState();
     }
 
     private IEnumerator RoundLoop()
@@ -108,15 +211,15 @@ public class SkirmishGameManager : NetworkBehaviour
 
         while (isServer && !MatchEnded)
         {
-            CurrentRound++;
+            SetCurrentRound(CurrentRound + 1);
 
             AssignTeamsToNewPlayers();
             ReviveAndTeleportAllPlayersToTeamSpawns();
 
-            CurrentRoundState = RoundState.PreRoundCountdown;
+            SetRoundState(RoundState.PreRoundCountdown);
             yield return RunCountdown(preRoundCountdownSeconds);
 
-            CurrentRoundState = RoundState.InRound;
+            SetRoundState(RoundState.InRound);
 
             bool roundResolved = false;
             while (isServer && !MatchEnded && !roundResolved)
@@ -139,7 +242,7 @@ public class SkirmishGameManager : NetworkBehaviour
                 yield return null;
             }
 
-            CurrentRoundState = RoundState.PostRoundDelay;
+            SetRoundState(RoundState.PostRoundDelay);
             yield return RunCountdown(postRoundDelaySeconds);
         }
     }
@@ -313,8 +416,15 @@ public class SkirmishGameManager : NetworkBehaviour
     [Server]
     private void HandleRoundEnd(int winnerTeam, bool isDraw)
     {
-        CurrentRoundState = RoundState.RoundEnded;
-        OnRoundEnded((winnerTeam, isDraw));
+        SetRoundState(RoundState.RoundEnded);
+        LastRoundWinnerTeam = winnerTeam;
+        LastRoundWasDraw = isDraw;
+        RoundResolutionSequence++;
+
+        if (isServerOnly)
+        {
+            RaiseRoundEndedIfNeeded(RoundResolutionSequence, winnerTeam, isDraw);
+        }
 
         if (isDraw)
         {
@@ -333,8 +443,8 @@ public class SkirmishGameManager : NetworkBehaviour
         {
             MatchEnded = true;
             MatchWinnerTeam = winnerTeam;
-            CurrentRoundState = RoundState.MatchEnded;
-            OnMatchEnded(winnerTeam);
+            SetRoundState(RoundState.MatchEnded);
+            RaiseMatchEndedIfNeeded(winnerTeam);
 
             if (_returnToLobbyCoroutine == null)
             {
@@ -371,11 +481,11 @@ public class SkirmishGameManager : NetworkBehaviour
 
         while (isServer && Time.time < endTime)
         {
-            CountdownRemaining = Mathf.Max(0f, endTime - Time.time);
+            SetCountdownRemaining(Mathf.Max(0f, endTime - Time.time));
             yield return null;
         }
 
-        CountdownRemaining = 0f;
+        SetCountdownRemaining(0f);
     }
 
     public int GetTeamRoundWins(int teamId)
@@ -421,7 +531,7 @@ public class SkirmishGameManager : NetworkBehaviour
 
         if (MatchWinnerTeam >= 0)
         {
-            OnMatchEnded(MatchWinnerTeam);
+            RaiseMatchEndedIfNeeded(MatchWinnerTeam);
         }
     }
 
@@ -429,7 +539,13 @@ public class SkirmishGameManager : NetworkBehaviour
     {
         if (newValue < 0) return;
         if (!MatchEnded) return;
-        OnMatchEnded(newValue);
+        RaiseMatchEndedIfNeeded(newValue);
+    }
+
+    private void HookOnRoundResolutionSequenceChanged(int oldValue, int newValue)
+    {
+        if (newValue <= 0) return;
+        RaiseRoundEndedIfNeeded(newValue, LastRoundWinnerTeam, LastRoundWasDraw);
     }
 
     public enum RoundState : byte
