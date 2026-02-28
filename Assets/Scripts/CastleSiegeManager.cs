@@ -61,9 +61,34 @@ public class CastleSiegeManager : NetworkBehaviour
     private Coroutine _matchLoop;
     private double _inGameStartServerTime = -1d;
     private bool _lordsSpawned = false;
+    private bool _hasRaisedMatchWinnerEvent;
+    private int _lastRaisedWinnerTeamId = -1;
 
     public bool IsInGame => CurrentPhase == MatchPhase.InGame;
     public int TeamCount => mapConfig != null ? Mathf.Max(0, mapConfig.TeamCount) : 0;
+
+    private void ResetMatchWinnerEventState()
+    {
+        _hasRaisedMatchWinnerEvent = false;
+        _lastRaisedWinnerTeamId = -1;
+    }
+
+    private void RaiseMatchWinnerIfNeeded(int winnerTeamId)
+    {
+        if (winnerTeamId < 0)
+        {
+            return;
+        }
+
+        if (_hasRaisedMatchWinnerEvent && _lastRaisedWinnerTeamId == winnerTeamId)
+        {
+            return;
+        }
+
+        _hasRaisedMatchWinnerEvent = true;
+        _lastRaisedWinnerTeamId = winnerTeamId;
+        OnMatchWinner(winnerTeamId);
+    }
 
     private void Awake()
     {
@@ -74,6 +99,13 @@ public class CastleSiegeManager : NetworkBehaviour
         }
 
         Instance = this;
+        ResetMatchWinnerEventState();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        ResetMatchWinnerEventState();
     }
 
     public override void OnStartServer()
@@ -85,6 +117,8 @@ public class CastleSiegeManager : NetworkBehaviour
             SetPhase(MatchPhase.MatchEnded);
             return;
         }
+
+        ResetMatchWinnerEventState();
 
         InitializeTeamConfigLookup();
         InitializeTeamEliminationFlags();
@@ -101,6 +135,7 @@ public class CastleSiegeManager : NetworkBehaviour
     {
         base.OnStopServer();
         CleanupAllServerState();
+        ResetMatchWinnerEventState();
     }
 
     private void OnDestroy()
@@ -593,7 +628,7 @@ public class CastleSiegeManager : NetworkBehaviour
 
         WinnerTeamId = aliveTeams[0];
         SetPhase(MatchPhase.MatchEnded);
-        OnMatchWinner(WinnerTeamId);
+        RaiseMatchWinnerIfNeeded(WinnerTeamId);
     }
 
     private void SetPhase(MatchPhase newPhase)
@@ -854,6 +889,7 @@ public class CastleSiegeManager : NetworkBehaviour
 
     private void HookOnWinnerChanged(int oldValue, int newValue)
     {
+        RaiseMatchWinnerIfNeeded(newValue);
     }
 
     public bool IsTeamEliminated(int teamId)
