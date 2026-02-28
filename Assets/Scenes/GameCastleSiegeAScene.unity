@@ -1194,7 +1194,8 @@ GameObject:
   - component: {fileID: 284020235}
   - component: {fileID: 284020234}
   - component: {fileID: 284020236}
-  m_Layer: 0
+  - component: {fileID: 284020237}
+  m_Layer: 3
   m_Name: DestructibleObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1406,6 +1407,22 @@ MonoBehaviour:
   - {fileID: 531585237}
   - {fileID: 531585236}
   disableCollidersWithFallbackVisuals: 0
+--- !u!114 &284020237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284020226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bedf5fcf0e02da42a76ba8c592f74bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestructibleResetTimer
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  rebuildDelaySeconds: 10
 --- !u!1001 &296021572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2533,6 +2550,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orb
       objectReference: {fileID: 0}
+    - target: {fileID: 6821168344022626147, guid: 982bd2136b4e2a146af7431466646833, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7571740765866621413, guid: 982bd2136b4e2a146af7431466646833, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -2584,6 +2605,14 @@ PrefabInstance:
     - target: {fileID: 7571740765866621413, guid: 982bd2136b4e2a146af7431466646833, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8171325111608990238, guid: 982bd2136b4e2a146af7431466646833, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8678328225000739186, guid: 982bd2136b4e2a146af7431466646833, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
