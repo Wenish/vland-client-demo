@@ -30,8 +30,8 @@ MonoBehaviour:
     PlayerSpawnPoints:
     - Position: {x: 0, y: 0, z: 20}
       RotationEuler: {x: 0, y: 180, z: 0}
-  WarmupSeconds: 15
-  StartCountdownSeconds: 5
+  WarmupSeconds: 1
+  StartCountdownSeconds: 3
   BaseRespawnSeconds: 10
   ExtraRespawnPerMinute: 1
   MinRespawnSeconds: 5

@@ -232,4 +232,32 @@ namespace MyGame.Events
             Position = position;
         }
     }
+
+    public class ObjectiveDestroyedEvent : GameEvent
+    {
+        public UnitController ObjectiveUnit { get; }
+        public string ObjectiveId { get; }
+        public UnitController? Killer { get; }
+        public int RewardTeamId { get; }
+
+        public ObjectiveDestroyedEvent(UnitController objectiveUnit, string objectiveId, UnitController? killer, int rewardTeamId)
+        {
+            ObjectiveUnit = objectiveUnit;
+            ObjectiveId = objectiveId;
+            Killer = killer;
+            RewardTeamId = rewardTeamId;
+        }
+    }
+
+    public class ObjectiveRebuiltEvent : GameEvent
+    {
+        public UnitController ObjectiveUnit { get; }
+        public string ObjectiveId { get; }
+
+        public ObjectiveRebuiltEvent(UnitController objectiveUnit, string objectiveId)
+        {
+            ObjectiveUnit = objectiveUnit;
+            ObjectiveId = objectiveId;
+        }
+    }
 }
