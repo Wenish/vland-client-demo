@@ -15,8 +15,8 @@ public class UnitController : NetworkBehaviour
     public int team;
 
     [Header("Team")]
-    [Tooltip("Set the team number in the editor. During Play mode, if you're the server/host, changing this will update the networked team.")]
-    [SerializeField, Min(0)]
+    [Tooltip("Set the team number in the editor. Use -1 for neutral (e.g., globally attackable objectives). During Play mode, if you're the server/host, changing this will update the networked team.")]
+    [SerializeField]
     private int teamNumber = 0;
 
     [Server]
@@ -321,7 +321,7 @@ public class UnitController : NetworkBehaviour
     {
         if (IsDead)
         {
-            unitRigidbody.linearVelocity = Vector3.zero;
+            SetLinearVelocitySafe(Vector3.zero);
             return;
         }
 
@@ -349,7 +349,7 @@ public class UnitController : NetworkBehaviour
             {
                 // End dash and stop dash velocity; normal movement resumes next frame
                 _isDashing = false;
-                unitRigidbody.linearVelocity = Vector3.zero;
+                SetLinearVelocitySafe(Vector3.zero);
             }
             else
             {
@@ -358,11 +358,11 @@ public class UnitController : NetworkBehaviour
                 {
                     // Scale the final velocity so we land exactly at the end distance
                     float scaledSpeed = remaining / Time.fixedDeltaTime;
-                    unitRigidbody.linearVelocity = _dashDirection * scaledSpeed;
+                    SetLinearVelocitySafe(_dashDirection * scaledSpeed);
                 }
                 else
                 {
-                    unitRigidbody.linearVelocity = _dashDirection * _dashSpeed;
+                    SetLinearVelocitySafe(_dashDirection * _dashSpeed);
                 }
             }
             return;
@@ -375,7 +375,18 @@ public class UnitController : NetworkBehaviour
         inputs.z = verticalInput;
         inputs = Vector3.ClampMagnitude(inputs, 1f);
         Vector3 moveDirection = inputs * currentMoveSpeed;
-        unitRigidbody.linearVelocity = moveDirection;
+        SetLinearVelocitySafe(moveDirection);
+    }
+
+    [Server]
+    private void SetLinearVelocitySafe(Vector3 velocity)
+    {
+        if (unitRigidbody == null || unitRigidbody.isKinematic)
+        {
+            return;
+        }
+
+        unitRigidbody.linearVelocity = velocity;
     }
 
     [SerializeField]
@@ -757,7 +768,8 @@ public class UnitController : NetworkBehaviour
 
 public enum UnitType : byte
 {
-    Player,
-    Zombie,
-    Spirit
+    Player = 0,
+    Zombie = 1,
+    Spirit = 2,
+    Structure = 3
 }
