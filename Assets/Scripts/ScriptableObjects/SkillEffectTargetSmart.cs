@@ -69,7 +69,6 @@ public class SkillEffectTargetSmart : SkillEffectTarget
         var best = scored.FirstOrDefault();
         if (best != null) return new List<UnitController> { best };
 
-        /* 
         if (caster != null)
         {
             var selfTargetingAllowed = ApplyCommonFilters(castContext, new List<UnitController> { caster });
@@ -78,7 +77,6 @@ public class SkillEffectTargetSmart : SkillEffectTarget
                 return new List<UnitController> { caster };
             }
         }
-        */
 
         return new List<UnitController>(0);
 
