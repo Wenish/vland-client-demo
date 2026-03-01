@@ -108,7 +108,7 @@ namespace NPCBehaviour
                 context.CurrentDestination = spawnPos;
 
                 // Calculate path to spawn
-                NavMesh.CalculatePath(context.Position, spawnPos, NavMesh.AllAreas, context.CurrentPath);
+                NavMesh.CalculatePath(context.Position, spawnPos, context.NavMeshAreaMask, context.CurrentPath);
 
                 if (context.CurrentPath.corners.Length < 2)
                 {

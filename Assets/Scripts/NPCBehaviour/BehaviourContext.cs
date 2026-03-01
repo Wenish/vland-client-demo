@@ -84,6 +84,7 @@ namespace NPCBehaviour
         public float HealthPercent => MaxHealth > 0 ? ((float)Health / MaxHealth) : 0f;
         public bool IsDead => Unit.IsDead;
         public int Team => Unit.team;
+        public int NavMeshAreaMask => TeamNavMeshAreas.BuildAreaMaskForTeam(Team);
 
         // Distance helpers
         public float DistanceToTarget()

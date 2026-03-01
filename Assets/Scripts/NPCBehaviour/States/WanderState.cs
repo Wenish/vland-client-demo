@@ -143,7 +143,7 @@ namespace NPCBehaviour
                 }
 
                 // Try to find valid NavMesh position
-                if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, wanderRadius, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, wanderRadius, context.NavMeshAreaMask))
                 {
                     // Ensure it's still within wander radius from origin
                     float distanceFromOrigin = Vector3.Distance(wanderOrigin, hit.position);
@@ -151,7 +151,7 @@ namespace NPCBehaviour
                     {
                         // Verify the destination is reachable via NavMesh
                         NavMeshPath testPath = new NavMeshPath();
-                        if (NavMesh.CalculatePath(context.Position, hit.position, NavMesh.AllAreas, testPath))
+                        if (NavMesh.CalculatePath(context.Position, hit.position, context.NavMeshAreaMask, testPath))
                         {
                             // Check if path is complete (not partial)
                             if (testPath.status == NavMeshPathStatus.PathComplete)
@@ -181,7 +181,7 @@ namespace NPCBehaviour
             Vector3 destination = context.CurrentDestination;
             
             // Calculate path
-            NavMesh.CalculatePath(context.Position, destination, NavMesh.AllAreas, context.CurrentPath);
+            NavMesh.CalculatePath(context.Position, destination, context.NavMeshAreaMask, context.CurrentPath);
 
             if (context.CurrentPath.corners.Length < 2)
             {

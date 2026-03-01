@@ -59,7 +59,8 @@ public class AiZombieController : MonoBehaviour
 
     void CalcPathToDestination()
     {
-        NavMesh.CalculatePath(transform.position, Destination, 1, _path);
+        int areaMask = TeamNavMeshAreas.BuildAreaMaskForTeam(_unitController.team);
+        NavMesh.CalculatePath(transform.position, Destination, areaMask, _path);
     }
 
     void SetMoveTarget()
