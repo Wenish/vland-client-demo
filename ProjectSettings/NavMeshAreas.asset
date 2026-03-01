@@ -11,13 +11,13 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
-  - name: 
+  - name: Team_0
     cost: 1
-  - name: 
+  - name: Team_1
     cost: 1
-  - name: 
+  - name: Team_2
     cost: 1
-  - name: 
+  - name: Team_3
     cost: 1
   - name: 
     cost: 1

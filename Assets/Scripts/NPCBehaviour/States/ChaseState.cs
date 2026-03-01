@@ -133,7 +133,7 @@ namespace NPCBehaviour
             context.CurrentDestination = targetPos;
 
             // Calculate path
-            NavMesh.CalculatePath(context.Position, targetPos, NavMesh.AllAreas, context.CurrentPath);
+            NavMesh.CalculatePath(context.Position, targetPos, context.NavMeshAreaMask, context.CurrentPath);
 
             if (context.CurrentPath.corners.Length < 2)
             {

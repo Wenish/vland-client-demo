@@ -101,7 +101,7 @@ namespace NPCBehaviour
             Vector3 fleePoint = context.Position + fleeDirection * fleeDistance;
 
             // Try to find valid NavMesh position
-            if (NavMesh.SamplePosition(fleePoint, out NavMeshHit hit, fleeDistance, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(fleePoint, out NavMeshHit hit, fleeDistance, context.NavMeshAreaMask))
             {
                 context.CurrentDestination = hit.position;
             }
@@ -114,7 +114,7 @@ namespace NPCBehaviour
         private void MoveTowardsFleePoint(BehaviourContext context)
         {
             Vector3 destination = context.CurrentDestination;
-            NavMesh.CalculatePath(context.Position, destination, NavMesh.AllAreas, context.CurrentPath);
+            NavMesh.CalculatePath(context.Position, destination, context.NavMeshAreaMask, context.CurrentPath);
 
             if (context.CurrentPath.corners.Length < 2)
             {

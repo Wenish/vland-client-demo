@@ -116,7 +116,7 @@ namespace NPCBehaviour
             randomPoint.y = origin.y; // Keep same Y level
 
             // Try to find valid NavMesh position
-            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, randomWaypointRange, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, randomWaypointRange, context.NavMeshAreaMask))
             {
                 context.CurrentDestination = hit.position;
             }
@@ -150,7 +150,7 @@ namespace NPCBehaviour
         private bool MoveTowardsDestination(BehaviourContext context)
         {
             Vector3 destination = context.CurrentDestination;
-            NavMesh.CalculatePath(context.Position, destination, NavMesh.AllAreas, context.CurrentPath);
+            NavMesh.CalculatePath(context.Position, destination, context.NavMeshAreaMask, context.CurrentPath);
 
             if (context.CurrentPath.corners.Length < 2)
             {
