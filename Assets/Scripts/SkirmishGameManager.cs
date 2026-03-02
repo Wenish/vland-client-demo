@@ -376,6 +376,55 @@ public class SkirmishGameManager : MatchGameManagerBase
     }
 
     [Server]
+    protected override void OnServerPlayerTeamAssigned(int connectionId, int teamId)
+    {
+        base.OnServerPlayerTeamAssigned(connectionId, teamId);
+
+        if (PlayerUnitsManager.Instance == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        {
+            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            var unitController = playerUnit.Unit.GetComponent<UnitController>();
+            if (unitController == null)
+            {
+                return;
+            }
+
+            int clampedTeamId = Mathf.Clamp(teamId, 0, teamSpawns.Count - 1);
+            var spawn = teamSpawns[clampedTeamId];
+            if (spawn == null)
+            {
+                return;
+            }
+
+            unitController.SetTeam(clampedTeamId);
+            unitController.InterruptAction();
+            unitController.SetHealth(unitController.maxHealth);
+            unitController.SetShield(unitController.maxShield);
+
+            if (playerUnit.Unit.TryGetComponent<Rigidbody>(out var rb))
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.position = spawn.position;
+                rb.rotation = spawn.rotation;
+            }
+
+            playerUnit.Unit.transform.SetPositionAndRotation(spawn.position, spawn.rotation);
+            return;
+        }
+    }
+
+    [Server]
     private (int winnerTeam, bool isDraw)? GetRoundOutcome()
     {
         if (PlayerUnitsManager.Instance == null) return null;

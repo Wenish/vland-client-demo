@@ -696,6 +696,36 @@ public class CastleSiegeManager : MatchGameManagerBase
     }
 
     [Server]
+    protected override void OnServerPlayerTeamAssigned(int connectionId, int teamId)
+    {
+        base.OnServerPlayerTeamAssigned(connectionId, teamId);
+
+        if (PlayerUnitsManager.Instance == null || !_teamConfigByTeamId.ContainsKey(teamId))
+        {
+            return;
+        }
+
+        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        {
+            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            var unitController = playerUnit.Unit.GetComponent<UnitController>();
+            if (unitController == null)
+            {
+                return;
+            }
+
+            var spawn = GetNearestTeamPlayerSpawn(teamId, unitController.transform.position);
+            RespawnPlayerAtSpawn(unitController, spawn);
+            return;
+        }
+    }
+
+    [Server]
     private CastleSiegeMapConfig.SpawnPointData GetNearestTeamPlayerSpawn(int teamId, Vector3 deathPosition)
     {
         var teamConfig = _teamConfigByTeamId[teamId];

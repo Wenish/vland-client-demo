@@ -26,14 +26,21 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnLifecycleWinnerTeamChanged))]
     public int LifecycleWinnerTeamId = -1;
 
+    [SyncVar(hook = nameof(HookOnReturnToLobbyCountdownChanged))]
+    public float ReturnToLobbyCountdownRemaining = 0f;
+
     [Header("Match End")]
     [SerializeField] private bool autoReturnToLobbyOnMatchEnd = true;
     [SerializeField, Min(0f)] private float returnToLobbyDelaySeconds = 15f;
+
+    [Header("Team Switching")]
+    [SerializeField] private bool requireBalancedManualTeamSwitching = false;
 
     public event Action<MatchLifecycleState> OnLifecycleStateChanged = delegate { };
     public event Action<bool> OnTeamSelectionLockChanged = delegate { };
     public event Action<(int connectionId, int teamId)> OnPlayerTeamAssigned = delegate { };
     public event Action<int> OnLifecycleMatchEnded = delegate { };
+    public event Action<float> OnReturnToLobbyCountdownChanged = delegate { };
 
     protected readonly Dictionary<int, int> ConnectionTeamAssignments = new Dictionary<int, int>();
     private Coroutine _returnToLobbyCoroutine;
@@ -67,6 +74,8 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
             StopCoroutine(_returnToLobbyCoroutine);
             _returnToLobbyCoroutine = null;
         }
+
+        ServerSetReturnToLobbyCountdownRemaining(0f);
     }
 
     [Server]
@@ -102,9 +111,68 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     }
 
     [Server]
+    public void ServerLockTeamSwitching()
+    {
+        ServerSetTeamSelectionLocked(true);
+    }
+
+    [Server]
+    public void ServerUnlockTeamSwitching()
+    {
+        ServerSetTeamSelectionLocked(false);
+    }
+
+    [Server]
+    public void ServerSetTeamSwitchingLocked(bool isLocked)
+    {
+        ServerSetTeamSelectionLocked(isLocked);
+    }
+
+    [ContextMenu("Server Lock Team Switching")]
+    private void ContextServerLockTeamSwitching()
+    {
+        if (!NetworkServer.active)
+        {
+            Debug.LogWarning($"[{nameof(MatchGameManagerBase)}] Cannot lock team switching because server is not active.", this);
+            return;
+        }
+
+        ServerLockTeamSwitching();
+    }
+
+    [ContextMenu("Server Unlock Team Switching")]
+    private void ContextServerUnlockTeamSwitching()
+    {
+        if (!NetworkServer.active)
+        {
+            Debug.LogWarning($"[{nameof(MatchGameManagerBase)}] Cannot unlock team switching because server is not active.", this);
+            return;
+        }
+
+        ServerUnlockTeamSwitching();
+    }
+
+    [Server]
+    protected void ServerSetReturnToLobbyCountdownRemaining(float value)
+    {
+        if (Mathf.Approximately(ReturnToLobbyCountdownRemaining, value))
+        {
+            return;
+        }
+
+        ReturnToLobbyCountdownRemaining = value;
+
+        if (isServerOnly)
+        {
+            OnReturnToLobbyCountdownChanged(value);
+        }
+    }
+
+    [Server]
     protected void ServerEnterPreMatch()
     {
         LifecycleWinnerTeamId = -1;
+        ServerSetReturnToLobbyCountdownRemaining(0f);
         ServerSetTeamSelectionLocked(false);
         ServerSetLifecycleState(MatchLifecycleState.PreMatch);
     }
@@ -145,10 +213,15 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     private IEnumerator ServerReturnToLobbyAfterDelay()
     {
         float delay = Mathf.Max(0f, returnToLobbyDelaySeconds);
-        if (delay > 0f)
+
+        float endTime = Time.time + delay;
+        while (isServer && Time.time < endTime)
         {
-            yield return new WaitForSeconds(delay);
+            ServerSetReturnToLobbyCountdownRemaining(Mathf.Max(0f, endTime - Time.time));
+            yield return null;
         }
+
+        ServerSetReturnToLobbyCountdownRemaining(0f);
 
         if (NetworkManager.singleton is NetworkRoomManager roomManager)
         {
@@ -199,7 +272,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
             return true;
         }
 
-        if (!CanAssignTeamWithBalanceRules(connectionId, requestedTeamId, hadExistingTeam ? currentTeam : -1))
+        if (requireBalancedManualTeamSwitching && !CanAssignTeamWithBalanceRules(connectionId, requestedTeamId, hadExistingTeam ? currentTeam : -1))
         {
             reason = "That team is currently full compared to others.";
             return false;
@@ -219,7 +292,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     [Server]
     protected virtual bool CanAcceptTeamSelection()
     {
-        return !TeamSelectionLocked && LifecycleState == MatchLifecycleState.PreMatch;
+        return !TeamSelectionLocked;
     }
 
     [Server]
@@ -264,6 +337,27 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     [Server]
     protected virtual void OnServerPlayerTeamAssigned(int connectionId, int teamId)
     {
+        if (PlayerUnitsManager.Instance == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        {
+            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            var unitController = playerUnit.Unit.GetComponent<UnitController>();
+            if (unitController != null)
+            {
+                unitController.SetTeam(teamId);
+            }
+
+            return;
+        }
     }
 
     private void HookOnLifecycleStateChanged(MatchLifecycleState oldValue, MatchLifecycleState newValue)
@@ -287,5 +381,10 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
         {
             OnLifecycleMatchEnded(newValue);
         }
+    }
+
+    private void HookOnReturnToLobbyCountdownChanged(float oldValue, float newValue)
+    {
+        OnReturnToLobbyCountdownChanged(newValue);
     }
 }

@@ -12,6 +12,8 @@ public class CastleSiegeClientStateSync : MonoBehaviour
     {
         public CastleSiegeManager.MatchPhase Phase;
         public float PhaseRemainingSeconds;
+        public bool TeamSelectionLocked;
+        public float ReturnToLobbyCountdownRemaining;
         public int WinnerTeamId;
         public int TeamCount;
         public int AliveTeams;
@@ -181,6 +183,8 @@ public class CastleSiegeClientStateSync : MonoBehaviour
             {
                 Phase = CastleSiegeManager.MatchPhase.Setup,
                 PhaseRemainingSeconds = 0f,
+                TeamSelectionLocked = false,
+                ReturnToLobbyCountdownRemaining = 0f,
                 WinnerTeamId = -1,
                 TeamCount = 0,
                 AliveTeams = 0,
@@ -211,6 +215,8 @@ public class CastleSiegeClientStateSync : MonoBehaviour
         {
             Phase = _manager.CurrentPhase,
             PhaseRemainingSeconds = _manager.PhaseRemainingSeconds,
+            TeamSelectionLocked = _manager.TeamSelectionLocked,
+            ReturnToLobbyCountdownRemaining = _manager.ReturnToLobbyCountdownRemaining,
             WinnerTeamId = _manager.WinnerTeamId,
             TeamCount = teamCount,
             AliveTeams = aliveTeams,
@@ -226,6 +232,6 @@ public class CastleSiegeClientStateSync : MonoBehaviour
             ? string.Empty
             : string.Join(",", snapshot.EliminatedTeams);
 
-        return $"{(int)snapshot.Phase}|{snapshot.PhaseRemainingSeconds:F1}|{snapshot.WinnerTeamId}|{snapshot.TeamCount}|{snapshot.AliveTeams}|{snapshot.LocalTeamId}|{snapshot.LocalTeamEliminated}|{eliminatedSignature}";
+        return $"{(int)snapshot.Phase}|{snapshot.PhaseRemainingSeconds:F1}|{snapshot.TeamSelectionLocked}|{snapshot.ReturnToLobbyCountdownRemaining:F1}|{snapshot.WinnerTeamId}|{snapshot.TeamCount}|{snapshot.AliveTeams}|{snapshot.LocalTeamId}|{snapshot.LocalTeamEliminated}|{eliminatedSignature}";
     }
 }

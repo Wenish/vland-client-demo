@@ -11,10 +11,14 @@ public class SkirmishClientStateSync : MonoBehaviour
     {
         public int Round;
         public int TargetRoundWins;
+        public int TeamCount;
+        public bool TeamSelectionLocked;
         public SkirmishGameManager.RoundState RoundState;
         public float CountdownRemaining;
+        public float ReturnToLobbyCountdownRemaining;
         public bool MatchEnded;
         public int MatchWinnerTeam;
+        public int LocalTeamId;
         public List<int> TeamScores;
     }
 
@@ -26,6 +30,7 @@ public class SkirmishClientStateSync : MonoBehaviour
     public Snapshot CurrentSnapshot { get; private set; }
 
     private SkirmishGameManager _manager;
+    private UnitController _localUnit;
     private float _nextPollAt;
     private string _lastSignature;
 
@@ -54,6 +59,11 @@ public class SkirmishClientStateSync : MonoBehaviour
             TryBindManager();
         }
 
+        if (_localUnit == null)
+        {
+            TryResolveLocalUnitFallback();
+        }
+
         if (Time.unscaledTime < _nextPollAt)
         {
             return;
@@ -75,6 +85,8 @@ public class SkirmishClientStateSync : MonoBehaviour
         _manager.OnCountdownChanged += HandleManagerStateChanged;
         _manager.OnRoundEnded += HandleManagerStateChanged;
         _manager.OnMatchEnded += HandleManagerStateChanged;
+        _manager.OnTeamSelectionLockChanged += HandleManagerStateChanged;
+        _manager.OnReturnToLobbyCountdownChanged += HandleManagerStateChanged;
     }
 
     private void UnbindManager()
@@ -86,7 +98,27 @@ public class SkirmishClientStateSync : MonoBehaviour
         _manager.OnCountdownChanged -= HandleManagerStateChanged;
         _manager.OnRoundEnded -= HandleManagerStateChanged;
         _manager.OnMatchEnded -= HandleManagerStateChanged;
+        _manager.OnTeamSelectionLockChanged -= HandleManagerStateChanged;
+        _manager.OnReturnToLobbyCountdownChanged -= HandleManagerStateChanged;
         _manager = null;
+    }
+
+    private void TryResolveLocalUnitFallback()
+    {
+        var inputs = FindObjectsByType<PlayerInput>(FindObjectsSortMode.None);
+        foreach (var input in inputs)
+        {
+            if (!input.isLocalPlayer || input.myUnit == null)
+            {
+                continue;
+            }
+
+            _localUnit = input.myUnit.GetComponent<UnitController>();
+            if (_localUnit != null)
+            {
+                return;
+            }
+        }
     }
 
     private void HandleManagerStateChanged(int _)
@@ -95,6 +127,11 @@ public class SkirmishClientStateSync : MonoBehaviour
     }
 
     private void HandleManagerStateChanged(float _)
+    {
+        PublishIfChanged(force: false);
+    }
+
+    private void HandleManagerStateChanged(bool _)
     {
         PublishIfChanged(force: false);
     }
@@ -132,10 +169,14 @@ public class SkirmishClientStateSync : MonoBehaviour
             {
                 Round = 0,
                 TargetRoundWins = 0,
+                TeamCount = 0,
+                TeamSelectionLocked = false,
                 RoundState = SkirmishGameManager.RoundState.WaitingToStart,
                 CountdownRemaining = 0f,
+                ReturnToLobbyCountdownRemaining = 0f,
                 MatchEnded = false,
                 MatchWinnerTeam = -1,
+                LocalTeamId = -1,
                 TeamScores = new List<int>()
             };
         }
@@ -151,10 +192,14 @@ public class SkirmishClientStateSync : MonoBehaviour
         {
             Round = _manager.CurrentRound,
             TargetRoundWins = _manager.TargetRoundWins,
+            TeamCount = _manager.TeamCount,
+            TeamSelectionLocked = _manager.TeamSelectionLocked,
             RoundState = _manager.CurrentRoundState,
             CountdownRemaining = _manager.CountdownRemaining,
+            ReturnToLobbyCountdownRemaining = _manager.ReturnToLobbyCountdownRemaining,
             MatchEnded = _manager.MatchEnded,
             MatchWinnerTeam = _manager.MatchWinnerTeam,
+            LocalTeamId = _localUnit != null ? _localUnit.team : -1,
             TeamScores = teamScores
         };
     }
@@ -165,6 +210,6 @@ public class SkirmishClientStateSync : MonoBehaviour
             ? string.Empty
             : string.Join(",", snapshot.TeamScores);
 
-        return $"{snapshot.Round}|{snapshot.TargetRoundWins}|{(int)snapshot.RoundState}|{snapshot.CountdownRemaining:F1}|{snapshot.MatchEnded}|{snapshot.MatchWinnerTeam}|{scoreSignature}";
+        return $"{snapshot.Round}|{snapshot.TargetRoundWins}|{snapshot.TeamCount}|{snapshot.TeamSelectionLocked}|{(int)snapshot.RoundState}|{snapshot.CountdownRemaining:F1}|{snapshot.ReturnToLobbyCountdownRemaining:F1}|{snapshot.MatchEnded}|{snapshot.MatchWinnerTeam}|{snapshot.LocalTeamId}|{scoreSignature}";
     }
 }
