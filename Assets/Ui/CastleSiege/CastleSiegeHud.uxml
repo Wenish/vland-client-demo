@@ -5,6 +5,8 @@
             <ui:Label text="Timer: 0.0s" name="LabelTimer" style="color: rgb(230, 230, 230); font-size: 14px; margin-bottom: 2px;" />
             <ui:Label text="Your Team: -" name="LabelTeam" style="color: rgb(230, 230, 230); font-size: 14px; margin-bottom: 2px;" />
             <ui:Label text="Alive Teams: 0/0" name="LabelAliveTeams" style="color: rgb(230, 230, 230); font-size: 14px; margin-bottom: 2px;" />
+            <ui:Label text="Returning to lobby in: 0.0s" name="LabelLobbyReturn" style="color: rgb(230, 230, 230); -unity-font-style: bold; font-size: 14px; margin-bottom: 4px; display: none;" />
+            <ui:VisualElement name="TeamSelectionContainer" style="flex-direction: column; margin-bottom: 4px;" />
             <ui:Label text="Winner: Team -" name="LabelWinner" style="color: rgb(230, 230, 230); -unity-font-style: bold; font-size: 14px; margin-top: 2px;" />
         </ui:VisualElement>
     </ui:VisualElement>
