@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SkirmishGameManager : NetworkBehaviour
+public class SkirmishGameManager : MatchGameManagerBase
 {
     public static SkirmishGameManager Instance { get; private set; }
 
@@ -19,7 +19,6 @@ public class SkirmishGameManager : NetworkBehaviour
 
     [Header("Match Rules")]
     [SerializeField, Min(1)] private int targetRoundWins = 10;
-    [SerializeField, Min(0f)] private float returnToLobbyDelaySeconds = 10f;
 
     [SyncVar(hook = nameof(HookOnRoundNumberChanged))]
     public int CurrentRound = 0;
@@ -45,7 +44,7 @@ public class SkirmishGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnRoundResolutionSequenceChanged))]
     private int RoundResolutionSequence = 0;
 
-    public int TeamCount => teamSpawns?.Count ?? 0;
+    public override int TeamCount => teamSpawns?.Count ?? 0;
     public int TargetRoundWins => targetRoundWins;
 
     public event Action<int> OnRoundChanged = delegate { };
@@ -54,10 +53,8 @@ public class SkirmishGameManager : NetworkBehaviour
     public event Action<(int winnerTeam, bool isDraw)> OnRoundEnded = delegate { };
     public event Action<int> OnMatchEnded = delegate { };
 
-    private readonly Dictionary<int, int> _connectionTeamAssignments = new Dictionary<int, int>();
     private readonly SyncDictionary<int, int> _teamRoundWins = new SyncDictionary<int, int>();
     private Coroutine _roundLoopCoroutine;
-    private Coroutine _returnToLobbyCoroutine;
     private bool _hasRaisedMatchEndedEvent;
     private int _lastRaisedMatchWinnerTeam = -1;
     private int _lastRaisedRoundResolutionSequence;
@@ -137,8 +134,10 @@ public class SkirmishGameManager : NetworkBehaviour
         }
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning("Multiple instances of SkirmishGameManager detected. Destroying duplicate.", this);
@@ -161,6 +160,8 @@ public class SkirmishGameManager : NetworkBehaviour
     {
         base.OnStartServer();
 
+        ServerEnterPreMatch();
+        ClearTeamAssignments();
         _teamRoundWins.Clear();
         ResetMatchEndedEventState();
         ResetRoundEndedEventState();
@@ -193,13 +194,7 @@ public class SkirmishGameManager : NetworkBehaviour
             _roundLoopCoroutine = null;
         }
 
-        if (_returnToLobbyCoroutine != null)
-        {
-            StopCoroutine(_returnToLobbyCoroutine);
-            _returnToLobbyCoroutine = null;
-        }
-
-        _connectionTeamAssignments.Clear();
+        ClearTeamAssignments();
         _teamRoundWins.Clear();
         ResetMatchEndedEventState();
         ResetRoundEndedEventState();
@@ -208,6 +203,7 @@ public class SkirmishGameManager : NetworkBehaviour
     private IEnumerator RoundLoop()
     {
         yield return WaitForFirstPlayerUnit();
+        ServerStartMatchLifecycle();
 
         while (isServer && !MatchEnded)
         {
@@ -280,13 +276,13 @@ public class SkirmishGameManager : NetworkBehaviour
 
             activeConnectionIds.Add(playerUnit.ConnectionId);
 
-            if (_connectionTeamAssignments.ContainsKey(playerUnit.ConnectionId))
+            if (ConnectionTeamAssignments.ContainsKey(playerUnit.ConnectionId))
             {
                 continue;
             }
 
             int assignedTeam = FindLeastPopulatedTeam();
-            _connectionTeamAssignments[playerUnit.ConnectionId] = assignedTeam;
+            ConnectionTeamAssignments[playerUnit.ConnectionId] = assignedTeam;
 
             var unitController = playerUnit.Unit.GetComponent<UnitController>();
             if (unitController != null)
@@ -295,13 +291,13 @@ public class SkirmishGameManager : NetworkBehaviour
             }
         }
 
-        var removedConnections = _connectionTeamAssignments.Keys
+        var removedConnections = ConnectionTeamAssignments.Keys
             .Where(connectionId => !activeConnectionIds.Contains(connectionId))
             .ToList();
 
         foreach (var connectionId in removedConnections)
         {
-            _connectionTeamAssignments.Remove(connectionId);
+            ConnectionTeamAssignments.Remove(connectionId);
         }
     }
 
@@ -311,7 +307,7 @@ public class SkirmishGameManager : NetworkBehaviour
         int teamCount = teamSpawns.Count;
         var teamPopulation = new int[teamCount];
 
-        foreach (var assignedTeam in _connectionTeamAssignments.Values)
+        foreach (var assignedTeam in ConnectionTeamAssignments.Values)
         {
             if (assignedTeam < 0 || assignedTeam >= teamCount) continue;
             teamPopulation[assignedTeam]++;
@@ -343,7 +339,7 @@ public class SkirmishGameManager : NetworkBehaviour
             var unitController = playerUnit.Unit.GetComponent<UnitController>();
             if (unitController == null) continue;
 
-            if (!_connectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int teamId))
+            if (!ConnectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int teamId))
             {
                 teamId = Mathf.Clamp(unitController.team, 0, teamSpawns.Count - 1);
             }
@@ -444,34 +440,9 @@ public class SkirmishGameManager : NetworkBehaviour
             MatchEnded = true;
             MatchWinnerTeam = winnerTeam;
             SetRoundState(RoundState.MatchEnded);
+            ServerEndMatchLifecycle(winnerTeam);
             RaiseMatchEndedIfNeeded(winnerTeam);
-
-            if (_returnToLobbyCoroutine == null)
-            {
-                _returnToLobbyCoroutine = StartCoroutine(ReturnToLobbyAfterDelay());
-            }
         }
-    }
-
-    [Server]
-    private IEnumerator ReturnToLobbyAfterDelay()
-    {
-        float delay = Mathf.Max(0f, returnToLobbyDelaySeconds);
-        if (delay > 0f)
-        {
-            yield return new WaitForSeconds(delay);
-        }
-
-        if (NetworkManager.singleton is NetworkRoomManager roomManager)
-        {
-            roomManager.ServerChangeScene(roomManager.RoomScene);
-        }
-        else
-        {
-            Debug.LogWarning("[SkirmishGameManager] NetworkManager is not a NetworkRoomManager. Unable to return to room scene.", this);
-        }
-
-        _returnToLobbyCoroutine = null;
     }
 
     [Server]

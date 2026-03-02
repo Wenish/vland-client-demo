@@ -9,7 +9,7 @@ using UnityEngine.AI;
 using UnityEditor;
 #endif
 
-public class CastleSiegeManager : NetworkBehaviour
+public class CastleSiegeManager : MatchGameManagerBase
 {
     public static CastleSiegeManager Instance { get; private set; }
 
@@ -46,7 +46,6 @@ public class CastleSiegeManager : NetworkBehaviour
     public event Action<int> OnTeamEliminated = delegate { };
     public event Action<int> OnMatchWinner = delegate { };
 
-    private readonly Dictionary<int, int> _connectionTeamAssignments = new Dictionary<int, int>();
     private readonly Dictionary<int, GameObject> _trackedPlayerUnitsByConnection = new Dictionary<int, GameObject>();
     private readonly Dictionary<int, Action> _playerDeathHandlersByConnection = new Dictionary<int, Action>();
     private readonly Dictionary<int, Coroutine> _respawnCoroutinesByConnection = new Dictionary<int, Coroutine>();
@@ -65,7 +64,7 @@ public class CastleSiegeManager : NetworkBehaviour
     private int _lastRaisedWinnerTeamId = -1;
 
     public bool IsInGame => CurrentPhase == MatchPhase.InGame;
-    public int TeamCount => mapConfig != null ? Mathf.Max(0, mapConfig.TeamCount) : 0;
+    public override int TeamCount => mapConfig != null ? Mathf.Max(0, mapConfig.TeamCount) : 0;
 
     private void ResetMatchWinnerEventState()
     {
@@ -90,8 +89,10 @@ public class CastleSiegeManager : NetworkBehaviour
         OnMatchWinner(winnerTeamId);
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -119,6 +120,8 @@ public class CastleSiegeManager : NetworkBehaviour
         }
 
         ResetMatchWinnerEventState();
+        ServerEnterPreMatch();
+        ClearTeamAssignments();
 
         InitializeTeamConfigLookup();
         InitializeTeamEliminationFlags();
@@ -135,11 +138,14 @@ public class CastleSiegeManager : NetworkBehaviour
     {
         base.OnStopServer();
         CleanupAllServerState();
+        ClearTeamAssignments();
         ResetMatchWinnerEventState();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
+
         if (Instance == this)
         {
             Instance = null;
@@ -301,6 +307,7 @@ public class CastleSiegeManager : NetworkBehaviour
     [Server]
     private void TransitionToInGame()
     {
+        ServerStartMatchLifecycle();
         SetPhase(MatchPhase.InGame);
         _inGameStartServerTime = NetworkTime.time;
         PhaseRemainingSeconds = 0f;
@@ -329,10 +336,10 @@ public class CastleSiegeManager : NetworkBehaviour
             int connectionId = playerUnit.ConnectionId;
             activeConnectionIds.Add(connectionId);
 
-            if (!_connectionTeamAssignments.TryGetValue(connectionId, out int assignedTeamId))
+            if (!ConnectionTeamAssignments.TryGetValue(connectionId, out int assignedTeamId))
             {
                 assignedTeamId = AssignTeamForConnection();
-                _connectionTeamAssignments[connectionId] = assignedTeamId;
+                ConnectionTeamAssignments[connectionId] = assignedTeamId;
                 OnPlayerJoined();
             }
 
@@ -362,13 +369,13 @@ public class CastleSiegeManager : NetworkBehaviour
     [Server]
     private void HandleDisconnectedPlayers(HashSet<int> activeConnectionIds)
     {
-        var disconnected = _connectionTeamAssignments.Keys
+        var disconnected = ConnectionTeamAssignments.Keys
             .Where(id => !activeConnectionIds.Contains(id))
             .ToList();
 
         foreach (int connectionId in disconnected)
         {
-            _connectionTeamAssignments.Remove(connectionId);
+            ConnectionTeamAssignments.Remove(connectionId);
             _trackedPlayerUnitsByConnection.Remove(connectionId);
             _playerDeathHandlersByConnection.Remove(connectionId);
 
@@ -411,7 +418,7 @@ public class CastleSiegeManager : NetworkBehaviour
     {
         OnUnitDied(unitController);
 
-        if (!_connectionTeamAssignments.TryGetValue(connectionId, out int teamId))
+        if (!ConnectionTeamAssignments.TryGetValue(connectionId, out int teamId))
         {
             return;
         }
@@ -445,7 +452,7 @@ public class CastleSiegeManager : NetworkBehaviour
             yield return new WaitForSeconds(delay);
         }
 
-        if (!_connectionTeamAssignments.TryGetValue(connectionId, out int teamId))
+        if (!ConnectionTeamAssignments.TryGetValue(connectionId, out int teamId))
         {
             _respawnCoroutinesByConnection.Remove(connectionId);
             yield break;
@@ -499,7 +506,7 @@ public class CastleSiegeManager : NetworkBehaviour
             population[teamId] = 0;
         }
 
-        foreach (int assignedTeam in _connectionTeamAssignments.Values)
+        foreach (int assignedTeam in ConnectionTeamAssignments.Values)
         {
             if (!population.ContainsKey(assignedTeam)) continue;
             population[assignedTeam]++;
@@ -591,7 +598,7 @@ public class CastleSiegeManager : NetworkBehaviour
             foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
             {
                 if (playerUnit.Unit == null) continue;
-                if (!_connectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int assignedTeam)) continue;
+                if (!ConnectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int assignedTeam)) continue;
                 if (assignedTeam != teamId) continue;
 
                 if (_respawnCoroutinesByConnection.TryGetValue(playerUnit.ConnectionId, out Coroutine respawnCoroutine))
@@ -628,6 +635,7 @@ public class CastleSiegeManager : NetworkBehaviour
 
         WinnerTeamId = aliveTeams[0];
         SetPhase(MatchPhase.MatchEnded);
+        ServerEndMatchLifecycle(WinnerTeamId);
         RaiseMatchWinnerIfNeeded(WinnerTeamId);
     }
 
@@ -666,7 +674,7 @@ public class CastleSiegeManager : NetworkBehaviour
                 continue;
             }
 
-            if (!_connectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int assignedTeamId))
+            if (!ConnectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int assignedTeamId))
             {
                 continue;
             }
@@ -863,7 +871,6 @@ public class CastleSiegeManager : NetworkBehaviour
             }
         }
 
-        _connectionTeamAssignments.Clear();
         _trackedPlayerUnitsByConnection.Clear();
         _playerDeathHandlersByConnection.Clear();
         _lordByTeamId.Clear();

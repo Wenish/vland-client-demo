@@ -235,4 +235,55 @@ public class PlayerLoadout : NetworkBehaviour
     public bool LastLoadoutOk => _lastLoadoutOk;
     public string LastLoadoutError => _lastLoadoutError;
 
+    private bool _lastTeamSelectionOk = true;
+    private string _lastTeamSelectionError = null;
+    private int _lastRequestedTeamId = -1;
+
+    public bool LastTeamSelectionOk => _lastTeamSelectionOk;
+    public string LastTeamSelectionError => _lastTeamSelectionError;
+    public int LastRequestedTeamId => _lastRequestedTeamId;
+
+    public void RequestChooseTeam(int desiredTeamId)
+    {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
+        _lastRequestedTeamId = desiredTeamId;
+        CmdRequestChooseTeam(desiredTeamId);
+    }
+
+    [Command]
+    private void CmdRequestChooseTeam(int desiredTeamId)
+    {
+        MatchGameManagerBase manager = MatchGameManagerBase.ActiveInstance;
+        if (manager == null)
+        {
+            manager = FindFirstObjectByType<MatchGameManagerBase>();
+        }
+
+        if (manager == null)
+        {
+            TargetAckTeamSelection(connectionToClient, false, "No active match manager in scene.", desiredTeamId);
+            return;
+        }
+
+        bool ok = manager.ServerTryChooseTeam(connectionToClient.connectionId, desiredTeamId, out string reason);
+        TargetAckTeamSelection(connectionToClient, ok, reason, desiredTeamId);
+    }
+
+    [TargetRpc]
+    private void TargetAckTeamSelection(NetworkConnection target, bool ok, string error, int desiredTeamId)
+    {
+        _lastTeamSelectionOk = ok;
+        _lastTeamSelectionError = error;
+        _lastRequestedTeamId = desiredTeamId;
+
+        if (!ok && !string.IsNullOrEmpty(error))
+        {
+            Debug.LogWarning($"Team selection rejected: {error}");
+        }
+    }
+
 }
