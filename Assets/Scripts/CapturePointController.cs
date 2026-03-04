@@ -1,11 +1,14 @@
 using UnityEngine;
 using Mirror;
+using System;
 using System.Collections.Generic;
 
-public class CapturePoint : NetworkBehaviour
+public class CapturePointController : NetworkBehaviour
 {
-    [SyncVar]
+    [SyncVar(hook = nameof(HookOnControllingTeamChanged))]
     public int controllingTeam = -1; // -1 for neutral, 0 for team A, 1 for team B
+
+    public event Action<(int oldTeam, int newTeam)> OnControllingTeamChanged = delegate { };
 
     [SyncVar]
     public float captureProgress = 0f; // 0 to 100
@@ -35,6 +38,26 @@ public class CapturePoint : NetworkBehaviour
     private readonly HashSet<UnitController> uniqueUnitsInTick = new HashSet<UnitController>();
     private readonly Dictionary<int, int> teamCounts = new Dictionary<int, int>(8);
     private int neutralCaptureTeam = -1;
+
+    private void HookOnControllingTeamChanged(int oldTeam, int newTeam)
+    {
+        if (isServer) return;
+
+        OnControllingTeamChanged((oldTeam, newTeam));
+    }
+
+    [Server]
+    private void SetControllingTeam(int newTeam)
+    {
+        if (controllingTeam == newTeam)
+        {
+            return;
+        }
+
+        int oldTeam = controllingTeam;
+        controllingTeam = newTeam;
+        OnControllingTeamChanged((oldTeam, newTeam));
+    }
 
     public override void OnStartServer()
     {
@@ -74,7 +97,7 @@ public class CapturePoint : NetworkBehaviour
                 captureProgress = Mathf.Clamp(captureProgress + tickCaptureDelta, 0f, 100f);
                 if (captureProgress >= 100f)
                 {
-                    controllingTeam = neutralCaptureTeam;
+                    SetControllingTeam(neutralCaptureTeam);
                     neutralCaptureTeam = -1;
                     captureProgress = 100f;
                 }
@@ -102,7 +125,7 @@ public class CapturePoint : NetworkBehaviour
         captureProgress = Mathf.Clamp(captureProgress - tickCaptureDelta, 0f, 100f);
         if (captureProgress <= 0f)
         {
-            controllingTeam = -1;
+            SetControllingTeam(-1);
             captureProgress = 0f;
             neutralCaptureTeam = dominantTeam;
         }
