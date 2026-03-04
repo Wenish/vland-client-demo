@@ -6,12 +6,19 @@ using System.Collections.Generic;
 public class CapturePointController : NetworkBehaviour
 {
     [SyncVar(hook = nameof(HookOnControllingTeamChanged))]
-    public int controllingTeam = -1; // -1 for neutral, 0 for team A, 1 for team B
+    public int controllingTeam = -1; // -1 for neutral, 0 for team A, 1 for team B etc.
 
     public event Action<(int oldTeam, int newTeam)> OnControllingTeamChanged = delegate { };
 
-    [SyncVar]
+    [SyncVar(hook = nameof(HookOnCaptureProgressChanged))]
     public float captureProgress = 0f; // 0 to 100
+
+    public event Action<float> OnCaptureProgressChanged = delegate { };
+
+    [SyncVar(hook = nameof(HookOnContenderTeamChanged))]
+    public int contenderTeam = -1;
+
+    public event Action<(int oldTeam, int newTeam)> OnContenderTeamChanged = delegate { };
 
     [Header("Capture Settings")]
     [Tooltip("Capture progress changed per second while a team is actively capturing.")]
@@ -37,13 +44,26 @@ public class CapturePointController : NetworkBehaviour
     private readonly Dictionary<int, UnitController> unitByColliderId = new Dictionary<int, UnitController>(128);
     private readonly HashSet<UnitController> uniqueUnitsInTick = new HashSet<UnitController>();
     private readonly Dictionary<int, int> teamCounts = new Dictionary<int, int>(8);
-    private int neutralCaptureTeam = -1;
 
     private void HookOnControllingTeamChanged(int oldTeam, int newTeam)
     {
         if (isServer) return;
 
         OnControllingTeamChanged((oldTeam, newTeam));
+    }
+
+    private void HookOnCaptureProgressChanged(float oldProgress, float newProgress)
+    {
+        if (isServer) return;
+
+        OnCaptureProgressChanged(newProgress);
+    }
+
+    private void HookOnContenderTeamChanged(int oldTeam, int newTeam)
+    {
+        if (isServer) return;
+
+        OnContenderTeamChanged((oldTeam, newTeam));
     }
 
     [Server]
@@ -78,56 +98,45 @@ public class CapturePointController : NetworkBehaviour
     private void ServerCaptureTick()
     {
         int dominantTeam = FindDominantTeam();
-        if (dominantTeam < 0)
-        {
-            return;
-        }
-
         float tickCaptureDelta = captureRate * captureTickInterval;
 
-        if (controllingTeam < 0)
+        if (contenderTeam < 0)
         {
-            if (neutralCaptureTeam < 0)
+            if (dominantTeam < 0 || dominantTeam == controllingTeam)
             {
-                neutralCaptureTeam = dominantTeam;
+                return;
             }
 
-            if (neutralCaptureTeam == dominantTeam)
-            {
-                captureProgress = Mathf.Clamp(captureProgress + tickCaptureDelta, 0f, 100f);
-                if (captureProgress >= 100f)
-                {
-                    SetControllingTeam(neutralCaptureTeam);
-                    neutralCaptureTeam = -1;
-                    captureProgress = 100f;
-                }
-            }
-            else
-            {
-                captureProgress = Mathf.Clamp(captureProgress - tickCaptureDelta, 0f, 100f);
-                if (captureProgress <= 0f)
-                {
-                    captureProgress = 0f;
-                    neutralCaptureTeam = dominantTeam;
-                }
-            }
-
-            return;
+            contenderTeam = dominantTeam;
+            captureProgress = 0f;
         }
 
-        if (controllingTeam == dominantTeam)
+        if (dominantTeam == contenderTeam)
         {
-            neutralCaptureTeam = -1;
             captureProgress = Mathf.Clamp(captureProgress + tickCaptureDelta, 0f, 100f);
+
+            if (captureProgress >= 100f)
+            {
+                SetControllingTeam(contenderTeam);
+                contenderTeam = -1;
+                captureProgress = 100f;
+            }
+
             return;
         }
 
         captureProgress = Mathf.Clamp(captureProgress - tickCaptureDelta, 0f, 100f);
         if (captureProgress <= 0f)
         {
-            SetControllingTeam(-1);
             captureProgress = 0f;
-            neutralCaptureTeam = dominantTeam;
+
+            if (dominantTeam < 0 || dominantTeam == controllingTeam)
+            {
+                contenderTeam = -1;
+                return;
+            }
+
+            contenderTeam = dominantTeam;
         }
     }
 
