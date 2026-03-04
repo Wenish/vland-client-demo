@@ -79,6 +79,32 @@ public class CapturePointController : NetworkBehaviour
         OnControllingTeamChanged((oldTeam, newTeam));
     }
 
+    [Server]
+    private void SetCaptureProgress(float newProgress)
+    {
+        float clampedProgress = Mathf.Clamp(newProgress, 0f, 100f);
+        if (Mathf.Approximately(captureProgress, clampedProgress))
+        {
+            return;
+        }
+
+        captureProgress = clampedProgress;
+        OnCaptureProgressChanged(clampedProgress);
+    }
+
+    [Server]
+    private void SetContenderTeam(int newTeam)
+    {
+        if (contenderTeam == newTeam)
+        {
+            return;
+        }
+
+        int oldTeam = contenderTeam;
+        contenderTeam = newTeam;
+        OnContenderTeamChanged((oldTeam, newTeam));
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -107,36 +133,36 @@ public class CapturePointController : NetworkBehaviour
                 return;
             }
 
-            contenderTeam = dominantTeam;
-            captureProgress = 0f;
+            SetContenderTeam(dominantTeam);
+            SetCaptureProgress(0f);
         }
 
         if (dominantTeam == contenderTeam)
         {
-            captureProgress = Mathf.Clamp(captureProgress + tickCaptureDelta, 0f, 100f);
+            SetCaptureProgress(captureProgress + tickCaptureDelta);
 
             if (captureProgress >= 100f)
             {
                 SetControllingTeam(contenderTeam);
-                contenderTeam = -1;
-                captureProgress = 100f;
+                SetContenderTeam(-1);
+                SetCaptureProgress(100f);
             }
 
             return;
         }
 
-        captureProgress = Mathf.Clamp(captureProgress - tickCaptureDelta, 0f, 100f);
+        SetCaptureProgress(captureProgress - tickCaptureDelta);
         if (captureProgress <= 0f)
         {
-            captureProgress = 0f;
+            SetCaptureProgress(0f);
 
             if (dominantTeam < 0 || dominantTeam == controllingTeam)
             {
-                contenderTeam = -1;
+                SetContenderTeam(-1);
                 return;
             }
 
-            contenderTeam = dominantTeam;
+            SetContenderTeam(dominantTeam);
         }
     }
 
