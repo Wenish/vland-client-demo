@@ -17,19 +17,19 @@ MonoBehaviour:
   - TeamId: 0
     LordUnit: {fileID: 11400000, guid: ecd2f2d2a21a3814d84b2d4a941ba6a8, type: 2}
     LordSpawn:
-      Position: {x: 0, y: 0, z: -45}
-      RotationEuler: {x: 0, y: 0, z: 0}
+      Position: {x: -45, y: 0, z: 0}
+      RotationEuler: {x: 0, y: 90, z: 0}
     PlayerSpawnPoints:
-    - Position: {x: 0, y: 0, z: -55}
-      RotationEuler: {x: 0, y: 0, z: 0}
+    - Position: {x: -55, y: 0, z: 0}
+      RotationEuler: {x: 0, y: 90, z: 0}
   - TeamId: 1
     LordUnit: {fileID: 11400000, guid: ecd2f2d2a21a3814d84b2d4a941ba6a8, type: 2}
     LordSpawn:
-      Position: {x: 0, y: 0, z: 45}
-      RotationEuler: {x: 0, y: 180, z: 0}
+      Position: {x: 45, y: 0, z: 0}
+      RotationEuler: {x: 0, y: 270, z: 0}
     PlayerSpawnPoints:
-    - Position: {x: 0, y: 0, z: 55}
-      RotationEuler: {x: 0, y: 180, z: 0}
+    - Position: {x: 55, y: 0, z: 0}
+      RotationEuler: {x: 0, y: 270, z: 0}
   WarmupSeconds: 15
   StartCountdownSeconds: 10
   BaseRespawnSeconds: 10
