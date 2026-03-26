@@ -12,6 +12,14 @@ public class SkillEffectMechanicDelayData : SkillEffectData
     [Tooltip("Seconds to wait before continuing the chain.")]
     public float delaySeconds = 1f;
 
+    [Tooltip("Percentage (0–1) of the caster's base move speed allowed during delay.")]
+    [Range(0f, 1f)]
+    public float moveSpeedPercent = 1f;
+
+    [Tooltip("Percentage (0–1) of the caster's base turn speed allowed during delay.")]
+    [Range(0f, 1f)]
+    public float turnSpeedPercent = 1f;
+
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
     public override IEnumerator Execute(
@@ -20,10 +28,29 @@ public class SkillEffectMechanicDelayData : SkillEffectData
         Action<List<UnitController>> onComplete
     )
     {
-        // 1) Wait for the specified delay
+        var caster = castContext.caster;
+
+        var moveSpeedModifier = new StatModifier
+        {
+            Type = StatType.MovementSpeed,
+            ModifierType = ModifierType.Percent,
+            Value = moveSpeedPercent
+        };
+        caster.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
+
+        var turnSpeedModifier = new StatModifier
+        {
+            Type = StatType.TurnSpeed,
+            ModifierType = ModifierType.Percent,
+            Value = turnSpeedPercent
+        };
+        caster.unitMediator.Stats.ApplyModifier(turnSpeedModifier);
+
         yield return new WaitForSeconds(delaySeconds);
 
-        // 2) Hand back the same targets so the chain continues
+        caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
+        caster.unitMediator.Stats.RemoveModifier(turnSpeedModifier);
+
         onComplete(targets);
     }
 }

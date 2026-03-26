@@ -14,6 +14,19 @@ public class CastContext
         _isCancelled = true;
     }
 
+    private bool _pendingTrigger = false;
+    public bool HasPendingTrigger => _pendingTrigger;
+    public void SignalTrigger()
+    {
+        _pendingTrigger = true;
+    }
+    public bool ConsumePendingTrigger()
+    {
+        if (!_pendingTrigger) return false;
+        _pendingTrigger = false;
+        return true;
+    }
+
     private bool _castCounted = false;
     // Call when an effect marked as "counts as casted" executes. Only counts once per cast.
     public void MarkCastCounted()

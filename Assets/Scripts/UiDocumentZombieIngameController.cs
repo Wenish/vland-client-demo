@@ -401,6 +401,9 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
         while (currentTime < endTime)
         {
+            if (_myPlayerUnitActionState.state.type != actionStateData.type)
+                break;
+
             if (actionStateData.type == UnitActionState.ActionType.Channeling)
             {
                 _playerCastbar.Progress = (float)((endTime - currentTime) / actionStateData.duration);

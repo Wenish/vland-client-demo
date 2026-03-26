@@ -120,6 +120,14 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void Cast(Vector3? aimPoint)
     {
+        // If a cast is already running, signal it instead of restarting
+        if (_runningCastCoroutine != null && _runningCastContext != null && !_runningCastContext.IsCancelled)
+        {
+            Debug.Log($"[Cast] Signaling running cast for {skillName} (busy={unit.unitActionState.IsActive})");
+            _runningCastContext.SignalTrigger();
+            return;
+        }
+
         if (IsOnCooldown || skillData == null) return;
 
         // If the unit is busy (casting/attacking/etc), only block if the skill doesn't allow activation while busy
@@ -134,8 +142,15 @@ public class NetworkedSkillInstance : NetworkBehaviour
             aimPoint = aimPoint,
             aimRotation = aimPoint.HasValue ? Quaternion.LookRotation(aimPoint.Value - unit.transform.position) : null
         };
-        _runningCastCoroutine = StartCoroutine(skillData.ExecuteCastCoroutine(_runningCastContext));
-    }    
+        _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
+    }
+
+    private IEnumerator CastCoroutineWrapper(CastContext ctx)
+    {
+        yield return skillData.ExecuteCastCoroutine(ctx);
+        _runningCastCoroutine = null;
+        _runningCastContext = null;
+    }
 
     [Server]
     public void CancelCast()
