@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: PreservationSkillEffectMechanicSpawnUnit
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicSpawnUnit
   countsAsCasted: 0
+  enabled: 1
   unitData: {fileID: 11400000, guid: b70788c509111b34b9d121212e4d2640, type: 2}
   spawnAtAimPoint: 0
   maxSpawnCount: 1
+  lifetime: 90
+  despawnDelay: 0
+  despawnOnCasterDeath: 0
+  despawnOnLoadoutChange: 1

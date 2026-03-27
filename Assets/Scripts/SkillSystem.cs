@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using Mirror;
 using UnityEngine;
 
 public class SkillSystem : NetworkBehaviour
 {
+    public event Action OnLoadoutReplaced = delegate { };
+
     public readonly SyncList<NetworkedSkillInstance> passiveSkills = new();
     public readonly SyncList<NetworkedSkillInstance> normalSkills = new();
     public readonly SyncList<NetworkedSkillInstance> ultimateSkills = new();
@@ -159,6 +161,8 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     public void ReplaceLoadout(IEnumerable<string> passive, IEnumerable<string> normal, IEnumerable<string> ultimate)
     {
+        OnLoadoutReplaced.Invoke();
+
         unit.InterruptAction();
         
         // Remove everything first
