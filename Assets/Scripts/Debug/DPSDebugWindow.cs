@@ -265,7 +265,7 @@ namespace ShadowInfection.Debug
         private VisualElement CreateUnitRow(UnitController unit, float dps, int rank)
         {
             var row = new VisualElement();
-            row.name = $"dps-row-{unit.GetInstanceID()}";
+            row.name = $"dps-row-{unit.GetEntityId()}";
             row.style.flexDirection = FlexDirection.Row;
             row.style.justifyContent = Justify.SpaceBetween;
             row.style.alignItems = Align.Center;

@@ -32,7 +32,7 @@ public abstract class UnitSpawnerBase : NetworkBehaviour
         // Generate unique spawner ID if not set
         if (string.IsNullOrEmpty(spawnerId))
         {
-            spawnerId = $"{gameObject.name}_{GetInstanceID()}";
+            spawnerId = $"{gameObject.name}_{GetEntityId()}";
         }
     }
 
