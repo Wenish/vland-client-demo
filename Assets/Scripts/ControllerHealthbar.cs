@@ -45,7 +45,7 @@ public class ControllerHealthbar : MonoBehaviour
     private void TryApplyMyPlayerColor()
     {
         // Find the local player and check if this unit is theirs
-        var players = FindObjectsByType<PlayerInput>(FindObjectsSortMode.None);
+        var players = FindObjectsByType<PlayerInput>();
         foreach (var pc in players)
         {
             if (pc.isLocalPlayer && pc.myUnit != null)

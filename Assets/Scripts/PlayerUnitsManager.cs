@@ -26,7 +26,7 @@ public class PlayerUnitsManager : NetworkBehaviour
         }
         Instance = this;
 
-        roomManager = FindFirstObjectByType<MyNetworkRoomManager>();
+        roomManager = FindAnyObjectByType<MyNetworkRoomManager>();
     }
 
     private void Start()

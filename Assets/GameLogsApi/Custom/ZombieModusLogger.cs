@@ -8,7 +8,7 @@ public class ZombieModusLogger : MonoBehaviour
 
     private void Awake()
     {
-        _gameLogManager = FindFirstObjectByType<GameLogManager>();
+        _gameLogManager = FindAnyObjectByType<GameLogManager>();
         if (_gameLogManager == null)
         {
             Debug.LogError("Kein GameLogManager in der Scene gefunden!");

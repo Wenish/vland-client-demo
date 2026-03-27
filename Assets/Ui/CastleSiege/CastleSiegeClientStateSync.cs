@@ -100,7 +100,7 @@ public class CastleSiegeClientStateSync : MonoBehaviour
 
     private void TryResolveLocalUnitFallback()
     {
-        var inputs = FindObjectsByType<PlayerInput>(FindObjectsSortMode.None);
+        var inputs = FindObjectsByType<PlayerInput>();
         foreach (var input in inputs)
         {
             if (!input.isLocalPlayer || input.myUnit == null)

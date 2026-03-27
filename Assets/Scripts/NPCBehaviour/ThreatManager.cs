@@ -290,7 +290,7 @@ namespace NPCBehaviour
             if (!_isInitialized || !healingGeneratesThreat) return;
 
             // Find nearby enemies and add threat
-            var enemies = FindObjectsByType<UnitController>(FindObjectsSortMode.None);
+            var enemies = FindObjectsByType<UnitController>();
             foreach (var enemy in enemies)
             {
                 if (enemy == null || enemy == _unit || enemy.IsDead) continue;

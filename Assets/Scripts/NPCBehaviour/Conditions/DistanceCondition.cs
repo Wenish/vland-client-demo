@@ -37,7 +37,7 @@ namespace NPCBehaviour
             else
             {
                 // Find closest enemy
-                var allUnits = Object.FindObjectsByType<UnitController>(FindObjectsSortMode.None);
+                var allUnits = Object.FindObjectsByType<UnitController>();
                 float closestDist = float.MaxValue;
 
                 foreach (var unit in allUnits)

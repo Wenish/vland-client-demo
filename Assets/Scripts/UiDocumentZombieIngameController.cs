@@ -320,7 +320,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _myPlayerUnitActionState.OnActionStateChanged += HandleOnActionStateChanged;
         _myPlayerUnitController.OnActionInterrupted += HandleOnActionInterrupted;
 
-        var localPlayerController = FindObjectsByType<PlayerController>(FindObjectsSortMode.None).FirstOrDefault(pc => pc.isLocalPlayer);
+        var localPlayerController = FindObjectsByType<PlayerController>().FirstOrDefault(pc => pc.isLocalPlayer);
         if (localPlayerController != null)
         {
             SetGoldText(localPlayerController.Gold);

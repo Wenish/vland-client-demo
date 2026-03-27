@@ -75,14 +75,14 @@ public class SpawnManager : NetworkBehaviour
         allSpawners.Clear();
 
         // Find all mob spawners
-        MobSpawner[] foundMobSpawners = FindObjectsByType<MobSpawner>(FindObjectsSortMode.None);
+        MobSpawner[] foundMobSpawners = FindObjectsByType<MobSpawner>();
         foreach (var spawner in foundMobSpawners)
         {
             RegisterMobSpawner(spawner);
         }
 
         // Find all boss spawners
-        BossSpawner[] foundBossSpawners = FindObjectsByType<BossSpawner>(FindObjectsSortMode.None);
+        BossSpawner[] foundBossSpawners = FindObjectsByType<BossSpawner>();
         foreach (var spawner in foundBossSpawners)
         {
             RegisterBossSpawner(spawner);

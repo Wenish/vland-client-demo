@@ -103,7 +103,7 @@ public class HostAdminOverlayPresenter : MonoBehaviour
         _manager = MatchGameManagerBase.ActiveInstance;
         if (_manager == null)
         {
-            _manager = FindFirstObjectByType<MatchGameManagerBase>();
+            _manager = FindAnyObjectByType<MatchGameManagerBase>();
         }
     }
 

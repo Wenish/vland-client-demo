@@ -24,7 +24,7 @@ public class ZombieSpawnManager : NetworkBehaviour
 
     void GetAllZombieSpawnInScene()
     {
-        zombieSpawns = FindObjectsByType<ZombieSpawnController>(FindObjectsSortMode.None);
+        zombieSpawns = FindObjectsByType<ZombieSpawnController>();
     }
 
     [System.Serializable]
