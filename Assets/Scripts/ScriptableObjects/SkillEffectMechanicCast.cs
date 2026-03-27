@@ -30,7 +30,15 @@ public class SkillEffectMechanicCast : SkillEffectData
     )
     {
         var caster = ctx.caster;
-        caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Casting, NetworkTime.time, castDuration, ctx.skillInstance.skillName);
+
+        // If a parent action (e.g. a channel) is already running, occupy the child slot
+        // so the parent state is not overwritten.
+        bool isChildAction = caster.unitActionState.IsActive;
+
+        if (isChildAction)
+            caster.unitActionState.SetChildActionState(UnitActionState.ActionType.Casting, NetworkTime.time, castDuration, ctx.skillInstance.skillName);
+        else
+            caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Casting, NetworkTime.time, castDuration, ctx.skillInstance.skillName);
 
         StatModifier moveSpeedModifier = new StatModifier()
         {
@@ -60,7 +68,10 @@ public class SkillEffectMechanicCast : SkillEffectData
             yield return null;
         }
 
-        caster.unitActionState.SetUnitActionStateToIdle();
+        if (isChildAction)
+            caster.unitActionState.ClearChildActionState();
+        else
+            caster.unitActionState.SetUnitActionStateToIdle();
 
         // Remove the move speed modifier
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);

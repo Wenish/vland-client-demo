@@ -14,6 +14,7 @@ public class ControllerCastbar : MonoBehaviour
     private Image sliderIconImage;
     private DatabaseManager databaseManager;
     private UnitActionState unitActionState;
+    private Coroutine _currentCastbarCoroutine;
     private void Awake()
     {
         slider.minValue = 0f;
@@ -37,10 +38,19 @@ public class ControllerCastbar : MonoBehaviour
     {
         if (!gameObject.activeInHierarchy) return;
 
-        StartCoroutine(ChangeCastbar(unitActionState.state));
+        bool showChild = unitActionState.HasChild;
+        var displayState = showChild ? unitActionState.childState : unitActionState.state;
+
+        if (_currentCastbarCoroutine != null)
+        {
+            StopCoroutine(_currentCastbarCoroutine);
+            _currentCastbarCoroutine = null;
+        }
+
+        _currentCastbarCoroutine = StartCoroutine(ChangeCastbar(displayState, showChild));
     }
 
-    private IEnumerator ChangeCastbar(UnitActionState.ActionStateData actionStateData)
+    private IEnumerator ChangeCastbar(UnitActionState.ActionStateData actionStateData, bool isChild = false)
     {
         slider.value = 0f;
         ShowCastbar();
@@ -67,7 +77,8 @@ public class ControllerCastbar : MonoBehaviour
     
         while (currentTime < endTime)
         {
-            if (unitActionState.state.type != actionStateData.type)
+            var currentType = isChild ? unitActionState.childState.type : unitActionState.state.type;
+            if (currentType != actionStateData.type)
                 break;
 
             if (actionStateData.type == UnitActionState.ActionType.Channeling)
