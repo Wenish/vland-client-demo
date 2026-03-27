@@ -41,7 +41,7 @@ public class CapturePointController : NetworkBehaviour
     [SerializeField] private int initialOverlapBufferSize = 64;
 
     private Collider[] overlapBuffer;
-    private readonly Dictionary<int, UnitController> unitByColliderId = new Dictionary<int, UnitController>(128);
+    private readonly Dictionary<EntityId, UnitController> unitByColliderId = new Dictionary<EntityId, UnitController>(128);
     private readonly HashSet<UnitController> uniqueUnitsInTick = new HashSet<UnitController>();
     private readonly Dictionary<int, int> teamCounts = new Dictionary<int, int>(8);
 
@@ -254,7 +254,7 @@ public class CapturePointController : NetworkBehaviour
     [Server]
     private UnitController ResolveUnit(Collider hit)
     {
-        int colliderId = hit.GetInstanceID();
+        EntityId colliderId = hit.GetEntityId();
 
         if (unitByColliderId.TryGetValue(colliderId, out UnitController cachedUnit))
         {
