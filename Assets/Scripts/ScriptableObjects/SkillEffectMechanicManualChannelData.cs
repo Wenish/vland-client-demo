@@ -156,8 +156,10 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
 
         Debug.Log($"[ManualChannel] Ended | elapsed={elapsed:F2} triggersUsed={triggersUsed} cancelled={ctx.IsCancelled}");
 
-        // Wait for the last trigger effect to finish before ending the channel
-        if (activeTriggerCoroutine != null)
+        // Wait for the last trigger effect to finish before ending the channel.
+        // On interrupt (IsCancelled), skip the wait — the trigger chain unwinds
+        // itself via the IsCancelled checks in SkillEffectNodeData / SkillEffectChainData.
+        if (activeTriggerCoroutine != null && !ctx.IsCancelled)
             yield return activeTriggerCoroutine;
 
         caster.unitActionState.SetUnitActionStateToIdle();

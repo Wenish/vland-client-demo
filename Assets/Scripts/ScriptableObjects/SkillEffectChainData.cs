@@ -21,8 +21,10 @@ public class SkillEffectChainData : ScriptableObject
             ));
         }
 
+        // Wait for all root nodes to finish; exit early if the cast was cancelled
         while (doneCount < rootNodes.Count)
         {
+            if (castContext.IsCancelled) yield break;
             yield return null;
         }
 
