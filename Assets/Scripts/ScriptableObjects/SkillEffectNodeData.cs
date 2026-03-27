@@ -28,7 +28,7 @@ public class SkillEffectNodeData
             castContext.MarkCastCounted();
         }
 
-        // 1) run the effect’s coroutine, passing it our onComplete callback
+        // 1) run the effect's coroutine, passing it our onComplete callback
         yield return castContext.skillInstance.StartCoroutine(
             effect.Execute(castContext, targets, (result) =>
             {
@@ -37,9 +37,10 @@ public class SkillEffectNodeData
             })
         );
 
-        // 2) wait for the effect to finish
+        // 2) wait for the effect to finish; exit early if the cast was cancelled
         while (!finished)
         {
+            if (castContext.IsCancelled) yield break;
             yield return null;
         }
 
