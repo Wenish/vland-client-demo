@@ -37,7 +37,7 @@ public class AiZombieController : MonoBehaviour
 
     void GetAllPlayerControllers()
     {
-        _playerControllers = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+        _playerControllers = FindObjectsByType<PlayerController>();
     }
     void CalcNearestPlayer()
     {

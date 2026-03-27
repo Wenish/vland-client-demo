@@ -72,7 +72,7 @@ namespace NPCBehaviour
         private void CalculateFleeDestination(BehaviourContext context)
         {
             // Find nearby threats
-            var allUnits = Object.FindObjectsByType<UnitController>(FindObjectsSortMode.None);
+            var allUnits = FindObjectsByType<UnitController>();
             var threats = allUnits
                 .Where(u => u != null && u != context.Unit && u.team != context.Team && !u.IsDead)
                 .Where(u => Vector3.Distance(context.Position, u.transform.position) <= threatDetectionRange)

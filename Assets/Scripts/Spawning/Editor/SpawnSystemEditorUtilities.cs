@@ -93,7 +93,7 @@ public static class SpawnSystemEditorUtilities
     public static void CreateSpawnManager()
     {
         // Check if one already exists
-        SpawnManager existing = GameObject.FindFirstObjectByType<SpawnManager>();
+        SpawnManager existing = GameObject.FindAnyObjectByType<SpawnManager>();
         if (existing != null)
         {
             EditorUtility.DisplayDialog(
@@ -189,8 +189,8 @@ public static class SpawnSystemEditorUtilities
     [MenuItem("Tools/Spawn System/Find All Spawners")]
     public static void FindAllSpawners()
     {
-        MobSpawner[] mobSpawners = GameObject.FindObjectsByType<MobSpawner>(FindObjectsSortMode.None);
-        BossSpawner[] bossSpawners = GameObject.FindObjectsByType<BossSpawner>(FindObjectsSortMode.None);
+        MobSpawner[] mobSpawners = GameObject.FindObjectsByType<MobSpawner>();
+        BossSpawner[] bossSpawners = GameObject.FindObjectsByType<BossSpawner>();
 
         Debug.Log($"[Spawn System] Found {mobSpawners.Length} mob spawners and {bossSpawners.Length} boss spawners in scene");
         
@@ -233,8 +233,8 @@ public static class SpawnSystemEditorUtilities
     [MenuItem("Tools/Spawn System/Select All Spawners")]
     public static void SelectAllSpawners()
     {
-        MobSpawner[] mobSpawners = GameObject.FindObjectsByType<MobSpawner>(FindObjectsSortMode.None);
-        BossSpawner[] bossSpawners = GameObject.FindObjectsByType<BossSpawner>(FindObjectsSortMode.None);
+        MobSpawner[] mobSpawners = GameObject.FindObjectsByType<MobSpawner>();
+        BossSpawner[] bossSpawners = GameObject.FindObjectsByType<BossSpawner>();
 
         GameObject[] allSpawners = new GameObject[mobSpawners.Length + bossSpawners.Length];
         
@@ -263,7 +263,7 @@ public static class SpawnSystemEditorUtilities
     {
         int generatedCount = 0;
 
-        MobSpawner[] mobSpawners = GameObject.FindObjectsByType<MobSpawner>(FindObjectsSortMode.None);
+        MobSpawner[] mobSpawners = GameObject.FindObjectsByType<MobSpawner>();
         foreach (var spawner in mobSpawners)
         {
             if (string.IsNullOrEmpty(spawner.spawnerId))
@@ -275,7 +275,7 @@ public static class SpawnSystemEditorUtilities
             }
         }
 
-        BossSpawner[] bossSpawners = GameObject.FindObjectsByType<BossSpawner>(FindObjectsSortMode.None);
+        BossSpawner[] bossSpawners = GameObject.FindObjectsByType<BossSpawner>();
         foreach (var spawner in bossSpawners)
         {
             if (string.IsNullOrEmpty(spawner.spawnerId))

@@ -29,7 +29,7 @@ public class InteractionZoneManager : MonoBehaviour
 
     void GetAllInteractionZonesInScene()
     {
-        interactionZones = FindObjectsByType<InteractionZone>(FindObjectsSortMode.None);
+        interactionZones = FindObjectsByType<InteractionZone>();
     }
 
     void OnOpenedGateEvent(OpenedGateEvent openedGateEvent)

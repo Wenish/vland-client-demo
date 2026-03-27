@@ -260,7 +260,7 @@ public class PlayerLoadout : NetworkBehaviour
         MatchGameManagerBase manager = MatchGameManagerBase.ActiveInstance;
         if (manager == null)
         {
-            manager = FindFirstObjectByType<MatchGameManagerBase>();
+            manager = FindAnyObjectByType<MatchGameManagerBase>();
         }
 
         if (manager == null)

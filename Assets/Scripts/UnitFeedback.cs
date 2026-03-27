@@ -176,7 +176,7 @@ public class UnitFeedback : MonoBehaviour
 
     private void SetUnitOwnership()
     {
-        var players = FindObjectsByType<PlayerInput>(FindObjectsSortMode.None);
+        var players = FindObjectsByType<PlayerInput>();
         foreach (var pc in players)
         {
             if (pc == null) continue;

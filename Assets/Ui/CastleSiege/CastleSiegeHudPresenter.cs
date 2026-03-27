@@ -154,7 +154,7 @@ public class CastleSiegeHudPresenter : MonoBehaviour
     {
         if (_localPlayerLoadout == null || !_localPlayerLoadout.isLocalPlayer)
         {
-            var loadouts = FindObjectsByType<PlayerLoadout>(FindObjectsSortMode.None);
+            var loadouts = FindObjectsByType<PlayerLoadout>();
             foreach (var loadout in loadouts)
             {
                 if (!loadout.isLocalPlayer)

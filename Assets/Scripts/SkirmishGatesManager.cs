@@ -11,14 +11,14 @@ public class SkirmishGatesManager : MonoBehaviour
 
     private void Awake()
     {
-        gameManager = FindFirstObjectByType<SkirmishGameManager>();
+        gameManager = FindAnyObjectByType<SkirmishGameManager>();
 
         if (gameManager == null)
         {
             Debug.LogError("SkirmishGameManager not found in scene.");
         }
 
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>(FindObjectsSortMode.None));
+        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
         
         Debug.Log($"[SkirmishGatesManager] Found {gateControllers.Count} gates in the scene.");
     }
@@ -51,7 +51,7 @@ public class SkirmishGatesManager : MonoBehaviour
             return;
         }
         
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>(FindObjectsSortMode.None));
+        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
         Debug.Log($"[SkirmishGatesManager] Round state changed to {newState}. Found {gateControllers.Count} gates in the scene.");
 
         switch (newState)

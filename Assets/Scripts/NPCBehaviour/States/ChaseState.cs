@@ -101,7 +101,7 @@ namespace NPCBehaviour
             }
 
             // Fallback to standard targeting
-            var allUnits = Object.FindObjectsByType<UnitController>(FindObjectsSortMode.None);
+            var allUnits = FindObjectsByType<UnitController>();
             var enemies = allUnits
                 .Where(u => u != null && u != context.Unit && u.team != context.Team && !u.IsDead)
                 .Where(u => Vector3.Distance(context.Position, u.transform.position) <= detectionRange)

@@ -11,14 +11,14 @@ public class CastleSiegeGateManager : MonoBehaviour
 
     private void Awake()
     {
-        gameManager = FindFirstObjectByType<CastleSiegeManager>();
+        gameManager = FindAnyObjectByType<CastleSiegeManager>();
 
         if (gameManager == null)
         {
             Debug.LogError("CastleSiegeManager not found in scene.");
         }
 
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>(FindObjectsSortMode.None));
+        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
         
         Debug.Log($"[CastleSiegeGateManager] Found {gateControllers.Count} gates in the scene.");
     }
@@ -51,7 +51,7 @@ public class CastleSiegeGateManager : MonoBehaviour
             return;
         }
         
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>(FindObjectsSortMode.None));
+        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
         Debug.Log($"[CastleSiegeGateManager] Match phase changed to {newPhase}. Found {gateControllers.Count} gates in the scene.");
 
         switch (newPhase)

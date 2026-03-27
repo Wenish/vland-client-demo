@@ -87,7 +87,7 @@ namespace ShadowInfection.UI.RoomLobby
             // Reuse an existing PanelSettings if another UIDocument already exists in the scene.
             UIDocument[] docs;
 #if UNITY_2023_1_OR_NEWER
-            docs = FindObjectsByType<UIDocument>(FindObjectsSortMode.None);
+            docs = FindObjectsByType<UIDocument>();
 #else
             docs = FindObjectsOfType<UIDocument>();
 #endif

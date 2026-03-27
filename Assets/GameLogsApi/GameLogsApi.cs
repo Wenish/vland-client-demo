@@ -38,7 +38,7 @@ public sealed class GameLogsApi : MonoBehaviour
     private static GameLogsApi FindFirstInstanceInScene()
     {
 #if UNITY_2023_1_OR_NEWER
-        return FindFirstObjectByType<GameLogsApi>();
+        return FindAnyObjectByType<GameLogsApi>();
 #else
         return FindObjectOfType<GameLogsApi>();
 #endif

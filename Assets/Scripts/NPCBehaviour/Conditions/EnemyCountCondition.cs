@@ -26,7 +26,7 @@ namespace NPCBehaviour
 
         public override bool Evaluate(BehaviourContext context)
         {
-            var allUnits = Object.FindObjectsByType<UnitController>(FindObjectsSortMode.None);
+            var allUnits = Object.FindObjectsByType<UnitController>();
             int count = allUnits
                 .Count(u => u != null && 
                            u != context.Unit && 

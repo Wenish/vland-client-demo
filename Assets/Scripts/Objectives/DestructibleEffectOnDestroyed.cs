@@ -146,7 +146,7 @@ public class DestructibleEffectOnDestroyed : NetworkBehaviour
             return _objective != null ? _objective.ObjectiveUnit : null;
         }
 
-        var allUnits = FindObjectsByType<UnitController>(FindObjectsSortMode.None);
+        var allUnits = FindObjectsByType<UnitController>();
         for (int i = 0; i < allUnits.Length; i++)
         {
             var unit = allUnits[i];

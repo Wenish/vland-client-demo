@@ -189,7 +189,7 @@ public class DestructibleObjectiveEditor : Editor
 
     private static bool IsPrefabInNetworkManagerSpawnables(GameObject prefabAsset)
     {
-        var networkManager = Object.FindFirstObjectByType<NetworkManager>();
+        var networkManager = Object.FindAnyObjectByType<NetworkManager>();
         if (networkManager == null || networkManager.spawnPrefabs == null)
         {
             return false;
@@ -213,7 +213,7 @@ public class DestructibleObjectiveEditor : Editor
             return;
         }
 
-        var networkManager = Object.FindFirstObjectByType<NetworkManager>();
+        var networkManager = Object.FindAnyObjectByType<NetworkManager>();
         if (networkManager == null)
         {
             Debug.LogWarning($"[{nameof(DestructibleObjectiveEditor)}] No NetworkManager found in open scene. Open the scene with NetworkManager first.");
