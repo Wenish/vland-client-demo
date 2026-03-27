@@ -330,10 +330,14 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private void HandleOnActionStateChanged(UnitActionState unitActionState)
     {
         if (_myPlayerUnitActionState == null) return;
-        var isCasting = unitActionState.state.type == UnitActionState.ActionType.Casting;
-        var isChanneling = unitActionState.state.type == UnitActionState.ActionType.Channeling;
-        var isCastingOrChanneling = isCasting || isChanneling;
-        if (!isCastingOrChanneling) return;
+
+        // Child state takes priority so a cast-within-channel shows the cast bar
+        bool showChild = unitActionState.HasChild;
+        var displayState = showChild ? unitActionState.childState : unitActionState.state;
+
+        var isCasting = displayState.type == UnitActionState.ActionType.Casting;
+        var isChanneling = displayState.type == UnitActionState.ActionType.Channeling;
+        if (!isCasting && !isChanneling) return;
 
         // Starting a new cast/channel: cancel any previous castbar coroutine and fade-out to avoid early hide
         if (_castbarCoroutine != null)
@@ -346,7 +350,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             StopCoroutine(_fadeOutCoroutine);
             _fadeOutCoroutine = null;
         }
-        _castbarCoroutine = StartCoroutine(ChangeCastbar(_myPlayerUnitActionState.state));
+        _castbarCoroutine = StartCoroutine(ChangeCastbar(displayState, showChild));
     }
 
     private void HandleOnActionInterrupted((UnitController unitController, UnitActionState.ActionStateData interruptedAction) data)
@@ -369,7 +373,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _fadeOutCoroutine = StartCoroutine(FadeOutPlayerCastbar(0.3f));
     }
 
-    private IEnumerator ChangeCastbar(UnitActionState.ActionStateData actionStateData)
+    private IEnumerator ChangeCastbar(UnitActionState.ActionStateData actionStateData, bool isChild = false)
     {
         if (_fadeOutCoroutine != null)
         {
@@ -401,7 +405,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
         while (currentTime < endTime)
         {
-            if (_myPlayerUnitActionState.state.type != actionStateData.type)
+            var currentType = isChild ? _myPlayerUnitActionState.childState.type : _myPlayerUnitActionState.state.type;
+            if (currentType != actionStateData.type)
                 break;
 
             if (actionStateData.type == UnitActionState.ActionType.Channeling)
