@@ -10,9 +10,7 @@ namespace Mirror
     {
         // only sync when changed hack /////////////////////////////////////////
 #if onlySyncOnChange_BANDWIDTH_SAVING
-        [Header("Sync Only If Changed")]
-        [Tooltip("When true, changes are not sent unless greater than sensitivity values below.")]
-        public bool onlySyncOnChange = true;
+        // onlySyncOnChange is inherited from NetworkTransformBase
 
         uint sendIntervalCounter = 0;
         double lastSendIntervalTime = double.MinValue;
