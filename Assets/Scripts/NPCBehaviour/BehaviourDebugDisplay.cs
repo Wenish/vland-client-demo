@@ -54,8 +54,10 @@ namespace NPCBehaviour
         [SerializeField]
         private bool showGizmos = true;
 
+        #pragma warning disable CS0414 // used in #if UNITY_EDITOR block
         [SerializeField]
         private bool showLabels = true;
+        #pragma warning restore CS0414
 
         private void Start()
         {
