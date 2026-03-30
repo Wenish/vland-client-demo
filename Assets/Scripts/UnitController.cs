@@ -190,6 +190,7 @@ public class UnitController : NetworkBehaviour
     private float _dashSpeed = 0f;
     private float _dashDistance = 0f;
     private Vector3 _dashStartPosition = Vector3.zero;
+    private bool _dashDecelerate = false;          // when true, speed eases out over the dash distance
     // Dash completion helpers
     private float _dashEndTime = 0f;               // absolute time when dash should end at the latest
     private float _lastDashTraveled = 0f;          // distance traveled along dash direction in previous FixedUpdate
@@ -353,7 +354,16 @@ public class UnitController : NetworkBehaviour
             }
             else
             {
-                float maxStep = _dashSpeed * Time.fixedDeltaTime;
+                // Apply deceleration curve: speed drops from full to ~0 over the dash distance
+                float currentSpeed = _dashSpeed;
+                if (_dashDecelerate && _dashDistance > 0f)
+                {
+                    float progress = traveled / _dashDistance; // 0..1
+                    currentSpeed = _dashSpeed * (1f - progress); // linear ease-out — full speed at start, zero at end
+                    currentSpeed = Mathf.Max(currentSpeed, _dashSpeed * 0.05f); // floor so it finishes
+                }
+
+                float maxStep = currentSpeed * Time.fixedDeltaTime;
                 if (remaining < maxStep && Time.fixedDeltaTime > 0f)
                 {
                     // Scale the final velocity so we land exactly at the end distance
@@ -362,7 +372,7 @@ public class UnitController : NetworkBehaviour
                 }
                 else
                 {
-                    SetLinearVelocitySafe(_dashDirection * _dashSpeed);
+                    SetLinearVelocitySafe(_dashDirection * currentSpeed);
                 }
             }
             return;
@@ -706,6 +716,12 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void StartDash(Vector3 direction, float speed, float distance)
     {
+        StartDash(direction, speed, distance, false);
+    }
+
+    [Server]
+    public void StartDash(Vector3 direction, float speed, float distance, bool decelerate)
+    {
         if (IsDead) return;
         // Only allow flat XZ dashes and non-zero direction
         direction.y = 0f;
@@ -716,14 +732,16 @@ public class UnitController : NetworkBehaviour
         _dashDistance = Mathf.Max(0f, distance);
         _dashStartPosition = transform.position;
         _dashStartPosition.y = 0f;
+        _dashDecelerate = decelerate;
         _isDashing = _dashDistance > 0f && _dashSpeed > 0f;
 
         // Initialize dash completion helpers
         _lastDashTraveled = 0f;
         _dashStalledFrames = 0;
-        // Safety timeout: expected dash duration + small fudge
+        // Safety timeout: expected dash duration + generous fudge for deceleration
         float expectedDuration = (_dashSpeed > 0f) ? (_dashDistance / _dashSpeed) : 0f;
-        _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration + 0.1f);
+        float timeoutFudge = decelerate ? 0.5f : 0.1f;
+        _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration * (decelerate ? 2f : 1f) + timeoutFudge);
     }
 
     /// <summary>
