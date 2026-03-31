@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Poison
   m_EditorClassIdentifier: Assembly-CSharp::BuffType
   displayName: Poison
+  isNegative: 1
+  isDispellable: 1

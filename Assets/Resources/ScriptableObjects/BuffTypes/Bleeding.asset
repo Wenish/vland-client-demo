@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Bleeding
   m_EditorClassIdentifier: Assembly-CSharp::BuffType
   displayName: Bleeding
+  isNegative: 1
+  isDispellable: 1
