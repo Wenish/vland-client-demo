@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Hex
   m_EditorClassIdentifier: Assembly-CSharp::BuffType
   displayName: Hex
+  isNegative: 1
+  isDispellable: 1

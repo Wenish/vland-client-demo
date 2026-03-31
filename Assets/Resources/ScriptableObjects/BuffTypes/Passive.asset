@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Passive
   m_EditorClassIdentifier: Assembly-CSharp::BuffType
   displayName: Passive
+  isNegative: 0
+  isDispellable: 0

@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Slow
   m_EditorClassIdentifier: Assembly-CSharp::BuffType
   displayName: Slow
+  isNegative: 1
+  isDispellable: 1

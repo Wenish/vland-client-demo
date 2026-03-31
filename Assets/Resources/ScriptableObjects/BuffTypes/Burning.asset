@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Burning
   m_EditorClassIdentifier: Assembly-CSharp::BuffType
   displayName: Burning
+  isNegative: 1
+  isDispellable: 1
