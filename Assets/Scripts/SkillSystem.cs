@@ -112,12 +112,17 @@ public class SkillSystem : NetworkBehaviour
     [Server]
     public void CastSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {
-        var isUnitDead = unit.IsDead;
-        if (isUnitDead)
+        if (unit.IsDead)
         {
             Debug.Log("Unit is dead, cannot cast skill.");
             return;
         }
+
+        if (unit.IsKnockedUp)
+        {
+            return;
+        }
+
         var list = GetList(slot);
         if (index < 0 || index >= list.Count) return;
         list[index].Cast(aimPoint);

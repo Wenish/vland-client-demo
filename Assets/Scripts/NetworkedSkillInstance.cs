@@ -120,6 +120,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void Cast(Vector3? aimPoint)
     {
+        if (unit == null || unit.IsDead || unit.IsKnockedUp) return;
+
         // If a cast is already running, signal it instead of restarting
         if (_runningCastCoroutine != null && _runningCastContext != null && !_runningCastContext.IsCancelled)
         {

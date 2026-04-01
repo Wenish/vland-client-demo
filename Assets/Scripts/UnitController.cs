@@ -181,6 +181,7 @@ public class UnitController : NetworkBehaviour
     }
 
     public bool IsDead => health <= 0;
+    public bool IsKnockedUp => _isKnockedUp;
     private Rigidbody unitRigidbody;
     private Collider unitCollider;
 
@@ -195,6 +196,28 @@ public class UnitController : NetworkBehaviour
     private float _dashEndTime = 0f;               // absolute time when dash should end at the latest
     private float _lastDashTraveled = 0f;          // distance traveled along dash direction in previous FixedUpdate
     private int _dashStalledFrames = 0;            // consecutive frames with no meaningful progress
+
+    // Knockup state (server-authoritative)
+    private bool _isKnockedUp = false;
+    private float _knockupStartTime = 0f;
+    private float _knockupDuration = 0f;
+    private float _knockupHeight = 0f;
+    private float _knockupBaseY = 0f;
+    private Vector3 _knockupPlanarAnchor = Vector3.zero;
+    private RigidbodyConstraints _knockupSavedConstraints;
+    private bool _knockupConstraintsOverridden = false;
+
+    private void OnDisable()
+    {
+        EndKnockupConstraintOverride();
+        _isKnockedUp = false;
+    }
+
+    private void OnDestroy()
+    {
+        EndKnockupConstraintOverride();
+        _isKnockedUp = false;
+    }
 
     public event Action<(int current, int max)> OnHealthChange = delegate { };
     public event Action<(int current, int max)> OnShieldChange = delegate { };
@@ -322,7 +345,15 @@ public class UnitController : NetworkBehaviour
     {
         if (IsDead)
         {
+            EndKnockupConstraintOverride();
+            _isKnockedUp = false;
             SetLinearVelocitySafe(Vector3.zero);
+            return;
+        }
+
+        if (_isKnockedUp)
+        {
+            UpdateKnockupMotion();
             return;
         }
 
@@ -386,6 +417,82 @@ public class UnitController : NetworkBehaviour
         inputs = Vector3.ClampMagnitude(inputs, 1f);
         Vector3 moveDirection = inputs * currentMoveSpeed;
         SetLinearVelocitySafe(moveDirection);
+    }
+
+    [Server]
+    private void UpdateKnockupMotion()
+    {
+        if (!_isKnockedUp)
+        {
+            return;
+        }
+
+        float elapsed = Time.time - _knockupStartTime;
+        float duration = Mathf.Max(0.05f, _knockupDuration);
+
+        if (elapsed >= duration)
+        {
+            _isKnockedUp = false;
+            Vector3 landingPos = new Vector3(_knockupPlanarAnchor.x, 0f, _knockupPlanarAnchor.z);
+
+            if (unitRigidbody != null && !unitRigidbody.isKinematic)
+            {
+                unitRigidbody.linearVelocity = Vector3.zero;
+                unitRigidbody.position = landingPos;
+            }
+
+            transform.position = landingPos;
+
+            EndKnockupConstraintOverride();
+            return;
+        }
+
+        float t = Mathf.Clamp01(elapsed / duration);
+        float yOffset = 4f * _knockupHeight * t * (1f - t);
+        Vector3 airbornePos = new Vector3(_knockupPlanarAnchor.x, _knockupBaseY + yOffset, _knockupPlanarAnchor.z);
+
+        if (unitRigidbody != null && !unitRigidbody.isKinematic)
+        {
+            unitRigidbody.linearVelocity = Vector3.zero;
+            unitRigidbody.MovePosition(airbornePos);
+        }
+        else
+        {
+            transform.position = airbornePos;
+        }
+    }
+
+    [Server]
+    private void CancelKnockup(bool snapToBaseHeight)
+    {
+        if (!_isKnockedUp)
+        {
+            EndKnockupConstraintOverride();
+            return;
+        }
+
+        _isKnockedUp = false;
+
+        if (!snapToBaseHeight)
+        {
+            EndKnockupConstraintOverride();
+            return;
+        }
+
+        Vector3 pos = transform.position;
+        Vector3 snapped = new Vector3(pos.x, ResolveLandingY(pos.x, pos.z), pos.z);
+
+        if (unitRigidbody != null && !unitRigidbody.isKinematic)
+        {
+            unitRigidbody.linearVelocity = Vector3.zero;
+            unitRigidbody.MovePosition(snapped);
+        }
+        else
+        {
+            transform.position = snapped;
+        }
+
+        EndKnockupConstraintOverride();
     }
 
     [Server]
@@ -514,7 +621,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void Attack()
     {
-        if (IsDead) return;
+        if (IsDead || IsKnockedUp) return;
         _ = weaponController.Attack(this);
     }
 
@@ -598,11 +705,33 @@ public class UnitController : NetworkBehaviour
 
     private void Die()
     {
+        if (isServer)
+        {
+            CancelKnockup(true);
+            _isDashing = false;
+        }
+
+        SnapToGroundAtCurrentPosition();
+
         if (unitCollider != null)
         {
             unitCollider.isTrigger = true;
         }
         RaiseOnDiedEvent();
+    }
+
+    private void SnapToGroundAtCurrentPosition()
+    {
+        float landingY = ResolveLandingY(transform.position.x, transform.position.z);
+        Vector3 snapped = new Vector3(transform.position.x, landingY, transform.position.z);
+
+        if (unitRigidbody != null && !unitRigidbody.isKinematic)
+        {
+            unitRigidbody.linearVelocity = Vector3.zero;
+            unitRigidbody.position = snapped;
+        }
+
+        transform.position = snapped;
     }
 
     private void Revive()
@@ -723,6 +852,8 @@ public class UnitController : NetworkBehaviour
     public void StartDash(Vector3 direction, float speed, float distance, bool decelerate)
     {
         if (IsDead) return;
+        CancelKnockup(false);
+
         // Only allow flat XZ dashes and non-zero direction
         direction.y = 0f;
         if (direction.sqrMagnitude < 0.0001f) return;
@@ -742,6 +873,76 @@ public class UnitController : NetworkBehaviour
         float expectedDuration = (_dashSpeed > 0f) ? (_dashDistance / _dashSpeed) : 0f;
         float timeoutFudge = decelerate ? 0.5f : 0.1f;
         _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration * (decelerate ? 2f : 1f) + timeoutFudge);
+    }
+
+    [Server]
+    public void StartKnockup(float height, float duration, bool interruptCurrentAction = true)
+    {
+        if (IsDead) return;
+
+        CancelKnockup(false);
+
+        if (interruptCurrentAction)
+        {
+            InterruptAction();
+        }
+
+        _isDashing = false;
+        _dashStalledFrames = 0;
+        _lastDashTraveled = 0f;
+
+        _knockupHeight = Mathf.Max(0f, height);
+        _knockupDuration = Mathf.Max(0.05f, duration);
+        _knockupStartTime = Time.time;
+
+        Vector3 currentPos = transform.position;
+        _knockupBaseY = currentPos.y;
+        _knockupPlanarAnchor = new Vector3(currentPos.x, 0f, currentPos.z);
+        _isKnockedUp = _knockupHeight > 0f;
+
+        if (_isKnockedUp && unitRigidbody != null && !unitRigidbody.isKinematic)
+        {
+            BeginKnockupConstraintOverride();
+            unitRigidbody.linearVelocity = Vector3.zero;
+        }
+    }
+
+    [Server]
+    private void BeginKnockupConstraintOverride()
+    {
+        if (unitRigidbody == null || unitRigidbody.isKinematic)
+        {
+            return;
+        }
+
+        if (_knockupConstraintsOverridden)
+        {
+            return;
+        }
+
+        _knockupSavedConstraints = unitRigidbody.constraints;
+        unitRigidbody.constraints = _knockupSavedConstraints & ~RigidbodyConstraints.FreezePositionY;
+        _knockupConstraintsOverridden = true;
+    }
+
+    private void EndKnockupConstraintOverride()
+    {
+        if (!_knockupConstraintsOverridden)
+        {
+            return;
+        }
+
+        if (unitRigidbody != null && !unitRigidbody.isKinematic)
+        {
+            unitRigidbody.constraints = _knockupSavedConstraints;
+        }
+
+        _knockupConstraintsOverridden = false;
+    }
+
+    private float ResolveLandingY(float x, float z)
+    {
+        return 0f;
     }
 
     /// <summary>
