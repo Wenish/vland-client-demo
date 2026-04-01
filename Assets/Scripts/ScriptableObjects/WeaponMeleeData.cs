@@ -14,34 +14,52 @@ public class WeaponMeleeData : WeaponData
 
     public override void PerformAttack(UnitController attacker)
     {
-        Vector3 unitPosition = attacker.transform.position + Vector3.up;
-        Quaternion unitRotation = attacker.transform.rotation;
+        Vector3 unitPosition = attacker.transform.position;
+        Vector3 attackerForwardXZ = Vector3.ProjectOnPlane(attacker.transform.forward, Vector3.up);
+        if (attackerForwardXZ.sqrMagnitude < 1e-6f)
+        {
+            attackerForwardXZ = Vector3.forward;
+        }
+        attackerForwardXZ.Normalize();
 
 
         // List to store the enemies hit by the attack cone
         List<UnitController> enemiesHit = new List<UnitController>();
 
-        // Cast rays in a cone shape to detect enemies
-        for (int i = 0; i < numRays; i++)
+        // Use an overlap sphere for broad phase, then apply cone/range checks on XZ only.
+        // Add vertical padding so airborne knockup targets are still included in broad phase.
+        const float airborneDetectionHeightPadding = 5f;
+        float broadPhaseRadius = Mathf.Sqrt((attackRange * attackRange) + (airborneDetectionHeightPadding * airborneDetectionHeightPadding));
+        Collider[] colliders = Physics.OverlapSphere(unitPosition, broadPhaseRadius);
+        foreach (var collider in colliders)
         {
-            // Calculate the angle of the current ray
-            float angle = -coneAngleRadians + (coneAngleRadians * 2.0f / (numRays - 1) * i);
-
-            // Rotate the direction vector by the angle
-            Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * unitRotation * Vector3.forward;
-
-            // Use a raycast to detect if there is an enemy within the attack range and in the direction of the attack
-            RaycastHit[] hits = Physics.RaycastAll(unitPosition, direction, attackRange);
-            foreach (var hit in hits)
+            UnitController enemy = collider.GetComponentInParent<UnitController>();
+            if (enemy == null || enemy == attacker || enemy.IsDead || enemy.team == attacker.team)
             {
-                UnitController enemy = hit.collider.GetComponent<UnitController>();
-                if (enemy != null && !enemy.IsDead && enemy.team != attacker.team)
+                continue;
+            }
+
+            Vector3 toEnemy = enemy.transform.position - unitPosition;
+            Vector3 toEnemyXZ = Vector3.ProjectOnPlane(toEnemy, Vector3.up);
+            float planarDistance = toEnemyXZ.magnitude;
+
+            if (planarDistance > attackRange)
+            {
+                continue;
+            }
+
+            if (planarDistance > 1e-6f)
+            {
+                float angleToEnemy = Vector3.Angle(attackerForwardXZ, toEnemyXZ);
+                if (angleToEnemy > coneAngleRadians)
                 {
-                    if (!enemiesHit.Contains(enemy))
-                    {
-                        enemiesHit.Add(enemy);
-                    }
+                    continue;
                 }
+            }
+
+            if (!enemiesHit.Contains(enemy))
+            {
+                enemiesHit.Add(enemy);
             }
         }
 
