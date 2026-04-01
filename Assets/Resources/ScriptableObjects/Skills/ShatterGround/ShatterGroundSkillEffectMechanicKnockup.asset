@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicKnockup
   countsAsCasted: 0
   enabled: 1
-  knockupHeight: 1.8
+  knockupHeight: 1.7
   knockupDuration: 0.9
   interruptAction: 1
   skipAllies: 1
