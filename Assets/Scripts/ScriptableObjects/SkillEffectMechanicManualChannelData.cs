@@ -84,23 +84,16 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
 
         Debug.Log($"[ManualChannel] Started | triggerInput={triggerInput} maxTriggers={maxTriggers} triggerCooldown={triggerCooldown} maxDuration={maxChannelDuration} hasEffect={triggerEffect != null}");
 
-        // For Attack trigger mode, find the PlayerInput that owns this caster
-        PlayerInput playerInput = null;
+        // Initialize fire1 detection based on trigger type
         if (triggerInput == TriggerInputType.Attack)
         {
-            var allInputs = UnityEngine.Object.FindObjectsByType<PlayerInput>(FindObjectsInactive.Exclude);
-            foreach (var pi in allInputs)
-            {
-                if (pi.myUnit == caster.gameObject)
-                {
-                    playerInput = pi;
-                    break;
-                }
-            }
-            if (playerInput != null)
-                prevFire1 = playerInput.IsPressingFire1;
-            else
-                Debug.LogWarning($"[ManualChannel] No PlayerInput found for caster {caster.name}");
+            // Use the caster's own fire1 state for Attack trigger detection
+            Debug.Log($"[ManualChannel] Using UnitController.isPressingFire1 for Attack trigger detection");
+            prevFire1 = caster.isPressingFire1;
+        }
+        else
+        {
+            Debug.Log($"[ManualChannel] Using SkillButton trigger detection (internal signal)");
         }
 
         while (elapsed < maxChannelDuration && triggersUsed < maxTriggers)
@@ -124,16 +117,14 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
             }
             else // Attack - detect rising edge of fire1
             {
-                if (playerInput != null)
+                // Primary method: use UnitController's fire1 state
+                bool currentFire1 = caster.isPressingFire1;
+                if (currentFire1 && !prevFire1)
                 {
-                    bool currentFire1 = playerInput.IsPressingFire1;
-                    if (currentFire1 && !prevFire1)
-                    {
-                        shouldTrigger = true;
-                        Debug.Log($"[ManualChannel] Attack trigger (fire1 press) at elapsed={elapsed:F2}");
-                    }
-                    prevFire1 = currentFire1;
+                    shouldTrigger = true;
+                    Debug.Log($"[ManualChannel] Attack trigger (fire1 press) at elapsed={elapsed:F2}");
                 }
+                prevFire1 = currentFire1;
             }
 
             if (shouldTrigger)

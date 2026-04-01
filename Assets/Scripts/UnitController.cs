@@ -96,6 +96,32 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public float angle = 0f;
 
+    // Fire1 input state tracking
+    [SyncVar]
+    public bool isPressingFire1 = false;
+    private bool _previousFire1State = false;
+
+    /// <summary>
+    /// Gets whether fire1 was just pressed this frame (rising edge detection).
+    /// For use by skill effects that need to detect individual fire1 presses.
+    /// </summary>
+    public bool HasFire1PressThisFrame => isPressingFire1 && !_previousFire1State;
+
+    [Server]
+    public void ReceiveFire1Input(bool isPressed)
+    {
+        isPressingFire1 = isPressed;
+    }
+
+    /// <summary>
+    /// Called by skill effects to update fire1 rising edge detection.
+    /// Must be called once per frame from the context that checks fire1 input.
+    /// </summary>
+    public void UpdateFire1State()
+    {
+        _previousFire1State = isPressingFire1;
+    }
+
     [SyncVar(hook = nameof(HookOnHealthChanged))]
     public int health = 100;
 

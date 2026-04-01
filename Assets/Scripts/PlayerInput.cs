@@ -177,6 +177,11 @@ public class PlayerInput : NetworkBehaviour
     void CmdSetFire1(bool isPressingFire1)
     {
         IsPressingFire1 = isPressingFire1;
+        // Signal the unit to track fire1 input for skill effects
+        if (_myUnitController != null)
+        {
+            _myUnitController.ReceiveFire1Input(isPressingFire1);
+        }
     }
 
 
@@ -416,6 +421,11 @@ public class PlayerInput : NetworkBehaviour
     [Server]
     public void ResetInput()
     {
+        // Clear fire1 state from the unit before disconnecting
+        if (_myUnitController != null)
+        {
+            _myUnitController.ReceiveFire1Input(false);
+        }
         myUnit = null;
         _myUnitController = null;
         HorizontalInput = 0f;
