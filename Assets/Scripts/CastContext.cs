@@ -7,6 +7,18 @@ public class CastContext
     public Vector3? aimPoint;
     public Quaternion? aimRotation;
 
+    /// <summary>
+    /// The unit that triggered this cast (e.g. the attacker when reflecting damage).
+    /// May be null for manually-cast skills.
+    /// </summary>
+    public UnitController instigator;
+
+    /// <summary>
+    /// The raw damage value from the triggering hit. Populated by damage-event triggers.
+    /// Used by mechanics such as <c>SkillEffectMechanicReflectDamage</c> in PercentOfIncoming mode.
+    /// </summary>
+    public int? incomingDamage;
+
     private bool _isCancelled = false;
     public bool IsCancelled => _isCancelled;
     public void Cancel()

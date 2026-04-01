@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
+  m_Name: AegisReprisal
+  m_EditorClassIdentifier: Assembly-CSharp::SkillData
+  skillName: Aegis Reprisal
+  skillType: 0
+  description: For 3 seconds, every hit you receive is partially returned to your
+    attacker.
+  cooldown: 12
+  castCost: 0
+  canActivateWhileBusy: 0
+  npcOnly: 0
+  initTrigger: {fileID: 0}
+  castTrigger: {fileID: 11400000, guid: 211907e603f8d534d95b54d74c462868, type: 2}
+  reactiveTriggers:
+  - {fileID: 11400000, guid: ced3ec04352062447b9ba2b9202acea5, type: 2}
+  iconTexture: {fileID: 2800000, guid: ad765dc1d92982141b13a4cca944a2ab, type: 3}

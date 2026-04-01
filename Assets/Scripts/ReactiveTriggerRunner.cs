@@ -71,6 +71,16 @@ public class ReactiveTriggerRunner : NetworkBehaviour
     /// </summary>
     public void Fire(SkillEventTriggerData trigger, List<UnitController> targets)
     {
+        FireWithInstigator(trigger, targets, null);
+    }
+
+    /// <summary>
+    /// Like <see cref="Fire"/> but also sets <see cref="CastContext.instigator"/> and optionally
+    /// <see cref="CastContext.incomingDamage"/> so reactive mechanics (e.g. reflect damage) can
+    /// target the unit that originated the event and scale off the triggering hit.
+    /// </summary>
+    public void FireWithInstigator(SkillEventTriggerData trigger, List<UnitController> targets, UnitController instigator, int? incomingDamage = null)
+    {
         if (trigger == null || trigger.onTrigger == null || _skill == null) return;
 
         // Cooldown gating (authority uses NetworkTime)
@@ -82,7 +92,11 @@ public class ReactiveTriggerRunner : NetworkBehaviour
             _lastFire[trigger] = NetworkTime.time;
         }
 
-        var ctx = new CastContext(_skill.Caster, _skill);
+        var ctx = new CastContext(_skill.Caster, _skill)
+        {
+            instigator = instigator,
+            incomingDamage = incomingDamage,
+        };
         _skill.StartCoroutine(RunChain(trigger.onTrigger, ctx, targets));
     }
 

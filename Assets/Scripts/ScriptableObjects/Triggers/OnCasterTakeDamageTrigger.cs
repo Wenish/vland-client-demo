@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using MyGame.Events;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/Skills/Triggers/OnCasterTakeDamage", fileName = "OnCasterTakeDamageTrigger")]
@@ -12,16 +12,13 @@ public class OnCasterTakeDamageTrigger : SkillEventTriggerData
         var caster = skill.Caster;
         if (caster == null) return;
 
-        // Use runner's convenience API so unsubscription is automatic
-        Action<(UnitController target, UnitController attacker)> handler = obj =>
+        // Subscribe via UnitDamagedEvent so we also receive the damage amount for percent-based
+        // mechanics such as SkillEffectMechanicReflectDamage in PercentOfIncoming mode.
+        runner.Subscribe<UnitDamagedEvent>(e =>
         {
+            if (e.Unit != caster) return;
             var targets = new List<UnitController> { caster };
-            runner.Fire(this, targets);
-        };
-
-        runner.Subscribe(
-            () => caster.OnTakeDamage += handler,
-            () => caster.OnTakeDamage -= handler
-        );
+            runner.FireWithInstigator(this, targets, e.Attacker, e.DamageAmount);
+        });
     }
 }
