@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Shatter Ground
   skillType: 0
-  description: 
-  cooldown: 2
+  description: Knocks up enemies around you.
+  cooldown: 14
   castCost: 0
   canActivateWhileBusy: 0
   npcOnly: 0
