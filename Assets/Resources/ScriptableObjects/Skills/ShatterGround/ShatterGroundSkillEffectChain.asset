@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: ShatterGroundSkillEffectChain
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 4140562915600629843
+  references:
+    version: 2
+    RefIds:
+    - rid: 4140562915600629843
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 7fd96a647587442d2b2a5f0f7a69393a, type: 2}
+        children:
+        - rid: 4140562915600629844
+    - rid: 4140562915600629844
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 726c62dba5db8478e8e6e67089b55d4b, type: 2}
+        children:
+        - rid: 4140562915600629845
+    - rid: 4140562915600629845
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: c352dcc58176c49c69b6e87ed19bfa3a, type: 2}
+        children:
+        - rid: 4140562915600629846
+    - rid: 4140562915600629846
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: e967ef03247cc498d9afaf2c80cc17b7, type: 2}
+        children: []
