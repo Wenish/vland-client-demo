@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8fc76f394d2e054a81201426bdbb761, type: 3}
+  m_Name: DaggerFan_AdaptiveMeleeStrike_Cast
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicAdaptiveMeleeStrikeData
+  countsAsCasted: 0
+  enabled: 1
+  baseDamage: 35
+  bonusDamageIfTargetHasToken: 0
+  hitsPerTarget: 1
+  tokenBuffId: assassin_dagger_mark
+  requireTokenToDamage: 0
+  consumeTokenOnHit: 0
+  tokenMustComeFromCaster: 1
+  applyTokenOnHit: 1
+  tokenDuration: 2
+  tokenUniqueMode: 2
+  tokenBuffType: {fileID: 0}
+  enableDirectionalBonus: 1
+  directionalMode: 0
+  directionalHalfAngle: 60
+  directionalDamageMultiplier: 1.25
+  maxTargets: 0
