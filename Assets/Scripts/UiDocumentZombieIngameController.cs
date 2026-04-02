@@ -116,6 +116,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillPassive.CooldownRemaining = skillPassive.CooldownRemaining;
             _skillPassive.CooldownProgress = skillPassive.CooldownProgress;
+            _skillPassive.IsRecastAvailable = skillPassive.IsRecastWindowOpen;
+            _skillPassive.RecastRemaining = skillPassive.RecastWindowRemaining;
             if (skillPassive.skillData != null)
             {
                 _skillPassive.IconTexture = skillPassive.skillData.iconTexture;
@@ -132,6 +134,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillNormal1.CooldownRemaining = skill1.CooldownRemaining;
             _skillNormal1.CooldownProgress = skill1.CooldownProgress;
+            _skillNormal1.IsRecastAvailable = skill1.IsRecastWindowOpen;
+            _skillNormal1.RecastRemaining = skill1.RecastWindowRemaining;
             if (skill1.skillData != null)
             {
                 _skillNormal1.IconTexture = skill1.skillData.iconTexture;
@@ -148,6 +152,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillNormal2.CooldownRemaining = skill2.CooldownRemaining;
             _skillNormal2.CooldownProgress = skill2.CooldownProgress;
+            _skillNormal2.IsRecastAvailable = skill2.IsRecastWindowOpen;
+            _skillNormal2.RecastRemaining = skill2.RecastWindowRemaining;
             if (skill2.skillData != null)
             {
                 _skillNormal2.IconTexture = skill2.skillData.iconTexture;
@@ -164,6 +170,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillNormal3.CooldownRemaining = skill3.CooldownRemaining;
             _skillNormal3.CooldownProgress = skill3.CooldownProgress;
+            _skillNormal3.IsRecastAvailable = skill3.IsRecastWindowOpen;
+            _skillNormal3.RecastRemaining = skill3.RecastWindowRemaining;
             if (skill3.skillData != null)
             {
                 _skillNormal3.IconTexture = skill3.skillData.iconTexture;
@@ -180,6 +188,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _skillUltimate.CooldownRemaining = skillUltimate.CooldownRemaining;
             _skillUltimate.CooldownProgress = skillUltimate.CooldownProgress;
+            _skillUltimate.IsRecastAvailable = skillUltimate.IsRecastWindowOpen;
+            _skillUltimate.RecastRemaining = skillUltimate.RecastWindowRemaining;
             if (skillUltimate.skillData != null)
             {
                 _skillUltimate.IconTexture = skillUltimate.skillData.iconTexture;
@@ -218,6 +228,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         element.CooldownRemaining = 0f;
         element.CooldownProgress = 0f;
+        element.IsRecastAvailable = false;
+        element.RecastRemaining = 0f;
         element.IconTexture = null;
         element.TooltipText = "";
     }

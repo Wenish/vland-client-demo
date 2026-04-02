@@ -13,7 +13,25 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [SyncVar]
     public double lastCastTime = -Mathf.Infinity;
 
+    [SyncVar]
+    private bool _isRecastWindowOpen;
+
+    [SyncVar]
+    private double _recastWindowEndTime = -Mathf.Infinity;
+
     public SkillData skillData;
+    public bool IsRecastWindowOpen => _isRecastWindowOpen;
+    public float RecastWindowRemaining
+    {
+        get
+        {
+            if (!_isRecastWindowOpen)
+                return 0f;
+
+            var remaining = (float)(_recastWindowEndTime - NetworkTime.time);
+            return Mathf.Max(0f, remaining);
+        }
+    }
 
     [SyncVar, SerializeField]
     private UnitController unit;
@@ -147,6 +165,25 @@ public class NetworkedSkillInstance : NetworkBehaviour
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
     }
 
+    [Server]
+    public void SetRecastWindowOpen(bool isOpen)
+    {
+        _isRecastWindowOpen = isOpen;
+        if (!isOpen)
+        {
+            _recastWindowEndTime = -Mathf.Infinity;
+        }
+    }
+
+    [Server]
+    public void SetRecastWindow(float durationSeconds)
+    {
+        _isRecastWindowOpen = durationSeconds > 0f;
+        _recastWindowEndTime = _isRecastWindowOpen
+            ? NetworkTime.time + durationSeconds
+            : -Mathf.Infinity;
+    }
+
     private IEnumerator CastCoroutineWrapper(CastContext ctx)
     {
         yield return skillData.ExecuteCastCoroutine(ctx);
@@ -157,6 +194,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void CancelCast()
     {
+        _isRecastWindowOpen = false;
+        _recastWindowEndTime = -Mathf.Infinity;
         _runningCastContext?.Cancel();
         _runningCastContext = null;
         if (_runningCastCoroutine != null)
