@@ -134,6 +134,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
     private Coroutine _runningCastCoroutine;
     private CastContext _runningCastContext;
+    private int _lastCastStartFrame = -1;
 
     [Server]
     public void Cast(Vector3? aimPoint)
@@ -153,10 +154,14 @@ public class NetworkedSkillInstance : NetworkBehaviour
         // If the unit is busy (casting/attacking/etc), only block if the skill doesn't allow activation while busy
         if (unit.unitActionState.IsActive && !skillData.canActivateWhileBusy) return;
 
+        // Prevent duplicate admission within the same server frame (e.g. very fast spam / duplicate command packets).
+        if (_lastCastStartFrame == Time.frameCount) return;
+
         if (_runningCastCoroutine != null)
         {
             StopCoroutine(_runningCastCoroutine);
         }
+        _lastCastStartFrame = Time.frameCount;
         _runningCastContext = new CastContext(unit, this)
         {
             aimPoint = aimPoint,
