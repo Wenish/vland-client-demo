@@ -113,6 +113,8 @@ public class CastleSiegeManager : MatchGameManagerBase
     {
         base.OnStartServer();
 
+        EnsureBotFillManager();
+
         if (!ValidateMapConfig())
         {
             SetPhase(MatchPhase.MatchEnded);
@@ -132,6 +134,59 @@ public class CastleSiegeManager : MatchGameManagerBase
         }
 
         _matchLoop = StartCoroutine(ServerMatchLoop());
+    }
+
+    [Server]
+    private void EnsureBotFillManager()
+    {
+        var botFill = GetComponent<PvpBotFillManager>();
+        if (botFill == null)
+        {
+            botFill = gameObject.AddComponent<PvpBotFillManager>();
+        }
+
+        int teamCount = Mathf.Max(1, TeamCount);
+        int targetPlayers = Mathf.Max(6, teamCount * 3);
+        int maxBots = Mathf.Max(0, targetPlayers - 1);
+        botFill.ServerConfigure(targetPlayers, maxBots, "Player");
+    }
+
+    [Server]
+    public UnitController ServerGetAliveEnemyLordForTeam(int requesterTeamId, Vector3 fromPosition)
+    {
+        UnitController bestLord = null;
+        float bestDistanceSqr = float.MaxValue;
+
+        foreach (var pair in _lordByTeamId)
+        {
+            int teamId = pair.Key;
+            if (teamId == requesterTeamId)
+            {
+                continue;
+            }
+
+            if (_eliminatedTeams.Contains(teamId))
+            {
+                continue;
+            }
+
+            var lord = pair.Value;
+            if (lord == null || lord.IsDead)
+            {
+                continue;
+            }
+
+            float sqrDistance = (lord.transform.position - fromPosition).sqrMagnitude;
+            if (sqrDistance >= bestDistanceSqr)
+            {
+                continue;
+            }
+
+            bestDistanceSqr = sqrDistance;
+            bestLord = lord;
+        }
+
+        return bestLord;
     }
 
     public override void OnStopServer()
