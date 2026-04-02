@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
+  m_Name: EchoCleaveSkillEffectChain_CastRoot
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
+  rootNodes:
+  - rid: 5742855926361358454
+  - rid: 5742855926361358461
+  - rid: 5742855926361358468
+  references:
+    version: 2
+    RefIds:
+    - rid: 5742855926361358454
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 05683e70f4fad8149a2e877397a1ccba, type: 2}
+        children:
+        - rid: 5742855926361358455
+    - rid: 5742855926361358455
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: ac317c4d8b67c1a48b613457e1b9d19f, type: 2}
+        children:
+        - rid: 5742855926361358456
+    - rid: 5742855926361358456
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 6db8d97c2d5faf04aa72fe52f4af5618, type: 2}
+        children:
+        - rid: 5742855926361358463
+    - rid: 5742855926361358461
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: d6b88052a4f333c41803c2a1d5835a0d, type: 2}
+        children: []
+    - rid: 5742855926361358463
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 1d33b5ddf487eee4382e1f34e7a5828e, type: 2}
+        children: []
+    - rid: 5742855926361358468
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 967c5a74962a60d4e9bc01eae772ea43, type: 2}
+        children: []

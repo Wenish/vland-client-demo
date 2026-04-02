@@ -376,6 +376,61 @@ public class NetworkedSkillInstance : NetworkBehaviour
         SoundManager.Instance.PlaySound(soundName, position, parent, pitchOffset);
     }
 
+    [ClientRpc(includeOwner = true)]
+    public void Rpc_PlayUnitAnimation(
+        uint targetNetId,
+        bool useTrigger,
+        string triggerName,
+        string stateName,
+        int layer,
+        float transitionDuration,
+        float normalizedTime,
+        float speedMultiplier,
+        bool resetTriggerBeforeSet)
+    {
+        if (targetNetId == 0) return;
+        if (!TryGetNetworkIdentity(targetNetId, out var identity) || identity == null) return;
+
+        var unit = identity.GetComponent<UnitController>();
+        if (unit == null) return;
+
+        var animator = ResolveAnimator(unit);
+        if (animator == null) return;
+
+        if (speedMultiplier > 0f)
+        {
+            animator.speed = speedMultiplier;
+        }
+
+        if (useTrigger)
+        {
+            if (string.IsNullOrWhiteSpace(triggerName)) return;
+            if (resetTriggerBeforeSet)
+            {
+                animator.ResetTrigger(triggerName);
+            }
+
+            animator.SetTrigger(triggerName);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(stateName)) return;
+        animator.CrossFadeInFixedTime(stateName, Mathf.Max(0f, transitionDuration), Mathf.Max(0, layer), Mathf.Clamp01(normalizedTime));
+    }
+
+    private static Animator ResolveAnimator(UnitController unit)
+    {
+        if (unit == null) return null;
+
+        if (unit.modelInstance != null)
+        {
+            var modelAnimator = unit.modelInstance.GetComponentInChildren<Animator>(true);
+            if (modelAnimator != null) return modelAnimator;
+        }
+
+        return unit.GetComponentInChildren<Animator>(true);
+    }
+
     [Server]
     public void Cleanup()
     {

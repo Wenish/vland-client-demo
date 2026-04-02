@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be47ebc95e0400548a462cb15acf1378, type: 3}
+  m_Name: EchoCleave_FullStackBonus
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicConditionalCasterStacksData
+  countsAsCasted: 0
+  enabled: 1
+  buffId: echo_cleave_stack
+  stackThreshold: 3
+  comparisonMode: 0
+  consumeStacksOnSuccess: 0
+  stacksToConsume: 0
+  onConditionMet: {fileID: 11400000, guid: cccaa766267cc6a4fbafd90933e37c7a, type: 2}
+  onConditionFailed: {fileID: 0}
+  postDelaySeconds: 0
