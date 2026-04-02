@@ -18,6 +18,14 @@
     border-bottom-left-radius: 3px;
 }
 
+.ability-container.recast-ready {
+    border-left-color: rgb(255, 179, 64);
+    border-right-color: rgb(255, 179, 64);
+    border-top-color: rgb(255, 179, 64);
+    border-bottom-color: rgb(255, 179, 64);
+    background-color: rgba(255, 170, 46, 0.3);
+}
+
 .ability-icon {
     position: absolute;
     width: 100%;

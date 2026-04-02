@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378dd7e5080dd4bddbceb7b8fe17676d, type: 3}
   m_Name: EchoCleave
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
-  skillName: EchoCleave
+  skillName: Echo Cleave
   skillType: 0
   description: Slash to gain Echo stacks, recast to unleash a stronger finisher.
   cooldown: 8
@@ -22,4 +22,4 @@ MonoBehaviour:
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: 10479d16e33339242ab5d1e4f7164c05, type: 2}
   reactiveTriggers: []
-  iconTexture: {fileID: 0}
+  iconTexture: {fileID: 2800000, guid: 9923fe03a9c7c4646a722a9499b0f38d, type: 3}

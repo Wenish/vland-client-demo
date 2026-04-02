@@ -54,53 +54,63 @@ public class SkillEffectMechanicRecastWindowData : SkillEffectData
 
         var caster = ctx.caster;
 
-        // Consume any pending trigger that was already queued from the initial press
-        // so we don't immediately fire the recast.
-        ctx.ConsumePendingTrigger();
-
-        // --- Anti-misfire delay ---
-        float elapsed = 0f;
-        while (elapsed < minDelayBeforeRecast)
+        try
         {
-            if (ctx.IsCancelled) yield break;
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+            // Consume any pending trigger that was already queued from the initial press
+            // so we don't immediately fire the recast.
+            ctx.ConsumePendingTrigger();
 
-        // --- Recast window loop ---
-        bool recastFired = false;
-        while (elapsed < windowDuration)
-        {
-            if (ctx.IsCancelled) yield break;
-
-            if (cancelOnDeath && caster.IsDead) break;
-            if (cancelOnKnockup && caster.IsKnockedUp) break;
-
-            if (ctx.ConsumePendingTrigger())
+            // --- Anti-misfire delay ---
+            float elapsed = 0f;
+            while (elapsed < minDelayBeforeRecast)
             {
-                recastFired = true;
-                break;
+                if (ctx.IsCancelled) yield break;
+                elapsed += Time.deltaTime;
+                yield return null;
             }
 
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+            var recastWindowRemaining = Mathf.Max(0f, windowDuration - elapsed);
+            ctx.skillInstance.SetRecastWindow(recastWindowRemaining);
 
-        // --- Branch ---
-        if (recastFired && onRecast != null)
-        {
-            yield return ctx.skillInstance.StartCoroutine(onRecast.ExecuteCoroutine(ctx, targets));
-        }
-        else if (!recastFired && onExpire != null)
-        {
-            yield return ctx.skillInstance.StartCoroutine(onExpire.ExecuteCoroutine(ctx, targets));
-        }
+            // --- Recast window loop ---
+            bool recastFired = false;
+            while (elapsed < windowDuration)
+            {
+                if (ctx.IsCancelled) yield break;
 
-        if (postDelaySeconds > 0f)
-        {
-            yield return new WaitForSeconds(postDelaySeconds);
-        }
+                if (cancelOnDeath && caster.IsDead) break;
+                if (cancelOnKnockup && caster.IsKnockedUp) break;
 
-        onComplete(targets);
+                if (ctx.ConsumePendingTrigger())
+                {
+                    recastFired = true;
+                    break;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            // --- Branch ---
+            if (recastFired && onRecast != null)
+            {
+                yield return ctx.skillInstance.StartCoroutine(onRecast.ExecuteCoroutine(ctx, targets));
+            }
+            else if (!recastFired && onExpire != null)
+            {
+                yield return ctx.skillInstance.StartCoroutine(onExpire.ExecuteCoroutine(ctx, targets));
+            }
+
+            if (postDelaySeconds > 0f)
+            {
+                yield return new WaitForSeconds(postDelaySeconds);
+            }
+
+            onComplete(targets);
+        }
+        finally
+        {
+            ctx.skillInstance.SetRecastWindowOpen(false);
+        }
     }
 }

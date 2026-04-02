@@ -21,10 +21,10 @@ public partial class AbilityCooldownElement : VisualElement
         set
         {
             _cooldownRemaining = Math.Clamp(value, 0f, float.PositiveInfinity);
-            _cooldownLabel.visible = _cooldownRemaining > 0f;
             _cooldownLabel.text = _cooldownRemaining < 1
                 ? _cooldownRemaining.ToString("F1")
                 : Mathf.FloorToInt(_cooldownRemaining).ToString();
+            UpdateVisualState();
         }
     }
 
@@ -38,7 +38,7 @@ public partial class AbilityCooldownElement : VisualElement
         {
             _cooldownProgress = Mathf.Clamp(value, 0f, 100f);
             _cooldownOverlay.style.height = Length.Percent(_cooldownProgress);
-            _iconOverlay.style.visibility = _cooldownProgress > 0f ? Visibility.Visible : Visibility.Hidden;
+            UpdateVisualState();
         }
     }
 
@@ -79,6 +79,33 @@ public partial class AbilityCooldownElement : VisualElement
                 _keyLabel.style.visibility = string.IsNullOrEmpty(_activationKey) ? Visibility.Hidden : Visibility.Visible;
             }
 
+        }
+    }
+
+    [SerializeField, DontCreateProperty]
+    private bool _isRecastAvailable;
+    [UxmlAttribute, CreateProperty]
+    public bool IsRecastAvailable
+    {
+        get => _isRecastAvailable;
+        set
+        {
+            _isRecastAvailable = value;
+            EnableInClassList("recast-ready", _isRecastAvailable);
+            UpdateVisualState();
+        }
+    }
+
+    [SerializeField, DontCreateProperty]
+    private float _recastRemaining;
+    [UxmlAttribute, CreateProperty]
+    public float RecastRemaining
+    {
+        get => _recastRemaining;
+        set
+        {
+            _recastRemaining = Math.Clamp(value, 0f, float.PositiveInfinity);
+            UpdateVisualState();
         }
     }
 
@@ -125,11 +152,36 @@ public partial class AbilityCooldownElement : VisualElement
         _keyLabel.AddToClassList("key-label");
         Add(_keyLabel);
         _keyLabel.style.visibility = string.IsNullOrEmpty(_activationKey) ? Visibility.Hidden : Visibility.Visible;
+        IsRecastAvailable = false;
     }
 
     public void SetIcon(Texture2D texture)
     {
         _iconImage.image = texture;
+    }
+
+    private void UpdateVisualState()
+    {
+        bool showCooldown = !_isRecastAvailable && _cooldownRemaining > 0f;
+        bool showCooldownOverlay = !_isRecastAvailable && _cooldownProgress > 0f;
+        bool showRecastCountdown = _isRecastAvailable && _recastRemaining > 0f;
+
+        if (showRecastCountdown)
+        {
+            _cooldownLabel.text = _recastRemaining < 1f
+                ? _recastRemaining.ToString("F1")
+                : Mathf.CeilToInt(_recastRemaining).ToString();
+        }
+        else if (showCooldown)
+        {
+            _cooldownLabel.text = _cooldownRemaining < 1f
+                ? _cooldownRemaining.ToString("F1")
+                : Mathf.FloorToInt(_cooldownRemaining).ToString();
+        }
+
+        _cooldownLabel.visible = showCooldown || showRecastCountdown;
+        _cooldownOverlay.style.visibility = showCooldownOverlay ? Visibility.Visible : Visibility.Hidden;
+        _iconOverlay.style.visibility = showCooldownOverlay ? Visibility.Visible : Visibility.Hidden;
     }
 
     private void OnPointerEnter(PointerEnterEvent evt)
