@@ -1,6 +1,7 @@
 using Mirror;
 using MyGame.Events;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerUnitsManager : NetworkBehaviour
 {
@@ -15,6 +16,9 @@ public class PlayerUnitsManager : NetworkBehaviour
     }
 
     public readonly SyncList<PlayerUnit> playerUnits = new SyncList<PlayerUnit>();
+
+    private const int BotConnectionIdStart = -100000;
+    private int _nextBotConnectionId = BotConnectionIdStart;
 
 
     private void Awake()
@@ -31,6 +35,12 @@ public class PlayerUnitsManager : NetworkBehaviour
 
     private void Start()
     {
+        if (!isServer)
+        {
+            return;
+        }
+
+        spawnIndex = 0;
         FindAllExistingConnections();
     }
 
@@ -72,32 +82,219 @@ public class PlayerUnitsManager : NetworkBehaviour
 
     public void SpawnPlayerUnit(NetworkConnectionToClient conn)
     {
-        var existingPlayerUnit = playerUnits.Find(pu => pu.ConnectionId == conn.connectionId);
-        if (existingPlayerUnit.Unit != null) return; // Already spawned
+        if (!isServer || conn == null)
+        {
+            return;
+        }
 
-        var spawnPoint = GetNextPlayerSpawnPoint();
-        var unit = UnitSpawner.Instance.SpawnUnit("Player", spawnPoint, Quaternion.Euler(0f, 0f, 0f));
-        playerUnits.Add(new PlayerUnit { ConnectionId = conn.connectionId, Unit = unit });
-        EventManager.Instance.Publish(new PlayerUnitSpawnedEvent(conn.connectionId, unit));
-        RpcPlayerUnitSpawned(conn.connectionId, unit);
+        SpawnPlayerUnitInternal(conn.connectionId, "Player");
+    }
+
+    [Server]
+    public GameObject SpawnBotPlayerUnit(string unitName = "Player")
+    {
+        int botConnectionId = AllocateBotConnectionId();
+        return SpawnPlayerUnitInternal(botConnectionId, string.IsNullOrWhiteSpace(unitName) ? "Player" : unitName);
+    }
+
+    [Server]
+    public bool DespawnBotPlayerUnit(int botConnectionId)
+    {
+        if (!IsBotConnectionId(botConnectionId))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            var playerUnit = playerUnits[i];
+            if (playerUnit.ConnectionId != botConnectionId)
+            {
+                continue;
+            }
+
+            playerUnits.RemoveAt(i);
+            if (playerUnit.Unit != null)
+            {
+                NetworkServer.Destroy(playerUnit.Unit);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    [Server]
+    public int GetHumanPlayerCount()
+    {
+        int count = 0;
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            var playerUnit = playerUnits[i];
+            if (playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            if (!IsBotConnectionId(playerUnit.ConnectionId))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    [Server]
+    public int GetBotPlayerCount()
+    {
+        int count = 0;
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            var playerUnit = playerUnits[i];
+            if (playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            if (IsBotConnectionId(playerUnit.ConnectionId))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    [Server]
+    public void GetBotConnectionIds(List<int> output)
+    {
+        if (output == null)
+        {
+            return;
+        }
+
+        output.Clear();
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            var playerUnit = playerUnits[i];
+            if (playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            if (IsBotConnectionId(playerUnit.ConnectionId))
+            {
+                output.Add(playerUnit.ConnectionId);
+            }
+        }
+    }
+
+    [Server]
+    public bool IsBotConnectionId(int connectionId)
+    {
+        return connectionId < 0;
+    }
+
+    [Server]
+    private int AllocateBotConnectionId()
+    {
+        while (true)
+        {
+            int candidate = _nextBotConnectionId--;
+            bool isUsed = false;
+
+            for (int i = 0; i < playerUnits.Count; i++)
+            {
+                if (playerUnits[i].ConnectionId == candidate)
+                {
+                    isUsed = true;
+                    break;
+                }
+            }
+
+            if (!isUsed)
+            {
+                return candidate;
+            }
+        }
+    }
+
+    [Server]
+    private GameObject SpawnPlayerUnitInternal(int connectionId, string unitName)
+    {
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            var existing = playerUnits[i];
+            if (existing.ConnectionId == connectionId && existing.Unit != null)
+            {
+                return existing.Unit;
+            }
+        }
+
+        Vector3 spawnPoint = GetNextPlayerSpawnPoint();
+        var unit = UnitSpawner.Instance.SpawnUnit(unitName, spawnPoint, Quaternion.Euler(0f, 0f, 0f));
+
+        if (unit != null)
+        {
+            var rb = unit.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
+
+        playerUnits.Add(new PlayerUnit { ConnectionId = connectionId, Unit = unit });
+        EventManager.Instance.Publish(new PlayerUnitSpawnedEvent(connectionId, unit));
+        RpcPlayerUnitSpawned(connectionId, unit);
+        return unit;
     }
 
     [SerializeField] private float spawnCircleRadius = 2f;
     [SerializeField] private float spawnAngleStepDegrees = 90f;
+    [SerializeField] private float spawnCollisionRadius = 0.8f;
+    [SerializeField] private int maxSpawnAttempts = 12;
     private int spawnIndex = 0;
 
     public Vector3 GetNextPlayerSpawnPoint()
     {
-        float angleRad = spawnIndex * spawnAngleStepDegrees * Mathf.Deg2Rad;
-        Vector3 spawnPoint = new Vector3(Mathf.Cos(angleRad) * spawnCircleRadius, 0f, Mathf.Sin(angleRad) * spawnCircleRadius);
+        for (int attempt = 0; attempt < maxSpawnAttempts; attempt++)
+        {
+            float angleRad = (spawnIndex + attempt) * spawnAngleStepDegrees * Mathf.Deg2Rad;
+            Vector3 candidate = new Vector3(
+                Mathf.Cos(angleRad) * spawnCircleRadius,
+                0f,
+                Mathf.Sin(angleRad) * spawnCircleRadius
+            );
+
+            if (IsSpawnPointFree(candidate))
+            {
+                spawnIndex++;
+                return candidate;
+            }
+        }
+
         spawnIndex++;
-        return spawnPoint;
+        float fallbackAngle = spawnIndex * spawnAngleStepDegrees * Mathf.Deg2Rad;
+        return new Vector3(
+            Mathf.Cos(fallbackAngle) * spawnCircleRadius,
+            0f,
+            Mathf.Sin(fallbackAngle) * spawnCircleRadius
+        );
+    }
+
+    [Server]
+    private bool IsSpawnPointFree(Vector3 position)
+    {
+        bool isBlocked = Physics.CheckSphere(position, spawnCollisionRadius, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+        return !isBlocked;
     }
 
     [ClientRpc]
     public void RpcPlayerUnitSpawned(int connectionId, GameObject unit)
     {
-        if (!isServer) return;
+        if (isServer) return;
         EventManager.Instance.Publish(new PlayerUnitSpawnedEvent(connectionId, unit));
     }
 

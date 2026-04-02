@@ -160,6 +160,8 @@ public class SkirmishGameManager : MatchGameManagerBase
     {
         base.OnStartServer();
 
+        EnsureBotFillManager();
+
         ServerEnterPreMatch();
         ClearTeamAssignments();
         _teamRoundWins.Clear();
@@ -182,6 +184,21 @@ public class SkirmishGameManager : MatchGameManagerBase
             StopCoroutine(_roundLoopCoroutine);
         }
         _roundLoopCoroutine = StartCoroutine(RoundLoop());
+    }
+
+    [Server]
+    private void EnsureBotFillManager()
+    {
+        var botFill = GetComponent<PvpBotFillManager>();
+        if (botFill == null)
+        {
+            botFill = gameObject.AddComponent<PvpBotFillManager>();
+        }
+
+        int teamCount = Mathf.Max(1, TeamCount);
+        int targetPlayers = Mathf.Max(4, teamCount * 2);
+        int maxBots = Mathf.Max(0, targetPlayers - 1);
+        botFill.ServerConfigure(targetPlayers, maxBots, "Player");
     }
 
     public override void OnStopServer()
