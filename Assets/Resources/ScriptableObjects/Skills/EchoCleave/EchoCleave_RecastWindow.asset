@@ -15,7 +15,7 @@ MonoBehaviour:
   countsAsCasted: 0
   enabled: 1
   windowDuration: 3
-  minDelayBeforeRecast: 0.15
+  minDelayBeforeRecast: 0.3
   cancelOnKnockup: 1
   cancelOnDeath: 1
   onRecast: {fileID: 11400000, guid: 5f15c19c01d51624e87fc635ee3c5539, type: 2}
