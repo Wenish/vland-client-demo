@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 641658595702280768}
   - component: {fileID: 6030866851624884877}
   m_Layer: 0
-  m_Name: Werwolf
+  m_Name: ModelWerwolf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
