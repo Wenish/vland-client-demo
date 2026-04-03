@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72d2ead941946040ae7ca8954210991, type: 3}
+  m_Name: Werwolf
+  m_EditorClassIdentifier: 
+  modelName: werwolf
+  prefab: {fileID: 2828235692202009384, guid: c9b9519e81923b7479dde2d45bb80112, type: 3}
+  defaultAnimationSet: {fileID: 11400000, guid: a6ea2575d45284f8cbf03eba6c599acd, type: 2}
+  weaponAnimationOverrides: []

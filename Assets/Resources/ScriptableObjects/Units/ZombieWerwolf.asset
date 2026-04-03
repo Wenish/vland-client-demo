@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f8c54470ddbb8a4eb4cc39c24fd33d8, type: 3}
+  m_Name: ZombieWerwolf
+  m_EditorClassIdentifier: 
+  unitName: Werwolf
+  unitType: 1
+  team: 0
+  health: 100
+  maxHealth: 100
+  shield: 0
+  maxShield: 0
+  moveSpeed: 5
+  weapon: {fileID: 11400000, guid: 5a821e469598a924a8ada0962153e09a, type: 2}
+  modelData: {fileID: 11400000, guid: 0f5e9c418747c574d8e9a7958b339aa3, type: 2}
+  passiveSkills: []
+  normalSkills: []
+  ultimateSkills: []
+  behaviourProfile: {fileID: 11400000, guid: 62a5a74123b234f4f8b7c3d374e42d70, type: 2}

@@ -30,7 +30,19 @@ MonoBehaviour:
       weight: 1
       maxCount: -1
   waveOverrides: []
-  recurringSpecialWaves: []
+  recurringSpecialWaves:
+  - ruleId: werwolfs
+    minInterval: 4
+    maxInterval: 6
+    replaceRegularWave: 1
+    wave:
+      waveName: Werwolfs
+      baseTotalSpawnCount: 10
+      entries:
+      - unitName: Werwolf
+        guaranteedCount: 10
+        weight: 1
+        maxCount: 10
   scaling:
     unitCountPerExtraPlayer: 0.5
     healthPerExtraPlayer: 0.2
