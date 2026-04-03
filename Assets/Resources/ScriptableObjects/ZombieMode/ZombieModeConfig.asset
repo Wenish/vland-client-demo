@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: affdb642be5a7264c9df542647d2d373, type: 3}
+  m_Name: ZombieModeConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ZombieModeConfig
+  spawnSettings:
+    timeBetweenWavesSeconds: 10
+    timeBetweenSpawnsSeconds: 0.35
+    maxZombiesAlive: 30
+    despawnDelaySeconds: 5
+  regularWave:
+    waveName: Regular Wave
+    baseTotalSpawnCount: 5
+    entries:
+    - unitName: Infected
+      guaranteedCount: 4
+      weight: 4
+      maxCount: -1
+    - unitName: Crawler
+      guaranteedCount: 1
+      weight: 1
+      maxCount: -1
+  waveOverrides: []
+  recurringSpecialWaves: []
+  scaling:
+    unitCountPerExtraPlayer: 0.5
+    healthPerExtraPlayer: 0.2
+    damagePerExtraPlayer: 0.15
+    unitCountByWave:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0.5
+        tangentMode: 65
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 2
+        value: 1.5
+        inSlope: 0.5
+        outSlope: 0.15789473
+        tangentMode: 5
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    unitCountExtrapolation: 1
+    healthByWave:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0.21052632
+        tangentMode: 65
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 20
+        value: 5
+        inSlope: 0.21052632
+        outSlope: 0.10526316
+        tangentMode: 5
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    healthExtrapolation: 1
+    damageByWave:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0.05263158
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 20
+        value: 2
+        inSlope: 0.05263158
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    damageExtrapolation: 1
