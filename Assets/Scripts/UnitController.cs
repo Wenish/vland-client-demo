@@ -735,6 +735,10 @@ public class UnitController : NetworkBehaviour
         {
             CancelKnockup(true);
             _isDashing = false;
+
+            // Always interrupt ongoing actions on death so cast/channel coroutines are cancelled,
+            // including death paths that bypass OnKillEvent (e.g. direct SetHealth(0)).
+            InterruptAction();
         }
 
         SnapToGroundAtCurrentPosition();

@@ -32,7 +32,13 @@ public class SkillEffectChainData : ScriptableObject
 
     private IEnumerator WaitOnRoot(SkillEffectNodeData rootNode, CastContext castContext, List<UnitController> targets, Action onComplete)
     {
-        yield return rootNode.ExecuteCoroutine(castContext, targets);
-        onComplete();
+        try
+        {
+            yield return rootNode.ExecuteCoroutine(castContext, targets);
+        }
+        finally
+        {
+            onComplete();
+        }
     }
 }

@@ -24,13 +24,25 @@ public class SkillEffectMechanicHeal : SkillEffectMechanic
 
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
+        if (targets == null || targets.Count == 0)
+        {
+            return new List<UnitController>(0);
+        }
+
+        var validTargets = new List<UnitController>(targets.Count);
         foreach (var target in targets)
         {
+            if (target == null || target.IsDead)
+            {
+                continue;
+            }
+
             int amount = CalculateHealAmount(target);
             if (amount <= 0) continue;
             target.Heal(amount, castContext.caster);
+            validTargets.Add(target);
         }
-        return targets;
+        return validTargets;
     }
 
     private int CalculateHealAmount(UnitController target)
