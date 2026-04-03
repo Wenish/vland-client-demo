@@ -191,9 +191,15 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
     private IEnumerator CastCoroutineWrapper(CastContext ctx)
     {
-        yield return skillData.ExecuteCastCoroutine(ctx);
-        _runningCastCoroutine = null;
-        _runningCastContext = null;
+        try
+        {
+            yield return skillData.ExecuteCastCoroutine(ctx);
+        }
+        finally
+        {
+            _runningCastCoroutine = null;
+            _runningCastContext = null;
+        }
     }
 
     [Server]

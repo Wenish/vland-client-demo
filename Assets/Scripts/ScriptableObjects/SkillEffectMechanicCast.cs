@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ public class SkillEffectMechanicCast : SkillEffectData
     )
     {
         var caster = ctx.caster;
+        targets ??= new List<UnitController>();
 
         // If a parent action (e.g. a channel) is already running, occupy the child slot
         // so the parent state is not overwritten.
@@ -60,6 +62,13 @@ public class SkillEffectMechanicCast : SkillEffectData
         while (elapsed < castDuration)
         {
             if (ctx.IsCancelled)
+            {
+                break;
+            }
+
+            // If all selected targets became invalid during cast, finish cast cleanly.
+            targets = targets.Where(t => t != null && !t.IsDead).ToList();
+            if (targets.Count == 0)
             {
                 break;
             }

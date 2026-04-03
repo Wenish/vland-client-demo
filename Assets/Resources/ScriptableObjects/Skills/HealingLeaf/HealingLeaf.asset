@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Healing Leaf
   skillType: 0
   description: Heals over Time
-  cooldown: 3
+  cooldown: 6
   castCost: 0
   canActivateWhileBusy: 0
   npcOnly: 0
