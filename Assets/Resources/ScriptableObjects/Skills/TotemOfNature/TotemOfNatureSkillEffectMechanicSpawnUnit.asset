@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85fa3cc3636e99f4a831547a37bfba0d, type: 3}
+  m_Name: TotemOfNatureSkillEffectMechanicSpawnUnit
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicSpawnUnit
+  countsAsCasted: 0
+  enabled: 1
+  unitData: {fileID: 11400000, guid: 868463527e82b3e429541ea50f28e4a6, type: 2}
+  spawnAtAimPoint: 0
+  maxSpawnCount: 1
+  lifetime: 15
+  despawnDelay: 0
+  despawnOnCasterDeath: 0
+  despawnOnLoadoutChange: 1

@@ -5260,98 +5260,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6796964542257883732, guid: e8f3bad0c3fad42038a906ce971dd98f, type: 3}
   m_PrefabInstance: {fileID: 698691173}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &704546954
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.096529715
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.99533015
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 168.921
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7511558181221131132, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 85c703237995ba14e8c8aa4334997bc6, type: 2}
-    - target: {fileID: 919132149155446097, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      propertyPath: m_Name
-      value: MysticTotem
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 704546956}
-  m_SourcePrefab: {fileID: 100100000, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
---- !u!1 &704546955 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9dfca06883c0ac34dacd3401f92cf1b1, type: 3}
-  m_PrefabInstance: {fileID: 704546954}
-  m_PrefabAsset: {fileID: 0}
---- !u!136 &704546956
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 704546955}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &704871261
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7333,7 +7241,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1073168032}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 0.9137255}
   m_Intensity: 1
@@ -7385,7 +7293,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -16447,6 +16355,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3264c8efe66c14e4e854083c8887805d, type: 3}
+--- !u!1001 &3469072228368854234
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.096529715
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.99533015
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 168.921
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307224633832368574, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647720966992147204, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
+      propertyPath: m_Name
+      value: MysticTotem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
 --- !u!1001 &3471749883948952902
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16683,7 +16648,7 @@ SceneRoots:
   - {fileID: 1019430616}
   - {fileID: 483945542}
   - {fileID: 1381927147}
-  - {fileID: 704546954}
+  - {fileID: 3469072228368854234}
   - {fileID: 1508718432}
   - {fileID: 713260365}
   - {fileID: 1556150736}
