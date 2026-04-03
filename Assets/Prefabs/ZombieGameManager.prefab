@@ -48,16 +48,16 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  ZombiePrefab: {fileID: 0}
-  ZombieSpawns: []
+  modeConfig: {fileID: 11400000, guid: 5ca6a1675dad2d344acbd97fcbf85579, type: 2}
+  zombieSpawns: []
+  autoStartOnServer: 1
   currentWave: 0
-  timeBetweenWaves: 10000
-  timeBetweenSpawns: 500
-  maxZombiesAlive: 30
-  zombiesPerWaveMultiplier: 5
   isGamePaused: 0
+  isWaveRunning: 0
   zombiesAlive: 0
-  isSpawingWave: 0
+  queuedSpawnCount: 0
+  currentWaveTotalCount: 0
+  currentWaveKilledCount: 0
 --- !u!114 &5923501022592648545
 MonoBehaviour:
   m_ObjectHideFlags: 0

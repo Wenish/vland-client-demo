@@ -25,6 +25,25 @@ namespace MyGame.Events
     }
 
     /// <summary>
+    /// Fired when zombie wave kill progress changes.
+    /// </summary>
+    public class WaveProgressChangedEvent : GameEvent
+    {
+        public int WaveNumber { get; }
+        public int KilledCount { get; }
+        public int TotalCount { get; }
+        public float PercentKilled { get; }
+
+        public WaveProgressChangedEvent(int waveNumber, int killedCount, int totalCount, float percentKilled)
+        {
+            WaveNumber = waveNumber;
+            KilledCount = killedCount;
+            TotalCount = totalCount;
+            PercentKilled = percentKilled;
+        }
+    }
+
+    /// <summary>
     /// Fired when a unit receives damage.
     /// </summary>
     public class UnitDamagedEvent : GameEvent

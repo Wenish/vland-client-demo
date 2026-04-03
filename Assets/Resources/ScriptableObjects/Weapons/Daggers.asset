@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Daggers
   weaponType: 2
+  npcOnly: 0
   attackPower: 20
-  attackRange: 2
+  attackRange: 2.25
   attackTime: 0.4
   attackSpeed: 0.1
   moveSpeedPercentWhileAttacking: 0.7

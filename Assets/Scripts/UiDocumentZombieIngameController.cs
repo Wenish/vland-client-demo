@@ -71,6 +71,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
         EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        EventManager.Instance.Subscribe<WaveProgressChangedEvent>(OnWaveProgressChangedEvent);
         EventManager.Instance.Subscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
     }
 
@@ -78,6 +79,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
         EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        EventManager.Instance.Unsubscribe<WaveProgressChangedEvent>(OnWaveProgressChangedEvent);
         EventManager.Instance.Unsubscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
         
         if (_myPlayerUnitController != null)
@@ -258,11 +260,16 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     void OnWaveStartedEvent(WaveStartedEvent waveStartedEvent)
     {
-        _labelWave.text = waveStartedEvent.WaveNumber.ToString();
+        _labelWave.text = $"{waveStartedEvent.WaveNumber} (0.0%)";
         _labelRoundStarted.text = $"Round\n{waveStartedEvent.WaveNumber}";
         _labelRoundStarted.style.opacity = 1f;
         StartCoroutine(FadeText(_labelRoundStarted, 0f, 1f, 1f)); // Fade in
         StartCoroutine(WaitAndFadeOut(_labelRoundStarted, 1f, 3f)); // Wait and fade out
+    }
+
+    void OnWaveProgressChangedEvent(WaveProgressChangedEvent waveProgressChangedEvent)
+    {
+        _labelWave.text = $"{waveProgressChangedEvent.WaveNumber} ({waveProgressChangedEvent.PercentKilled:0.0}%)";
     }
 
     IEnumerator FadeText(Label textLabel, float startAlpha, float endAlpha, float duration)
