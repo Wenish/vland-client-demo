@@ -43,6 +43,28 @@ namespace MyGame.Events
         }
     }
 
+    public class ZombieGameOverEvent : GameEvent
+    {
+        public bool IsGameOver { get; }
+
+        public ZombieGameOverEvent(bool isGameOver)
+        {
+            IsGameOver = isGameOver;
+        }
+    }
+
+    public class ZombieReturnToLobbyCountdownEvent : GameEvent
+    {
+        public bool IsAutoReturnActive { get; }
+        public float CountdownSeconds { get; }
+
+        public ZombieReturnToLobbyCountdownEvent(bool isAutoReturnActive, float countdownSeconds)
+        {
+            IsAutoReturnActive = isAutoReturnActive;
+            CountdownSeconds = countdownSeconds;
+        }
+    }
+
     /// <summary>
     /// Fired when a unit receives damage.
     /// </summary>
