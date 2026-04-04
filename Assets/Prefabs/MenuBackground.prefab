@@ -1967,6 +1967,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b1939102578eea44b87cf50f089dfd12, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0dd6f506ea5f6b44cac58c46d25a2755, type: 2}
     - target: {fileID: 919132149155446097, guid: b1939102578eea44b87cf50f089dfd12, type: 3}
       propertyPath: m_Name
       value: WallCulled002
