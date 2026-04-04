@@ -12,6 +12,13 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelWave;
     private Label _labelRoundStarted;
     private Label _labelGold;
+    private VisualElement _playerVitalsContainer;
+    private VisualElement _playerHealthContainer;
+    private VisualElement _playerHealthFill;
+    private Label _labelPlayerHealthValue;
+    private VisualElement _playerShieldContainer;
+    private VisualElement _playerShieldFill;
+    private Label _labelPlayerShieldValue;
     private Coroutine _goldCoroutine;
     private AbilityCooldownElement _skillPassive;
     private AbilityCooldownElement _baseAttack;
@@ -33,9 +40,17 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _labelWave = _uiDocument.rootVisualElement.Q<Label>(name: "labelWave");
         _labelRoundStarted = _uiDocument.rootVisualElement.Q<Label>(name: "labelRoundStarted");
         _labelGold = _uiDocument.rootVisualElement.Q<Label>(name: "labelGold");
+        _playerVitalsContainer = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerVitalsContainer");
+        _playerHealthContainer = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerHealthContainer");
+        _playerHealthFill = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerHealthFill");
+        _labelPlayerHealthValue = _uiDocument.rootVisualElement.Q<Label>(name: "labelPlayerHealthValue");
+        _playerShieldContainer = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerShieldContainer");
+        _playerShieldFill = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerShieldFill");
+        _labelPlayerShieldValue = _uiDocument.rootVisualElement.Q<Label>(name: "labelPlayerShieldValue");
         _labelWave.text = "";
         _labelRoundStarted.text = "";
         _labelGold.text = "Gold: 0";
+        HidePlayerVitals();
         _skillPassive = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillPassive");
         _skillPassive.CooldownRemaining = 0f;
         _skillPassive.CooldownProgress = 0f;
@@ -86,6 +101,8 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         {
             _myPlayerUnitController.OnWeaponChange -= OnWeaponChange;
             _myPlayerUnitController.OnActionInterrupted -= HandleOnActionInterrupted;
+            _myPlayerUnitController.OnHealthChange -= HandleOnPlayerHealthChanged;
+            _myPlayerUnitController.OnShieldChange -= HandleOnPlayerShieldChanged;
         }
         
         if (_myPlayerUnitActionState != null)
@@ -330,20 +347,128 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     private void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
     {
+        UnbindCurrentPlayerUnit();
         _myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
         _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
         _myPlayerUnitSkillSystem = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<SkillSystem>();
         _myPlayerUnitActionState = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<UnitActionState>();
         OnWeaponChange(_myPlayerUnitController);
         _myPlayerUnitController.OnWeaponChange += OnWeaponChange;
+        _myPlayerUnitController.OnHealthChange += HandleOnPlayerHealthChanged;
+        _myPlayerUnitController.OnShieldChange += HandleOnPlayerShieldChanged;
         _myPlayerUnitActionState.OnActionStateChanged += HandleOnActionStateChanged;
         _myPlayerUnitController.OnActionInterrupted += HandleOnActionInterrupted;
+        ShowPlayerVitals();
+        RefreshPlayerVitals();
 
         var localPlayerController = FindObjectsByType<PlayerController>().FirstOrDefault(pc => pc.isLocalPlayer);
         if (localPlayerController != null)
         {
             SetGoldText(localPlayerController.Gold);
         }
+    }
+
+    private void UnbindCurrentPlayerUnit()
+    {
+        if (_myPlayerUnitController != null)
+        {
+            _myPlayerUnitController.OnWeaponChange -= OnWeaponChange;
+            _myPlayerUnitController.OnActionInterrupted -= HandleOnActionInterrupted;
+            _myPlayerUnitController.OnHealthChange -= HandleOnPlayerHealthChanged;
+            _myPlayerUnitController.OnShieldChange -= HandleOnPlayerShieldChanged;
+        }
+
+        if (_myPlayerUnitActionState != null)
+        {
+            _myPlayerUnitActionState.OnActionStateChanged -= HandleOnActionStateChanged;
+        }
+
+        _myPlayerUnitController = null;
+        _myPlayerUnitWeaponController = null;
+        _myPlayerUnitSkillSystem = null;
+        _myPlayerUnitActionState = null;
+        HidePlayerVitals();
+    }
+
+    private void RefreshPlayerVitals()
+    {
+        if (_myPlayerUnitController == null)
+        {
+            HidePlayerVitals();
+            return;
+        }
+
+        ShowPlayerVitals();
+        UpdatePlayerHealth(_myPlayerUnitController.health, _myPlayerUnitController.maxHealth);
+        UpdatePlayerShield(_myPlayerUnitController.shield, _myPlayerUnitController.maxShield);
+    }
+
+    private void HandleOnPlayerHealthChanged((int current, int max) health)
+    {
+        UpdatePlayerHealth(health.current, health.max);
+    }
+
+    private void HandleOnPlayerShieldChanged((int current, int max) shield)
+    {
+        UpdatePlayerShield(shield.current, shield.max);
+    }
+
+    private void UpdatePlayerHealth(int current, int max)
+    {
+        if (_labelPlayerHealthValue != null)
+        {
+            _labelPlayerHealthValue.text = $"{Mathf.Max(0, current)} / {Mathf.Max(0, max)}";
+        }
+
+        SetBarFill(_playerHealthFill, current, max);
+        if (_playerHealthContainer != null)
+        {
+            _playerHealthContainer.style.display = max > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+    }
+
+    private void UpdatePlayerShield(int current, int max)
+    {
+        if (_labelPlayerShieldValue != null)
+        {
+            _labelPlayerShieldValue.text = $"{Mathf.Max(0, current)} / {Mathf.Max(0, max)}";
+        }
+
+        SetBarFill(_playerShieldFill, current, max);
+        if (_playerShieldContainer != null)
+        {
+            _playerShieldContainer.style.display = max > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+    }
+
+    private void SetBarFill(VisualElement fillElement, int current, int max)
+    {
+        if (fillElement == null)
+        {
+            return;
+        }
+
+        float percent = max <= 0 ? 0f : Mathf.Clamp01((float)current / max) * 100f;
+        fillElement.style.width = Length.Percent(percent);
+    }
+
+    private void ShowPlayerVitals()
+    {
+        if (_playerVitalsContainer != null)
+        {
+            _playerVitalsContainer.style.display = DisplayStyle.Flex;
+        }
+    }
+
+    private void HidePlayerVitals()
+    {
+        if (_playerVitalsContainer != null)
+        {
+            _playerVitalsContainer.style.display = DisplayStyle.None;
+        }
+
+        UpdatePlayerHealth(0, 0);
+        UpdatePlayerShield(0, 0);
     }
 
     private void HandleOnActionStateChanged(UnitActionState unitActionState)
