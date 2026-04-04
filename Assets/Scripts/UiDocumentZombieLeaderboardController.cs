@@ -38,6 +38,7 @@ public class UiDocumentZombieLeaderboardController : MonoBehaviour
         if (_zombieGameManager != null)
         {
             _zombieGameManager.OnLeaderboardChanged -= HandleLeaderboardChanged;
+            _zombieGameManager.OnGameOverStateChanged -= HandleGameOverStateChanged;
             _zombieGameManager = null;
         }
     }
@@ -56,6 +57,14 @@ public class UiDocumentZombieLeaderboardController : MonoBehaviour
         }
 
         _zombieGameManager.OnLeaderboardChanged += HandleLeaderboardChanged;
+        _zombieGameManager.OnGameOverStateChanged += HandleGameOverStateChanged;
+
+        if (_zombieGameManager.IsGameOver)
+        {
+            _isLeaderboardVisible = true;
+            SetLeaderboardVisible(true);
+        }
+
         RenderLeaderboard();
     }
 
@@ -91,6 +100,20 @@ public class UiDocumentZombieLeaderboardController : MonoBehaviour
             return;
         }
 
+        RenderLeaderboard();
+    }
+
+    private void HandleGameOverStateChanged(bool isGameOver)
+    {
+        if (!isGameOver)
+        {
+            _isLeaderboardVisible = false;
+            SetLeaderboardVisible(false);
+            return;
+        }
+
+        _isLeaderboardVisible = true;
+        SetLeaderboardVisible(true);
         RenderLeaderboard();
     }
 
