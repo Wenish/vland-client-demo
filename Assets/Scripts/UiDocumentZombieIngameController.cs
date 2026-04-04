@@ -33,6 +33,13 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private UnitActionState _myPlayerUnitActionState;
     private Coroutine _castbarCoroutine;
     private Coroutine _fadeOutCoroutine;
+    private VisualElement _playerStatsContainer;
+    private Label _labelStatAttackPower;
+    private Label _labelStatAbilityPower;
+    private Label _labelStatAttackSpeed;
+    private Label _labelStatMovementSpeed;
+    private Label _labelStatDamageReduction;
+    private StatSystem _myPlayerStatSystem;
 
     void Awake()
     {
@@ -80,6 +87,13 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _playerCastbar.TextName = "";
         _playerCastbar.IconTexture = null;
         HidePlayerCastbar();
+        _playerStatsContainer = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerStatsContainer");
+        _labelStatAttackPower = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatAttackPower");
+        _labelStatAbilityPower = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatAbilityPower");
+        _labelStatAttackSpeed = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatAttackSpeed");
+        _labelStatMovementSpeed = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatMovementSpeed");
+        _labelStatDamageReduction = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatDamageReduction");
+        HidePlayerStats();
     }
 
     void Start()
@@ -108,6 +122,11 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         if (_myPlayerUnitActionState != null)
         {
             _myPlayerUnitActionState.OnActionStateChanged -= HandleOnActionStateChanged;
+        }
+
+        if (_myPlayerStatSystem != null)
+        {
+            _myPlayerStatSystem.OnStatChanged -= HandleOnStatChanged;
         }
     }
 
@@ -360,6 +379,10 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _myPlayerUnitController.OnActionInterrupted += HandleOnActionInterrupted;
         ShowPlayerVitals();
         RefreshPlayerVitals();
+        _myPlayerStatSystem = _myPlayerUnitController.unitMediator.Stats;
+        _myPlayerStatSystem.OnStatChanged += HandleOnStatChanged;
+        RefreshAllStats();
+        ShowPlayerStats();
 
         var localPlayerController = FindObjectsByType<PlayerController>().FirstOrDefault(pc => pc.isLocalPlayer);
         if (localPlayerController != null)
@@ -387,7 +410,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _myPlayerUnitWeaponController = null;
         _myPlayerUnitSkillSystem = null;
         _myPlayerUnitActionState = null;
+
+        if (_myPlayerStatSystem != null)
+        {
+            _myPlayerStatSystem.OnStatChanged -= HandleOnStatChanged;
+            _myPlayerStatSystem = null;
+        }
+
         HidePlayerVitals();
+        HidePlayerStats();
     }
 
     private void RefreshPlayerVitals()
@@ -671,5 +702,56 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         var range = $"<size=16>Range: {weaponData.attackRange}</size>";
 
         return $"{title}\n<color=#cccccc>{type}\n{damage}\n{range}</color>";
+    }
+
+    private void HandleOnStatChanged(StatType statType)
+    {
+        if (_myPlayerStatSystem == null) return;
+        var stats = _myPlayerStatSystem;
+        switch (statType)
+        {
+            case StatType.AttackPower:
+                _labelStatAttackPower.text = $"ATK: {stats.GetStat(StatType.AttackPower):0}";
+                break;
+            case StatType.AbilityPower:
+                _labelStatAbilityPower.text = $"AP: {stats.GetStat(StatType.AbilityPower):0}";
+                break;
+            case StatType.AttackSpeed:
+                _labelStatAttackSpeed.text = $"AS: {stats.GetStat(StatType.AttackSpeed):0.00}x";
+                break;
+            case StatType.MovementSpeed:
+                _labelStatMovementSpeed.text = $"SPD: {stats.GetStat(StatType.MovementSpeed):0.0}";
+                break;
+            case StatType.DamageReduction:
+                _labelStatDamageReduction.text = $"DR: {stats.GetStat(StatType.DamageReduction):0}%";
+                break;
+        }
+    }
+
+    private void RefreshAllStats()
+    {
+        if (_myPlayerStatSystem == null) return;
+        var stats = _myPlayerStatSystem;
+        _labelStatAttackPower.text = $"ATK: {stats.GetStat(StatType.AttackPower):0}";
+        _labelStatAbilityPower.text = $"AP: {stats.GetStat(StatType.AbilityPower):0}";
+        _labelStatAttackSpeed.text = $"AS: {stats.GetStat(StatType.AttackSpeed):0.00}x";
+        _labelStatMovementSpeed.text = $"SPD: {stats.GetStat(StatType.MovementSpeed):0.0}";
+        _labelStatDamageReduction.text = $"DR: {stats.GetStat(StatType.DamageReduction):0}%";
+    }
+
+    private void ShowPlayerStats()
+    {
+        if (_playerStatsContainer != null)
+        {
+            _playerStatsContainer.style.display = DisplayStyle.Flex;
+        }
+    }
+
+    private void HidePlayerStats()
+    {
+        if (_playerStatsContainer != null)
+        {
+            _playerStatsContainer.style.display = DisplayStyle.None;
+        }
     }
 }
