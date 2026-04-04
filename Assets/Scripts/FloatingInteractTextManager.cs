@@ -35,20 +35,7 @@ public class FloatingInteractTextManager : MonoBehaviour
         var hasMyUnitEnteredTheZone = zone.Unit == myPlayerUnitController;
         if (hasMyUnitEnteredTheZone)
         {
-            string interactionText;
-            switch (zone.Zone.interactionType)
-            {
-                case InteractionType.OpenGate:
-                    interactionText = "Press F to open the gate";
-                    break;
-                case InteractionType.BuyWeapon:
-                    interactionText = "Press F to buy a weapon";
-                    break;
-                default:
-                    interactionText = "Press F to interact";
-                    break;
-            }
-            interactionText += $"\n[Cost: {zone.Zone.goldCost} Gold]";
+            var interactionText = zone.Zone.BuildTooltipText();
             GameObject textObj = SpawnInteractText(interactionText, zone.Zone.transform);
             activeInteractTexts[zone.Zone.transform] = textObj;
         }

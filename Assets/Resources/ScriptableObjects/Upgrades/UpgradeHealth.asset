@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46a73870d6fab854599f2a7e0c5d96ae, type: 3}
+  m_Name: UpgradeHealth
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeDefinition
+  upgradeId: upgrade_Health
+  displayName: Health
+  description: 
+  baseGoldCost: 500
+  minWaveToUnlock: 1
+  maxPurchasesPerPlayer: -1
+  buffId: upgrade_health
+  buffType: {fileID: 11400000, guid: 474c976de02dc2c4584637e2db0dda38, type: 2}
+  uniqueMode: 0
+  duration: Infinity
+  persistsThroughDeath: 1
+  statModifiers:
+  - Type: 0
+    Value: 15
+    ModifierType: 0

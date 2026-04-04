@@ -64,6 +64,9 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         for (int i = 0; i < UnitNetworkBuffs.NetworkBuffs.Count; i++)
         {
             var buff = UnitNetworkBuffs.NetworkBuffs[i];
+            if (!buff.ShowInUnitUiBuffBar)
+                continue;
+
             if (_currentBuffs.Any(b => b.InstanceId == buff.InstanceId))
                 continue;
 
@@ -98,6 +101,11 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
     private void OnBuffAdded(int index)
     {
         var buff = UnitNetworkBuffs.NetworkBuffs[index];
+        if (!buff.ShowInUnitUiBuffBar)
+        {
+            return;
+        }
+
         var isInfiniteBuff = buff.Duration == Mathf.Infinity;
         Texture2D iconTexture = DatabaseManager.Instance.skillDatabase.GetSkillByName(buff.SkillName)?.iconTexture;
 

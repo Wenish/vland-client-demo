@@ -92,8 +92,8 @@ public class BuffSystem
     {
         if (_target.UnitController.IsDead)
         {
-            // clear all buffs if dead
-            foreach (var b in _active.ToList())
+            // Remove only non-persistent buffs while dead.
+            foreach (var b in _active.Where(b => !b.PersistsThroughDeath).ToList())
                 RemoveBuff(b);
             return;
         }

@@ -87,11 +87,63 @@ public class PlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            if (Keyboard.current == null)
+            {
+                return;
+            }
+
+            if (TryHandleUpgradeQuickBuy(Keyboard.current))
+            {
+                return;
+            }
+
+            if (Keyboard.current.fKey.wasPressedThisFrame)
             {
                 CmdInteract();
             }
         }
+    }
+
+    private bool TryHandleUpgradeQuickBuy(Keyboard keyboard)
+    {
+        if (_interactionZone == null || _interactionZone.InteractionType != InteractionType.BuyUpgrade)
+        {
+            return false;
+        }
+
+        if (!_interactionZone.TryGetComponent<UpgradeStationZone>(out var upgradeStationZone) || !upgradeStationZone.HasMultipleOffers)
+        {
+            return false;
+        }
+
+        var offerIndex = GetPressedOfferIndex(keyboard);
+        if (offerIndex < 0)
+        {
+            return false;
+        }
+
+        if (!upgradeStationZone.TryGetUpgradeIdAtOfferIndex(offerIndex, out var upgradeId))
+        {
+            return false;
+        }
+
+        CmdBuyUpgrade(upgradeId);
+        return true;
+    }
+
+    private static int GetPressedOfferIndex(Keyboard keyboard)
+    {
+        if (keyboard.digit1Key.wasPressedThisFrame) return 0;
+        if (keyboard.digit2Key.wasPressedThisFrame) return 1;
+        if (keyboard.digit3Key.wasPressedThisFrame) return 2;
+        if (keyboard.digit4Key.wasPressedThisFrame) return 3;
+        if (keyboard.digit5Key.wasPressedThisFrame) return 4;
+        if (keyboard.digit6Key.wasPressedThisFrame) return 5;
+        if (keyboard.digit7Key.wasPressedThisFrame) return 6;
+        if (keyboard.digit8Key.wasPressedThisFrame) return 7;
+        if (keyboard.digit9Key.wasPressedThisFrame) return 8;
+
+        return -1;
     }
 
     [Server]
@@ -154,7 +206,13 @@ public class PlayerController : NetworkBehaviour
     {
         if (_interactionZone == null) return;
 
-        var canAffordInteraction = SpendGold(_interactionZone.goldCost);
+        if (_interactionZone.InteractionType == InteractionType.BuyUpgrade)
+        {
+            EventManager.Instance.Publish(new BuyUpgradeEvent(_interactionZone, this));
+            return;
+        }
+
+        var canAffordInteraction = SpendGold(_interactionZone.GoldCost);
 
         if (!canAffordInteraction)
         {
@@ -162,16 +220,25 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        switch (_interactionZone.interactionType)
+        switch (_interactionZone.InteractionType)
         {
             case InteractionType.OpenGate:
                 Debug.Log("Open Gate");
-                EventManager.Instance.Publish(new OpenGateEvent(_interactionZone.interactionId));
+                EventManager.Instance.Publish(new OpenGateEvent(_interactionZone.InteractionId));
                 break;
             case InteractionType.BuyWeapon:
                 Debug.Log("Buy Weapon");
-                EventManager.Instance.Publish(new BuyWeaponEvent(_interactionZone.interactionId, this));
+                EventManager.Instance.Publish(new BuyWeaponEvent(_interactionZone.InteractionId, this));
                 break;
         }
+    }
+
+    [Command]
+    public void CmdBuyUpgrade(string upgradeId)
+    {
+        if (_interactionZone == null) return;
+        if (_interactionZone.InteractionType != InteractionType.BuyUpgrade) return;
+
+        EventManager.Instance.Publish(new BuyUpgradeEvent(_interactionZone, this, upgradeId));
     }
 }
