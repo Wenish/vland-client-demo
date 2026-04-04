@@ -36,9 +36,9 @@ public class InteractionZoneManager : MonoBehaviour
     {
         foreach (var zone in interactionZones)
         {
-            if (zone.interactionType != InteractionType.OpenGate) continue;
+            if (zone.InteractionType != InteractionType.OpenGate) continue;
 
-            if (zone.interactionId == openedGateEvent.GateId)
+            if (zone.InteractionId == openedGateEvent.GateId)
             {
                 zone.gameObject.SetActive(false);
             }
@@ -49,9 +49,9 @@ public class InteractionZoneManager : MonoBehaviour
     {
         foreach (var zone in interactionZones)
         {
-            if (zone.interactionType != InteractionType.OpenGate) continue;
+            if (zone.InteractionType != InteractionType.OpenGate) continue;
 
-            if (zone.interactionId == closedGateEvent.GateId)
+            if (zone.InteractionId == closedGateEvent.GateId)
             {
                 zone.gameObject.SetActive(true);
             }

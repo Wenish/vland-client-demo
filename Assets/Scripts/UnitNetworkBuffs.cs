@@ -16,6 +16,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
         public float Duration;
         public float Remaining;
         public string SkillName;
+        public bool ShowInUnitUiBuffBar;
     }
 
     public override void OnStartServer()
@@ -37,7 +38,8 @@ public class UnitNetworkBuffs : NetworkBehaviour
                     BuffId = b.BuffId,
                     Duration = b.Duration,
                     Remaining = b.Remaining,
-                    SkillName = b.SkillName
+                    SkillName = b.SkillName,
+                    ShowInUnitUiBuffBar = b.BuffType == null || b.BuffType.ShowInUnitUiBuffBar
                 });
             }
         }
@@ -72,7 +74,8 @@ public class UnitNetworkBuffs : NetworkBehaviour
             BuffId = buff.BuffId,
             Duration = buff.Duration,
             Remaining = buff.Remaining,
-            SkillName = buff.SkillName
+            SkillName = buff.SkillName,
+            ShowInUnitUiBuffBar = buff.BuffType == null || buff.BuffType.ShowInUnitUiBuffBar
         });
     }
 
@@ -108,7 +111,8 @@ public class UnitNetworkBuffs : NetworkBehaviour
                 BuffId = oldBuff.BuffId,
                 Duration = oldBuff.Duration,
                 Remaining = buff.Remaining,
-                SkillName = oldBuff.SkillName
+                SkillName = oldBuff.SkillName,
+                ShowInUnitUiBuffBar = oldBuff.ShowInUnitUiBuffBar
             };
             NetworkBuffs[i] = updatedBuff;
             break;

@@ -9,6 +9,7 @@ public abstract class Buff
     public UniqueMode UniqueMode { get; }
     public UnitMediator Caster { get; }
     public BuffType BuffType { get; }
+    public bool PersistsThroughDeath { get; set; }
 
     public string SkillName { get; set; }
     public event Action OnRemoved;
@@ -34,6 +35,7 @@ public abstract class Buff
         UniqueMode = uniqueMode;
         Caster = caster;
         BuffType = buffType;
+        PersistsThroughDeath = false;
     }
 
     public void SetDuration(float newDuration)
