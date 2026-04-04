@@ -51,12 +51,14 @@ namespace MyGame.Events
         public UnitController Unit { get; }
         public UnitController Attacker { get; }
         public int DamageAmount { get; }
+        public int AppliedDamageAmount { get; }
 
-        public UnitDamagedEvent(UnitController unit, UnitController attacker, int damageAmount)
+        public UnitDamagedEvent(UnitController unit, UnitController attacker, int damageAmount, int appliedDamageAmount)
         {
             Unit = unit;
             Attacker = attacker;
             DamageAmount = damageAmount;
+            AppliedDamageAmount = appliedDamageAmount;
         }
     }
 

@@ -558,25 +558,28 @@ public class UnitController : NetworkBehaviour
         int reducedDamage = Mathf.CeilToInt(damage * damageMultiplier);
         damage = Mathf.Max(0, reducedDamage);
 
-        OnTakeDamageEvent(damage, attacker);
-        // If the unit has a shield, reduce the shield points first
-        if (shield > 0)
+        int originalShield = shield;
+        int originalHealth = health;
+        int shieldDamage = Mathf.Min(originalShield, damage);
+        int damageAfterShield = damage - shieldDamage;
+        int healthDamage = Mathf.Min(originalHealth, damageAfterShield);
+        int actualDamage = shieldDamage + healthDamage;
+
+        OnTakeDamageEvent(damage, actualDamage, attacker);
+
+        if (shieldDamage > 0)
         {
-            shield -= damage;
-            if (shield < 0)
-            {
-                damage = -shield;
-                shield = 0;
-            }
-            else
-            {
-                OnAfterTakeDamageEvent(damage, attacker);
-                return;
-            }
+            shield = Mathf.Max(0, originalShield - shieldDamage);
         }
 
-        // Reduce the health points by the remaining damage
-        var newHealth = health - damage;
+        if (healthDamage <= 0)
+        {
+            OnAfterTakeDamageEvent(actualDamage, attacker);
+            return;
+        }
+
+        // Reduce the health points by the remaining damage that made it through the shield.
+        var newHealth = originalHealth - healthDamage;
 
         health = Mathf.Clamp(newHealth, 0, maxHealth);
 
@@ -585,7 +588,7 @@ public class UnitController : NetworkBehaviour
             OnKillEvent(attacker);
             Die();
         }
-        OnAfterTakeDamageEvent(damage, attacker);
+        OnAfterTakeDamageEvent(actualDamage, attacker);
     }
 
     private float GetIncomingDamageMultiplier()
@@ -615,19 +618,19 @@ public class UnitController : NetworkBehaviour
     }
 
     [Server]
-    public void OnTakeDamageEvent(int damage, UnitController attacker)
+    public void OnTakeDamageEvent(int damage, int appliedDamage, UnitController attacker)
     {
-        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
+        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage));
         OnTakeDamage((this, attacker));
-        RpcOnTakenDamage(damage, attacker);
+        RpcOnTakenDamage(damage, appliedDamage, attacker);
     }
 
     [ClientRpc]
-    public void RpcOnTakenDamage(int damage, UnitController attacker)
+    public void RpcOnTakenDamage(int damage, int appliedDamage, UnitController attacker)
     {
         if (isServer) return;
         OnTakeDamage((this, attacker));
-        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage));
+        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage));
     }
 
     [Server]

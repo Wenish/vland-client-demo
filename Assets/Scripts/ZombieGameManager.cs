@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using MyGame.Events;
 using UnityEngine;
@@ -9,6 +10,8 @@ using UnityEngine.InputSystem;
 public class ZombieGameManager : NetworkBehaviour
 {
     private const int DefaultGoldDrop = 10;
+    private const int KillPointsReward = 25;
+    private const float LeaderboardReconcileIntervalSeconds = 1f;
 
     public static ZombieGameManager Singleton { get; private set; }
 
@@ -34,9 +37,23 @@ public class ZombieGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnWaveKilledCountChanged))]
     [SerializeField] private int currentWaveKilledCount = 0;
 
+    public struct ZombieLeaderboardEntry
+    {
+        public int ConnectionId;
+        public string PlayerName;
+        public int Points;
+        public int Kills;
+        public int Deaths;
+        public int GoldGathered;
+        public bool IsConnected;
+    }
+
+    public readonly SyncList<ZombieLeaderboardEntry> zombieLeaderboardEntries = new SyncList<ZombieLeaderboardEntry>();
+
     private readonly HashSet<uint> trackedZombieNetIds = new HashSet<uint>();
     private readonly Dictionary<string, int> recurringRuleNextWave = new Dictionary<string, int>();
     private Coroutine waveLoopCoroutine;
+    private float nextLeaderboardReconcileAt = 0f;
 
     public int CurrentWave => currentWave;
     public bool IsGamePaused => isGamePaused;
@@ -49,6 +66,9 @@ public class ZombieGameManager : NetworkBehaviour
 
     public event Action<int> OnNewWaveStarted = delegate { };
     public event Action<float, int, int> OnWaveProgressChanged = delegate { };
+    public event Action OnLeaderboardChanged = delegate { };
+
+    public IReadOnlyList<ZombieLeaderboardEntry> LeaderboardEntries => zombieLeaderboardEntries;
 
     private void Awake()
     {
@@ -61,7 +81,11 @@ public class ZombieGameManager : NetworkBehaviour
         base.OnStartServer();
 
         EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
+        EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
+        EventManager.Instance.Subscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
+        EventManager.Instance.Subscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
         ResetRecurringSpecialWaveState();
+        ResetLeaderboardState();
 
         if (autoStartOnServer)
         {
@@ -69,11 +93,33 @@ public class ZombieGameManager : NetworkBehaviour
         }
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        zombieLeaderboardEntries.OnAdd += HandleLeaderboardListChanged;
+        zombieLeaderboardEntries.OnSet += HandleLeaderboardListChanged;
+        zombieLeaderboardEntries.OnRemove += HandleLeaderboardListChanged;
+        zombieLeaderboardEntries.OnClear += HandleLeaderboardListCleared;
+        OnLeaderboardChanged();
+    }
+
     public override void OnStopServer()
     {
         base.OnStopServer();
         StopZombieMode();
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
+        EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
+        EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
+        EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        zombieLeaderboardEntries.OnAdd -= HandleLeaderboardListChanged;
+        zombieLeaderboardEntries.OnSet -= HandleLeaderboardListChanged;
+        zombieLeaderboardEntries.OnRemove -= HandleLeaderboardListChanged;
+        zombieLeaderboardEntries.OnClear -= HandleLeaderboardListCleared;
     }
 
     private void OnDestroy()
@@ -86,6 +132,9 @@ public class ZombieGameManager : NetworkBehaviour
         if (isServer)
         {
             EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
+            EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
+            EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
+            EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
         }
 
         StopAllCoroutines();
@@ -102,6 +151,12 @@ public class ZombieGameManager : NetworkBehaviour
         {
             isGamePaused = !isGamePaused;
         }
+
+        if (Time.time >= nextLeaderboardReconcileAt)
+        {
+            nextLeaderboardReconcileAt = Time.time + LeaderboardReconcileIntervalSeconds;
+            ReconcileLeaderboardConnectivity();
+        }
     }
 
     [Server]
@@ -117,6 +172,8 @@ public class ZombieGameManager : NetworkBehaviour
         {
             return;
         }
+
+        ResetLeaderboardState();
 
         waveLoopCoroutine = StartCoroutine(ServerWaveLoop());
     }
@@ -549,8 +606,14 @@ public class ZombieGameManager : NetworkBehaviour
 
         if (unitDiedEvent.Unit.unitType != UnitType.Zombie)
         {
+            if (unitDiedEvent.Unit.unitType == UnitType.Player)
+            {
+                TryIncrementPlayerDeath(unitDiedEvent.Unit);
+            }
             return;
         }
+
+        TryCreditZombieKill(unitDiedEvent.Killer);
 
         ZombieDropGold(unitDiedEvent.Unit, unitDiedEvent.Killer, DefaultGoldDrop);
 
@@ -569,6 +632,354 @@ public class ZombieGameManager : NetworkBehaviour
         currentWaveKilledCount = Mathf.Min(currentWaveTotalCount, currentWaveKilledCount + 1);
         RaiseWaveProgressChangedEvent();
         StartCoroutine(DespawnZombieAfterDelay(identity.gameObject));
+    }
+
+    [Server]
+    private void OnUnitDamaged(UnitDamagedEvent unitDamagedEvent)
+    {
+        if (unitDamagedEvent == null || unitDamagedEvent.AppliedDamageAmount <= 0)
+        {
+            return;
+        }
+
+        if (unitDamagedEvent.Attacker == null || unitDamagedEvent.Attacker.unitType != UnitType.Player)
+        {
+            return;
+        }
+
+        if (!TryGetConnectionIdForPlayerUnit(unitDamagedEvent.Attacker, out int connectionId))
+        {
+            return;
+        }
+
+        if (!TryGetLeaderboardIndex(connectionId, out int rowIndex))
+        {
+            return;
+        }
+
+        var row = zombieLeaderboardEntries[rowIndex];
+        row.Points += unitDamagedEvent.AppliedDamageAmount;
+        row.PlayerName = ResolveDisplayName(connectionId, unitDamagedEvent.Attacker, row.PlayerName);
+        row.IsConnected = true;
+        zombieLeaderboardEntries[rowIndex] = row;
+        SortLeaderboardRows();
+    }
+
+    [Server]
+    private void OnPlayerReceivesGold(PlayerReceivesGoldEvent playerReceivesGoldEvent)
+    {
+        if (playerReceivesGoldEvent == null || playerReceivesGoldEvent.GoldAmount <= 0)
+        {
+            return;
+        }
+
+        var creditedPlayer = playerReceivesGoldEvent.Player;
+        if (creditedPlayer == null || creditedPlayer.unitType != UnitType.Player)
+        {
+            return;
+        }
+
+        if (!TryGetConnectionIdForPlayerUnit(creditedPlayer, out int connectionId))
+        {
+            return;
+        }
+
+        if (!TryGetLeaderboardIndex(connectionId, out int rowIndex))
+        {
+            return;
+        }
+
+        var row = zombieLeaderboardEntries[rowIndex];
+        row.GoldGathered += playerReceivesGoldEvent.GoldAmount;
+        row.PlayerName = ResolveDisplayName(connectionId, creditedPlayer, row.PlayerName);
+        row.IsConnected = true;
+        zombieLeaderboardEntries[rowIndex] = row;
+        SortLeaderboardRows();
+    }
+
+    [Server]
+    private void OnPlayerUnitSpawned(PlayerUnitSpawnedEvent playerUnitSpawnedEvent)
+    {
+        if (playerUnitSpawnedEvent == null || playerUnitSpawnedEvent.Unit == null)
+        {
+            return;
+        }
+
+        EnsureLeaderboardEntry(playerUnitSpawnedEvent.ConnectionId, playerUnitSpawnedEvent.Unit.GetComponent<UnitController>(), true);
+    }
+
+    private void HandleLeaderboardListChanged(int _)
+    {
+        OnLeaderboardChanged();
+    }
+
+    private void HandleLeaderboardListChanged(int _, ZombieLeaderboardEntry __)
+    {
+        OnLeaderboardChanged();
+    }
+
+    private void HandleLeaderboardListCleared()
+    {
+        OnLeaderboardChanged();
+    }
+
+    [Server]
+    private void ResetLeaderboardState()
+    {
+        zombieLeaderboardEntries.Clear();
+        ReconcileLeaderboardConnectivity();
+    }
+
+    [Server]
+    private void ReconcileLeaderboardConnectivity()
+    {
+        if (PlayerUnitsManager.Instance == null)
+        {
+            return;
+        }
+
+        var activeHumanConnectionIds = new HashSet<int>();
+        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        {
+            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            if (playerUnit.ConnectionId < 0 || playerUnit.Unit == null)
+            {
+                continue;
+            }
+
+            activeHumanConnectionIds.Add(playerUnit.ConnectionId);
+            EnsureLeaderboardEntry(playerUnit.ConnectionId, playerUnit.Unit.GetComponent<UnitController>(), true);
+        }
+
+        for (int i = 0; i < zombieLeaderboardEntries.Count; i++)
+        {
+            var row = zombieLeaderboardEntries[i];
+            bool isConnected = activeHumanConnectionIds.Contains(row.ConnectionId);
+            if (row.IsConnected == isConnected)
+            {
+                continue;
+            }
+
+            row.IsConnected = isConnected;
+            zombieLeaderboardEntries[i] = row;
+        }
+
+        SortLeaderboardRows();
+    }
+
+    [Server]
+    private void TryCreditZombieKill(UnitController killer)
+    {
+        if (killer == null || killer.unitType != UnitType.Player)
+        {
+            return;
+        }
+
+        if (!TryGetConnectionIdForPlayerUnit(killer, out int connectionId))
+        {
+            return;
+        }
+
+        if (!TryGetLeaderboardIndex(connectionId, out int rowIndex))
+        {
+            return;
+        }
+
+        var row = zombieLeaderboardEntries[rowIndex];
+        row.Kills += 1;
+        row.Points += KillPointsReward;
+        row.PlayerName = ResolveDisplayName(connectionId, killer, row.PlayerName);
+        row.IsConnected = true;
+        zombieLeaderboardEntries[rowIndex] = row;
+        SortLeaderboardRows();
+    }
+
+    [Server]
+    private void TryIncrementPlayerDeath(UnitController deadUnit)
+    {
+        if (deadUnit == null || deadUnit.unitType != UnitType.Player)
+        {
+            return;
+        }
+
+        if (!TryGetConnectionIdForPlayerUnit(deadUnit, out int connectionId))
+        {
+            return;
+        }
+
+        if (!TryGetLeaderboardIndex(connectionId, out int rowIndex))
+        {
+            return;
+        }
+
+        var row = zombieLeaderboardEntries[rowIndex];
+        row.Deaths += 1;
+        row.PlayerName = ResolveDisplayName(connectionId, deadUnit, row.PlayerName);
+        row.IsConnected = true;
+        zombieLeaderboardEntries[rowIndex] = row;
+        SortLeaderboardRows();
+    }
+
+    [Server]
+    private bool TryGetConnectionIdForPlayerUnit(UnitController playerUnit, out int connectionId)
+    {
+        connectionId = default;
+        if (playerUnit == null || PlayerUnitsManager.Instance == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        {
+            var playerUnitEntry = PlayerUnitsManager.Instance.playerUnits[i];
+            if (playerUnitEntry.ConnectionId < 0 || playerUnitEntry.Unit == null)
+            {
+                continue;
+            }
+
+            if (playerUnitEntry.Unit != playerUnit.gameObject)
+            {
+                continue;
+            }
+
+            connectionId = playerUnitEntry.ConnectionId;
+            return true;
+        }
+
+        return false;
+    }
+
+    [Server]
+    private bool TryGetLeaderboardIndex(int connectionId, out int index)
+    {
+        EnsureLeaderboardEntry(connectionId, null, false);
+        for (int i = 0; i < zombieLeaderboardEntries.Count; i++)
+        {
+            if (zombieLeaderboardEntries[i].ConnectionId != connectionId)
+            {
+                continue;
+            }
+
+            index = i;
+            return true;
+        }
+
+        index = -1;
+        return false;
+    }
+
+    [Server]
+    private void EnsureLeaderboardEntry(int connectionId, UnitController playerUnit, bool isConnected)
+    {
+        if (connectionId < 0)
+        {
+            return;
+        }
+
+        string resolvedName = playerUnit != null
+            ? ResolveDisplayName(connectionId, playerUnit, $"Player {connectionId}")
+            : null;
+
+        for (int i = 0; i < zombieLeaderboardEntries.Count; i++)
+        {
+            var current = zombieLeaderboardEntries[i];
+            if (current.ConnectionId != connectionId)
+            {
+                continue;
+            }
+
+            bool changed = false;
+            if (!string.IsNullOrWhiteSpace(resolvedName) && !string.Equals(current.PlayerName, resolvedName, StringComparison.Ordinal))
+            {
+                current.PlayerName = resolvedName;
+                changed = true;
+            }
+
+            if (current.IsConnected != isConnected)
+            {
+                current.IsConnected = isConnected;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                zombieLeaderboardEntries[i] = current;
+            }
+            return;
+        }
+
+        zombieLeaderboardEntries.Add(new ZombieLeaderboardEntry
+        {
+            ConnectionId = connectionId,
+            PlayerName = ResolveDisplayName(connectionId, playerUnit, $"Player {connectionId}"),
+            Points = 0,
+            Kills = 0,
+            Deaths = 0,
+            GoldGathered = 0,
+            IsConnected = isConnected
+        });
+        SortLeaderboardRows();
+    }
+
+    [Server]
+    private void SortLeaderboardRows()
+    {
+        if (zombieLeaderboardEntries.Count <= 1)
+        {
+            return;
+        }
+
+        var orderedRows = zombieLeaderboardEntries
+            .OrderByDescending(entry => entry.Points)
+            .ThenByDescending(entry => entry.Kills)
+            .ThenBy(entry => entry.Deaths)
+            .ThenBy(entry => entry.ConnectionId)
+            .ToList();
+
+        bool changed = false;
+        for (int i = 0; i < orderedRows.Count; i++)
+        {
+            var lhs = orderedRows[i];
+            var rhs = zombieLeaderboardEntries[i];
+            bool same = lhs.ConnectionId == rhs.ConnectionId
+                && lhs.Points == rhs.Points
+                && lhs.Kills == rhs.Kills
+                && lhs.Deaths == rhs.Deaths
+                && lhs.GoldGathered == rhs.GoldGathered
+                && lhs.IsConnected == rhs.IsConnected
+                && string.Equals(lhs.PlayerName, rhs.PlayerName, StringComparison.Ordinal);
+            if (!same)
+            {
+                changed = true;
+                break;
+            }
+        }
+
+        if (!changed)
+        {
+            return;
+        }
+
+        zombieLeaderboardEntries.Clear();
+        for (int i = 0; i < orderedRows.Count; i++)
+        {
+            zombieLeaderboardEntries.Add(orderedRows[i]);
+        }
+    }
+
+    private static string ResolveDisplayName(int connectionId, UnitController playerUnit, string fallback)
+    {
+        if (playerUnit != null && !string.IsNullOrWhiteSpace(playerUnit.unitName))
+        {
+            return playerUnit.unitName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(fallback))
+        {
+            return fallback;
+        }
+
+        return $"Player {connectionId}";
     }
 
     [Server]
