@@ -12,6 +12,7 @@ public class ZombieGameManager : NetworkBehaviour
     private const int DefaultGoldDrop = 10;
     private const int KillPointsReward = 25;
     private const float LeaderboardReconcileIntervalSeconds = 1f;
+    private const float ServerOnlyAutoReturnDelaySeconds = 10f;
 
     public static ZombieGameManager Singleton { get; private set; }
 
@@ -37,6 +38,15 @@ public class ZombieGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(HookOnWaveKilledCountChanged))]
     [SerializeField] private int currentWaveKilledCount = 0;
 
+    [SyncVar(hook = nameof(HookOnIsGameOverChanged))]
+    [SerializeField] private bool isGameOver = false;
+
+    [SyncVar(hook = nameof(HookOnAutoReturnToLobbyEnabledChanged))]
+    [SerializeField] private bool autoReturnToLobbyEnabled = false;
+
+    [SyncVar(hook = nameof(HookOnReturnToLobbyCountdownChanged))]
+    [SerializeField] private float returnToLobbyCountdownSeconds = 0f;
+
     public struct ZombieLeaderboardEntry
     {
         public int ConnectionId;
@@ -53,11 +63,16 @@ public class ZombieGameManager : NetworkBehaviour
     private readonly HashSet<uint> trackedZombieNetIds = new HashSet<uint>();
     private readonly Dictionary<string, int> recurringRuleNextWave = new Dictionary<string, int>();
     private Coroutine waveLoopCoroutine;
+    private Coroutine autoReturnToLobbyCoroutine;
     private float nextLeaderboardReconcileAt = 0f;
+    private bool returnToLobbyRequested = false;
 
     public int CurrentWave => currentWave;
     public bool IsGamePaused => isGamePaused;
     public bool IsWaveRunning => isWaveRunning;
+    public bool IsGameOver => isGameOver;
+    public bool IsAutoReturnToLobbyEnabled => autoReturnToLobbyEnabled;
+    public float ReturnToLobbyCountdownSeconds => returnToLobbyCountdownSeconds;
     public int CurrentWaveTotalCount => currentWaveTotalCount;
     public int CurrentWaveKilledCount => currentWaveKilledCount;
     public float CurrentWaveKilledPercent => currentWaveTotalCount <= 0
@@ -67,6 +82,9 @@ public class ZombieGameManager : NetworkBehaviour
     public event Action<int> OnNewWaveStarted = delegate { };
     public event Action<float, int, int> OnWaveProgressChanged = delegate { };
     public event Action OnLeaderboardChanged = delegate { };
+    public event Action<bool> OnGameOverStateChanged = delegate { };
+    public event Action<bool> OnAutoReturnToLobbyEnabledChanged = delegate { };
+    public event Action<float> OnReturnToLobbyCountdownChanged = delegate { };
 
     public IReadOnlyList<ZombieLeaderboardEntry> LeaderboardEntries => zombieLeaderboardEntries;
 
@@ -107,6 +125,13 @@ public class ZombieGameManager : NetworkBehaviour
     {
         base.OnStopServer();
         StopZombieMode();
+
+        if (autoReturnToLobbyCoroutine != null)
+        {
+            StopCoroutine(autoReturnToLobbyCoroutine);
+            autoReturnToLobbyCoroutine = null;
+        }
+
         EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
         EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
         EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
@@ -174,6 +199,16 @@ public class ZombieGameManager : NetworkBehaviour
         }
 
         ResetLeaderboardState();
+        isGameOver = false;
+        autoReturnToLobbyEnabled = false;
+        returnToLobbyCountdownSeconds = 0f;
+        returnToLobbyRequested = false;
+        trackedZombieNetIds.Clear();
+        zombiesAlive = 0;
+        queuedSpawnCount = 0;
+
+        EventManager.Instance.Publish(new ZombieGameOverEvent(false));
+        EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(false, 0f));
 
         waveLoopCoroutine = StartCoroutine(ServerWaveLoop());
     }
@@ -192,6 +227,35 @@ public class ZombieGameManager : NetworkBehaviour
     }
 
     [Server]
+    public void ServerReturnToLobby()
+    {
+        if (returnToLobbyRequested)
+        {
+            return;
+        }
+
+        returnToLobbyRequested = true;
+
+        if (autoReturnToLobbyCoroutine != null)
+        {
+            StopCoroutine(autoReturnToLobbyCoroutine);
+            autoReturnToLobbyCoroutine = null;
+        }
+
+        ServerSetAutoReturnToLobbyEnabled(false);
+        ServerSetReturnToLobbyCountdownSeconds(0f);
+
+        if (NetworkManager.singleton is NetworkRoomManager roomManager)
+        {
+            roomManager.ServerChangeScene(roomManager.RoomScene);
+        }
+        else
+        {
+            Debug.LogWarning($"[{nameof(ZombieGameManager)}] NetworkManager is not a NetworkRoomManager. Unable to return to room scene.", this);
+        }
+    }
+
+    [Server]
     public void SetPaused(bool paused)
     {
         isGamePaused = paused;
@@ -199,10 +263,21 @@ public class ZombieGameManager : NetworkBehaviour
 
     private IEnumerator ServerWaveLoop()
     {
-        while (isServer)
+        while (isServer && !isGameOver)
         {
             yield return WaitWhilePaused();
+
+            if (isGameOver)
+            {
+                yield break;
+            }
+
             yield return WaitForSecondsServer(modeConfig.spawnSettings.timeBetweenWavesSeconds);
+
+            if (isGameOver)
+            {
+                yield break;
+            }
 
             currentWave++;
 
@@ -217,12 +292,27 @@ public class ZombieGameManager : NetworkBehaviour
             {
                 yield return WaitWhilePaused();
 
+                if (isGameOver)
+                {
+                    yield break;
+                }
+
                 while (isServer && zombiesAlive >= modeConfig.spawnSettings.maxZombiesAlive)
                 {
+                    if (isGameOver)
+                    {
+                        yield break;
+                    }
+
                     yield return null;
                 }
 
                 if (!isServer)
+                {
+                    yield break;
+                }
+
+                if (isGameOver)
                 {
                     yield break;
                 }
@@ -241,6 +331,11 @@ public class ZombieGameManager : NetworkBehaviour
 
             while (isServer && zombiesAlive > 0)
             {
+                if (isGameOver)
+                {
+                    yield break;
+                }
+
                 yield return null;
             }
 
@@ -289,6 +384,24 @@ public class ZombieGameManager : NetworkBehaviour
     private void HookOnWaveKilledCountChanged(int oldValue, int newValue)
     {
         RaiseWaveProgressChangedEvent();
+    }
+
+    private void HookOnIsGameOverChanged(bool oldValue, bool newValue)
+    {
+        OnGameOverStateChanged(newValue);
+        EventManager.Instance.Publish(new ZombieGameOverEvent(newValue));
+    }
+
+    private void HookOnAutoReturnToLobbyEnabledChanged(bool oldValue, bool newValue)
+    {
+        OnAutoReturnToLobbyEnabledChanged(newValue);
+        EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(newValue, returnToLobbyCountdownSeconds));
+    }
+
+    private void HookOnReturnToLobbyCountdownChanged(float oldValue, float newValue)
+    {
+        OnReturnToLobbyCountdownChanged(newValue);
+        EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
     }
 
     private void RefreshZombieSpawns()
@@ -609,6 +722,7 @@ public class ZombieGameManager : NetworkBehaviour
             if (unitDiedEvent.Unit.unitType == UnitType.Player)
             {
                 TryIncrementPlayerDeath(unitDiedEvent.Unit);
+                TryTriggerGameOverFromAllHumanPlayersDead();
             }
             return;
         }
@@ -818,6 +932,138 @@ public class ZombieGameManager : NetworkBehaviour
         row.IsConnected = true;
         zombieLeaderboardEntries[rowIndex] = row;
         SortLeaderboardRows();
+    }
+
+    [Server]
+    private void TryTriggerGameOverFromAllHumanPlayersDead()
+    {
+        if (isGameOver)
+        {
+            return;
+        }
+
+        if (!AreAllHumanPlayersDead())
+        {
+            return;
+        }
+
+        HandleServerGameOver();
+    }
+
+    [Server]
+    private bool AreAllHumanPlayersDead()
+    {
+        if (PlayerUnitsManager.Instance == null)
+        {
+            return false;
+        }
+
+        bool hasAnyHuman = false;
+        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        {
+            var playerUnitEntry = PlayerUnitsManager.Instance.playerUnits[i];
+            if (playerUnitEntry.ConnectionId < 0)
+            {
+                continue;
+            }
+
+            if (playerUnitEntry.Unit == null)
+            {
+                continue;
+            }
+
+            hasAnyHuman = true;
+
+            var unitController = playerUnitEntry.Unit.GetComponent<UnitController>();
+            if (unitController == null)
+            {
+                return false;
+            }
+
+            if (!unitController.IsDead)
+            {
+                return false;
+            }
+        }
+
+        return hasAnyHuman;
+    }
+
+    [Server]
+    private void HandleServerGameOver()
+    {
+        if (isGameOver)
+        {
+            return;
+        }
+
+        isGameOver = true;
+        StopZombieMode();
+
+        OnGameOverStateChanged(true);
+        EventManager.Instance.Publish(new ZombieGameOverEvent(true));
+
+        if (isServerOnly && autoReturnToLobbyCoroutine == null)
+        {
+            autoReturnToLobbyCoroutine = StartCoroutine(ServerReturnToLobbyAfterDelay(ServerOnlyAutoReturnDelaySeconds));
+        }
+    }
+
+    [Server]
+    private void ServerSetAutoReturnToLobbyEnabled(bool value)
+    {
+        if (autoReturnToLobbyEnabled == value)
+        {
+            return;
+        }
+
+        autoReturnToLobbyEnabled = value;
+
+        if (isServerOnly)
+        {
+            OnAutoReturnToLobbyEnabledChanged(value);
+            EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(value, returnToLobbyCountdownSeconds));
+        }
+    }
+
+    [Server]
+    private void ServerSetReturnToLobbyCountdownSeconds(float value)
+    {
+        if (Mathf.Approximately(returnToLobbyCountdownSeconds, value))
+        {
+            return;
+        }
+
+        returnToLobbyCountdownSeconds = value;
+
+        if (isServerOnly)
+        {
+            OnReturnToLobbyCountdownChanged(value);
+            EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, value));
+        }
+    }
+
+    [Server]
+    private IEnumerator ServerReturnToLobbyAfterDelay(float delaySeconds)
+    {
+        float endTime = Time.unscaledTime + Mathf.Max(0f, delaySeconds);
+        ServerSetAutoReturnToLobbyEnabled(true);
+
+        while (isServer && !returnToLobbyRequested && Time.unscaledTime < endTime)
+        {
+            ServerSetReturnToLobbyCountdownSeconds(Mathf.Max(0f, endTime - Time.unscaledTime));
+            yield return null;
+        }
+
+        ServerSetReturnToLobbyCountdownSeconds(0f);
+        ServerSetAutoReturnToLobbyEnabled(false);
+
+        if (isServer && !returnToLobbyRequested)
+        {
+            ServerReturnToLobby();
+        }
+
+        autoReturnToLobbyCoroutine = null;
     }
 
     [Server]

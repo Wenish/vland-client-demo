@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="zombieGameOverRoot" style="position: absolute; width: 100%; height: 100%; align-items: center; justify-content: flex-start; padding-top: 48px; display: none;">
+        <ui:VisualElement style="width: 520px; max-width: 90%; background-color: rgba(0, 0, 0, 0.86); border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgba(255, 255, 255, 0.12); border-right-color: rgba(255, 255, 255, 0.12); border-top-color: rgba(255, 255, 255, 0.12); border-bottom-color: rgba(255, 255, 255, 0.12); padding-top: 22px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; align-items: center;">
+            <ui:Label name="zombieGameOverTitle" text="Game Over" style="color: rgb(255, 255, 255); font-size: 44px; -unity-font-style: bold; margin-bottom: 10px; -unity-text-align: middle-center;" />
+            <ui:Label text="All survivors are down." style="color: rgba(255, 255, 255, 0.86); font-size: 15px; margin-bottom: 10px; -unity-text-align: middle-center;" />
+            <ui:Label name="zombieReturnCountdownLabel" text="Returning to lobby in 10s" style="color: rgb(255, 206, 120); font-size: 16px; -unity-font-style: bold; margin-top: 8px; margin-bottom: 14px; -unity-text-align: middle-center; display: none;" />
+            <ui:Button name="zombieReturnToLobbyButton" text="Return To Lobby" style="width: 210px; height: 38px; font-size: 15px; -unity-font-style: bold;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
