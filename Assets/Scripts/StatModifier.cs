@@ -6,7 +6,8 @@ public enum StatType
     TurnSpeed,
     DamageReduction,
     AttackSpeed,
-    AttackPower
+    AttackPower,
+    AbilityPower
 }
 
 [System.Serializable]
