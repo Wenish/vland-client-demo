@@ -13,4 +13,16 @@ MonoBehaviour:
   m_Name: OpenFireSkillEffectMechanicDamage
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
-  amount: 28
+  enabled: 1
+  physicalMode: 0
+  physicalAmount: 28
+  physicalAttackPowerScaling: 28
+  physicalAbilityPowerScaling: 0
+  magicMode: 0
+  magicAmount: 0
+  magicAttackPowerScaling: 0
+  magicAbilityPowerScaling: 0
+  trueDamageMode: 0
+  trueDamageAmount: 0
+  trueDamageAttackPowerScaling: 0
+  trueDamageAbilityPowerScaling: 0

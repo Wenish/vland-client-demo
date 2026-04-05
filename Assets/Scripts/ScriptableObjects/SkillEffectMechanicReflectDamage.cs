@@ -39,7 +39,7 @@ public class SkillEffectMechanicReflectDamage : SkillEffectMechanic
             damage = Mathf.Max(1, Mathf.RoundToInt(castContext.incomingDamage.Value * reflectAmount / 100f));
         }
 
-        instigator.TakeDamage(damage, castContext.caster);
+        instigator.TakeDamage(DamageInstance.True(damage), castContext.caster);
         return new List<UnitController> { instigator };
     }
 }

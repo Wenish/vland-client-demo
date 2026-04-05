@@ -558,6 +558,20 @@ public class UnitController : NetworkBehaviour
         int reducedDamage = Mathf.CeilToInt(damage * damageMultiplier);
         damage = Mathf.Max(0, reducedDamage);
 
+        ApplyFinalDamage(damage, attacker);
+    }
+
+    [Server]
+    public void TakeDamage(DamageInstance damage, UnitController attacker)
+    {
+        if (IsDead) return;
+
+        int finalDamage = DamageCalculator.Calculate(damage, this);
+        ApplyFinalDamage(finalDamage, attacker);
+    }
+
+    private void ApplyFinalDamage(int damage, UnitController attacker)
+    {
         int originalShield = shield;
         int originalHealth = health;
         int shieldDamage = Mathf.Min(originalShield, damage);

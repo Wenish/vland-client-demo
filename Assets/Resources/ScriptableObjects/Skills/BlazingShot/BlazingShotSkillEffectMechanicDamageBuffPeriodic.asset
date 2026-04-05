@@ -13,4 +13,16 @@ MonoBehaviour:
   m_Name: BlazingShotSkillEffectMechanicDamageBuffPeriodic
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
-  amount: 3
+  enabled: 1
+  physicalMode: 0
+  physicalAmount: 0
+  physicalAttackPowerScaling: 0
+  physicalAbilityPowerScaling: 0
+  magicMode: 0
+  magicAmount: 3
+  magicAttackPowerScaling: 0
+  magicAbilityPowerScaling: 3
+  trueDamageMode: 0
+  trueDamageAmount: 0
+  trueDamageAttackPowerScaling: 0
+  trueDamageAbilityPowerScaling: 0

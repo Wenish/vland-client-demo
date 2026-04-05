@@ -14,4 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
   enabled: 1
-  amount: 5
+  physicalMode: 0
+  physicalAmount: 0
+  physicalAttackPowerScaling: 0
+  physicalAbilityPowerScaling: 0
+  magicMode: 0
+  magicAmount: 5
+  magicAttackPowerScaling: 0
+  magicAbilityPowerScaling: 5
+  trueDamageMode: 0
+  trueDamageAmount: 0
+  trueDamageAttackPowerScaling: 0
+  trueDamageAbilityPowerScaling: 0

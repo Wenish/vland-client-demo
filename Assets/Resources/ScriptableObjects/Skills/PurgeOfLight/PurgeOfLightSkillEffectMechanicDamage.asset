@@ -13,4 +13,16 @@ MonoBehaviour:
   m_Name: PurgeOfLightSkillEffectMechanicDamage
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
-  amount: 15
+  enabled: 1
+  physicalMode: 0
+  physicalAmount: 0
+  physicalAttackPowerScaling: 0
+  physicalAbilityPowerScaling: 0
+  magicMode: 0
+  magicAmount: 15
+  magicAttackPowerScaling: 15
+  magicAbilityPowerScaling: 15
+  trueDamageMode: 0
+  trueDamageAmount: 0
+  trueDamageAttackPowerScaling: 0
+  trueDamageAbilityPowerScaling: 0

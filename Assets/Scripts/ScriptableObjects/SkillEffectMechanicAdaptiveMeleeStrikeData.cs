@@ -115,9 +115,18 @@ public class SkillEffectMechanicAdaptiveMeleeStrikeData : SkillEffectMechanic
             }
 
             int hitCount = Mathf.Max(1, hitsPerTarget);
+
+            // Adaptive: deal Physical if AttackPower >= AbilityPower, otherwise Magic
+            float attackPower = casterMediator.Stats.GetStat(StatType.AttackPower);
+            float abilityPower = casterMediator.Stats.GetStat(StatType.AbilityPower);
+            bool isPhysical = attackPower >= abilityPower;
+
             for (int i = 0; i < hitCount; i++)
             {
-                target.TakeDamage(damage, caster);
+                var damageInstance = isPhysical
+                    ? DamageInstance.Physical(damage)
+                    : DamageInstance.Magic(damage);
+                target.TakeDamage(damageInstance, caster);
             }
 
             if (consumeTokenOnHit && existingToken != null)
