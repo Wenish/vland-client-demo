@@ -39,6 +39,9 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelStatAttackSpeed;
     private Label _labelStatMovementSpeed;
     private Label _labelStatDamageReduction;
+    private Label _labelStatArmor;
+    private Label _labelStatMagicResist;
+    private Label _labelStatCritChance;
     private StatSystem _myPlayerStatSystem;
 
     void Awake()
@@ -93,6 +96,9 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _labelStatAttackSpeed = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatAttackSpeed");
         _labelStatMovementSpeed = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatMovementSpeed");
         _labelStatDamageReduction = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatDamageReduction");
+        _labelStatArmor = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatArmor");
+        _labelStatMagicResist = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatMagicResist");
+        _labelStatCritChance = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatCritChance");
         HidePlayerStats();
     }
 
@@ -725,6 +731,18 @@ public class UiDocumentZombieIngameController : MonoBehaviour
             case StatType.DamageReduction:
                 _labelStatDamageReduction.text = $"DR: {stats.GetStat(StatType.DamageReduction):0}%";
                 break;
+            case StatType.Armor:
+                _labelStatArmor.text = $"ARM: {stats.GetStat(StatType.Armor):0}";
+                break;
+            case StatType.MagicResist:
+                _labelStatMagicResist.text = $"MR: {stats.GetStat(StatType.MagicResist):0}";
+                break;
+            case StatType.CritChance:
+                if (_labelStatCritChance != null)
+                {
+                    _labelStatCritChance.text = $"CRIT: {stats.GetStat(StatType.CritChance):0}%";
+                }
+                break;
         }
     }
 
@@ -737,6 +755,12 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _labelStatAttackSpeed.text = $"AS: {stats.GetStat(StatType.AttackSpeed):0.00}x";
         _labelStatMovementSpeed.text = $"SPD: {stats.GetStat(StatType.MovementSpeed):0.0}";
         _labelStatDamageReduction.text = $"DR: {stats.GetStat(StatType.DamageReduction):0}%";
+        _labelStatArmor.text = $"ARM: {stats.GetStat(StatType.Armor):0}";
+        _labelStatMagicResist.text = $"MR: {stats.GetStat(StatType.MagicResist):0}";
+        if (_labelStatCritChance != null)
+        {
+            _labelStatCritChance.text = $"CRIT: {stats.GetStat(StatType.CritChance):0}%";
+        }
     }
 
     private void ShowPlayerStats()

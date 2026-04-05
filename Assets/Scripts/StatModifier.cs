@@ -9,7 +9,8 @@ public enum StatType
     AttackPower,
     AbilityPower,
     Armor,
-    MagicResist
+    MagicResist,
+    CritChance
 }
 
 [System.Serializable]
