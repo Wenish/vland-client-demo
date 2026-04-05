@@ -13,4 +13,16 @@ MonoBehaviour:
   m_Name: BlazingShotSkillEffectMechanicDamage
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicDamageData
   countsAsCasted: 0
-  amount: 70
+  enabled: 1
+  physicalMode: 0
+  physicalAmount: 45
+  physicalAttackPowerScaling: 25
+  physicalAbilityPowerScaling: 0
+  magicMode: 0
+  magicAmount: 20
+  magicAttackPowerScaling: 25
+  magicAbilityPowerScaling: 0
+  trueDamageMode: 0
+  trueDamageAmount: 0
+  trueDamageAttackPowerScaling: 0
+  trueDamageAbilityPowerScaling: 0

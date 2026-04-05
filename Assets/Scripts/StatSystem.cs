@@ -20,6 +20,9 @@ public class StatSystem
         baseStats[StatType.DamageReduction] = 0f;
         baseStats[StatType.AttackSpeed] = 1f;
         baseStats[StatType.AttackPower] = 10f;
+        baseStats[StatType.AbilityPower] = 0f;
+        baseStats[StatType.Armor] = 0f;
+        baseStats[StatType.MagicResist] = 0f;
     }
 
     public void SetBaseStat(StatType stat, float value)

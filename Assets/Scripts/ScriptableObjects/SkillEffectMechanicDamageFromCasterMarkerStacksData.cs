@@ -23,6 +23,9 @@ public class SkillEffectMechanicDamageFromCasterMarkerStacksData : SkillEffectMe
     [Tooltip("If true, stacks used for this attack are removed from the caster.")]
     public bool consumeStacks = true;
 
+    [Tooltip("Type of damage dealt (Physical is reduced by Armor, Magic by MagicResist, True bypasses all reductions).")]
+    public DamageType damageType = DamageType.Physical;
+
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)
     {
         if (castContext?.caster?.unitMediator?.Buffs == null)
@@ -45,7 +48,15 @@ public class SkillEffectMechanicDamageFromCasterMarkerStacksData : SkillEffectMe
                     continue;
                 }
 
-                target.TakeDamage(damage, castContext.caster);
+                DamageInstance damageInstance = damageType switch
+                {
+                    DamageType.Physical => DamageInstance.Physical(damage),
+                    DamageType.Magic    => DamageInstance.Magic(damage),
+                    DamageType.True     => DamageInstance.True(damage),
+                    _                   => DamageInstance.Physical(damage),
+                };
+
+                target.TakeDamage(damageInstance, castContext.caster);
             }
         }
 

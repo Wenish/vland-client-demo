@@ -7,7 +7,9 @@ public enum StatType
     DamageReduction,
     AttackSpeed,
     AttackPower,
-    AbilityPower
+    AbilityPower,
+    Armor,
+    MagicResist
 }
 
 [System.Serializable]
