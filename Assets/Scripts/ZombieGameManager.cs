@@ -66,6 +66,7 @@ public class ZombieGameManager : NetworkBehaviour
     private Coroutine autoReturnToLobbyCoroutine;
     private float nextLeaderboardReconcileAt = 0f;
     private bool returnToLobbyRequested = false;
+    private float runStartedAtServerTime = 0f;
 
     public int CurrentWave => currentWave;
     public bool IsGamePaused => isGamePaused;
@@ -73,6 +74,7 @@ public class ZombieGameManager : NetworkBehaviour
     public bool IsGameOver => isGameOver;
     public bool IsAutoReturnToLobbyEnabled => autoReturnToLobbyEnabled;
     public float ReturnToLobbyCountdownSeconds => returnToLobbyCountdownSeconds;
+    public float RunStartedAtServerTime => runStartedAtServerTime;
     public int CurrentWaveTotalCount => currentWaveTotalCount;
     public int CurrentWaveKilledCount => currentWaveKilledCount;
     public float CurrentWaveKilledPercent => currentWaveTotalCount <= 0
@@ -206,6 +208,7 @@ public class ZombieGameManager : NetworkBehaviour
         trackedZombieNetIds.Clear();
         zombiesAlive = 0;
         queuedSpawnCount = 0;
+        runStartedAtServerTime = Time.time;
 
         EventManager.Instance.Publish(new ZombieGameOverEvent(false));
         EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(false, 0f));
@@ -233,6 +236,9 @@ public class ZombieGameManager : NetworkBehaviour
         {
             return;
         }
+
+        EventManager.Instance.Publish(new ZombieRunEndedEvent(
+            isGameOver ? ZombieRunEndReason.ReturnToLobbyAfterGameOver : ZombieRunEndReason.HostEndedEarly));
 
         returnToLobbyRequested = true;
 
@@ -1002,6 +1008,7 @@ public class ZombieGameManager : NetworkBehaviour
 
         OnGameOverStateChanged(true);
         EventManager.Instance.Publish(new ZombieGameOverEvent(true));
+        EventManager.Instance.Publish(new ZombieRunEndedEvent(ZombieRunEndReason.AllPlayersDead));
 
         if (isServerOnly && autoReturnToLobbyCoroutine == null)
         {

@@ -65,6 +65,23 @@ namespace MyGame.Events
         }
     }
 
+    public enum ZombieRunEndReason
+    {
+        AllPlayersDead = 0,
+        HostEndedEarly = 1,
+        ReturnToLobbyAfterGameOver = 2
+    }
+
+    public class ZombieRunEndedEvent : GameEvent
+    {
+        public ZombieRunEndReason EndReason { get; }
+
+        public ZombieRunEndedEvent(ZombieRunEndReason endReason)
+        {
+            EndReason = endReason;
+        }
+    }
+
     /// <summary>
     /// Fired when a unit receives damage.
     /// </summary>

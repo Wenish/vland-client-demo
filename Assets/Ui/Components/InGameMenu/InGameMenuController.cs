@@ -124,6 +124,13 @@ public class InGameMenuController : MonoBehaviour
         // Ensure menu is closed and input unblocked before switching scenes
         CloseMenu();
 
+        // In zombie mode, use the manager flow so run-end side effects stay centralized.
+        if (NetworkServer.active && ZombieGameManager.Singleton != null)
+        {
+            ZombieGameManager.Singleton.ServerReturnToLobby();
+            return;
+        }
+
         // Use NetworkRoomManager to properly return to lobby scene
         if (NetworkManager.singleton is NetworkRoomManager roomManager)
         {
