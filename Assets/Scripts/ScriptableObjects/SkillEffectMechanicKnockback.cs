@@ -47,7 +47,7 @@ public class SkillEffectMechanicKnockback : SkillEffectMechanic
             if (dir == Vector3.zero)
                 dir = caster.transform.forward;
 
-            target.StartDash(dir, knockbackSpeed, knockbackDistance, true);
+            target.StartDash(dir, knockbackSpeed, knockbackDistance, UnitController.DashSpeedProfile.Constant);
         }
 
         return targets;
