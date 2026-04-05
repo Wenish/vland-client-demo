@@ -6,6 +6,13 @@ using UnityEngine.InputSystem; // New Input System
 
 public class UnitController : NetworkBehaviour
 {
+    public enum DashSpeedProfile : byte
+    {
+        Constant = 0,
+        EaseOut = 1,
+        EaseIn = 2
+    }
+
     [SyncVar]
     public UnitType unitType;
 
@@ -217,11 +224,14 @@ public class UnitController : NetworkBehaviour
     private float _dashSpeed = 0f;
     private float _dashDistance = 0f;
     private Vector3 _dashStartPosition = Vector3.zero;
-    private bool _dashDecelerate = false;          // when true, speed eases out over the dash distance
+    private DashSpeedProfile _dashSpeedProfile = DashSpeedProfile.Constant;
     // Dash completion helpers
     private float _dashEndTime = 0f;               // absolute time when dash should end at the latest
     private float _lastDashTraveled = 0f;          // distance traveled along dash direction in previous FixedUpdate
     private int _dashStalledFrames = 0;            // consecutive frames with no meaningful progress
+    private const string WallTag = "Wall";
+    private const float DashWallImpactDotThreshold = 0.70710678f;
+    private const float DashWallSweepBuffer = 0.05f;
 
     // Knockup state (server-authoritative)
     private bool _isKnockedUp = false;
@@ -397,30 +407,24 @@ public class UnitController : NetworkBehaviour
             const float stallEpsilon = 0.001f;        // minimal delta to consider as movement progress
             const int maxStallFrames = 3;             // how many fixed frames of no-progress to allow
 
+            float currentSpeed = GetCurrentDashSpeed(traveled);
+
+            float maxStep = currentSpeed * Time.fixedDeltaTime;
+
             bool timedOut = Time.time >= _dashEndTime && _dashEndTime > 0f;
             bool completed = remaining <= endEpsilon;
             bool progressed = (traveled - _lastDashTraveled) > stallEpsilon;
+            bool hitWallHeadOn = !completed && ShouldStopDashForWallImpact(maxStep + DashWallSweepBuffer);
             _dashStalledFrames = progressed ? 0 : (_dashStalledFrames + 1);
             _lastDashTraveled = traveled;
 
-            if (completed || timedOut || _dashStalledFrames >= maxStallFrames)
+            if (completed || timedOut || hitWallHeadOn || _dashStalledFrames >= maxStallFrames)
             {
                 // End dash and stop dash velocity; normal movement resumes next frame
-                _isDashing = false;
-                SetLinearVelocitySafe(Vector3.zero);
+                StopDash();
             }
             else
             {
-                // Apply deceleration curve: speed drops from full to ~0 over the dash distance
-                float currentSpeed = _dashSpeed;
-                if (_dashDecelerate && _dashDistance > 0f)
-                {
-                    float progress = traveled / _dashDistance; // 0..1
-                    currentSpeed = _dashSpeed * (1f - progress); // linear ease-out — full speed at start, zero at end
-                    currentSpeed = Mathf.Max(currentSpeed, _dashSpeed * 0.05f); // floor so it finishes
-                }
-
-                float maxStep = currentSpeed * Time.fixedDeltaTime;
                 if (remaining < maxStep && Time.fixedDeltaTime > 0f)
                 {
                     // Scale the final velocity so we land exactly at the end distance
@@ -530,6 +534,72 @@ public class UnitController : NetworkBehaviour
         }
 
         unitRigidbody.linearVelocity = velocity;
+    }
+
+    private float GetCurrentDashSpeed(float traveled)
+    {
+        if (_dashDistance <= 0f)
+        {
+            return _dashSpeed;
+        }
+
+        float progress = Mathf.Clamp01(traveled / _dashDistance);
+        float minSpeed = _dashSpeed * 0.05f;
+
+        switch (_dashSpeedProfile)
+        {
+            case DashSpeedProfile.EaseOut:
+                return Mathf.Max(_dashSpeed * (1f - progress), minSpeed);
+            case DashSpeedProfile.EaseIn:
+                return Mathf.Max(_dashSpeed * progress, minSpeed);
+            default:
+                return _dashSpeed;
+        }
+    }
+
+    [Server]
+    private void StopDash()
+    {
+        _isDashing = false;
+        _dashEndTime = 0f;
+        _dashStalledFrames = 0;
+        _lastDashTraveled = 0f;
+        SetLinearVelocitySafe(Vector3.zero);
+    }
+
+    [Server]
+    private bool ShouldStopDashForWallImpact(float sweepDistance)
+    {
+        if (sweepDistance <= 0f || unitRigidbody == null || unitRigidbody.isKinematic)
+        {
+            return false;
+        }
+
+        if (!unitRigidbody.SweepTest(_dashDirection, out RaycastHit hit, sweepDistance, QueryTriggerInteraction.Ignore))
+        {
+            return false;
+        }
+
+        if (hit.collider == null || hit.collider == unitCollider || hit.collider.isTrigger)
+        {
+            return false;
+        }
+
+        if (!hit.collider.CompareTag(WallTag))
+        {
+            return false;
+        }
+
+        Vector3 wallNormal = hit.normal;
+        wallNormal.y = 0f;
+        if (wallNormal.sqrMagnitude < 0.0001f)
+        {
+            return false;
+        }
+
+        wallNormal.Normalize();
+        float impactAlignment = Vector3.Dot(_dashDirection, -wallNormal);
+        return impactAlignment >= DashWallImpactDotThreshold;
     }
 
     [SerializeField]
@@ -751,7 +821,7 @@ public class UnitController : NetworkBehaviour
         if (isServer)
         {
             CancelKnockup(true);
-            _isDashing = false;
+            StopDash();
 
             // Always interrupt ongoing actions on death so cast/channel coroutines are cancelled,
             // including death paths that bypass OnKillEvent (e.g. direct SetHealth(0)).
@@ -892,11 +962,17 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void StartDash(Vector3 direction, float speed, float distance)
     {
-        StartDash(direction, speed, distance, false);
+        StartDash(direction, speed, distance, DashSpeedProfile.Constant);
     }
 
     [Server]
     public void StartDash(Vector3 direction, float speed, float distance, bool decelerate)
+    {
+        StartDash(direction, speed, distance, decelerate ? DashSpeedProfile.EaseOut : DashSpeedProfile.Constant);
+    }
+
+    [Server]
+    public void StartDash(Vector3 direction, float speed, float distance, DashSpeedProfile speedProfile)
     {
         if (IsDead) return;
         CancelKnockup(false);
@@ -910,7 +986,7 @@ public class UnitController : NetworkBehaviour
         _dashDistance = Mathf.Max(0f, distance);
         _dashStartPosition = transform.position;
         _dashStartPosition.y = 0f;
-        _dashDecelerate = decelerate;
+        _dashSpeedProfile = speedProfile;
         _isDashing = _dashDistance > 0f && _dashSpeed > 0f;
 
         // Initialize dash completion helpers
@@ -918,8 +994,9 @@ public class UnitController : NetworkBehaviour
         _dashStalledFrames = 0;
         // Safety timeout: expected dash duration + generous fudge for deceleration
         float expectedDuration = (_dashSpeed > 0f) ? (_dashDistance / _dashSpeed) : 0f;
-        float timeoutFudge = decelerate ? 0.5f : 0.1f;
-        _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration * (decelerate ? 2f : 1f) + timeoutFudge);
+        bool variableSpeedProfile = speedProfile != DashSpeedProfile.Constant;
+        float timeoutFudge = variableSpeedProfile ? 0.5f : 0.1f;
+        _dashEndTime = Time.time + Mathf.Max(0.05f, expectedDuration * (variableSpeedProfile ? 2f : 1f) + timeoutFudge);
     }
 
     [Server]
@@ -934,9 +1011,7 @@ public class UnitController : NetworkBehaviour
             InterruptAction();
         }
 
-        _isDashing = false;
-        _dashStalledFrames = 0;
-        _lastDashTraveled = 0f;
+        StopDash();
 
         _knockupHeight = Mathf.Max(0f, height);
         _knockupDuration = Mathf.Max(0.05f, duration);
