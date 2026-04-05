@@ -42,9 +42,7 @@ public class UnitSpawner : NetworkBehaviour
 
         if (unitController != null)
         {
-            unitController.unitMediator.Stats.SetBaseStat(StatType.Health, unitData.maxHealth);
-            unitController.unitMediator.Stats.SetBaseStat(StatType.MovementSpeed, unitData.moveSpeed);
-            unitController.unitMediator.Stats.SetBaseStat(StatType.Shield, unitData.maxShield);
+            unitController.unitMediator.Stats.SetBaseStats(unitData.GetBaseStats());
             unitController.health = unitData.health;
             unitController.shield = unitData.shield;
             unitController.team = unitData.team;

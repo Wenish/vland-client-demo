@@ -12,7 +12,6 @@ public class StatSystem
     {
         this.mediator = mediator;
 
-        // Example base stats
         baseStats[StatType.Health] = this.mediator.UnitController.maxHealth;
         baseStats[StatType.MovementSpeed] = this.mediator.UnitController.moveSpeed;
         baseStats[StatType.Shield] = this.mediator.UnitController.maxShield;
@@ -23,6 +22,15 @@ public class StatSystem
         baseStats[StatType.AbilityPower] = 0f;
         baseStats[StatType.Armor] = 0f;
         baseStats[StatType.MagicResist] = 0f;
+        baseStats[StatType.CritChance] = 0f;
+    }
+
+    public void SetBaseStats(IEnumerable<StatModifier> stats)
+    {
+        foreach (var stat in stats)
+        {
+            SetBaseStat(stat.Type, stat.Value);
+        }
     }
 
     public void SetBaseStat(StatType stat, float value)

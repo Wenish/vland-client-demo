@@ -11,6 +11,33 @@ public static class DamageCalculator
 {
     public static int Calculate(DamageInstance raw, UnitController target)
     {
+        return Calculate(raw, target, null, out _);
+    }
+
+    public static int Calculate(DamageInstance raw, UnitController target, UnitController attacker, out bool wasCritical)
+    {
+        wasCritical = false;
+
+        if (raw.physical > 0f && attacker != null && attacker.unitMediator != null)
+        {
+            float critChancePercent = Mathf.Max(0f, attacker.unitMediator.Stats.GetStat(StatType.CritChance));
+            float baseChance = Mathf.Clamp01(critChancePercent / 100f);
+
+            if (baseChance > 0f)
+            {
+                bool isCritical = raw.sourceKind == DamageSourceKind.BasicAttack
+                    ? attacker.RollBasicAttackCrit(baseChance)
+                    : Random.value < baseChance;
+
+                if (isCritical)
+                {
+                    raw.physical *= 2f;
+                    raw.isCritical = true;
+                    wasCritical = true;
+                }
+            }
+        }
+
         float armor = 0f;
         float magicResist = 0f;
         float damageReduction = 0f;

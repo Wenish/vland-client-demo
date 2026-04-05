@@ -107,6 +107,7 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public bool isPressingFire1 = false;
     private bool _previousFire1State = false;
+    private float _basicAttackCritMeter = 0f;
 
     /// <summary>
     /// Gets whether fire1 was just pressed this frame (rising edge detection).
@@ -313,6 +314,8 @@ public class UnitController : NetworkBehaviour
 
         if (isServer)
         {
+            ResetBasicAttackCritMeter();
+
             // On initial spawn, set collider state directly without triggering events
             // Die()/Revive() will be called by gameplay methods (TakeDamage, Heal, SetHealth) when appropriate
             if (health <= 0)
@@ -354,6 +357,32 @@ public class UnitController : NetworkBehaviour
             Heal(maxHealth, this);
             Shield(maxShield, this);
         }
+    }
+
+    [Server]
+    public bool RollBasicAttackCrit(float baseChance)
+    {
+        baseChance = Mathf.Clamp01(baseChance);
+        if (baseChance <= 0f)
+        {
+            return false;
+        }
+
+        _basicAttackCritMeter += baseChance;
+        bool isCritical = UnityEngine.Random.value < Mathf.Clamp01(_basicAttackCritMeter);
+
+        if (isCritical)
+        {
+            _basicAttackCritMeter = Mathf.Max(0f, _basicAttackCritMeter - 1f);
+        }
+
+        return isCritical;
+    }
+
+    [Server]
+    private void ResetBasicAttackCritMeter()
+    {
+        _basicAttackCritMeter = 0f;
     }
 
     [Server]
@@ -628,7 +657,7 @@ public class UnitController : NetworkBehaviour
         int reducedDamage = Mathf.CeilToInt(damage * damageMultiplier);
         damage = Mathf.Max(0, reducedDamage);
 
-        ApplyFinalDamage(damage, attacker);
+        ApplyFinalDamage(damage, attacker, false);
     }
 
     [Server]
@@ -636,11 +665,11 @@ public class UnitController : NetworkBehaviour
     {
         if (IsDead) return;
 
-        int finalDamage = DamageCalculator.Calculate(damage, this);
-        ApplyFinalDamage(finalDamage, attacker);
+        int finalDamage = DamageCalculator.Calculate(damage, this, attacker, out bool wasCritical);
+        ApplyFinalDamage(finalDamage, attacker, wasCritical);
     }
 
-    private void ApplyFinalDamage(int damage, UnitController attacker)
+    private void ApplyFinalDamage(int damage, UnitController attacker, bool wasCritical)
     {
         int originalShield = shield;
         int originalHealth = health;
@@ -649,7 +678,7 @@ public class UnitController : NetworkBehaviour
         int healthDamage = Mathf.Min(originalHealth, damageAfterShield);
         int actualDamage = shieldDamage + healthDamage;
 
-        OnTakeDamageEvent(damage, actualDamage, attacker);
+        OnTakeDamageEvent(damage, actualDamage, attacker, wasCritical);
 
         if (shieldDamage > 0)
         {
@@ -702,19 +731,19 @@ public class UnitController : NetworkBehaviour
     }
 
     [Server]
-    public void OnTakeDamageEvent(int damage, int appliedDamage, UnitController attacker)
+    public void OnTakeDamageEvent(int damage, int appliedDamage, UnitController attacker, bool wasCritical)
     {
-        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage));
+        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage, wasCritical));
         OnTakeDamage((this, attacker));
-        RpcOnTakenDamage(damage, appliedDamage, attacker);
+        RpcOnTakenDamage(damage, appliedDamage, attacker, wasCritical);
     }
 
     [ClientRpc]
-    public void RpcOnTakenDamage(int damage, int appliedDamage, UnitController attacker)
+    public void RpcOnTakenDamage(int damage, int appliedDamage, UnitController attacker, bool wasCritical)
     {
         if (isServer) return;
         OnTakeDamage((this, attacker));
-        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage));
+        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage, wasCritical));
     }
 
     [Server]
@@ -820,6 +849,7 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer)
         {
+            ResetBasicAttackCritMeter();
             CancelKnockup(true);
             StopDash();
 
@@ -853,6 +883,11 @@ public class UnitController : NetworkBehaviour
 
     private void Revive()
     {
+        if (isServer)
+        {
+            ResetBasicAttackCritMeter();
+        }
+
         if (unitCollider != null)
         {
             unitCollider.isTrigger = false;

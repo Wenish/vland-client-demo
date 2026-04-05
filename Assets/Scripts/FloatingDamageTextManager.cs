@@ -12,6 +12,8 @@ public class FloatingDamageTextManager : MonoBehaviour
 
     public float minFontSize = 2f;
     public float maxFontSize = 5f;
+    [SerializeField] private Color criticalHitColor = new Color(1f, 0.88f, 0.15f);
+    [SerializeField] private float criticalFontSizeMultiplier = 1.35f;
 
     private Color greenColor = new Color(0f / 255f, 201f / 255f, 81f / 255f);
     private Color blueColor = new Color(0f / 255f, 166f / 255f, 244f / 255f);
@@ -44,7 +46,14 @@ public class FloatingDamageTextManager : MonoBehaviour
         if (hasMyUnitMadeTheDamage || hasMyUnitReceivedTheDamage)
         {
             var color = hasMyUnitReceivedTheDamage ? redColor : orangeColor;
-            SpawnDamageText(unitDamagedEvent.DamageAmount.ToString(), unitDamagedEvent.DamageAmount, unitDamagedEvent.Unit.transform, color);
+            float sizeMultiplier = 1f;
+            if (unitDamagedEvent.WasCritical)
+            {
+                color = criticalHitColor;
+                sizeMultiplier = Mathf.Max(1f, criticalFontSizeMultiplier);
+            }
+
+            SpawnDamageText(unitDamagedEvent.DamageAmount.ToString(), unitDamagedEvent.DamageAmount, unitDamagedEvent.Unit.transform, color, sizeMultiplier);
         }
     }
 
@@ -96,13 +105,13 @@ public class FloatingDamageTextManager : MonoBehaviour
     }
 
 
-    public void SpawnDamageText(string text, int value, Transform textSpawnPoint, Color color)
+    public void SpawnDamageText(string text, int value, Transform textSpawnPoint, Color color, float sizeMultiplier = 1f)
     {
         Vector3 spawnPosition = textSpawnPoint.position + new Vector3(Random.Range(-1, 1), 0, 0);
         GameObject damageText = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity);
         Vector3 randomOffset = textOffset + new Vector3(0, Random.Range(-1f, 0.5f), 0);
         float clampedValue = Mathf.Clamp(value, 10, 100);
-        float fontSize = Mathf.Lerp(minFontSize, maxFontSize, (clampedValue - 10) / 90);
+        float fontSize = Mathf.Lerp(minFontSize, maxFontSize, (clampedValue - 10) / 90) * Mathf.Max(1f, sizeMultiplier);
         damageText.GetComponent<FloatingDamageText>().Initialize(text, randomOffset, color, fontSize);
     }
 }

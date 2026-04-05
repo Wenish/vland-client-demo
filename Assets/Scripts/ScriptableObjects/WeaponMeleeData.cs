@@ -84,7 +84,7 @@ public class WeaponMeleeData : WeaponData
             // Hit as many enemies as maxHits
             for (int i = 0; i < Mathf.Min(maxHits, enemiesHit.Count); i++)
             {
-                enemiesHit[i].TakeDamage(DamageInstance.Physical(damage), attacker);
+                enemiesHit[i].TakeDamage(DamageInstance.Physical(damage, DamageSourceKind.BasicAttack), attacker);
                 enemiesHit[i].RaiseOnAttackHitReceivedEvent(attacker);
             }
 
@@ -92,7 +92,7 @@ public class WeaponMeleeData : WeaponData
         else if (enemiesHit.Count == 1)
         {
             var enemy = enemiesHit[0];
-            enemy.TakeDamage(DamageInstance.Physical(damage), attacker);
+            enemy.TakeDamage(DamageInstance.Physical(damage, DamageSourceKind.BasicAttack), attacker);
             enemy.RaiseOnAttackHitReceivedEvent(attacker);
             return;
         }
