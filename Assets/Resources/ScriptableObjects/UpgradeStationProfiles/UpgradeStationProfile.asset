@@ -19,3 +19,11 @@ MonoBehaviour:
     costOverride: -1
   - upgrade: {fileID: 11400000, guid: b9451a586ec05f34baf58ee20b5671de, type: 2}
     costOverride: -1
+  - upgrade: {fileID: 11400000, guid: 67cbcd763ca3c5f4588004758265fb79, type: 2}
+    costOverride: -1
+  - upgrade: {fileID: 11400000, guid: c08ccdfba921adf46a06b2d0a8f7af6f, type: 2}
+    costOverride: -1
+  - upgrade: {fileID: 11400000, guid: d7bca252a21cb2948aa2fda34e7de3fd, type: 2}
+    costOverride: -1
+  - upgrade: {fileID: 11400000, guid: d98154a336886354fa37f6c1c0ebcfbe, type: 2}
+    costOverride: -1
