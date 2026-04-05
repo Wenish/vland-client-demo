@@ -32,8 +32,8 @@ MonoBehaviour:
   waveOverrides: []
   recurringSpecialWaves:
   - ruleId: werwolfs
-    minInterval: 4
-    maxInterval: 6
+    minInterval: 6
+    maxInterval: 8
     replaceRegularWave: 1
     wave:
       waveName: Werwolfs
