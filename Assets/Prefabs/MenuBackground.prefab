@@ -181,7 +181,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 0.6981132, g: 0.4962231, b: 0.08232466, a: 1}
+  m_Color: {r: 0.4974777, g: 0.69803923, b: 0.08235292, a: 1}
   m_Intensity: 11.79
   m_Range: 20
   m_SpotAngle: 30
@@ -331,7 +331,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 0.9098039, g: 0.5529412, b: 0.16862746, a: 1}
+  m_Color: {r: 0.2692686, g: 0.9098039, b: 0.16862744, a: 1}
   m_Intensity: 0.3
   m_Range: 20
   m_SpotAngle: 30
@@ -574,7 +574,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 0.6981132, g: 0.4962231, b: 0.08232466, a: 1}
+  m_Color: {r: 0.33983985, g: 0.08235292, b: 0.69803923, a: 1}
   m_Intensity: 11.79
   m_Range: 20
   m_SpotAngle: 30
@@ -781,7 +781,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 0.9098039, g: 0.5529412, b: 0.16862746, a: 1}
+  m_Color: {r: 0.636105, g: 0.16862744, b: 0.9098039, a: 1}
   m_Intensity: 0.3
   m_Range: 20
   m_SpotAngle: 30
@@ -1331,6 +1331,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4528520227022301497}
     m_Modifications:
+    - target: {fileID: 993463422805629661, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 993463422805629661, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.8055825
+      objectReference: {fileID: 0}
     - target: {fileID: 1752531204454590553, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.011
@@ -1378,6 +1386,14 @@ PrefabInstance:
     - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
       propertyPath: prewarm
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.10201043
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2215,6 +2231,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4528520227022301497}
     m_Modifications:
+    - target: {fileID: 993463422805629661, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 993463422805629661, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 993463422805629661, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.4578979
+      objectReference: {fileID: 0}
     - target: {fileID: 1752531204454590553, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.896
@@ -2262,6 +2290,18 @@ PrefabInstance:
     - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
       propertyPath: prewarm
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422160780352259166, guid: 56f02590ce7db2347803864c84dd78d3, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.60617864
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
