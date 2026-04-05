@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCBehaviour.DistanceCondition
   description: 
   comparison: 1
-  distance: 3
+  distance: 2
   maxDistance: 10
   useCurrentTarget: 1
