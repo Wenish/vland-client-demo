@@ -131,8 +131,8 @@ namespace Vland.UI
         private void BuildSlotBar()
         {
             _slotsBar.Clear();
-            AddSlot(LoadoutSlot.Passive, "Passive");
             AddSlot(LoadoutSlot.Weapon, "Weapon");
+            AddSlot(LoadoutSlot.Passive, "Passive");
             AddSlot(LoadoutSlot.Normal1, "Skill 1");
             AddSlot(LoadoutSlot.Normal2, "Skill 2");
             AddSlot(LoadoutSlot.Normal3, "Skill 3");
@@ -345,8 +345,8 @@ namespace Vland.UI
             // slotsBar children map order: 0 Weapon,1 Passive,2 N1,3 N2,4 N3,5 Ult
             int idx = slot switch
             {
-                LoadoutSlot.Passive => 0,
-                LoadoutSlot.Weapon => 1,
+                LoadoutSlot.Weapon => 0,
+                LoadoutSlot.Passive => 1,
                 LoadoutSlot.Normal1 => 2,
                 LoadoutSlot.Normal2 => 3,
                 LoadoutSlot.Normal3 => 4,
