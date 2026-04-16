@@ -18,6 +18,9 @@ MonoBehaviour:
   cooldown: 45
   castCost: 0
   canActivateWhileBusy: 1
+  hasRequiredWeapon: 1
+  requiredWeapon: 2
+  npcOnly: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: d54759c25c5be4981a3a4388e21f893e, type: 2}
   reactiveTriggers: []

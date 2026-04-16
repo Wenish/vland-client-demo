@@ -186,9 +186,16 @@ public class PlayerLoadout : NetworkBehaviour
         var normalUnique = desiredNormalSkills.Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().Take(3).ToArray();
         foreach (var name in normalUnique)
         {
-            if (skillDb.GetSkillByName(name) == null)
+            var skill = skillDb.GetSkillByName(name);
+            if (skill == null)
             {
                 TargetAckSetLoadout(connectionToClient, false, $"Unknown skill: {name}");
+                return;
+            }
+
+            if (!skill.CanBeUsedWithWeapon(weaponData.weaponType))
+            {
+                TargetAckSetLoadout(connectionToClient, false, $"Skill '{name}' requires weapon: {skill.GetRequiredWeaponLabel()}");
                 return;
             }
         }
@@ -196,16 +203,33 @@ public class PlayerLoadout : NetworkBehaviour
         var passiveUnique = desiredPassiveSkills.Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().Take(2).ToArray();
         foreach (var name in passiveUnique)
         {
-            if (skillDb.GetSkillByName(name) == null)
+            var skill = skillDb.GetSkillByName(name);
+            if (skill == null)
             {
                 TargetAckSetLoadout(connectionToClient, false, $"Unknown passive: {name}");
                 return;
             }
+
+            if (!skill.CanBeUsedWithWeapon(weaponData.weaponType))
+            {
+                TargetAckSetLoadout(connectionToClient, false, $"Passive '{name}' requires weapon: {skill.GetRequiredWeaponLabel()}");
+                return;
+            }
         }
-        if (!string.IsNullOrWhiteSpace(desiredUltimateSkill) && skillDb.GetSkillByName(desiredUltimateSkill) == null)
+        if (!string.IsNullOrWhiteSpace(desiredUltimateSkill))
         {
-            TargetAckSetLoadout(connectionToClient, false, $"Unknown ultimate: {desiredUltimateSkill}");
-            return;
+            var ultimate = skillDb.GetSkillByName(desiredUltimateSkill);
+            if (ultimate == null)
+            {
+                TargetAckSetLoadout(connectionToClient, false, $"Unknown ultimate: {desiredUltimateSkill}");
+                return;
+            }
+
+            if (!ultimate.CanBeUsedWithWeapon(weaponData.weaponType))
+            {
+                TargetAckSetLoadout(connectionToClient, false, $"Ultimate '{desiredUltimateSkill}' requires weapon: {ultimate.GetRequiredWeaponLabel()}");
+                return;
+            }
         }
 
         // Apply to unit (server authoritative)

@@ -688,12 +688,14 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         var title = $"<size=20><b>{skillData.skillName}</b></size>";
         var type = $"<size=16><color=#cccccc>Type: {skillData.skillType}</color></size>";
+        var requiredWeapon = $"<size=16><color=#cccccc>Required Weapon: {skillData.GetRequiredWeaponLabel()}</color></size>";
         var cooldown = $"<size=16><color=#cccccc>Cooldown: {skillData.cooldown}s</color></size>";
         var description = $"<size=16>{skillData.description}</size>";
 
         var text = "";
         text += $"{title}\n";
         text += $"{type}\n";
+        text += $"{requiredWeapon}\n";
         text += skillData.cooldown != 0 ? $"{cooldown}\n" : "";
         text += $"\n{description}";
 

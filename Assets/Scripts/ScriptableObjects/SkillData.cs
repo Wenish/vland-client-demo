@@ -11,7 +11,22 @@ public class SkillData : ScriptableObject
     public int cooldown;
     public int castCost;
     public bool canActivateWhileBusy;
-    public WeaponType? requiredWeapon;
+    [Tooltip("If false, this skill can be used with any weapon.")]
+    [SerializeField] private bool hasRequiredWeapon;
+    [SerializeField] private WeaponType requiredWeapon;
+
+    public WeaponType? RequiredWeapon
+    {
+        get => hasRequiredWeapon ? requiredWeapon : (WeaponType?)null;
+        set
+        {
+            hasRequiredWeapon = value.HasValue;
+            if (value.HasValue)
+            {
+                requiredWeapon = value.Value;
+            }
+        }
+    }
     
     [Header("Restrictions")]
     public bool npcOnly;
@@ -26,6 +41,22 @@ public class SkillData : ScriptableObject
 
     [Header("UI")]
     public Texture2D iconTexture;
+
+    public bool CanBeUsedWithWeapon(WeaponType? weaponType)
+    {
+        var required = RequiredWeapon;
+        if (!required.HasValue)
+        {
+            return true;
+        }
+
+        return weaponType.HasValue && weaponType.Value == required.Value;
+    }
+
+    public string GetRequiredWeaponLabel()
+    {
+        return RequiredWeapon.HasValue ? RequiredWeapon.Value.ToString() : "Any";
+    }
 
     public IEnumerator ExecuteInitCoroutine(CastContext castContext)
     {
