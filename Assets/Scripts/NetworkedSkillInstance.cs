@@ -151,6 +151,14 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         if (IsOnCooldown || skillData == null) return;
 
+        var currentWeaponType = unit.currentWeapon != null
+            ? (WeaponType?)unit.currentWeapon.weaponType
+            : null;
+        if (!skillData.CanBeUsedWithWeapon(currentWeaponType))
+        {
+            return;
+        }
+
         // If the unit is busy (casting/attacking/etc), only block if the skill doesn't allow activation while busy
         if (unit.unitActionState.IsActive && !skillData.canActivateWhileBusy) return;
 

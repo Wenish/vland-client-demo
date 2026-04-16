@@ -60,6 +60,9 @@ public class LoadoutWindowController : MonoBehaviour
             else if (slot == LoadoutSlot.Ultimate) PopulateGridFor(LoadoutSlot.Ultimate);
             else PopulateGridFor(LoadoutSlot.Normal1);
         };
+
+        ClearIncompatibleSkillSelections();
+        ApplyCurrentLoadout();
     }
 
     private void TryInitializeFromSavedLoadout()
@@ -129,6 +132,8 @@ public class LoadoutWindowController : MonoBehaviour
             return;
         }
 
+        var selectedWeaponType = GetSelectedWeaponType();
+
         if (slot == LoadoutSlot.Weapon)
         {
             if (_db.weaponDatabase != null)
@@ -150,7 +155,7 @@ public class LoadoutWindowController : MonoBehaviour
         {
             if (_db.skillDatabase != null)
             {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Passive && !s.npcOnly))
+                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Passive && !s.npcOnly && s.CanBeUsedWithWeapon(selectedWeaponType)))
                 {
                     items.Add(new LoadoutItem
                     {
@@ -167,7 +172,7 @@ public class LoadoutWindowController : MonoBehaviour
         {
             if (_db.skillDatabase != null)
             {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Ultimate && !s.npcOnly))
+                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Ultimate && !s.npcOnly && s.CanBeUsedWithWeapon(selectedWeaponType)))
                 {
                     items.Add(new LoadoutItem
                     {
@@ -185,7 +190,7 @@ public class LoadoutWindowController : MonoBehaviour
             // normals
             if (_db.skillDatabase != null)
             {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Normal && !s.npcOnly))
+                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Normal && !s.npcOnly && s.CanBeUsedWithWeapon(selectedWeaponType)))
                 {
                     items.Add(new LoadoutItem
                     {
@@ -206,12 +211,14 @@ public class LoadoutWindowController : MonoBehaviour
     {
         var title = $"<size=20><b>{skillData.skillName}</b></size>";
         var type = $"<size=16><color=#cccccc>Type: {skillData.skillType}</color></size>";
+        var requiredWeapon = $"<size=16><color=#cccccc>Required Weapon: {skillData.GetRequiredWeaponLabel()}</color></size>";
         var cooldown = $"<size=16><color=#cccccc>Cooldown: {skillData.cooldown}s</color></size>";
         var description = $"<size=16>{skillData.description}</size>";
 
         var text = "";
         text += $"{title}\n";
         text += $"{type}\n";
+        text += $"{requiredWeapon}\n";
         text += skillData.cooldown != 0 ? $"{cooldown}\n" : "";
         text += $"\n{description}";
 
@@ -233,9 +240,81 @@ public class LoadoutWindowController : MonoBehaviour
 
     private void HandleSelectionChanged(LoadoutSlot slot, string id)
     {
+        if (slot == LoadoutSlot.Weapon)
+        {
+            ClearIncompatibleSkillSelections();
+
+            var activeSlot = _window.ActiveSlot;
+            if (activeSlot != LoadoutSlot.Weapon)
+            {
+                PopulateGridFor(activeSlot);
+            }
+        }
+
         if (_applyPending) return;
         _applyPending = true;
         _applyRoutine = StartCoroutine(ApplyAtEndOfFrame());
+    }
+
+    private WeaponType? GetSelectedWeaponType()
+    {
+        if (_db == null || _db.weaponDatabase == null)
+        {
+            return null;
+        }
+
+        var selectedWeaponId = _window.GetSelectedId(LoadoutSlot.Weapon);
+        if (string.IsNullOrWhiteSpace(selectedWeaponId))
+        {
+            return null;
+        }
+
+        var weapon = _db.weaponDatabase.GetWeaponByName(selectedWeaponId);
+        return weapon != null ? weapon.weaponType : null;
+    }
+
+    private void ClearIncompatibleSkillSelections()
+    {
+        if (_db == null || _db.skillDatabase == null)
+        {
+            return;
+        }
+
+        var weaponType = GetSelectedWeaponType();
+        if (!weaponType.HasValue)
+        {
+            return;
+        }
+
+        var slotsToCheck = new[]
+        {
+            LoadoutSlot.Passive,
+            LoadoutSlot.Normal1,
+            LoadoutSlot.Normal2,
+            LoadoutSlot.Normal3,
+            LoadoutSlot.Ultimate,
+        };
+
+        foreach (var slot in slotsToCheck)
+        {
+            var selectedId = _window.GetSelectedId(slot);
+            if (string.IsNullOrWhiteSpace(selectedId))
+            {
+                continue;
+            }
+
+            var skill = _db.skillDatabase.GetSkillByName(selectedId);
+            if (skill == null)
+            {
+                _window.SelectById(slot, null);
+                continue;
+            }
+
+            if (!skill.CanBeUsedWithWeapon(weaponType))
+            {
+                _window.SelectById(slot, null);
+            }
+        }
     }
 
     private System.Collections.IEnumerator ApplyAtEndOfFrame()

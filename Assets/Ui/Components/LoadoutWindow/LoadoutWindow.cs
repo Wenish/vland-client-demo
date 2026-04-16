@@ -295,6 +295,8 @@ namespace Vland.UI
         }
 
         private LoadoutSlot _lastActive = LoadoutSlot.Weapon;
+        public LoadoutSlot ActiveSlot => _lastActive;
+
         public void SetActiveSlot(LoadoutSlot slot)
         {
             _lastActive = slot;
