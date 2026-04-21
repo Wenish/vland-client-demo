@@ -69,5 +69,7 @@ public enum WeaponType : byte
     Daggers,
     Bow,
     Gun,
-    Pistols
+    Pistols,
+    SwordAndShield,
+    Staff,
 }

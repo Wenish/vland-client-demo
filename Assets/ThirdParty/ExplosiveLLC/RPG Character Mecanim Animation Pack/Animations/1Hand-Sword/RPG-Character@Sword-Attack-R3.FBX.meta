@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 65ab56ec63abae340b7646d2ed24c864
+guid: 475796453e56ae447b098689c94bcfb5
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable:
@@ -317,12 +317,6 @@ ModelImporter:
     second: RPG-Character-Mesh
   - first:
       1: 100208
-    second: Sword
-  - first:
-      1: 100210
-    second: RPG-Character-Mesh001
-  - first:
-      1: 100212
     second: Exporter
   - first:
       4: 400000
@@ -638,12 +632,6 @@ ModelImporter:
     second: RPG-Character-Mesh
   - first:
       4: 400208
-    second: Sword
-  - first:
-      4: 400210
-    second: RPG-Character-Mesh001
-  - first:
-      4: 400212
     second: Exporter
   - first:
       23: 2300000
@@ -661,12 +649,6 @@ ModelImporter:
       23: 2300008
     second: USP
   - first:
-      23: 2300010
-    second: Sword
-  - first:
-      23: 2300012
-    second: RPG-Character-Mesh001
-  - first:
       33: 3300000
     second: Mesh_Soldier_A
   - first:
@@ -681,12 +663,6 @@ ModelImporter:
   - first:
       33: 3300008
     second: USP
-  - first:
-      33: 3300010
-    second: Sword
-  - first:
-      33: 3300012
-    second: RPG-Character-Mesh001
   - first:
       43: 4300000
     second: Mesh_Soldier_A
@@ -709,14 +685,8 @@ ModelImporter:
       43: 4300012
     second: RPG-Character-Mesh
   - first:
-      43: 4300014
-    second: Sword
-  - first:
-      43: 4300016
-    second: RPG-Character-Mesh001
-  - first:
       74: 7400000
-    second: Sword-Attack-R7
+    second: Sword-Attack-R3
   - first:
       95: 9500000
     second: //RootNode
@@ -748,7 +718,10 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'B_Spine' has translation animation that
+      will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -762,7 +735,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Sword-Attack-R7
+      name: Sword-Attack-R3
       takeName: Take 001
       internalID: 7400000
       firstFrame: 0
@@ -786,7 +759,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.47164032
+      - time: 0.43409422
         functionName: Hit
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -1569,5 +1542,5 @@ AssetOrigin:
   productId: 63772
   packageName: RPG Character Mecanim Animation Pack
   packageVersion: 7.2.2
-  assetPath: Assets/ThirdParty/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R7.FBX
+  assetPath: Assets/ThirdParty/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R3.FBX
   uploadId: 850048

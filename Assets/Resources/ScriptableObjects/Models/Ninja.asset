@@ -26,3 +26,5 @@ MonoBehaviour:
     animationSet: {fileID: 11400000, guid: d4424c69e2fe34c6ebd3e664c1b1733a, type: 2}
   - weaponType: 5
     animationSet: {fileID: 11400000, guid: 5e9b076841e1942539e8f39e213691e4, type: 2}
+  - weaponType: 6
+    animationSet: {fileID: 11400000, guid: aa54fac528ec6471885b34ca2d9ba350, type: 2}

@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fbc6dfc18dc3c8f4396c30f954b5b087, type: 3}
-  m_Name: Daggers
+  m_Name: SwordAndShield
   m_EditorClassIdentifier: 
-  weaponName: Daggers
-  weaponType: 2
+  weaponName: Sword and Shield
+  weaponType: 6
   npcOnly: 0
-  attackPower: 20
-  attackRange: 2.25
-  attackTime: 0.4
-  attackSpeed: 0.1
-  moveSpeedPercentWhileAttacking: 0.7
-  iconTexture: {fileID: 2800000, guid: dd9a6579ad6c34d24a935272b651ba97, type: 3}
+  attackPower: 10
+  attackRange: 2.5
+  attackTime: 0.6
+  attackSpeed: 0.2
+  moveSpeedPercentWhileAttacking: 0.6
+  iconTexture: {fileID: 2800000, guid: 8032e2f400c5c40d3996078bd0bb1423, type: 3}
   weaponModelRightHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
   weaponModelLeftHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
   swingVfxs:
   - swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
     swingVfxPositionOffset: {x: 0, y: 0.7, z: 0}
-    swingVfxRotationOffset: {x: -10, y: -40, z: -10}
+    swingVfxRotationOffset: {x: -10, y: 40, z: 190}
     swingVfxLifetime: 3
   - swingVfxPrefab: {fileID: 8733610434990368906, guid: ca1e854f485de42078ff84a3fe913811, type: 3}
     swingVfxPositionOffset: {x: 0, y: 0.7, z: 0}
-    swingVfxRotationOffset: {x: -10, y: 40, z: 190}
+    swingVfxRotationOffset: {x: -10, y: -40, z: -10}
     swingVfxLifetime: 3
   onAttackStartAudioClips: []
   swingAudioClips:
@@ -41,6 +41,6 @@ MonoBehaviour:
     pitchOffset: 0.1
   mode: 0
   maxHits: 1
-  coneAngleRadians: 80
-  numRays: 11
+  coneAngleRadians: 90
+  numRays: 13
   weighting: 0.5

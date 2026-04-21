@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Gun
   weaponType: 4
+  npcOnly: 0
   attackPower: 25
   attackRange: 17
   attackTime: 0.4
   attackSpeed: 1
   moveSpeedPercentWhileAttacking: 0
-  iconTexture: {fileID: 2800000, guid: a75d106bee05f484d878ccfbbe052cd4, type: 3}
+  iconTexture: {fileID: 2800000, guid: 04947517af5f34173b384b565dcb2e90, type: 3}
   weaponModelRightHand: {fileID: 8570921939139364386, guid: 9dd315c983d90bd49b67ff1fa981ca4b, type: 3}
   weaponModelLeftHand: {fileID: 0}
   swingVfxs: []
