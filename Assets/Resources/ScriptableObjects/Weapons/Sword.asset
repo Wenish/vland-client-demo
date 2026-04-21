@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Sword
   weaponType: 1
+  npcOnly: 0
   attackPower: 25
   attackRange: 3
   attackTime: 0.4
   attackSpeed: 0.8
   moveSpeedPercentWhileAttacking: 0.8
-  iconTexture: {fileID: 2800000, guid: fa0c47ba7d6e44ecabea895caf7b3660, type: 3}
+  iconTexture: {fileID: 2800000, guid: ce6168d7f503649bbb8d9d02fb0108a5, type: 3}
   weaponModelRightHand: {fileID: 2300579297111590268, guid: 434f858f2add644caa0f24a050866880, type: 3}
   weaponModelLeftHand: {fileID: 0}
   swingVfxs: []

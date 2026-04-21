@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 65ab56ec63abae340b7646d2ed24c864
+guid: 58f2909dff975b54c8395d479180996e
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable:
@@ -716,7 +716,7 @@ ModelImporter:
     second: RPG-Character-Mesh001
   - first:
       74: 7400000
-    second: Sword-Attack-R7
+    second: Sword-Attack-R6
   - first:
       95: 9500000
     second: //RootNode
@@ -762,7 +762,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Sword-Attack-R7
+      name: Sword-Attack-R6
       takeName: Take 001
       internalID: 7400000
       firstFrame: 0
@@ -786,7 +786,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.47164032
+      - time: 0.38319275
         functionName: Hit
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -1569,5 +1569,5 @@ AssetOrigin:
   productId: 63772
   packageName: RPG Character Mecanim Animation Pack
   packageVersion: 7.2.2
-  assetPath: Assets/ThirdParty/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R7.FBX
+  assetPath: Assets/ThirdParty/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R6.FBX
   uploadId: 850048
