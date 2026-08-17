@@ -1,70 +1,30 @@
 .form-join-game__panel {
-    background-color: rgba(13, 13, 13, 0.99);
-    padding-top: 14px;
-    padding-right: 8px;
-    padding-bottom: 14px;
-    padding-left: 8px;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-    border-bottom-left-radius: 3px;
+    width: 420px;
+}
+
+.form-join-game__input {
+    color: rgb(255, 244, 231);
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    cursor: var(--cursor-hover);
+}
+
+.form-join-game__input > #unity-text-input {
+    background-color: rgba(0, 4, 10, 0.7);
     border-top-width: 2px;
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
-    border-left-color: rgba(74, 74, 74, 0.8);
-    border-right-color: rgba(74, 74, 74, 0.8);
-    border-top-color: rgba(74, 74, 74, 0.8);
-    border-bottom-color: rgba(74, 74, 74, 0.8);
-    width: 420px;
-    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
-}
-
-.form-join-game__title {
-    font-size: 24px;
-    color: rgb(250, 250, 250);
-    -unity-font-style: Bold;
-    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-BoldItalic.ttf?fileID=12800000&guid=b3a6efa09efe2434bbd1f56a126b2bb4&type=3#Lato-BoldItalic");
-    margin-top: 0;
-    padding-top: 0;
-}
-
-.form-join-game__input {
-    color: rgb(250, 250, 250);
-    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.form-join-game__input > #unity-text-input {
-    background-color: rgb(26, 26, 26);
-    --unity-cursor-color: rgb(245, 245, 245);
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    border-color: rgb(202, 159, 108);
+    --unity-cursor-color: rgb(255, 244, 231);
+    color: rgb(255, 244, 231);
 }
 
 .form-join-game__input > .unity-base-text-field__input--placeholder {
-    color: rgb(102, 102, 102);
-    -unity-text-align: upper-left;
-    -unity-font-style: italic;
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.form-join-game__input > .unity-text-field__caret {
-    background-color: rgb(0, 255, 153);
-    width: 3px;
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-
-
-.unity-text-element__selectable {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    color: rgb(154, 161, 174);
 }
 
 .unity-base-field__label {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-    margin-bottom: 0;
-}
-
-.unity-button {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    color: rgb(254, 221, 183);
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    margin-bottom: 4px;
 }

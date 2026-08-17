@@ -1,13 +1,14 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase"/>
     <Style src="project://database/Assets/Ui/Components/MultiplayerMenu/MultiplayerMenu.uss?fileID=7433441132597879392&amp;guid=01e26c624bb3744028990e2b93c31395&amp;type=3#MultiplayerMenu"/>
-    <ui:VisualElement name="VisualElement" style="flex-grow: 1; justify-content: center; align-self: center; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);">
-        <ui:VisualElement name="panel" class="multiplayer-menu__panel">
-            <ui:Label text="Multiplayer Menu" style="color: rgb(250, 250, 250); -unity-font-definition: url(&quot;project://database/Assets/Fonts/Lato/Lato-BoldItalic.ttf?fileID=12800000&amp;guid=b3a6efa09efe2434bbd1f56a126b2bb4&amp;type=3#Lato-BoldItalic&quot;); margin-top: 0; margin-right: 0; margin-bottom: 14px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: upper-center; cursor: url(&quot;project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&amp;guid=7dd2a1cc508c64aa891e32dd530a2437&amp;type=3#CursorDefaultAlternativ_32&quot;);"/>
-            <ui:Button text="Host Game" name="buttonHostGame" class="multiplayer-menu__button"/>
-            <ui:Button text="Join Game" name="buttonJoinGame" class="multiplayer-menu__button"/>
-            <ui:Button text="Server Browser" name="buttonServerBrowser" class="multiplayer-menu__button" style="display: none;"/>
-            <ui:Button text="Server Only" name="buttonServerOnly" class="multiplayer-menu__button" style="margin-top: 14px;"/>
-            <ui:Button text="Back to Main Menu" name="buttonBackToMainMenu" class="multiplayer-menu__button" style="margin-top: 14px;"/>
+    <ui:VisualElement name="VisualElement" style="flex-grow: 1; justify-content: center; align-self: center;">
+        <ui:VisualElement name="panel" class="si-panel multiplayer-menu__panel">
+            <ui:Label text="MULTIPLAYER" class="si-panel__title"/>
+            <OrnateButton text="HOST GAME" name="buttonHostGame" icon-image="project://database/Assets/Art/Ui/Icons/icon-host.svg?fileID=2800000&amp;guid=e1a1b2c3d4e5f60718293a4b5c6d7ea6&amp;type=3#icon-host"/>
+            <OrnateButton text="JOIN GAME" name="buttonJoinGame" icon-image="project://database/Assets/Art/Ui/Icons/icon-join.svg?fileID=2800000&amp;guid=e1a1b2c3d4e5f60718293a4b5c6d7ea7&amp;type=3#icon-join"/>
+            <OrnateButton text="SERVER BROWSER" name="buttonServerBrowser" style="display: none;"/>
+            <OrnateButton text="SERVER ONLY" name="buttonServerOnly" class="si-button si-button--compact" style="margin-top: 14px;"/>
+            <OrnateButton text="BACK" name="buttonBackToMainMenu" class="si-button si-button--compact" icon-image="project://database/Assets/Art/Ui/Icons/icon-back.svg?fileID=2800000&amp;guid=e1a1b2c3d4e5f60718293a4b5c6d7ea8&amp;type=3#icon-back" style="margin-top: 14px;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

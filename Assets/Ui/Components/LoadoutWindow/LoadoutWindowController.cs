@@ -44,6 +44,7 @@ public class LoadoutWindowController : MonoBehaviour
 
         var panelElement = root.Q<VisualElement>(name: "LoadoutPanel");
         UiPointerState.RegisterBlockingElement(panelElement);
+        UiGameplayInputGuard.Apply(panelElement);
 
         // Initialize selections from saved local loadout before wiring events
         TryInitializeFromSavedLoadout();

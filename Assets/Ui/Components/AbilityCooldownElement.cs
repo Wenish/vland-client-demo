@@ -10,7 +10,8 @@ public partial class AbilityCooldownElement : VisualElement
     private VisualElement _iconOverlay;
     private VisualElement _cooldownOverlay;
     private Label _cooldownLabel;
-    private Label _keyLabel; // displays the activation key
+    private Label _keyLabel;
+    private VisualElement _keyIcon; // displays the activation key
 
     [SerializeField, DontCreateProperty]
     private float _cooldownRemaining;
@@ -74,11 +75,29 @@ public partial class AbilityCooldownElement : VisualElement
         set
         {
             _activationKey = value;
-            if (_keyLabel != null) {
-                _keyLabel.text = _activationKey;
-                _keyLabel.style.visibility = string.IsNullOrEmpty(_activationKey) ? Visibility.Hidden : Visibility.Visible;
-            }
+            UpdateActivationKeyDisplay();
+        }
+    }
 
+    private void UpdateActivationKeyDisplay()
+    {
+        if (_keyLabel == null)
+        {
+            return;
+        }
+
+        var hasKey = !string.IsNullOrEmpty(_activationKey);
+        var isMouseLeft = _activationKey == "LM";
+
+        if (_keyIcon != null)
+        {
+            _keyIcon.style.display = hasKey && isMouseLeft ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        _keyLabel.style.visibility = hasKey && !isMouseLeft ? Visibility.Visible : Visibility.Hidden;
+        if (hasKey && !isMouseLeft)
+        {
+            _keyLabel.text = _activationKey;
         }
     }
 
@@ -151,7 +170,14 @@ public partial class AbilityCooldownElement : VisualElement
         _keyLabel = new Label { name = "KeyLabel" };
         _keyLabel.AddToClassList("key-label");
         Add(_keyLabel);
-        _keyLabel.style.visibility = string.IsNullOrEmpty(_activationKey) ? Visibility.Hidden : Visibility.Visible;
+
+        _keyIcon = new VisualElement { name = "KeyIcon" };
+        _keyIcon.AddToClassList("key-icon");
+        _keyIcon.AddToClassList("key-icon--mouse-left");
+        _keyIcon.style.display = DisplayStyle.None;
+        Add(_keyIcon);
+
+        UpdateActivationKeyDisplay();
         IsRecastAvailable = false;
     }
 
@@ -189,9 +215,9 @@ public partial class AbilityCooldownElement : VisualElement
         if (string.IsNullOrEmpty(_tooltipText))
             return;
         
-        StyleColor backgroundColor = new StyleColor(new Color(0.051f, 0.051f, 0.051f, 0.995f));
-        StyleColor borderColor = new StyleColor(new Color(0.29f, 0.29f, 0.29f, 0.8f));
-        StyleColor textColor = new StyleColor(new Color(0.98f, 0.98f, 0.98f, 1f));
+        StyleColor backgroundColor = new StyleColor(new Color(0.008f, 0.075f, 0.204f, 0.95f));
+        StyleColor borderColor = new StyleColor(new Color(0.792f, 0.624f, 0.424f, 0.85f));
+        StyleColor textColor = new StyleColor(new Color(1f, 0.957f, 0.906f, 1f));
 
         _runtimeTooltip = new Label
         {

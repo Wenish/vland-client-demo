@@ -32,6 +32,7 @@ public class CastleSiegeHudPresenter : MonoBehaviour
         _winnerLabel = _root.Q<Label>("LabelWinner");
         _lobbyReturnLabel = _root.Q<Label>("LabelLobbyReturn");
         _teamSelectionContainer = _root.Q<VisualElement>("TeamSelectionContainer");
+        UiGameplayInputGuard.Apply(_root);
 
         if (stateSync == null)
         {
@@ -127,7 +128,9 @@ public class CastleSiegeHudPresenter : MonoBehaviour
         while (_teamSelectionButtons.Count < teamCount)
         {
             int teamId = _teamSelectionButtons.Count;
-            var button = new Button(() => RequestChooseTeam(teamId));
+            var button = new OrnateButton { text = $"Join Team {teamId}" };
+            button.clicked += () => RequestChooseTeam(teamId);
+            button.AddToClassList("si-button--compact");
             button.style.marginTop = 2;
             button.style.marginBottom = 2;
             _teamSelectionContainer.Add(button);

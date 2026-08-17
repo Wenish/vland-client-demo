@@ -1,44 +1,13 @@
+@import url("GameBase.uss");
+
 .page-title {
-    font-size: 72px;
-    letter-spacing: 1px;
-    color: rgb(255, 255, 255);
+    font-size: 64px;
+    letter-spacing: 4px;
+    color: rgb(255, 244, 231);
     -unity-font-style: normal;
-    -unity-text-align: lower-left;
+    -unity-text-align: upper-center;
     -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
-    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
-}
-
-.main-menu-button {
-    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
-    font-size: 28px;
-    color: rgb(255, 255, 255);
-    background-color: rgba(255, 255, 255, 0);
-    border-left-color: rgba(255, 244, 244, 0);
-    border-right-color: rgba(255, 244, 244, 0);
-    border-top-color: rgba(255, 244, 244, 0);
-    border-bottom-color: rgba(255, 244, 244, 0);
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-align: upper-left;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    transition-duration: 0.3s;
-    transition-timing-function: ease-out;
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.main-menu-button:hover {
-    color: rgb(150, 190, 186);
-    letter-spacing: 12px;
-    padding-left: 20px;
-}
-
-.main-menu-button:focus {
-    color: rgb(150, 190, 186);
-    letter-spacing: 12px;
-    padding-left: 20px;
+    margin-bottom: 28px;
 }
 
 #Background {
@@ -47,8 +16,6 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    top: auto;
-    left: auto;
     -unity-background-scale-mode: scale-and-crop;
     opacity: 1;
     background-position-y: bottom 0;
@@ -56,42 +23,32 @@
 
 .page-container {
     flex-grow: 1;
-    padding-top: 64px;
+    padding-top: 80px;
     padding-right: 64px;
     padding-bottom: 64px;
     padding-left: 64px;
     max-width: 1600px;
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-self: center;
-    min-width: auto;
     width: 100%;
-    -unity-text-align: upper-left;
-}
-
-.main-menu-title {
 }
 
 .page-content {
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 100%;
 }
 
-.unity-label {
-    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
+.main-menu-stack {
+    align-items: stretch;
+    width: 320px;
 }
 
-.unity-base-field__label {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+.unity-base-field__input,
+.unity-base-field__label,
+.unity-text-element__selectable {
+    cursor: var(--cursor-hover);
 }
-
-.unity-base-field__input {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-field {
-}
-
-
-
-

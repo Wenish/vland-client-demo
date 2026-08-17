@@ -53,10 +53,11 @@ public class UiDocumentZombieGameOverController : MonoBehaviour
         countdownLabel = root.Q<Label>("zombieReturnCountdownLabel");
         returnToLobbyButton = root.Q<Button>("zombieReturnToLobbyButton");
 
+        if (gameOverRoot != null)
+            UiGameplayInputGuard.Apply(gameOverRoot);
+
         if (returnToLobbyButton != null)
-        {
             returnToLobbyButton.clicked += HandleReturnToLobbyClicked;
-        }
 
         if (titleLabel != null)
         {

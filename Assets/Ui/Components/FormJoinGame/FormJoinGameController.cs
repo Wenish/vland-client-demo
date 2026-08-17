@@ -24,6 +24,7 @@ public class FormJoinGameController : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         rootVisualElement = uiDocument.rootVisualElement;
         rootVisualElement.style.display = DisplayStyle.None;
+        UiGameplayInputGuard.Apply(rootVisualElement, blockMovementKeys: false);
 
         buttonCancel = rootVisualElement.Q<Button>("buttonCancel");
         buttonJoinGame = rootVisualElement.Q<Button>("buttonJoinGame");

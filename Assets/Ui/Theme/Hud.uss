@@ -1,0 +1,236 @@
+:root {
+    cursor: var(--cursor-pointer);
+}
+
+.si-skillbar,
+.si-gold,
+.si-vitals,
+.si-vital-row,
+.si-round-stats,
+.si-round-box,
+.si-round-stat,
+.cast-bar {
+    cursor: var(--cursor-ui);
+}
+
+.si-skillbar {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 18px;
+}
+
+.si-gold {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 12px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 8px;
+    padding-right: 10px;
+    background-color: rgba(2, 19, 52, 0.72);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.55);
+    border-right-color: rgba(202, 159, 108, 0.55);
+    border-top-color: rgba(202, 159, 108, 0.55);
+    border-bottom-color: rgba(202, 159, 108, 0.55);
+}
+
+.si-gold__icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+    background-image: var(--icon-coins);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.si-gold__value {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+}
+
+.si-vitals {
+    width: 280px;
+    margin-right: 14px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: rgba(2, 19, 52, 0.72);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.7);
+    border-right-color: rgba(202, 159, 108, 0.7);
+    border-top-color: rgba(202, 159, 108, 0.7);
+    border-bottom-color: rgba(202, 159, 108, 0.7);
+}
+
+.si-vital-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.si-vital-row__icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.si-vital-row__icon--shield {
+    background-image: var(--icon-shield);
+}
+
+.si-vital-row__icon--health {
+    background-image: var(--icon-health);
+}
+
+.si-vital-track {
+    flex-grow: 1;
+    height: 12px;
+    background-color: rgba(0, 4, 10, 0.92);
+    overflow: hidden;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(255, 244, 231, 0.08);
+    border-right-color: rgba(255, 244, 231, 0.08);
+    border-top-color: rgba(255, 244, 231, 0.08);
+    border-bottom-color: rgba(255, 244, 231, 0.08);
+}
+
+.si-vital-track--health {
+    height: 14px;
+}
+
+.si-vital-fill--shield {
+    height: 100%;
+    background-color: rgb(116, 212, 255);
+}
+
+.si-vital-fill--health {
+    height: 100%;
+    background-color: rgb(0, 166, 62);
+}
+
+.si-vital-value {
+    min-width: 64px;
+    margin-left: 6px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 12px;
+    color: rgb(255, 244, 231);
+    -unity-text-align: middle-right;
+}
+
+.si-round-infos {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    align-items: stretch;
+    min-width: 220px;
+}
+
+.si-round-stats {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(2, 19, 52, 0.72);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.45);
+    border-right-color: rgba(202, 159, 108, 0.45);
+    border-top-color: rgba(202, 159, 108, 0.45);
+    border-bottom-color: rgba(202, 159, 108, 0.45);
+}
+
+.si-round-stat {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.si-round-stat__icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.si-round-stat__icon--clock {
+    background-image: var(--icon-clock);
+}
+
+.si-round-stat__icon--skull {
+    background-image: var(--icon-skull);
+}
+
+.si-round-stat__icon--sword {
+    background-image: var(--icon-sword);
+}
+
+.si-round-stat__icon--chart-up {
+    background-image: var(--icon-chart-up);
+}
+
+.si-round-stat__value {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(255, 244, 231);
+}
+
+.si-round-box {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: rgba(2, 19, 52, 0.72);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.55);
+    border-right-color: rgba(202, 159, 108, 0.55);
+    border-top-color: rgba(202, 159, 108, 0.55);
+    border-bottom-color: rgba(202, 159, 108, 0.55);
+}
+
+.si-round-title {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 22px;
+    color: rgb(255, 244, 231);
+    margin-bottom: 6px;
+}
+
+.si-round-completion-label {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 12px;
+    color: rgb(204, 208, 214);
+    margin-bottom: 4px;
+}
+
+.si-round-track {
+    height: 8px;
+    background-color: rgba(0, 4, 10, 0.9);
+    overflow: hidden;
+}
+
+.si-round-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(202, 159, 108);
+}

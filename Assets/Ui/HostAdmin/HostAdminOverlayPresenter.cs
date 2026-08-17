@@ -24,6 +24,7 @@ public class HostAdminOverlayPresenter : MonoBehaviour
         _teamSwitchingLabel = _root.Q<Label>("LabelTeamSwitching");
         _lockButton = _root.Q<Button>("ButtonLockTeamSwitching");
         _unlockButton = _root.Q<Button>("ButtonUnlockTeamSwitching");
+        UiGameplayInputGuard.Apply(_root);
     }
 
     private void OnEnable()

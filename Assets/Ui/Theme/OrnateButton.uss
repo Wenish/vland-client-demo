@@ -1,0 +1,95 @@
+.si-button {
+    position: relative;
+    overflow: hidden;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+    min-width: 276px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 28px;
+    padding-right: 28px;
+    font-size: 36px;
+    letter-spacing: 2px;
+    color: rgb(254, 221, 183);
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel/Cinzel-Bold.ttf?fileID=12800000&guid=a2b3c4d5e6f7081920a1b2c3d4e5f602&type=3#Cinzel-Bold");
+    -unity-text-align: middle-center;
+    background-color: rgb(2, 19, 52);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    -unity-material: url("project://database/Assets/Ui/Button.shadergraph?fileID=-876546973899608171&guid=685800311cf4fbe45b7ebd1e950d4523&type=3#Button") prop("_BackgroundTop" rgb(2, 19, 52)) prop("_BackgroundBottom" rgb(0, 4, 10)) prop("_Glow" 0) prop("_Darken" 0) prop("_BorderOuter" rgb(202, 159, 108)) prop("_BorderInner" rgb(202, 159, 108));
+    transition-property: color, -unity-material;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    cursor: var(--cursor-hover);
+}
+
+.si-button:hover {
+    color: rgb(255, 244, 231);
+    -unity-material: url("project://database/Assets/Ui/Button.shadergraph?fileID=-876546973899608171&guid=685800311cf4fbe45b7ebd1e950d4523&type=3#Button") prop("_BackgroundTop" rgb(14, 11, 7)) prop("_BackgroundBottom" rgb(2, 19, 52)) prop("_Glow" 1) prop("_Darken" 0) prop("_BorderOuter" rgb(253, 199, 135)) prop("_BorderInner" rgb(254, 221, 183));
+}
+
+.si-button:focus {
+    color: rgb(255, 244, 231);
+    -unity-material: url("project://database/Assets/Ui/Button.shadergraph?fileID=-876546973899608171&guid=685800311cf4fbe45b7ebd1e950d4523&type=3#Button") prop("_BackgroundTop" rgb(14, 11, 7)) prop("_BackgroundBottom" rgb(2, 19, 52)) prop("_Glow" 1) prop("_Darken" 0) prop("_BorderOuter" rgb(253, 199, 135)) prop("_BorderInner" rgb(254, 221, 183));
+}
+
+.si-button:active {
+    color: rgb(101, 80, 54);
+    -unity-material: url("project://database/Assets/Ui/Button.shadergraph?fileID=-876546973899608171&guid=685800311cf4fbe45b7ebd1e950d4523&type=3#Button") prop("_BackgroundTop" rgb(0, 4, 10)) prop("_BackgroundBottom" rgb(0, 4, 10)) prop("_Glow" 0) prop("_Darken" 1) prop("_BorderOuter" rgb(101, 80, 54)) prop("_BorderInner" rgb(101, 80, 54));
+}
+
+.si-button--compact {
+    min-height: 48px;
+    min-width: 166px;
+    font-size: 22px;
+    letter-spacing: 1px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.si-button__icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(253, 199, 135);
+}
+
+.si-button:hover .si-button__icon,
+.si-button:focus .si-button__icon {
+    -unity-background-image-tint-color: rgb(255, 244, 231);
+}
+
+.si-button:active .si-button__icon {
+    -unity-background-image-tint-color: rgb(101, 80, 54);
+}
+
+.si-button .unity-button__image {
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    -unity-background-image-tint-color: rgb(253, 199, 135);
+}
+
+.si-button:hover .unity-button__image,
+.si-button:focus .unity-button__image {
+    -unity-background-image-tint-color: rgb(255, 244, 231);
+}
+
+.si-button:active .unity-button__image {
+    -unity-background-image-tint-color: rgb(101, 80, 54);
+}

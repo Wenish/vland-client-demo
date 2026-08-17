@@ -20,6 +20,7 @@ public class UiDocumentZombieLeaderboardController : MonoBehaviour
         }
 
         var root = _uiDocument.rootVisualElement;
+        UiGameplayInputGuard.Apply(root);
         _leaderboardPanel = root.Q<VisualElement>(name: "leaderboardPanel");
         _leaderboardRows = root.Q<VisualElement>(name: "leaderboardRows");
         _leaderboardEmptyLabel = root.Q<Label>(name: "leaderboardEmptyLabel");

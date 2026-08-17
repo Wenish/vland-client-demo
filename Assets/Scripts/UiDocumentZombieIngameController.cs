@@ -12,6 +12,12 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     private Label _labelWave;
     private Label _labelRoundStarted;
     private Label _labelGold;
+    private Label _labelWavePercent;
+    private Label _labelCompletion;
+    private Label _labelMatchTimer;
+    private VisualElement _roundCompletionFill;
+    private int _displayedGold;
+    private float _matchStartTime;
     private VisualElement _playerVitalsContainer;
     private VisualElement _playerHealthContainer;
     private VisualElement _playerHealthFill;
@@ -47,9 +53,14 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
+        UiGameplayInputGuard.Apply(_uiDocument.rootVisualElement);
         _labelWave = _uiDocument.rootVisualElement.Q<Label>(name: "labelWave");
         _labelRoundStarted = _uiDocument.rootVisualElement.Q<Label>(name: "labelRoundStarted");
         _labelGold = _uiDocument.rootVisualElement.Q<Label>(name: "labelGold");
+        _labelWavePercent = _uiDocument.rootVisualElement.Q<Label>(name: "labelWavePercent");
+        _labelCompletion = _uiDocument.rootVisualElement.Q<Label>(name: "labelCompletion");
+        _labelMatchTimer = _uiDocument.rootVisualElement.Q<Label>(name: "labelMatchTimer");
+        _roundCompletionFill = _uiDocument.rootVisualElement.Q<VisualElement>(name: "roundCompletionFill");
         _playerVitalsContainer = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerVitalsContainer");
         _playerHealthContainer = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerHealthContainer");
         _playerHealthFill = _uiDocument.rootVisualElement.Q<VisualElement>(name: "playerHealthFill");
@@ -59,7 +70,10 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _labelPlayerShieldValue = _uiDocument.rootVisualElement.Q<Label>(name: "labelPlayerShieldValue");
         _labelWave.text = "";
         _labelRoundStarted.text = "";
-        _labelGold.text = "Gold: 0";
+        _displayedGold = 0;
+        _labelGold.text = "0";
+        _matchStartTime = Time.time;
+        SetRoundProgress(0, 0f);
         HidePlayerVitals();
         _skillPassive = _uiDocument.rootVisualElement.Q<AbilityCooldownElement>(name: "skillPassive");
         _skillPassive.CooldownRemaining = 0f;
@@ -140,6 +154,20 @@ public class UiDocumentZombieIngameController : MonoBehaviour
     {
         SyncAttackCooldown();
         SyncSkillCooldown();
+        UpdateMatchTimer();
+    }
+
+    void UpdateMatchTimer()
+    {
+        if (_labelMatchTimer == null)
+        {
+            return;
+        }
+
+        int elapsed = Mathf.Max(0, Mathf.FloorToInt(Time.time - _matchStartTime));
+        int minutes = elapsed / 60;
+        int seconds = elapsed % 60;
+        _labelMatchTimer.text = $"{minutes:00}:{seconds:00}";
     }
 
     void SyncAttackCooldown()
@@ -288,10 +316,10 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     void SetGoldText(int gold)
     {
-        int currentGold = int.Parse(_labelGold.text.Replace("Gold: ", ""));
+        int currentGold = _displayedGold;
         if (currentGold != gold)
         {
-            _labelGold.text = $"Gold: {gold}";
+            _labelGold.text = gold.ToString();
         }
         if (_goldCoroutine != null)
         {
@@ -300,9 +328,32 @@ public class UiDocumentZombieIngameController : MonoBehaviour
         _goldCoroutine = StartCoroutine(CountGoldCoroutine(currentGold, gold));
     }
 
+    void SetRoundProgress(int waveNumber, float percentKilled)
+    {
+        if (_labelWave != null)
+        {
+            _labelWave.text = waveNumber > 0 ? $"Round {waveNumber}" : "Round";
+        }
+
+        if (_labelWavePercent != null)
+        {
+            _labelWavePercent.text = $"{percentKilled:0.0}%";
+        }
+
+        if (_labelCompletion != null)
+        {
+            _labelCompletion.text = $"Completion {percentKilled:0}%";
+        }
+
+        if (_roundCompletionFill != null)
+        {
+            _roundCompletionFill.style.width = Length.Percent(Mathf.Clamp(percentKilled, 0f, 100f));
+        }
+    }
+
     void OnWaveStartedEvent(WaveStartedEvent waveStartedEvent)
     {
-        _labelWave.text = $"{waveStartedEvent.WaveNumber} (0.0%)";
+        SetRoundProgress(waveStartedEvent.WaveNumber, 0f);
         _labelRoundStarted.text = $"Round\n{waveStartedEvent.WaveNumber}";
         _labelRoundStarted.style.opacity = 1f;
         StartCoroutine(FadeText(_labelRoundStarted, 0f, 1f, 1f)); // Fade in
@@ -311,7 +362,7 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
     void OnWaveProgressChangedEvent(WaveProgressChangedEvent waveProgressChangedEvent)
     {
-        _labelWave.text = $"{waveProgressChangedEvent.WaveNumber} ({waveProgressChangedEvent.PercentKilled:0.0}%)";
+        SetRoundProgress(waveProgressChangedEvent.WaveNumber, waveProgressChangedEvent.PercentKilled);
     }
 
     IEnumerator FadeText(Label textLabel, float startAlpha, float endAlpha, float duration)
@@ -361,13 +412,15 @@ public class UiDocumentZombieIngameController : MonoBehaviour
 
             float currentGoldF = Mathf.Lerp(startGold, endGold, t);
             int displayGold = Mathf.RoundToInt(currentGoldF);
-            _labelGold.text = $"Gold: {displayGold}";
+            _displayedGold = displayGold;
+            _labelGold.text = displayGold.ToString();
 
             yield return null; // Wait one frame
         }
 
         // Ensure final value is exactly correct
-        _labelGold.text = $"Gold: {targetGold}";
+        _displayedGold = targetGold;
+        _labelGold.text = targetGold.ToString();
     }
 
     private void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)

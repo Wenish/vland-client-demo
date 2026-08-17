@@ -1,76 +1,53 @@
 .audio-container {
     width: 100%;
     max-width: 700px;
-    -unity-font-definition: url("project://database/Assets/Fonts/Lato/Lato-Regular.ttf?fileID=12800000&guid=526713aa7236b174b9e59134565a177c&type=3#Lato-Regular");
-    padding-top: 0;
-    padding-right: 12px;
-    padding-bottom: 12px;
-    padding-left: 12px;
-    cursor: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    padding-top: 12px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
 }
 
 .unity-base-field {
-    font-size: 22px;
-    color: rgb(255, 255, 255);
+    font-size: 18px;
+    color: rgb(255, 244, 231);
     background-color: transparent;
     border-width: 0;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
     margin-left: 0;
     margin-right: 0;
-    margin-top: 0;
-    margin-bottom: 0;
+    margin-top: 4px;
+    margin-bottom: 4px;
     padding-top: 1px;
     padding-bottom: 1px;
 }
 
 .unity-toggle .unity-toggle__checkmark {
     background-color: transparent;
-    border-width: 3px;
-    border-color: white;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
-    width: 24px;
-    height: 24px;
-    border-top-width: 3px;
-    border-right-width: 3px;
-    border-bottom-width: 3px;
-    border-left-width: 3px;
-    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-color: rgb(202, 159, 108);
+    width: 22px;
+    height: 22px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    -unity-background-image-tint-color: rgb(253, 199, 135);
 }
 
 Toggle:hover .unity-toggle__checkmark {
-    border-color: rgb(150, 190, 186);
+    border-color: rgb(253, 199, 135);
 }
 
 Toggle:focus .unity-toggle__checkmark {
-    border-color: rgb(111, 202, 192);
-}
-
-Toggle .unity-toggle__checkmark {
-    transition-duration: 0.16s;
-    transition-property: border-color;
+    border-color: rgb(255, 244, 231);
 }
 
 .unity-base-slider .unity-base-slider__tracker {
-    background-color: rgb(47, 62, 61);
+    background-color: rgb(1, 11, 31);
     border-width: 0;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
 }
 
 .unity-base-slider__fill {
-    background-color: rgb(215, 204, 172);
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
+    background-color: rgb(202, 159, 108);
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
@@ -78,145 +55,62 @@ Toggle .unity-toggle__checkmark {
 }
 
 .unity-base-slider__dragger {
-    background-color: rgb(215, 204, 172);
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
+    background-color: rgb(253, 199, 135);
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
 }
 
-.unity-base-field:focus .unity-label {
-    color: rgb(255, 255, 255);
-}
-
-SliderInt:hover .unity-base-slider__fill {
-    background-color: rgb(150, 190, 186);
-    transition-duration: 0.16s;
-    transition-property: background-color;
-}
-
+SliderInt:hover .unity-base-slider__fill,
 SliderInt:focus .unity-base-slider__fill {
-    background-color: rgb(111, 202, 192);
-    transition-duration: 0.16s;
-    transition-property: background-color;
+    background-color: rgb(253, 199, 135);
 }
 
-SliderInt:hover .unity-base-slider__dragger {
-    background-color: rgb(150, 190, 186);
-    width: 10px;
-    height: 28px;
-    margin-top: -14px;
-}
-
+SliderInt:hover .unity-base-slider__dragger,
 SliderInt:focus .unity-base-slider__dragger {
-    background-color: rgb(111, 202, 192);
-    width: 12px;
-    height: 30px;
-    margin-top: -15px;
+    background-color: rgb(255, 244, 231);
 }
 
-SliderInt .unity-base-slider__dragger {
-    transition-duration: 0.16s, 0.16s, 0.16s, 0.16s;
-    transition-property: background-color, width, height, margin-top;
-}
-
-.unity-base-popup-field__input {
-    font-size: 18px;
-    color: rgb(255, 255, 255);
-    background-color: transparent;
-    border-width: 3px;
-    border-color: white;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
-    margin-left: 0;
-    transition-duration: 0.16s;
-    transition-property: border-color;
-}
-
-.unity-base-popup-field__input {
-    padding: 0 12px;
-}
-
-.unity-base-popup-field:hover .unity-base-popup-field__input {
-    border-color: rgb(150, 190, 186);
-}
-
-.unity-base-popup-field:focus .unity-base-popup-field__input {
-    border-color: rgb(111, 202, 192);
-}
-
-.unity-base-popup-field__arrow {
-    -unity-background-image-tint-color: rgb(255, 255, 255);
-}
-
+.unity-base-popup-field__input,
 .unity-base-text-field__input {
-    color: rgb(255, 255, 255);
-    background-color: transparent;
-    border-width: 3px;
-    border-color: white;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+    background-color: rgba(0, 4, 10, 0.7);
+    border-width: 2px;
+    border-color: rgb(202, 159, 108);
     margin-left: 0;
-    transition-duration: 0.16s;
-    transition-property: border-color;
-    padding-top: 0;
+    padding-top: 2px;
     padding-right: 12px;
     padding-left: 12px;
-    padding-bottom: 0;
+    padding-bottom: 2px;
+}
+
+.unity-base-popup-field:hover .unity-base-popup-field__input,
+.unity-base-text-field__input:hover {
+    border-color: rgb(253, 199, 135);
+}
+
+.unity-base-popup-field:focus .unity-base-popup-field__input,
+.unity-base-text-field:focus .unity-base-text-field__input {
+    border-color: rgb(255, 244, 231);
 }
 
 .unity-base-text-field__input--placeholder {
-    color: rgb(214, 214, 214);
-}
-
-.unity-base-text-field__input:hover {
-    border-color: rgb(150, 190, 186);
-}
-
-.unity-base-text-field:focus .unity-base-text-field__input {
-    border-color: rgb(111, 202, 192);
-}
-
-.unity-text-element__selectable {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-slider__drag-container {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-field__input {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-slider .unity-base-slider__tracker {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-slider__fill {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-slider__dragger-border {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
-}
-
-.unity-base-slider__dragger {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    color: rgb(154, 161, 174);
 }
 
 .unity-base-popup-field__arrow {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    -unity-background-image-tint-color: rgb(253, 199, 135);
 }
 
+.unity-base-field__input,
+.unity-base-field__label,
+.unity-text-element__selectable,
+.unity-base-slider__drag-container,
+.unity-base-slider__fill,
+.unity-base-slider__dragger,
+.unity-base-popup-field__arrow,
 .unity-base-popup-field__text {
-    cursor: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    cursor: var(--cursor-hover);
 }

@@ -7,55 +7,79 @@ namespace ShadowInfection.UI.RoomLobby
     public sealed class RoomLobbyController : MonoBehaviour
     {
         [Header("Assets")]
-        [Tooltip("UXML template for the room lobby UI.")]
         [SerializeField] private VisualTreeAsset roomLobbyUxml;
+        [SerializeField] private StyleSheet gameBaseStyle;
+        [SerializeField] private StyleSheet roomLobbyStyle;
 
-        [Tooltip("Optional: PanelSettings to use for this UIDocument. If empty, the controller tries to reuse one from other UIDocuments in the scene.")]
         [SerializeField] private PanelSettings panelSettings;
 
-        [Tooltip("UI refresh rate in seconds. Lower = more responsive, higher = less GC/CPU.")]
         [SerializeField] private float refreshIntervalSeconds = 0.2f;
 
         private UIDocument uiDocument;
         private RoomLobbyView view;
         private MirrorRoomLobbyPresenter presenter;
-
+        private VisualElement lobbyShell;
         private VisualElement lobbyRoot;
-        private bool styleSheetAddedToDocument;
 
         private void Awake()
         {
             uiDocument = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
-
             EnsurePanelSettings();
 
             if (roomLobbyUxml == null)
             {
-                UnityEngine.Debug.LogError("RoomLobbyController: Missing UXML reference (roomLobbyUxml). Assign the RoomLobby.uxml asset in the inspector.");
+                UnityEngine.Debug.LogError("RoomLobbyController: Assign RoomLobby.uxml in the inspector.");
                 enabled = false;
                 return;
             }
 
-            var root = uiDocument.rootVisualElement;
-            lobbyRoot = root.Q<VisualElement>("roomLobbyRoot");
-            if (lobbyRoot != null)
-                lobbyRoot.RemoveFromHierarchy();
-
-            var tree = roomLobbyUxml.CloneTree();
-            lobbyRoot = tree.Q<VisualElement>("roomLobbyRoot") ?? tree;
-
-            root.Add(tree);
-
-            view = new RoomLobbyView(tree);
+            MountLobbyUi();
+            view = new RoomLobbyView(lobbyRoot);
             presenter = new MirrorRoomLobbyPresenter(view, refreshIntervalSeconds);
+        }
+
+        private void MountLobbyUi()
+        {
+            var documentRoot = uiDocument.rootVisualElement;
+
+            lobbyShell?.RemoveFromHierarchy();
+
+            lobbyShell = roomLobbyUxml.Instantiate();
+            lobbyShell.style.flexGrow = 1;
+            lobbyShell.style.width = Length.Percent(100);
+            lobbyShell.style.height = Length.Percent(100);
+
+            ApplyStyleSheets(documentRoot, lobbyShell);
+
+            documentRoot.Add(lobbyShell);
+
+            lobbyRoot = lobbyShell.Q<VisualElement>("roomLobbyRoot") ?? lobbyShell;
+        }
+
+        private void ApplyStyleSheets(params VisualElement[] targets)
+        {
+            foreach (var target in targets)
+            {
+                if (target == null)
+                    continue;
+
+                AddStyleSheet(target, gameBaseStyle);
+                AddStyleSheet(target, roomLobbyStyle);
+            }
+        }
+
+        private static void AddStyleSheet(VisualElement target, StyleSheet sheet)
+        {
+            if (sheet == null || target.styleSheets.Contains(sheet))
+                return;
+
+            target.styleSheets.Add(sheet);
         }
 
         private void OnDestroy()
         {
             presenter?.SetEnabled(false);
-
-            if (lobbyRoot != null)
-                lobbyRoot.RemoveFromHierarchy();
+            lobbyShell?.RemoveFromHierarchy();
         }
 
         private void OnEnable()
@@ -84,16 +108,13 @@ namespace ShadowInfection.UI.RoomLobby
                 return;
             }
 
-            // Reuse an existing PanelSettings if another UIDocument already exists in the scene.
-            UIDocument[] docs;
 #if UNITY_2023_1_OR_NEWER
-            docs = FindObjectsByType<UIDocument>();
+            var docs = FindObjectsByType<UIDocument>();
 #else
-            docs = FindObjectsOfType<UIDocument>();
+            var docs = FindObjectsOfType<UIDocument>();
 #endif
-            for (int i = 0; i < docs.Length; i++)
+            foreach (var doc in docs)
             {
-                var doc = docs[i];
                 if (doc != null && doc != uiDocument && doc.panelSettings != null)
                 {
                     uiDocument.panelSettings = doc.panelSettings;
@@ -101,8 +122,30 @@ namespace ShadowInfection.UI.RoomLobby
                 }
             }
 
-            // Fallback is convenient for quick testing, but a real PanelSettings asset is recommended.
             uiDocument.panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
         }
+
+#if UNITY_EDITOR
+        private void Reset()
+        {
+            if (roomLobbyUxml == null)
+            {
+                roomLobbyUxml = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                    "Assets/Ui/Components/RoomLobby/RoomLobby.uxml");
+            }
+
+            if (gameBaseStyle == null)
+            {
+                gameBaseStyle = UnityEditor.AssetDatabase.LoadAssetAtPath<StyleSheet>(
+                    "Assets/Ui/GameBase.uss");
+            }
+
+            if (roomLobbyStyle == null)
+            {
+                roomLobbyStyle = UnityEditor.AssetDatabase.LoadAssetAtPath<StyleSheet>(
+                    "Assets/Ui/Components/RoomLobby/RoomLobby.uss");
+            }
+        }
+#endif
     }
 }

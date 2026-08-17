@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 
 public class InGameMenuController : MonoBehaviour
 {
+    private const int MenuSortingOrder = 100;
+
     private UIDocument uiDocument;
     private VisualElement inGameMenuRoot;
     public string LobbySceneName = "LobbyScene";
@@ -18,8 +20,12 @@ public class InGameMenuController : MonoBehaviour
     private void Awake()
     {
         uiDocument = GetComponent<UIDocument>();
+        uiDocument.sortingOrder = MenuSortingOrder;
+
         var rootElement = uiDocument.rootVisualElement;
         inGameMenuRoot = rootElement.Q<VisualElement>("game-menu");
+        inGameMenuRoot.pickingMode = PickingMode.Position;
+        UiGameplayInputGuard.Apply(inGameMenuRoot);
 
         buttonExitGame = inGameMenuRoot.Q<Button>("buttonExitGame");
         buttonReturnToGame = inGameMenuRoot.Q<Button>("buttonReturnToGame");

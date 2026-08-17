@@ -1,12 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase"/>
     <ui:VisualElement name="HostAdminOverlayRoot" picking-mode="Ignore" style="flex-grow: 1; padding-top: 12px; padding-right: 12px; align-items: flex-end; justify-content: flex-start;">
-        <ui:VisualElement name="HostAdminPanel" picking-mode="Position" style="background-color: rgba(0, 0, 0, 0.7); border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; padding-top: 8px; padding-right: 10px; padding-bottom: 8px; padding-left: 10px; min-width: 220px;">
-            <ui:Label text="Host Controls" name="LabelTitle" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 15px; margin-bottom: 4px;" />
-            <ui:Label text="Manager: -" name="LabelManager" style="color: rgb(220, 220, 220); font-size: 13px; margin-bottom: 2px;" />
-            <ui:Label text="Team Switching: -" name="LabelTeamSwitching" style="color: rgb(220, 220, 220); font-size: 13px; margin-bottom: 6px;" />
-            <ui:VisualElement name="ButtonsRow" style="flex-direction: row; gap: 6px;">
-                <ui:Button text="Lock" name="ButtonLockTeamSwitching" style="min-width: 90px;" />
-                <ui:Button text="Unlock" name="ButtonUnlockTeamSwitching" style="min-width: 90px;" />
+        <ui:VisualElement name="HostAdminPanel" picking-mode="Position" class="si-hud-panel" style="min-width: 220px;">
+            <ui:Label text="Host Controls" name="LabelTitle" class="si-body" style="color: rgb(254, 221, 183); font-size: 15px; margin-bottom: 4px;" />
+            <ui:Label text="Manager: -" name="LabelManager" class="si-body" style="font-size: 13px; margin-bottom: 2px;" />
+            <ui:Label text="Team Switching: -" name="LabelTeamSwitching" class="si-body" style="font-size: 13px; margin-bottom: 6px;" />
+            <ui:VisualElement name="ButtonsRow" style="flex-direction: row;">
+                <OrnateButton text="LOCK" name="ButtonLockTeamSwitching" class="si-button si-button--compact" style="min-width: 90px; margin-right: 6px;" />
+                <OrnateButton text="UNLOCK" name="ButtonUnlockTeamSwitching" class="si-button si-button--compact" style="min-width: 90px;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

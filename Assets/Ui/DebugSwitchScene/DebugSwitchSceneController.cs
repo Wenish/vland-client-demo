@@ -29,6 +29,7 @@ public class DebugSwitchSceneController : MonoBehaviour
             Debug.LogWarning("DebugSwitchSceneController: rootVisualElement is null.");
             return;
         }
+        UiGameplayInputGuard.Apply(rootVisualElement);
         ButtonZombieMap = rootVisualElement.Q<Button>("ButtonZombieMap");
         if (ButtonZombieMap == null)
         {
