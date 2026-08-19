@@ -91,9 +91,9 @@ public partial class LoadoutTile : VisualElement
 
         RegisterCallback<ClickEvent>(_ => Clicked?.Invoke(this));
 
-        // hover callbacks for tooltip (mirrors AbilityCooldownElement behavior)
-        RegisterCallback<PointerEnterEvent>(OnPointerEnter);
-        RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+        RegisterCallback<PointerEnterEvent>(OnPointerEnter, TrickleDown.TrickleDown);
+        RegisterCallback<PointerLeaveEvent>(OnPointerLeave, TrickleDown.TrickleDown);
+        RegisterCallback<DetachFromPanelEvent>(_ => ReleaseInteractiveHover());
 
         // Keep square aspect: set height equal to width when layout changes
         RegisterCallback<GeometryChangedEvent>(evt =>
@@ -104,6 +104,8 @@ public partial class LoadoutTile : VisualElement
 
     private void OnPointerEnter(PointerEnterEvent evt)
     {
+        UiCursorRefresh.PushInteractiveHover();
+
         // derive tooltip text: prefer explicit TooltipText, otherwise DisplayName
         var text = string.IsNullOrEmpty(_tooltipText) ? _displayName : _tooltipText;
         if (string.IsNullOrEmpty(text))
@@ -195,10 +197,17 @@ public partial class LoadoutTile : VisualElement
 
     private void OnPointerLeave(PointerLeaveEvent evt)
     {
+        ReleaseInteractiveHover();
+
         if (_runtimeTooltip != null)
         {
             panel.visualTree.Remove(_runtimeTooltip);
             _runtimeTooltip = null;
         }
+    }
+
+    private void ReleaseInteractiveHover()
+    {
+        UiCursorRefresh.PopInteractiveHover();
     }
 }

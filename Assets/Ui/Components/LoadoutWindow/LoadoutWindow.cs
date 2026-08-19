@@ -169,6 +169,9 @@ namespace Vland.UI
             {
                 SetActiveSlot(slot);
             });
+            container.RegisterCallback<PointerEnterEvent>(_ => UiCursorRefresh.PushInteractiveHover(), TrickleDown.TrickleDown);
+            container.RegisterCallback<PointerLeaveEvent>(_ => UiCursorRefresh.PopInteractiveHover(), TrickleDown.TrickleDown);
+            container.RegisterCallback<DetachFromPanelEvent>(_ => UiCursorRefresh.PopInteractiveHover());
         }
 
         private void ApplyGridStyle()

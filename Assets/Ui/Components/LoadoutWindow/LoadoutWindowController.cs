@@ -8,6 +8,8 @@ using Vland.UI;
 [DefaultExecutionOrder(100)]
 public class LoadoutWindowController : MonoBehaviour
 {
+    private const int LoadoutSortingOrder = 50;
+
     public UIDocument uiDocument;
     public VisualTreeAsset loadoutPanelUxml; // can be LoadoutPanel.uxml now
     public StyleSheet loadoutWindowUss;       // existing loadout element styles
@@ -26,6 +28,8 @@ public class LoadoutWindowController : MonoBehaviour
             Debug.LogError("UIDocument missing.");
             return;
         }
+
+        uiDocument.sortingOrder = LoadoutSortingOrder;
 
         var root = uiDocument.rootVisualElement;
         root.pickingMode = PickingMode.Ignore;
@@ -49,7 +53,7 @@ public class LoadoutWindowController : MonoBehaviour
             panelElement.pickingMode = PickingMode.Position;
             UiPointerState.RegisterBlockingElement(panelElement);
             UiGameplayInputGuard.Apply(panelElement);
-            UiCursorRefresh.ScheduleForRoot(panelElement);
+            UiCursorRefresh.ScheduleForRoot(panelElement, LoadoutSortingOrder);
         }
 
         // Initialize selections from saved local loadout before wiring events
