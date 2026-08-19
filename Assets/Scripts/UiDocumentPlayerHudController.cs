@@ -8,6 +8,9 @@ using UnityEngine.UIElements;
 public class UiDocumentPlayerHudController : MonoBehaviour
 {
     public Color castSuccessColor = Color.green;
+    [SerializeField] private Texture2D aimCursorTexture;
+    [SerializeField] private Texture2D hoverCursorTexture;
+    [SerializeField] private Texture2D uiCursorTexture;
     private UIDocument _uiDocument;
     private Label _labelWave;
     private Label _labelRoundStarted;
@@ -53,8 +56,9 @@ public class UiDocumentPlayerHudController : MonoBehaviour
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
-        _uiDocument.rootVisualElement.pickingMode = PickingMode.Ignore;
-        UiGameplayInputGuard.Apply(_uiDocument.rootVisualElement);
+        var root = _uiDocument.rootVisualElement;
+        root.pickingMode = PickingMode.Ignore;
+        UiGameplayInputGuard.Apply(root);
         _labelWave = _uiDocument.rootVisualElement.Q<Label>(name: "labelWave");
         _labelRoundStarted = _uiDocument.rootVisualElement.Q<Label>(name: "labelRoundStarted");
         _labelGold = _uiDocument.rootVisualElement.Q<Label>(name: "labelGold");
@@ -116,8 +120,31 @@ public class UiDocumentPlayerHudController : MonoBehaviour
         _labelStatCritChance = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatCritChance");
         HidePlayerStats();
 
-        var hudBottom = _uiDocument.rootVisualElement.Q(className: "si-hud-bottom");
+        SetPickingIgnoreRecursive(root.Q<VisualElement>("roundInfos"));
+        SetPickingIgnoreRecursive(root.Q<Label>("labelRoundStarted")?.parent);
+        SetPickingIgnoreRecursive(root.Q<CastBar>("playerCastbar"));
+
+        var hudBottom = root.Q(className: "si-hud-bottom");
         SetPickingIgnoreRecursive(hudBottom);
+    }
+
+    void Start()
+    {
+        RegisterCursors();
+        UiCursorRefresh.ScheduleForRoot(_uiDocument.rootVisualElement);
+
+        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        EventManager.Instance.Subscribe<WaveProgressChangedEvent>(OnWaveProgressChangedEvent);
+        EventManager.Instance.Subscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
+    }
+
+    private void RegisterCursors()
+    {
+        if (aimCursorTexture == null && hoverCursorTexture == null && uiCursorTexture == null)
+            return;
+
+        UiCursorRefresh.Configure(aimCursorTexture, hoverCursorTexture, uiCursorTexture);
     }
 
     static void SetPickingIgnoreRecursive(VisualElement element)
@@ -139,16 +166,10 @@ public class UiDocumentPlayerHudController : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-        EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedEvent);
-        EventManager.Instance.Subscribe<WaveProgressChangedEvent>(OnWaveProgressChangedEvent);
-        EventManager.Instance.Subscribe<PlayerGoldChangedEvent>(OnPlayerGoldChangedEvent);
-    }
-
     void OnDestroy()
     {
+        UiCursorRefresh.SetGameplayPointerEnabled(false);
+
         EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
         EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
         EventManager.Instance.Unsubscribe<WaveProgressChangedEvent>(OnWaveProgressChangedEvent);
@@ -449,6 +470,7 @@ public class UiDocumentPlayerHudController : MonoBehaviour
     private void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
     {
         UnbindCurrentPlayerUnit();
+        UiCursorRefresh.SetGameplayPointerEnabled(true);
         _myPlayerUnitController = myPlayerUnitSpawnedEvent.PlayerCharacter;
         _myPlayerUnitWeaponController = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<WeaponController>();
         _myPlayerUnitSkillSystem = myPlayerUnitSpawnedEvent.PlayerCharacter.GetComponent<SkillSystem>();
@@ -475,6 +497,8 @@ public class UiDocumentPlayerHudController : MonoBehaviour
 
     private void UnbindCurrentPlayerUnit()
     {
+        UiCursorRefresh.SetGameplayPointerEnabled(false);
+
         if (_myPlayerUnitController != null)
         {
             _myPlayerUnitController.OnWeaponChange -= OnWeaponChange;
@@ -856,4 +880,27 @@ public class UiDocumentPlayerHudController : MonoBehaviour
             _playerStatsContainer.style.display = DisplayStyle.None;
         }
     }
+
+#if UNITY_EDITOR
+    private void Reset()
+    {
+        if (aimCursorTexture == null)
+        {
+            aimCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Assets/Art/Cursors/CursorPointer_32.png");
+        }
+
+        if (hoverCursorTexture == null)
+        {
+            hoverCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Assets/Art/Cursors/CursorHover_32.png");
+        }
+
+        if (uiCursorTexture == null)
+        {
+            uiCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Assets/Art/Cursors/CursorDefaultAlternativ_32.png");
+        }
+    }
+#endif
 }

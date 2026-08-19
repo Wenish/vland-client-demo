@@ -4,12 +4,16 @@ using UnityEngine.UIElements;
 namespace ShadowInfection.UI.RoomLobby
 {
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-100)]
     public sealed class RoomLobbyController : MonoBehaviour
     {
         [Header("Assets")]
         [SerializeField] private VisualTreeAsset roomLobbyUxml;
         [SerializeField] private StyleSheet gameBaseStyle;
         [SerializeField] private StyleSheet roomLobbyStyle;
+        [SerializeField] private Texture2D aimCursorTexture;
+        [SerializeField] private Texture2D hoverCursorTexture;
+        [SerializeField] private Texture2D uiCursorTexture;
 
         [SerializeField] private PanelSettings panelSettings;
 
@@ -34,8 +38,17 @@ namespace ShadowInfection.UI.RoomLobby
             }
 
             MountLobbyUi();
+            RegisterCursors();
+            UiCursorRefresh.SetGameplayPointerEnabled(false);
+            UiCursorRefresh.ScheduleForRoot(lobbyRoot);
+            UiCursorRefresh.ScheduleForRoot(uiDocument.rootVisualElement);
             view = new RoomLobbyView(lobbyRoot);
             presenter = new MirrorRoomLobbyPresenter(view, refreshIntervalSeconds);
+        }
+
+        private void OnEnable()
+        {
+            presenter?.SetEnabled(true);
         }
 
         private void MountLobbyUi()
@@ -85,15 +98,18 @@ namespace ShadowInfection.UI.RoomLobby
             target.styleSheets.Add(sheet);
         }
 
+        private void RegisterCursors()
+        {
+            if (aimCursorTexture == null && hoverCursorTexture == null && uiCursorTexture == null)
+                return;
+
+            UiCursorRefresh.Configure(aimCursorTexture, hoverCursorTexture, uiCursorTexture);
+        }
+
         private void OnDestroy()
         {
             presenter?.SetEnabled(false);
             lobbyShell?.RemoveFromHierarchy();
-        }
-
-        private void OnEnable()
-        {
-            presenter?.SetEnabled(true);
         }
 
         private void OnDisable()
@@ -153,6 +169,24 @@ namespace ShadowInfection.UI.RoomLobby
             {
                 roomLobbyStyle = UnityEditor.AssetDatabase.LoadAssetAtPath<StyleSheet>(
                     "Assets/Ui/Components/RoomLobby/RoomLobby.uss");
+            }
+
+            if (aimCursorTexture == null)
+            {
+                aimCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    "Assets/Art/Cursors/CursorPointer_32.png");
+            }
+
+            if (hoverCursorTexture == null)
+            {
+                hoverCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    "Assets/Art/Cursors/CursorHover_32.png");
+            }
+
+            if (uiCursorTexture == null)
+            {
+                uiCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    "Assets/Art/Cursors/CursorDefaultAlternativ_32.png");
             }
         }
 #endif

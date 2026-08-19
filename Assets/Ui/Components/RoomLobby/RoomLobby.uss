@@ -1,3 +1,7 @@
+:root {
+    cursor: var(--cursor-ui);
+}
+
 .room-lobby {
     position: absolute;
     left: 0;
@@ -8,6 +12,7 @@
     align-items: flex-start;
     justify-content: flex-start;
     padding: 24px;
+    cursor: var(--cursor-ui);
 }
 
 .room-lobby__panel {

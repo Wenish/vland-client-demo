@@ -34,10 +34,15 @@ namespace ShadowInfection.UI.RoomLobby
                 readyButton.clicked += () => ReadyButtonClicked?.Invoke();
         }
 
+        private bool isVisible;
+
         public void SetVisible(bool visible)
         {
-            if (root != null)
-                root.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            if (root == null || isVisible == visible)
+                return;
+
+            isVisible = visible;
+            root.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public void SetSubtitle(string text)

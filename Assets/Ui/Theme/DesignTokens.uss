@@ -22,9 +22,9 @@
     --font-button: url("project://database/Assets/Fonts/Cinzel/Cinzel-Bold.ttf?fileID=12800000&guid=a2b3c4d5e6f7081920a1b2c3d4e5f602&type=3#Cinzel-Bold");
     --font-body: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
     --font-body-bold: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
-    --cursor-pointer: url("project://database/Assets/Art/Cursors/CursorPointer_32.png?fileID=2800000&guid=e6d3e27aaa79942b98e995d56accf2b0&type=3#CursorPointer_32");
-    --cursor-ui: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32");
-    --cursor-hover: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32");
+    --cursor-pointer: url("project://database/Assets/Art/Cursors/CursorPointer_32.png?fileID=2800000&guid=e6d3e27aaa79942b98e995d56accf2b0&type=3#CursorPointer_32") 16 16;
+    --cursor-ui: url("project://database/Assets/Art/Cursors/CursorDefaultAlternativ_32.png?fileID=2800000&guid=7dd2a1cc508c64aa891e32dd530a2437&type=3#CursorDefaultAlternativ_32") 0 0;
+    --cursor-hover: url("project://database/Assets/Art/Cursors/CursorHover_32.png?fileID=2800000&guid=5f8252ad3e9b547c1be980e2638f433c&type=3#CursorHover_32") 0 0;
     --icon-play: url("project://database/Assets/Art/Ui/Icons/icon-play.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea2&type=3#icon-play");
     --icon-settings: url("project://database/Assets/Art/Ui/Icons/icon-settings.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea3&type=3#icon-settings");
     --icon-credits: url("project://database/Assets/Art/Ui/Icons/icon-credits.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea4&type=3#icon-credits");

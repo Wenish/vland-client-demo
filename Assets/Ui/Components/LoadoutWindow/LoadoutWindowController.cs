@@ -49,6 +49,7 @@ public class LoadoutWindowController : MonoBehaviour
             panelElement.pickingMode = PickingMode.Position;
             UiPointerState.RegisterBlockingElement(panelElement);
             UiGameplayInputGuard.Apply(panelElement);
+            UiCursorRefresh.ScheduleForRoot(panelElement);
         }
 
         // Initialize selections from saved local loadout before wiring events

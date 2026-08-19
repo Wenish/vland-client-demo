@@ -6,19 +6,15 @@
 .si-round-stats,
 .si-round-box,
 .si-round-stat,
-.cast-bar {
+.cast-bar,
+.si-vitals,
+.si-vital-row,
+.si-player-stats,
+.si-player-stats__label,
+.si-round-infos,
+.si-round-title,
+.si-round-completion-label {
     cursor: var(--cursor-ui);
-}
-
-.si-hud-bottom,
-.si-hud-bottom Label,
-.si-hud-bottom VisualElement,
-.si-hud-bottom .si-gold,
-.si-hud-bottom .si-vitals,
-.si-hud-bottom .si-vital-row,
-.si-hud-bottom .si-player-stats,
-.si-hud-bottom .ability-container {
-    cursor: var(--cursor-pointer);
 }
 
 .si-hud-bottom {

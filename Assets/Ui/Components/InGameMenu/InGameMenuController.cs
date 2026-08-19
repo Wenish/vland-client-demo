@@ -47,6 +47,7 @@ public class InGameMenuController : MonoBehaviour
         ShowButton(buttonLeaveServer, isOnlyClient);
         
         UiPointerState.RegisterBlockingElement(inGameMenuRoot);
+        UiCursorRefresh.ScheduleForRoot(inGameMenuRoot);
 
         buttonExitGame.clicked += ExitGame;
         buttonReturnToGame.clicked += CloseMenu;

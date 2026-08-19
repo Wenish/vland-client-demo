@@ -9777,6 +9777,9 @@ MonoBehaviour:
   roomLobbyUxml: {fileID: 9197481963319205126, guid: c88e826af6f228e418ebb9f2494f8188, type: 3}
   gameBaseStyle: {fileID: 7433441132597879392, guid: b63ce31c77e10af4eab5a904fdde83f4, type: 3}
   roomLobbyStyle: {fileID: 7433441132597879392, guid: 511be4b3819089147be469f5b687b325, type: 3}
+  aimCursorTexture: {fileID: 2800000, guid: e6d3e27aaa79942b98e995d56accf2b0, type: 3}
+  hoverCursorTexture: {fileID: 2800000, guid: 5f8252ad3e9b547c1be980e2638f433c, type: 3}
+  uiCursorTexture: {fileID: 2800000, guid: 7dd2a1cc508c64aa891e32dd530a2437, type: 3}
   panelSettings: {fileID: 11400000, guid: 4430eaa22e4440149b9be804527f4244, type: 2}
   refreshIntervalSeconds: 0.2
 --- !u!114 &1381927146
