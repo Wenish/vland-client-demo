@@ -13,17 +13,18 @@ public partial class OrnateButton : Button
         focusable = false;
         AddToClassList(UssClassName);
 
-        RegisterCallback<PointerEnterEvent>(OnPointerEnter);
-        RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+        RegisterCallback<PointerEnterEvent>(OnPointerEnter, TrickleDown.TrickleDown);
+        RegisterCallback<PointerLeaveEvent>(OnPointerLeave, TrickleDown.TrickleDown);
         RegisterCallback<ClickEvent>(OnClicked, TrickleDown.TrickleDown);
+        RegisterCallback<DetachFromPanelEvent>(_ => ReleaseInteractiveHover());
     }
 
     private void OnPointerEnter(PointerEnterEvent evt)
     {
+        UiCursorRefresh.PushInteractiveHover();
+
         if (_hoverPlayed)
-        {
             return;
-        }
 
         _hoverPlayed = true;
         PlaySound("UiButtonHover");
@@ -31,12 +32,19 @@ public partial class OrnateButton : Button
 
     private void OnPointerLeave(PointerLeaveEvent evt)
     {
-        _hoverPlayed = false;
+        ReleaseInteractiveHover();
     }
 
     private void OnClicked(ClickEvent evt)
     {
+        ReleaseInteractiveHover();
         PlaySound("UiButtonClick");
+    }
+
+    private void ReleaseInteractiveHover()
+    {
+        _hoverPlayed = false;
+        UiCursorRefresh.PopInteractiveHover();
     }
 
     private static void PlaySound(string soundName)

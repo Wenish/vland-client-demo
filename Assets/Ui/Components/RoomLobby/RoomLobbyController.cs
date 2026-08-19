@@ -7,6 +7,7 @@ namespace ShadowInfection.UI.RoomLobby
     [DefaultExecutionOrder(-100)]
     public sealed class RoomLobbyController : MonoBehaviour
     {
+        private const int LobbySortingOrder = 50;
         [Header("Assets")]
         [SerializeField] private VisualTreeAsset roomLobbyUxml;
         [SerializeField] private StyleSheet gameBaseStyle;
@@ -28,6 +29,7 @@ namespace ShadowInfection.UI.RoomLobby
         private void Awake()
         {
             uiDocument = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
+            uiDocument.sortingOrder = LobbySortingOrder;
             EnsurePanelSettings();
 
             if (roomLobbyUxml == null)
@@ -40,8 +42,8 @@ namespace ShadowInfection.UI.RoomLobby
             MountLobbyUi();
             RegisterCursors();
             UiCursorRefresh.SetGameplayPointerEnabled(false);
-            UiCursorRefresh.ScheduleForRoot(lobbyRoot);
-            UiCursorRefresh.ScheduleForRoot(uiDocument.rootVisualElement);
+            UiCursorRefresh.ScheduleForRoot(lobbyRoot, LobbySortingOrder);
+            UiCursorRefresh.ScheduleForRoot(uiDocument.rootVisualElement, LobbySortingOrder);
             view = new RoomLobbyView(lobbyRoot);
             presenter = new MirrorRoomLobbyPresenter(view, refreshIntervalSeconds);
         }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 // Drives hardware cursors for gameplay (pointer), interactive UI (hover), and
@@ -12,18 +14,16 @@ public static class UiCursorRefresh
     public static readonly Vector2 HoverHotspot = Vector2.zero;
     public static readonly Vector2 DefaultHotspot = Vector2.zero;
 
-    private const int PointerPriority = 0;
-    private const int DefaultPriority = 1;
-    private const int HoverPriority = 2;
-
     private static Texture2D _pointerCursor;
     private static Texture2D _hoverCursor;
     private static Texture2D _defaultCursor;
 
     private static bool _gameplayPointerEnabled;
+    private static int _interactiveHoverDepth;
 
     private static readonly HashSet<IPanel> HookedPanels = new HashSet<IPanel>();
     private static readonly HashSet<VisualElement> AttachedRoots = new HashSet<VisualElement>();
+    private static readonly Dictionary<IPanel, int> PanelSortingOrders = new Dictionary<IPanel, int>();
 
     public static void Configure(Texture2D pointerCursor, Texture2D hoverCursor, Texture2D defaultCursor)
     {
@@ -45,7 +45,44 @@ public static class UiCursorRefresh
         ApplyHardwareCursor();
     }
 
-    public static void ScheduleForRoot(VisualElement root)
+    public static void PushInteractiveHover()
+    {
+        _interactiveHoverDepth++;
+        ApplyHardwareCursor();
+    }
+
+    public static void PopInteractiveHover()
+    {
+        if (_interactiveHoverDepth > 0)
+            _interactiveHoverDepth--;
+
+        ApplyHardwareCursor();
+    }
+
+    public static void ResetInteractiveHover()
+    {
+        _interactiveHoverDepth = 0;
+        ApplyHardwareCursor();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void SubscribeSceneEvents()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ResetInteractiveHover();
+    }
+
+    public static void Refresh()
+    {
+        ApplyHardwareCursor();
+    }
+
+    public static void ScheduleForRoot(VisualElement root, int sortingOrder = 0)
     {
         if (root == null || !AttachedRoots.Add(root))
             return;
@@ -57,6 +94,9 @@ public static class UiCursorRefresh
             var panel = root.panel;
             if (panel == null)
                 return;
+
+            if (!PanelSortingOrders.TryGetValue(panel, out var existing) || sortingOrder > existing)
+                PanelSortingOrders[panel] = sortingOrder;
 
             ApplyHardwareCursor();
             HookPanel(panel);
@@ -99,6 +139,13 @@ public static class UiCursorRefresh
 
     private static void ApplyHardwareCursor()
     {
+        if (_interactiveHoverDepth > 0)
+        {
+            if (_hoverCursor != null)
+                UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
+            return;
+        }
+
         ApplyHardwareCursorForPick(PickBestElementAtMouse());
     }
 
@@ -108,38 +155,22 @@ public static class UiCursorRefresh
             ? Mouse.current.position.ReadValue()
             : new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
 
-        VisualElement best = null;
-        var bestPriority = -1;
-
-        foreach (var panel in HookedPanels)
+        foreach (var panel in HookedPanels
+                     .Where(panel => panel?.visualTree != null)
+                     .OrderByDescending(GetPanelSortingOrder))
         {
-            if (panel?.visualTree == null)
-                continue;
-
             Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(panel, screenPos);
             var picked = panel.Pick(panelPos);
-            if (picked == null)
-                continue;
-
-            var priority = GetCursorPriority(picked);
-            if (priority > bestPriority)
-            {
-                bestPriority = priority;
-                best = picked;
-            }
+            if (picked != null)
+                return picked;
         }
 
-        return best;
+        return null;
     }
 
-    private static int GetCursorPriority(VisualElement picked)
+    private static int GetPanelSortingOrder(IPanel panel)
     {
-        return ResolveCursorKind(picked) switch
-        {
-            CursorKind.Hover => HoverPriority,
-            CursorKind.Default => DefaultPriority,
-            _ => PointerPriority,
-        };
+        return PanelSortingOrders.TryGetValue(panel, out var sortingOrder) ? sortingOrder : 0;
     }
 
     private static void ApplyHardwareCursorForPick(VisualElement picked)
@@ -183,14 +214,16 @@ public static class UiCursorRefresh
         if (element is Button or TextField or Toggle or Slider or DropdownField or IntegerField or FloatField)
             return true;
 
-        if (element is AbilityCooldownElement or LoadoutTile)
+        if (element is OrnateButton or AbilityCooldownElement or LoadoutTile)
             return true;
 
         return HasAnyClass(
             element,
             "room-lobby__ready-button",
             "si-button",
+            "si-button__icon",
             "unity-button",
+            "unity-button__image",
             "ability-container",
             "loadout-tile",
             "loadout-tile__icon",
