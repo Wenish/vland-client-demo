@@ -30,49 +30,55 @@
     </ui:VisualElement>
     <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; flex-direction: column; justify-content: flex-end; align-items: center; flex-basis: 50%;">
         <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" icon-texture="project://database/Assets/Art/Skills/monk_hands.jpg?fileID=2800000&amp;guid=32e55def1e718487e909fb7642359dde&amp;type=3#monk_hands" progress="0.84" text-time="4.2s" text-name="Healing Hands" name="playerCastbar"/>
-        <ui:VisualElement name="playerStatsContainer" style="flex-direction: row; justify-content: center; align-items: center; margin-bottom: 8px; background-color: rgba(2, 19, 52, 0.78); padding-top: 4px; padding-bottom: 4px; padding-left: 8px; padding-right: 8px; display: none;">
-            <ui:VisualElement style="flex-direction: column; margin-right: 8px;">
-                <ui:Label name="labelStatAttackPower" text="ATK: 0" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-                <ui:Label name="labelStatAbilityPower" text="AP: 0" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-                <ui:Label name="labelStatAttackSpeed" text="AS: 1.00x" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-                <ui:Label name="labelStatCritChance" text="CRIT: 0%" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-            </ui:VisualElement>
-            <ui:VisualElement style="flex-direction: column;">
-                <ui:Label name="labelStatMovementSpeed" text="SPD: 5.0" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-                <ui:Label name="labelStatDamageReduction" text="DR: 0%" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-                <ui:Label name="labelStatArmor" text="ARM: 0" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-                <ui:Label name="labelStatMagicResist" text="MR: 0" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
-            </ui:VisualElement>
-        </ui:VisualElement>
-        <ui:VisualElement picking-mode="Position" class="si-skillbar">
-            <ui:VisualElement class="si-gold">
-                <ui:VisualElement class="si-gold__icon"/>
-                <ui:Label text="0" name="labelGold" class="si-gold__value"/>
-            </ui:VisualElement>
-            <ui:VisualElement name="playerVitalsContainer" class="si-vitals">
-                <ui:VisualElement name="playerShieldContainer" class="si-vital-row">
-                    <ui:VisualElement class="si-vital-row__icon si-vital-row__icon--shield"/>
-                    <ui:Label text="Shield" name="labelPlayerShieldTitle" style="display: none;"/>
-                    <ui:VisualElement class="si-vital-track">
-                        <ui:VisualElement name="playerShieldFill" class="si-vital-fill--shield" style="width: 0%;"/>
-                    </ui:VisualElement>
-                    <ui:Label text="0 / 0" name="labelPlayerShieldValue" class="si-vital-value" style="color: rgb(116, 212, 255);"/>
+        <ui:VisualElement picking-mode="Ignore" class="si-hud-bottom">
+            <ui:VisualElement name="playerStatsContainer" class="si-player-stats" style="display: none;">
+                <ui:VisualElement class="si-player-stats__column si-player-stats__column--left">
+                    <ui:Label name="labelStatAttackPower" text="ATK: 0" class="si-player-stats__label"/>
+                    <ui:Label name="labelStatAbilityPower" text="AP: 0" class="si-player-stats__label"/>
+                    <ui:Label name="labelStatAttackSpeed" text="AS: 1.00x" class="si-player-stats__label"/>
+                    <ui:Label name="labelStatCritChance" text="CRIT: 0%" class="si-player-stats__label"/>
                 </ui:VisualElement>
-                <ui:VisualElement name="playerHealthContainer" class="si-vital-row" style="margin-bottom: 0;">
-                    <ui:VisualElement class="si-vital-row__icon si-vital-row__icon--health"/>
-                    <ui:Label text="Health" name="labelPlayerHealthTitle" style="display: none;"/>
-                    <ui:VisualElement class="si-vital-track si-vital-track--health">
-                        <ui:VisualElement name="playerHealthFill" class="si-vital-fill--health" style="width: 100%;"/>
-                    </ui:VisualElement>
-                    <ui:Label text="0 / 0" name="labelPlayerHealthValue" class="si-vital-value"/>
+                <ui:VisualElement class="si-player-stats__column">
+                    <ui:Label name="labelStatMovementSpeed" text="SPD: 5.0" class="si-player-stats__label"/>
+                    <ui:Label name="labelStatDamageReduction" text="DR: 0%" class="si-player-stats__label"/>
+                    <ui:Label name="labelStatArmor" text="ARM: 0" class="si-player-stats__label"/>
+                    <ui:Label name="labelStatMagicResist" text="MR: 0" class="si-player-stats__label"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <AbilityCooldownElement name="skillPassive" cooldown-progress="-0.3" cooldown-remaining="-0.07" enabled="true" icon-texture="project://database/Assets/Art/Skills/passive_poison.jpg?fileID=2800000&amp;guid=5218f22c7f2df4c9a8d065e7d2ac703a&amp;type=3#passive_poison" style="width: 36px; height: 36px; margin-right: 6px;"/>
-            <AbilityCooldownElement name="baseAttack" icon-texture="project://database/Assets/Art/Skills/sword_attack.jpg?fileID=2800000&amp;guid=fa0c47ba7d6e44ecabea895caf7b3660&amp;type=3#sword_attack" cooldown-progress="26.4" cooldown-remaining="43.3" enabled="true" activation-key="LM" style="margin-right: 6px;"/>
-            <AbilityCooldownElement name="skillNormal1" icon-texture="project://database/Assets/Art/Skills/assassin_dash.jpg?fileID=2800000&amp;guid=3b9ec3ab04de441fcbdfbdfc65024837&amp;type=3#assassin_dash" cooldown-progress="29" cooldown-remaining="3" enabled="true" activation-key="Q" style="margin-right: 6px;"/>
-            <AbilityCooldownElement name="skillNormal2" icon-texture="project://database/Assets/Art/Skills/ritual_ghost.jpg?fileID=2800000&amp;guid=ffbe089e38ca045e19c7b110ff1c2f0b&amp;type=3#ritual_ghost" cooldown-progress="-0.3" cooldown-remaining="0" enabled="true" activation-key="E" style="margin-right: 6px;"/>
-            <AbilityCooldownElement name="skillNormal3" icon-texture="project://database/Assets/Art/Skills/monk_force_shield.jpg?fileID=2800000&amp;guid=8c331e79808994765a52dbeb2b7ad260&amp;type=3#monk_force_shield" cooldown-progress="58" cooldown-remaining="5" enabled="true" activation-key="C" style="margin-right: 6px;"/>
-            <AbilityCooldownElement name="skillUltimate" cooldown-progress="-0.3" cooldown-remaining="-0.07" enabled="true" icon-texture="project://database/Assets/Art/Skills/ritual_ghost_healing.jpg?fileID=2800000&amp;guid=29a96695c13274ef5b2ec61422d1b054&amp;type=3#ritual_ghost_healing" activation-key="X" class="ability-container--ultimate"/>
+            <ui:VisualElement class="si-hud-main">
+                    <ui:VisualElement class="si-gold si-gold--compact">
+                        <ui:VisualElement class="si-gold__icon"/>
+                        <ui:Label text="0" name="labelGold" class="si-gold__value"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="si-hud-combat">
+                    <ui:VisualElement name="playerVitalsContainer" class="si-vitals">
+                        <ui:VisualElement name="playerShieldContainer" class="si-vital-row">
+                            <ui:Label text="Shield" name="labelPlayerShieldTitle" style="display: none;"/>
+                            <ui:VisualElement class="si-vital-track">
+                                <ui:VisualElement name="playerShieldFill" class="si-vital-fill--shield" style="width: 0%;"/>
+                                <ui:VisualElement class="si-vital-row__icon si-vital-row__icon--shield si-vital-bar-icon"/>
+                                <ui:Label text="0 / 0" name="labelPlayerShieldValue" class="si-vital-value si-vital-value--overlay si-vital-value--shield"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="playerHealthContainer" class="si-vital-row si-vital-row--health">
+                            <ui:Label text="Health" name="labelPlayerHealthTitle" style="display: none;"/>
+                            <ui:VisualElement class="si-vital-track si-vital-track--health">
+                                <ui:VisualElement name="playerHealthFill" class="si-vital-fill--health" style="width: 100%;"/>
+                                <ui:VisualElement class="si-vital-row__icon si-vital-row__icon--health si-vital-bar-icon"/>
+                                <ui:Label text="0 / 0" name="labelPlayerHealthValue" class="si-vital-value si-vital-value--overlay"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="si-skills-row">
+                        <AbilityCooldownElement name="skillPassive" cooldown-progress="-0.3" cooldown-remaining="-0.07" enabled="true" icon-texture="project://database/Assets/Art/Skills/passive_poison.jpg?fileID=2800000&amp;guid=5218f22c7f2df4c9a8d065e7d2ac703a&amp;type=3#passive_poison" class="si-skill-passive" style="width: 36px; height: 36px; margin-right: 6px;"/>
+                        <AbilityCooldownElement name="baseAttack" icon-texture="project://database/Assets/Art/Skills/sword_attack.jpg?fileID=2800000&amp;guid=fa0c47ba7d6e44ecabea895caf7b3660&amp;type=3#sword_attack" cooldown-progress="26.4" cooldown-remaining="43.3" enabled="true" activation-key="LM" style="margin-right: 6px;"/>
+                        <AbilityCooldownElement name="skillNormal1" icon-texture="project://database/Assets/Art/Skills/assassin_dash.jpg?fileID=2800000&amp;guid=3b9ec3ab04de441fcbdfbdfc65024837&amp;type=3#assassin_dash" cooldown-progress="29" cooldown-remaining="3" enabled="true" activation-key="Q" style="margin-right: 6px;"/>
+                        <AbilityCooldownElement name="skillNormal2" icon-texture="project://database/Assets/Art/Skills/ritual_ghost.jpg?fileID=2800000&amp;guid=ffbe089e38ca045e19c7b110ff1c2f0b&amp;type=3#ritual_ghost" cooldown-progress="-0.3" cooldown-remaining="0" enabled="true" activation-key="E" style="margin-right: 6px;"/>
+                        <AbilityCooldownElement name="skillNormal3" icon-texture="project://database/Assets/Art/Skills/monk_force_shield.jpg?fileID=2800000&amp;guid=8c331e79808994765a52dbeb2b7ad260&amp;type=3#monk_force_shield" cooldown-progress="58" cooldown-remaining="5" enabled="true" activation-key="C" style="margin-right: 6px;"/>
+                        <AbilityCooldownElement name="skillUltimate" cooldown-progress="-0.3" cooldown-remaining="-0.07" enabled="true" icon-texture="project://database/Assets/Art/Skills/ritual_ghost_healing.jpg?fileID=2800000&amp;guid=29a96695c13274ef5b2ec61422d1b054&amp;type=3#ritual_ghost_healing" activation-key="X" class="ability-container--ultimate"/>
+                    </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>

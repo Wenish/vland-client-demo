@@ -115,6 +115,28 @@ public class UiDocumentPlayerHudController : MonoBehaviour
         _labelStatMagicResist = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatMagicResist");
         _labelStatCritChance = _uiDocument.rootVisualElement.Q<Label>(name: "labelStatCritChance");
         HidePlayerStats();
+
+        var hudBottom = _uiDocument.rootVisualElement.Q(className: "si-hud-bottom");
+        SetPickingIgnoreRecursive(hudBottom);
+    }
+
+    static void SetPickingIgnoreRecursive(VisualElement element)
+    {
+        if (element == null)
+        {
+            return;
+        }
+
+        if (element is AbilityCooldownElement)
+        {
+            return;
+        }
+
+        element.pickingMode = PickingMode.Ignore;
+        foreach (var child in element.Children())
+        {
+            SetPickingIgnoreRecursive(child);
+        }
     }
 
     void Start()

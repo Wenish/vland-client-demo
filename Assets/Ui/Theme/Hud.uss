@@ -3,8 +3,6 @@
 }
 
 .si-gold,
-.si-vitals,
-.si-vital-row,
 .si-round-stats,
 .si-round-box,
 .si-round-stat,
@@ -12,16 +10,84 @@
     cursor: var(--cursor-ui);
 }
 
-.si-skillbar {
+.si-hud-bottom,
+.si-hud-bottom Label,
+.si-hud-bottom VisualElement,
+.si-hud-bottom .si-gold,
+.si-hud-bottom .si-vitals,
+.si-hud-bottom .si-vital-row,
+.si-hud-bottom .si-player-stats,
+.si-hud-bottom .ability-container {
+    cursor: var(--cursor-pointer);
+}
+
+.si-hud-bottom {
     flex-direction: row;
     align-items: flex-end;
     justify-content: center;
     padding-bottom: 18px;
-    cursor: var(--cursor-ui);
 }
 
-.si-skillbar .ability-container {
-    cursor: var(--cursor-hover);
+.si-hud-main {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.si-hud-combat {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.si-skill-passive {
+    margin-bottom: 10px;
+}
+
+.si-skills-row {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.si-player-stats {
+    flex-direction: row;
+    align-items: flex-start;
+    align-self: flex-end;
+    margin-right: 16px;
+    margin-bottom: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: rgba(2, 19, 52, 0.72);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.55);
+    border-right-color: rgba(202, 159, 108, 0.55);
+    border-top-color: rgba(202, 159, 108, 0.55);
+    border-bottom-color: rgba(202, 159, 108, 0.55);
+}
+
+.si-player-stats__column {
+    flex-direction: column;
+}
+
+.si-player-stats__column--left {
+    margin-right: 8px;
+}
+
+.si-player-stats__label {
+    font-size: 11px;
+    color: rgb(255, 244, 231);
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
 }
 
 .si-gold {
@@ -43,6 +109,21 @@
     border-bottom-color: rgba(202, 159, 108, 0.55);
 }
 
+.si-gold--compact {
+    align-self: flex-start;
+    margin-right: 0;
+    margin-bottom: 4px;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
 .si-gold__icon {
     width: 18px;
     height: 18px;
@@ -58,34 +139,35 @@
 }
 
 .si-vitals {
-    width: 280px;
-    margin-right: 14px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 8px;
-    padding-right: 8px;
-    background-color: rgba(2, 19, 52, 0.72);
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgba(202, 159, 108, 0.7);
-    border-right-color: rgba(202, 159, 108, 0.7);
-    border-top-color: rgba(202, 159, 108, 0.7);
-    border-bottom-color: rgba(202, 159, 108, 0.7);
+    flex-direction: column;
+    align-self: stretch;
+    width: 100%;
+    margin-bottom: 4px;
 }
 
 .si-vital-row {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 4px;
+    align-self: stretch;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.si-vital-row--health {
+    margin-bottom: 0;
 }
 
 .si-vital-row__icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 6px;
+    width: 14px;
+    height: 14px;
     -unity-background-scale-mode: scale-to-fit;
+}
+
+.si-vital-bar-icon {
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    translate: 0 -50%;
 }
 
 .si-vital-row__icon--shield {
@@ -97,8 +179,10 @@
 }
 
 .si-vital-track {
+    position: relative;
     flex-grow: 1;
-    height: 12px;
+    width: 100%;
+    height: 16px;
     background-color: rgba(0, 4, 10, 0.92);
     overflow: hidden;
     border-top-width: 1px;
@@ -112,26 +196,53 @@
 }
 
 .si-vital-track--health {
-    height: 14px;
+    height: 18px;
 }
 
 .si-vital-fill--shield {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
     height: 100%;
     background-color: rgb(116, 212, 255);
 }
 
 .si-vital-fill--health {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
     height: 100%;
     background-color: rgb(0, 166, 62);
 }
 
 .si-vital-value {
-    min-width: 64px;
-    margin-left: 6px;
     -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
-    font-size: 12px;
+    font-size: 10px;
     color: rgb(255, 244, 231);
-    -unity-text-align: middle-right;
+}
+
+.si-vital-value--overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    -unity-text-align: middle-center;
+    text-shadow: 0 0 3px rgb(0, 0, 0);
+}
+
+.si-vital-value--shield {
+    color: rgb(255, 244, 231);
 }
 
 .si-round-infos {
