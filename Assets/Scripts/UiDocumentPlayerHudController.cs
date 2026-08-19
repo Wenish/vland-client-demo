@@ -53,6 +53,7 @@ public class UiDocumentPlayerHudController : MonoBehaviour
     void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
+        _uiDocument.rootVisualElement.pickingMode = PickingMode.Ignore;
         UiGameplayInputGuard.Apply(_uiDocument.rootVisualElement);
         _labelWave = _uiDocument.rootVisualElement.Q<Label>(name: "labelWave");
         _labelRoundStarted = _uiDocument.rootVisualElement.Q<Label>(name: "labelRoundStarted");

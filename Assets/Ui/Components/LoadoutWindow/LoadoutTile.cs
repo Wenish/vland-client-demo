@@ -86,6 +86,7 @@ public partial class LoadoutTile : VisualElement
         _iconEl.style.flexGrow = 1;
         _iconEl.style.width = Length.Percent(100);
         _iconEl.style.height = Length.Percent(100);
+        _iconEl.pickingMode = PickingMode.Ignore;
         Add(_iconEl);
 
         RegisterCallback<ClickEvent>(_ => Clicked?.Invoke(this));
@@ -143,6 +144,7 @@ public partial class LoadoutTile : VisualElement
             }
         };
         _runtimeTooltip.enableRichText = true;
+        _runtimeTooltip.pickingMode = PickingMode.Ignore;
         _runtimeTooltip.text = text;
         panel.visualTree.Add(_runtimeTooltip);
         _runtimeTooltip.RegisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged);

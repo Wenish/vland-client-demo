@@ -41,10 +41,12 @@ namespace ShadowInfection.UI.RoomLobby
         private void MountLobbyUi()
         {
             var documentRoot = uiDocument.rootVisualElement;
+            documentRoot.pickingMode = PickingMode.Ignore;
 
             lobbyShell?.RemoveFromHierarchy();
 
             lobbyShell = roomLobbyUxml.Instantiate();
+            lobbyShell.pickingMode = PickingMode.Ignore;
             lobbyShell.style.flexGrow = 1;
             lobbyShell.style.width = Length.Percent(100);
             lobbyShell.style.height = Length.Percent(100);
@@ -54,6 +56,13 @@ namespace ShadowInfection.UI.RoomLobby
             documentRoot.Add(lobbyShell);
 
             lobbyRoot = lobbyShell.Q<VisualElement>("roomLobbyRoot") ?? lobbyShell;
+            lobbyRoot.pickingMode = PickingMode.Ignore;
+
+            var lobbyPanel = lobbyRoot.Q<VisualElement>("roomLobbyPanel");
+            if (lobbyPanel != null)
+            {
+                lobbyPanel.pickingMode = PickingMode.Position;
+            }
         }
 
         private void ApplyStyleSheets(params VisualElement[] targets)

@@ -250,6 +250,7 @@ public partial class AbilityCooldownElement : VisualElement
             }
         };
         _runtimeTooltip.enableRichText = true;
+        _runtimeTooltip.pickingMode = PickingMode.Ignore;
         _runtimeTooltip.text = _tooltipText;
         panel.visualTree.Add(_runtimeTooltip);
         _runtimeTooltip.RegisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged);

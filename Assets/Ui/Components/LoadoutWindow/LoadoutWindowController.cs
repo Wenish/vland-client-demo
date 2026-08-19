@@ -28,6 +28,7 @@ public class LoadoutWindowController : MonoBehaviour
         }
 
         var root = uiDocument.rootVisualElement;
+        root.pickingMode = PickingMode.Ignore;
         root.styleSheets.Add(loadoutWindowUss);
         if (loadoutPanelUss != null) root.styleSheets.Add(loadoutPanelUss);
         if (loadoutPanelUxml != null)
@@ -43,8 +44,12 @@ public class LoadoutWindowController : MonoBehaviour
         }
 
         var panelElement = root.Q<VisualElement>(name: "LoadoutPanel");
-        UiPointerState.RegisterBlockingElement(panelElement);
-        UiGameplayInputGuard.Apply(panelElement);
+        if (panelElement != null)
+        {
+            panelElement.pickingMode = PickingMode.Position;
+            UiPointerState.RegisterBlockingElement(panelElement);
+            UiGameplayInputGuard.Apply(panelElement);
+        }
 
         // Initialize selections from saved local loadout before wiring events
         TryInitializeFromSavedLoadout();

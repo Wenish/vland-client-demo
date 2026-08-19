@@ -1,8 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
     <Style src="project://database/Assets/Ui/Components/RoomLobby/RoomLobby.uss?fileID=7433441132597879392&amp;guid=511be4b3819089147be469f5b687b325&amp;type=3#RoomLobby" />
-    <ui:VisualElement name="roomLobbyRoot" class="room-lobby">
-        <ui:VisualElement name="roomLobbyPanel" class="room-lobby__panel">
+    <ui:VisualElement name="roomLobbyRoot" picking-mode="Ignore" class="room-lobby">
+        <ui:VisualElement name="roomLobbyPanel" picking-mode="Position" class="room-lobby__panel">
             <ui:Label name="title" text="Room" class="room-lobby__title" />
             <ui:Label name="subtitle" text="Waiting for players…" class="room-lobby__subtitle" />
             <ui:Label text="Players" class="room-lobby__section-title" />

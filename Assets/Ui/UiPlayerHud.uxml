@@ -3,7 +3,7 @@
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase"/>
     <Style src="project://database/Assets/Ui/Theme/Hud.uss?fileID=7433441132597879392&amp;guid=d1a1b2c3d4e5f60718293a4b5c6d7e94&amp;type=3#Hud"/>
     <Style src="project://database/Assets/Ui/Components/AbilityCooldownElement.uss?fileID=7433441132597879392&amp;guid=23cbcf49461e14045b9699d942f91a5e&amp;type=3#AbilityCooldownElement"/>
-    <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-basis: 50%; align-items: center; justify-content: center;">
+    <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-basis: 50%; align-items: center; justify-content: center;">
         <ui:Label text="Round&#10;1" name="labelRoundStarted" class="si-title" style="white-space: nowrap; -unity-text-align: upper-center; font-size: 64px; color: rgb(255, 244, 231);"/>
     </ui:VisualElement>
     <ui:VisualElement name="roundInfos" class="si-round-infos" picking-mode="Ignore">
@@ -28,7 +28,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: column; justify-content: flex-end; align-items: center; flex-basis: 50%;">
+    <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; flex-direction: column; justify-content: flex-end; align-items: center; flex-basis: 50%;">
         <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" icon-texture="project://database/Assets/Art/Skills/monk_hands.jpg?fileID=2800000&amp;guid=32e55def1e718487e909fb7642359dde&amp;type=3#monk_hands" progress="0.84" text-time="4.2s" text-name="Healing Hands" name="playerCastbar"/>
         <ui:VisualElement name="playerStatsContainer" style="flex-direction: row; justify-content: center; align-items: center; margin-bottom: 8px; background-color: rgba(2, 19, 52, 0.78); padding-top: 4px; padding-bottom: 4px; padding-left: 8px; padding-right: 8px; display: none;">
             <ui:VisualElement style="flex-direction: column; margin-right: 8px;">
@@ -44,7 +44,7 @@
                 <ui:Label name="labelStatMagicResist" text="MR: 0" class="si-body" style="color: rgb(255, 244, 231); font-size: 12px;"/>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement class="si-skillbar">
+        <ui:VisualElement picking-mode="Position" class="si-skillbar">
             <ui:VisualElement class="si-gold">
                 <ui:VisualElement class="si-gold__icon"/>
                 <ui:Label text="0" name="labelGold" class="si-gold__value"/>

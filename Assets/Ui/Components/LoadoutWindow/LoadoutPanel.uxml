@@ -1,10 +1,10 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
     <Style src="project://database/Assets/Ui/Components/LoadoutWindow/LoadoutPanel.uss?fileID=7433441132597879392&amp;guid=944f6fbfff0544f328370fe0becc3d5e&amp;type=3#LoadoutPanel" />
-    <ui:VisualElement picking-mode="Ignore" class="loadout-container" style="justify-content: flex-start;">
-        <ui:VisualElement style="flex-grow: 0; flex-basis: 50%;" />
-        <ui:VisualElement name="LoadoutPanel" class="loadout-panel">
-            <ui:Label text="Loadout" class="loadout-header" />
+    <ui:VisualElement picking-mode="Ignore" class="loadout-container">
+        <ui:VisualElement picking-mode="Ignore" class="loadout-container__spacer" />
+        <ui:VisualElement name="LoadoutPanel" picking-mode="Position" class="loadout-panel">
+            <ui:Label text="Loadout" picking-mode="Position" class="loadout-header" />
             <Vland.UI.LoadoutWindow name="LoadoutWindow" Columns="4" RowsBeforeScroll="2" class="loadout-window" />
         </ui:VisualElement>
     </ui:VisualElement>

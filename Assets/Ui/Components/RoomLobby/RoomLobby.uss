@@ -28,6 +28,7 @@
     border-right-color: rgb(202, 159, 108);
     border-top-color: rgb(202, 159, 108);
     border-bottom-color: rgb(202, 159, 108);
+    cursor: var(--cursor-ui);
 }
 
 .room-lobby__title {

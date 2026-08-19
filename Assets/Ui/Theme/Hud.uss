@@ -2,7 +2,6 @@
     cursor: var(--cursor-pointer);
 }
 
-.si-skillbar,
 .si-gold,
 .si-vitals,
 .si-vital-row,
@@ -18,6 +17,11 @@
     align-items: flex-end;
     justify-content: center;
     padding-bottom: 18px;
+    cursor: var(--cursor-ui);
+}
+
+.si-skillbar .ability-container {
+    cursor: var(--cursor-hover);
 }
 
 .si-gold {

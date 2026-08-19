@@ -59,19 +59,23 @@ namespace Vland.UI
         public LoadoutWindow()
         {
             AddToClassList("loadout-window");
+            pickingMode = PickingMode.Position;
 
             // Top slot bar: 1 weapon, 1 passive, 3 normal, 1 ultimate
             _slotsBar = new VisualElement { name = "slotsBar" };
             _slotsBar.AddToClassList("slots-bar");
+            _slotsBar.pickingMode = PickingMode.Position;
             Add(_slotsBar);
 
             // Scrollable grid container
             _subheading = new Label();
             _subheading.AddToClassList("loadout-subheading");
+            _subheading.pickingMode = PickingMode.Position;
             Add(_subheading);
 
             _scroll = new ScrollView(ScrollViewMode.Vertical) { name = "scroll" };
             _scroll.AddToClassList("loadout-scroll");
+            _scroll.pickingMode = PickingMode.Position;
             Add(_scroll);
 
             // Prevent keyboard from scrolling this ScrollView (allow only pointer/touch wheel)
@@ -81,6 +85,7 @@ namespace Vland.UI
 
             _grid = new VisualElement { name = "grid" };
             _grid.AddToClassList("loadout-grid");
+            _grid.pickingMode = PickingMode.Position;
             _scroll.Add(_grid);
 
             BuildSlotBar();
@@ -143,10 +148,13 @@ namespace Vland.UI
         {
             var container = new VisualElement();
             container.AddToClassList("slot");
+            container.pickingMode = PickingMode.Position;
             var icon = new VisualElement();
             icon.AddToClassList("slot__icon");
+            icon.pickingMode = PickingMode.Ignore;
             var text = new Label(label);
             text.AddToClassList("slot__label");
+            text.pickingMode = PickingMode.Ignore;
             container.Add(icon);
             container.Add(text);
             _slotsBar.Add(container);

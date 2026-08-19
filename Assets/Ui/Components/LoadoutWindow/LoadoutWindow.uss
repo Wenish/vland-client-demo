@@ -3,6 +3,7 @@
     flex-grow: 1;
     flex-direction: column;
     padding: 8px;
+    cursor: var(--cursor-ui);
 }
 
 /* Slots bar */
@@ -22,6 +23,7 @@
     border-width: 2px;
     border-color: rgb(152, 119, 81);
     background-color: rgba(2, 19, 52, 0.7);
+    cursor: var(--cursor-hover);
 }
 
 .slot.active {
@@ -36,11 +38,21 @@
     background-size: cover;
     background-position: center;
     border-radius: 6px;
+    cursor: var(--cursor-hover);
 }
 
 .slot__label { display: none; }
 
 /* Scroll container */
+.loadout-scroll,
+.loadout-scroll .unity-scroll-view__content-viewport,
+.loadout-scroll .unity-scroll-view__content-container,
+.loadout-grid,
+.loadout-subheading,
+.slots-bar {
+    cursor: var(--cursor-ui);
+}
+
 .loadout-scroll {
     flex-grow: 1;
 }
@@ -52,6 +64,13 @@
     font-size: 18px;
     color: rgb(254, 221, 183);
     -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+}
+
+.loadout-grid .loadout-tile,
+.loadout-grid .loadout-tile__icon,
+.slots-bar .slot,
+.slots-bar .slot__icon {
+    cursor: var(--cursor-hover);
 }
 
 /* Grid */
@@ -68,6 +87,7 @@
     border-radius: 6px;
     border-width: 0px;
     background-color: rgba(0,0,0,0.0);
+    cursor: var(--cursor-hover);
 }
 
 .loadout-tile:hover { background-color: rgba(255,255,255,0.04); }
@@ -84,6 +104,7 @@
     border-radius: 6px;
     border-width: 1px;
     border-color: #2e2e2e;
+    cursor: var(--cursor-hover);
 }
 
 .loadout-tile__label {
@@ -119,12 +140,19 @@
     width: 12px;
 }
 
+.loadout-scroll .unity-scroller--vertical,
+.loadout-scroll .unity-base-slider--vertical,
+.loadout-scroll .unity-base-slider__tracker {
+    cursor: var(--cursor-ui);
+}
+
 .loadout-scroll .unity-base-slider__dragger {
     background-color: rgba(160, 160, 160, 1);
     width: 10px;
     min-width: 10px;
     left: 1px;
     border-radius: 4px;
+    cursor: var(--cursor-hover);
 }
 
 .loadout-scroll .unity-base-slider--vertical .unity-base-slider__tracker {

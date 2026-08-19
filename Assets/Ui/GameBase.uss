@@ -36,6 +36,13 @@ Label,
     cursor: var(--cursor-ui);
 }
 
+.loadout-tile,
+.loadout-tile__icon,
+.slot,
+.slot__icon {
+    cursor: var(--cursor-hover);
+}
+
 .main-menu-stack {
     align-items: stretch;
     width: 320px;
