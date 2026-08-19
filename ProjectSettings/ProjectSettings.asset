@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: VCL
+  companyName: Voxel Core Lab
   productName: Shadow Infection - Alpha
   defaultCursor: {fileID: 2800000, guid: e6d3e27aaa79942b98e995d56accf2b0, type: 3}
   cursorHotspot: {x: 16, y: 16}
