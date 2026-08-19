@@ -5,7 +5,7 @@ using MyGame.Events;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class UiDocumentZombieIngameController : MonoBehaviour
+public class UiDocumentPlayerHudController : MonoBehaviour
 {
     public Color castSuccessColor = Color.green;
     private UIDocument _uiDocument;

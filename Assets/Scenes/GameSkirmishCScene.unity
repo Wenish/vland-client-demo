@@ -1024,7 +1024,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3090320341836401896, guid: 99f830ee92795024887266c7b907e7f2, type: 3}
       propertyPath: m_Name
-      value: UiDocumentZombieIngame
+      value: UiDocumentPlayerHud
       objectReference: {fileID: 0}
     - target: {fileID: 7031219943660283738, guid: 99f830ee92795024887266c7b907e7f2, type: 3}
       propertyPath: m_LocalPosition.x
