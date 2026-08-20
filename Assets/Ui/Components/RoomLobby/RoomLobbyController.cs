@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace ShadowInfection.UI.RoomLobby
 {
@@ -20,13 +21,17 @@ namespace ShadowInfection.UI.RoomLobby
 
         [SerializeField] private PanelSettings panelSettings;
 
-        [SerializeField] private float refreshIntervalSeconds = 0.2f;
-
         private UIDocument uiDocument;
         private RoomLobbyView view;
         private MirrorRoomLobbyPresenter presenter;
         private VisualElement lobbyRoot;
         private bool mounted;
+
+        [Inject]
+        internal void Construct(MirrorRoomLobbyPresenter injectedPresenter)
+        {
+            presenter = injectedPresenter;
+        }
 
         private void Awake()
         {
@@ -54,12 +59,19 @@ namespace ShadowInfection.UI.RoomLobby
                 yield break;
             }
 
+            if (presenter == null)
+            {
+                UnityEngine.Debug.LogError(
+                    "RoomLobbyController: Presenter was not injected. Add GameLifetimeScope and RoomLobbyLifetimeScope to the scene.");
+                yield break;
+            }
+
             RegisterCursors();
             UiCursorRefresh.SetGameplayPointerEnabled(false);
             UiCursorRefresh.ScheduleForRoot(lobbyRoot, LobbySortingOrder);
             UiCursorRefresh.ScheduleForRoot(uiDocument.rootVisualElement, LobbySortingOrder);
             view = new RoomLobbyView(lobbyRoot);
-            presenter = new MirrorRoomLobbyPresenter(view, refreshIntervalSeconds);
+            presenter.Bind(view);
             presenter.SetEnabled(isActiveAndEnabled);
         }
 
@@ -179,6 +191,7 @@ namespace ShadowInfection.UI.RoomLobby
         private void OnDestroy()
         {
             presenter?.SetEnabled(false);
+            presenter?.Unbind();
         }
 
         private void OnDisable()
