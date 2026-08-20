@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -13,7 +14,7 @@ namespace NPCBehaviour
         [Tooltip("Unique identifier for this state")]
         public string stateId;
         
-        [TextArea(2, 4)]
+        [ResizableTextArea]
         [Tooltip("Description of what this state does")]
         public string description;
 

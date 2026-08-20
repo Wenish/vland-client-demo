@@ -1,15 +1,18 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SkillEffectMechanicBuffStat", menuName = "Game/Skills/Effects/Mechanic/BuffStat")]
 public class SkillEffectMechanicBuffStatData : SkillEffectMechanic
 {
     public string buffId;
+    [Expandable]
     public BuffType buffType;
 
     [Header("Stat Modifiers")] 
     [Tooltip("Configure one or more stat modifiers that this buff will apply.")]
     public List<StatModifier> statModifiers = new List<StatModifier>();
+    [MinValue(0f)]
     public float duration = 5f;
     public UniqueMode uniqueMode = UniqueMode.None;
 

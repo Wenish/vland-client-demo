@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -15,6 +16,7 @@ namespace NPCBehaviour
         public float chance = 0.5f;
 
         [Tooltip("Minimum time between evaluations (prevents spam)")]
+        [MinValue(0f)]
         public float cooldown = 1f;
 
         private float _lastEvaluationTime = -999f;

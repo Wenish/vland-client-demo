@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,16 +15,20 @@ namespace NPCBehaviour
     {
         [Header("Flee Behaviour")]
         [Tooltip("Transitions from this state")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Header("Flee Parameters")]
         [Tooltip("Distance to flee from target")]
+        [MinValue(0f)]
         public float fleeDistance = 15f;
 
         [Tooltip("How often to recalculate flee direction")]
+        [MinValue(0.05f)]
         public float recalculateInterval = 1f;
 
         [Tooltip("Range to detect threats")]
+        [MinValue(0f)]
         public float threatDetectionRange = 20f;
 
         public override void OnEnter(BehaviourContext context)

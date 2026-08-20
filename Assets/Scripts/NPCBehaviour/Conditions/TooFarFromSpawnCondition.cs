@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -11,6 +12,7 @@ namespace NPCBehaviour
     {
         [Header("Reset Distance")]
         [Tooltip("Distance from spawn point before reset triggers")]
+        [MinValue(0f)]
         public float resetDistance = 50f;
 
         public override bool Evaluate(BehaviourContext context)

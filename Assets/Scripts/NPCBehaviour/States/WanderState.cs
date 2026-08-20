@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,6 +15,7 @@ namespace NPCBehaviour
     {
         [Header("Wander Behaviour")]
         [Tooltip("Transitions from this state")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Header("Wander Range")]
@@ -48,11 +50,13 @@ namespace NPCBehaviour
         public bool lookAroundWhilePaused = true;
 
         [Tooltip("Random rotation speed when looking around")]
+        [ShowIf(nameof(lookAroundWhilePaused))]
         [Range(10f, 90f)]
         public float lookAroundSpeed = 30f;
 
         [Header("State Duration")]
         [Tooltip("Optional: Maximum time to stay in wander state (0 = infinite)")]
+        [MinValue(0f)]
         public float maxWanderTime = 0f;
 
         public override void OnEnter(BehaviourContext context)

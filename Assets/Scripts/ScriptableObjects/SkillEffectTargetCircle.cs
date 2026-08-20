@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SkillEffectTargetCircle", menuName = "Game/Skills/Effects/Target/Circle")]
 public class SkillEffectTargetCircle : SkillEffectTarget
 {
+    [MinValue(0f)]
     public float radius;
     public bool includeInitialTargets = true;
     public LayerMask unitLayer;

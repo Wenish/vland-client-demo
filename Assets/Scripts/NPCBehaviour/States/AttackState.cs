@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -12,16 +13,21 @@ namespace NPCBehaviour
     {
         [Header("Attack Behaviour")]
         [Tooltip("Transitions from this state")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Header("Skill Usage")]
         [Tooltip("Strategy for selecting which skill to use")]
+        [Required]
+        [Expandable]
         public SkillSelector skillSelector;
 
         [Tooltip("Minimum time between skill attempts (seconds)")]
+        [MinValue(0f)]
         public float skillCooldown = 1f;
 
         [Tooltip("Minimum time between auto-attacks (seconds)")]
+        [MinValue(0f)]
         public float autoAttackCooldown = 0.5f;
 
         [Header("Facing")]
@@ -32,6 +38,8 @@ namespace NPCBehaviour
         public bool updateThreatTarget = false;
 
         [Tooltip("How often to update threat target (in seconds)")]
+        [ShowIf(nameof(updateThreatTarget))]
+        [MinValue(0.05f)]
         public float threatUpdateInterval = 1f;
 
         public override void OnEnter(BehaviourContext context)

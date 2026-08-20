@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -11,6 +12,7 @@ namespace NPCBehaviour
     {
         [Header("Spawn Check")]
         [Tooltip("Distance from spawn to be considered 'at spawn'")]
+        [MinValue(0f)]
         public float threshold = 0.5f;
 
         public override bool Evaluate(BehaviourContext context)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -12,12 +13,15 @@ namespace NPCBehaviour
     {
         [Header("Idle Behaviour")]
         [Tooltip("Transitions from this state")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Tooltip("Should the NPC look around while idle?")]
         public bool lookAround = false;
 
         [Tooltip("Random rotation speed when looking around")]
+        [ShowIf(nameof(lookAround))]
+        [MinValue(0f)]
         public float rotationSpeed = 30f;
 
         public override void OnEnter(BehaviourContext context)

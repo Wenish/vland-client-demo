@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -14,7 +15,10 @@ namespace NPCBehaviour
         [System.Serializable]
         public class WeightedSkill
         {
+            [AllowNesting]
             public string skillName;
+            [AllowNesting]
+            [MinValue(0f)]
             [Tooltip("Higher weight = more likely to be selected")]
             public float weight = 1f;
         }

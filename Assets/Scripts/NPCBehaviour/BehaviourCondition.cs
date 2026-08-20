@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -9,7 +9,7 @@ namespace NPCBehaviour
     /// </summary>
     public abstract class BehaviourCondition : ScriptableObject
     {
-        [TextArea(2, 3)]
+        [ResizableTextArea]
         public string description;
 
         /// <summary>

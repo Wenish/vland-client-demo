@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -14,11 +15,15 @@ namespace NPCBehaviour
         [System.Serializable]
         public class HealthSkillMapping
         {
+            [AllowNesting]
             [Range(0f, 1f)]
             public float minHealthPercent;
+            [AllowNesting]
             [Range(0f, 1f)]
             public float maxHealthPercent = 1f;
+            [AllowNesting]
             public List<string> skillNames = new();
+            [AllowNesting]
             [Tooltip("Priority when multiple ranges match (higher = more important)")]
             public int priority = 0;
         }

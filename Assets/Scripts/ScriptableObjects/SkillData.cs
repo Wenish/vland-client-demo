@@ -1,19 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewSkill", menuName = "Game/Skills/Skill")]
 public class SkillData : ScriptableObject
 {
+    [BoxGroup("Identity")]
     public string skillName;
+    [BoxGroup("Identity")]
     public SkillType skillType;
+    [BoxGroup("Identity")]
+    [ResizableTextArea]
     public string description;
+
+    [BoxGroup("Timing")]
+    [MinValue(0)]
     public int cooldown;
+    [BoxGroup("Timing")]
+    [MinValue(0)]
     public int castCost;
+    [BoxGroup("Timing")]
     public bool canActivateWhileBusy;
+
+    [BoxGroup("Restrictions")]
     [Tooltip("If false, this skill can be used with any weapon.")]
-    [SerializeField] private bool hasRequiredWeapon;
-    [SerializeField] private WeaponType requiredWeapon;
+    [SerializeField]
+    private bool hasRequiredWeapon;
+    [BoxGroup("Restrictions")]
+    [SerializeField]
+    [ShowIf(nameof(hasRequiredWeapon))]
+    private WeaponType requiredWeapon;
+    [BoxGroup("Restrictions")]
+    public bool npcOnly;
 
     public WeaponType? RequiredWeapon
     {
@@ -27,19 +46,21 @@ public class SkillData : ScriptableObject
             }
         }
     }
-    
-    [Header("Restrictions")]
-    public bool npcOnly;
 
-    [Header("Effects")]
+    [BoxGroup("Effects")]
+    [Expandable]
     public SkillEffectChainData initTrigger;
+    [BoxGroup("Effects")]
+    [Expandable]
     public SkillEffectChainData castTrigger;
 
-    [Header("Reactive Triggers")]
+    [BoxGroup("Reactive Triggers")]
     [Tooltip("Event-driven triggers that will subscribe when the skill is initialized. Executed on the server by default.")]
+    [Expandable]
     public List<SkillEventTriggerData> reactiveTriggers = new();
 
-    [Header("UI")]
+    [BoxGroup("UI")]
+    [ShowAssetPreview(64)]
     public Texture2D iconTexture;
 
     public bool CanBeUsedWithWeapon(WeaponType? weaponType)

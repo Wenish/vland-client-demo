@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -14,8 +15,13 @@ namespace NPCBehaviour
         [System.Serializable]
         public class DistanceSkillMapping
         {
+            [AllowNesting]
+            [MinValue(0f)]
             public float minDistance;
+            [AllowNesting]
+            [MinValue(0f)]
             public float maxDistance;
+            [AllowNesting]
             public List<string> skillNames = new();
         }
 

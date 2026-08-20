@@ -1,27 +1,55 @@
 using System.Collections.Generic;
-using UnityEngine;
+using NaughtyAttributes;
 using NPCBehaviour;
+using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewUnit", menuName = "Game/Unit/Unit")]
 public class UnitData : ScriptableObject
 {
+    [BoxGroup("Identity")]
     public string unitName;
+    [BoxGroup("Identity")]
     public UnitType unitType;
+    [BoxGroup("Identity")]
     public int team;
 
-    [Header("Stats")]
+    [BoxGroup("Stats")]
+    [MinValue(0)]
     public int health;
+    [BoxGroup("Stats")]
+    [MinValue(0)]
     public int maxHealth;
+    [BoxGroup("Stats")]
+    [MinValue(0)]
     public int shield;
+    [BoxGroup("Stats")]
+    [MinValue(0)]
     public int maxShield;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float moveSpeed;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float turnSpeed = 1f;
+    [BoxGroup("Stats")]
     public float damageReduction = 0f;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float attackSpeed = 1f;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float attackPower = 10f;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float abilityPower = 0f;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float armor = 0f;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float magicResist = 0f;
+    [BoxGroup("Stats")]
+    [MinValue(0f)]
     public float critChance = 0f;
 
     public IEnumerable<StatModifier> GetBaseStats()
@@ -49,17 +77,27 @@ public class UnitData : ScriptableObject
         };
     }
 
-    [Header("Weapon")]
+    [BoxGroup("Loadout")]
+    [Expandable]
     public WeaponData weapon;
-
-    [Header("Model")]
+    [BoxGroup("Loadout")]
+    [Expandable]
     public ModelData modelData;
 
-    [Header("Skills")]
+    [BoxGroup("Skills")]
+    [Expandable]
     public List<SkillData> passiveSkills = new List<SkillData>();
+    [BoxGroup("Skills")]
+    [Expandable]
     public List<SkillData> normalSkills = new List<SkillData>();
+    [BoxGroup("Skills")]
+    [Expandable]
     public List<SkillData> ultimateSkills = new List<SkillData>();
 
-    [Header("AI Behaviour")]
+    [BoxGroup("AI")]
+    [ShowIf(nameof(IsNpc))]
+    [Expandable]
     public BehaviourProfile behaviourProfile;
+
+    private bool IsNpc() => unitType != UnitType.Player;
 }

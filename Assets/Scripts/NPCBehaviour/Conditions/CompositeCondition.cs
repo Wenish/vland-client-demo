@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -17,6 +18,7 @@ namespace NPCBehaviour
 
         [Header("Composite Logic")]
         public LogicType logicType = LogicType.And;
+        [Expandable]
         public BehaviourCondition[] conditions;
 
         public override bool Evaluate(BehaviourContext context)

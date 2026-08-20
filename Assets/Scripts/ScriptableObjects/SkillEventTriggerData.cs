@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 /// <summary>
@@ -9,9 +10,12 @@ using UnityEngine;
 public abstract class SkillEventTriggerData : ScriptableObject
 {
     [Tooltip("Optional: limit how frequently this trigger can fire per skill instance (seconds). 0 = no limit")]
+    [MinValue(0f)]
     public float triggerCooldown = 0f;
 
     [Tooltip("Effects to execute when this trigger fires.")]
+    [Required]
+    [Expandable]
     public SkillEffectChainData onTrigger;
 
     [Tooltip("If true, only server will subscribe and execute. Recommended for authoritative gameplay.")]
