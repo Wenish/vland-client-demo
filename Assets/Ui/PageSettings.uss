@@ -1,3 +1,37 @@
+.page-settings {
+    min-height: 0;
+    overflow: hidden;
+    align-items: center;
+}
+
+.page-settings .page-title {
+    flex-shrink: 0;
+}
+
+.page-settings__actions {
+    flex-shrink: 0;
+}
+
+.settings-scroll {
+    flex-grow: 0;
+    flex-shrink: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 724px;
+    align-self: center;
+}
+
+.settings-scroll > .unity-scroll-view__content-viewport {
+    overflow: hidden;
+}
+
+.settings-scroll > .unity-scroll-view__content-viewport > .unity-scroll-view__content-container {
+    align-items: stretch;
+    width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
 .audio-container {
     width: 100%;
     max-width: 700px;
@@ -41,12 +75,12 @@ Toggle:focus .unity-toggle__checkmark {
     border-color: rgb(255, 244, 231);
 }
 
-.unity-base-slider .unity-base-slider__tracker {
+.input-slider .unity-base-slider__tracker {
     background-color: rgb(1, 11, 31);
     border-width: 0;
 }
 
-.unity-base-slider__fill {
+.input-slider .unity-base-slider__fill {
     background-color: rgb(202, 159, 108);
     border-top-width: 0;
     border-right-width: 0;
@@ -54,7 +88,7 @@ Toggle:focus .unity-toggle__checkmark {
     border-left-width: 0;
 }
 
-.unity-base-slider__dragger {
+.input-slider .unity-base-slider__dragger {
     background-color: rgb(253, 199, 135);
     border-top-width: 0;
     border-right-width: 0;
@@ -62,13 +96,13 @@ Toggle:focus .unity-toggle__checkmark {
     border-left-width: 0;
 }
 
-SliderInt:hover .unity-base-slider__fill,
-SliderInt:focus .unity-base-slider__fill {
+.input-slider:hover .unity-base-slider__fill,
+.input-slider:focus .unity-base-slider__fill {
     background-color: rgb(253, 199, 135);
 }
 
-SliderInt:hover .unity-base-slider__dragger,
-SliderInt:focus .unity-base-slider__dragger {
+.input-slider:hover .unity-base-slider__dragger,
+.input-slider:focus .unity-base-slider__dragger {
     background-color: rgb(255, 244, 231);
 }
 
@@ -113,4 +147,62 @@ SliderInt:focus .unity-base-slider__dragger {
 .unity-base-popup-field__arrow,
 .unity-base-popup-field__text {
     cursor: var(--cursor-hover);
+}
+
+.settings-scroll .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.settings-scroll .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
+    display: none;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.settings-scroll .unity-scroller--vertical {
+    width: 12px;
+    margin-left: 8px;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.settings-scroll .unity-base-slider--vertical {
+    width: 12px;
+    min-width: 12px;
+}
+
+.settings-scroll .unity-scroller--vertical > .unity-scroller__slider {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.settings-scroll .unity-scroller--vertical,
+.settings-scroll .unity-base-slider--vertical,
+.settings-scroll .unity-base-slider__tracker {
+    cursor: var(--cursor-ui);
+}
+
+.settings-scroll .unity-base-slider--vertical .unity-base-slider__tracker {
+    background-color: rgb(1, 11, 31);
+    width: 8px;
+    min-width: 8px;
+    left: 2px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-color: rgb(101, 80, 54);
+}
+
+.settings-scroll .unity-base-slider__dragger {
+    background-color: rgb(202, 159, 108);
+    width: 8px;
+    min-width: 8px;
+    left: 2px;
+    border-width: 0;
+    cursor: var(--cursor-hover);
+}
+
+.settings-scroll .unity-scroller--vertical:hover .unity-base-slider__dragger,
+.settings-scroll .unity-base-slider__dragger:hover {
+    background-color: rgb(253, 199, 135);
 }
