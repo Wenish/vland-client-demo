@@ -214,6 +214,36 @@ namespace MyGame.Events
         }
     }
 
+    public enum PlayerHudInfoKind
+    {
+        Info = 0,
+        Error = 1
+    }
+
+    /// <summary>
+    /// Local-player HUD info line. Gameplay publishes this; the HUD displays it.
+    /// DurationSeconds of 0 or less uses the HUD default.
+    /// </summary>
+    public class PlayerHudInfoMessageEvent : GameEvent
+    {
+        public string Text { get; }
+        public string Key { get; }
+        public float DurationSeconds { get; }
+        public PlayerHudInfoKind Kind { get; }
+
+        public PlayerHudInfoMessageEvent(
+            string text,
+            string key = "",
+            float durationSeconds = 0f,
+            PlayerHudInfoKind kind = PlayerHudInfoKind.Info)
+        {
+            Text = text ?? string.Empty;
+            Key = string.IsNullOrWhiteSpace(key) ? Text : key;
+            DurationSeconds = durationSeconds;
+            Kind = kind;
+        }
+    }
+
     public class UnitEnteredInteractionZone : GameEvent
     {
         public UnitController Unit { get; }

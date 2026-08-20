@@ -152,6 +152,7 @@ public class PlayerInput : NetworkBehaviour
         bool firePressed = (mousePressed && !overUi) || gamepadPressed || keyboardPressed;
         if (!IsAltPressed() && firePressed)
         {
+            PlayerActionFeedback.TryNotifyAttackCooldown(_myUnitController);
             if (_delaySendSetFire1InputCoroutine != null)
             {
                 StopCoroutine(_delaySendSetFire1InputCoroutine);
@@ -182,6 +183,9 @@ public class PlayerInput : NetworkBehaviour
         {
             _myUnitController.ReceiveFire1Input(isPressingFire1);
         }
+
+        if (isPressingFire1)
+            NotifyOwnerIfAttackOnCooldown();
     }
 
 
@@ -348,36 +352,21 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     public void InputUseSkills()
     {
-        if (
+        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+            TryUseSkill(SkillSlotType.Normal, 0);
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+            TryUseSkill(SkillSlotType.Normal, 1);
+        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
+            TryUseSkill(SkillSlotType.Normal, 2);
+        if (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
+            TryUseSkill(SkillSlotType.Ultimate, 0);
+    }
 
-            Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame
-
-            )
-        {
-            CmdUseSkill(SkillSlotType.Normal, 0, _mouseWorldPosition);
-        }
-        if (
-
-            Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame
-
-            )
-        {
-            CmdUseSkill(SkillSlotType.Normal, 1, _mouseWorldPosition);
-        }
-        if (
-            Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame
-
-            )
-        {
-            CmdUseSkill(SkillSlotType.Normal, 2, _mouseWorldPosition);
-        }
-        if (
-
-            Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame
-            )
-        {
-            CmdUseSkill(SkillSlotType.Ultimate, 0, _mouseWorldPosition);
-        }
+    [Client]
+    void TryUseSkill(SkillSlotType slot, int index)
+    {
+        PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
+        CmdUseSkill(slot, index, _mouseWorldPosition);
     }
 
     [Client]
@@ -400,7 +389,39 @@ public class PlayerInput : NetworkBehaviour
     [Command]
     public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {
-        _myUnitController.unitMediator.Skills.CastSkill(slot, index, aimPoint);
+        if (_myUnitController == null || _myUnitController.unitMediator == null || _myUnitController.unitMediator.Skills == null)
+            return;
+
+        var skills = _myUnitController.unitMediator.Skills;
+        var skill = skills.GetSkill(slot, index);
+        var result = skills.CastSkill(slot, index, aimPoint);
+        if (result == SkillCastResult.OnCooldown
+            && PlayerActionFeedback.ShouldShowSkillCooldown(_myUnitController, slot, index))
+            NotifyOwnerActionFailed(PlayerActionFailReason.OnCooldown, PlayerActionFeedback.ResolveSkillName(skill));
+    }
+
+    [Server]
+    void NotifyOwnerIfAttackOnCooldown()
+    {
+        if (!PlayerActionFeedback.ShouldShowAttackCooldown(_myUnitController))
+            return;
+
+        NotifyOwnerActionFailed(PlayerActionFailReason.OnCooldown, "Attack");
+    }
+
+    [Server]
+    void NotifyOwnerActionFailed(PlayerActionFailReason reason, string actionName)
+    {
+        if (connectionToClient == null)
+            return;
+
+        TargetNotifyActionFailed(reason, actionName);
+    }
+
+    [TargetRpc]
+    void TargetNotifyActionFailed(PlayerActionFailReason reason, string actionName)
+    {
+        PlayerActionFeedback.Notify(reason, actionName);
     }
 
     [Command]

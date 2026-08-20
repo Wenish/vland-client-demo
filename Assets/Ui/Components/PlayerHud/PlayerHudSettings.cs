@@ -10,6 +10,9 @@ namespace ShadowInfection.UI.PlayerHud
         public float BannerFadeOutSeconds { get; }
         public float CastBarInterruptFadeSeconds { get; }
         public float CastBarSuccessFadeSeconds { get; }
+        public float InfoMessageDurationSeconds { get; }
+        public float InfoMessageFadeSeconds { get; }
+        public int InfoMessageMaxVisible { get; }
 
         public PlayerHudSettings(
             float goldTweenSeconds,
@@ -17,7 +20,10 @@ namespace ShadowInfection.UI.PlayerHud
             float bannerHoldSeconds,
             float bannerFadeOutSeconds,
             float castBarInterruptFadeSeconds,
-            float castBarSuccessFadeSeconds)
+            float castBarSuccessFadeSeconds,
+            float infoMessageDurationSeconds,
+            float infoMessageFadeSeconds,
+            int infoMessageMaxVisible)
         {
             GoldTweenSeconds = Math.Max(0f, goldTweenSeconds);
             BannerFadeInSeconds = Math.Max(0f, bannerFadeInSeconds);
@@ -25,6 +31,9 @@ namespace ShadowInfection.UI.PlayerHud
             BannerFadeOutSeconds = Math.Max(0f, bannerFadeOutSeconds);
             CastBarInterruptFadeSeconds = Math.Max(0f, castBarInterruptFadeSeconds);
             CastBarSuccessFadeSeconds = Math.Max(0f, castBarSuccessFadeSeconds);
+            InfoMessageDurationSeconds = Math.Max(0.1f, infoMessageDurationSeconds);
+            InfoMessageFadeSeconds = Math.Max(0f, infoMessageFadeSeconds);
+            InfoMessageMaxVisible = Math.Max(1, infoMessageMaxVisible);
         }
     }
 }
