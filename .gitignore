@@ -76,3 +76,9 @@ crashlytics-build.properties
 # Unity Package files
 *.unitypackage
 *.unitypackage.meta
+
+# NuGetForUnity installed packages (restore from Assets/packages.config)
+# https://github.com/GlitchEnzo/NuGetForUnity
+/[Aa]ssets/[Pp]ackages/
+/[Aa]ssets/[Pp]ackages.meta
+/[Pp]ackages/nuget-packages/InstalledPackages/
