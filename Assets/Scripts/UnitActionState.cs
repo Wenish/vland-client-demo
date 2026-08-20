@@ -16,6 +16,30 @@ public class UnitActionState : NetworkBehaviour
     public bool IsActive => _state.type != ActionType.Idle;
     public bool HasChild => _childState.type != ActionType.Idle;
 
+    public bool IsPerforming(ActionType type)
+    {
+        return _state.type == type || _childState.type == type;
+    }
+
+    public bool IsPerforming(ActionType type, string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return IsPerforming(type);
+
+        return Matches(_state, type, name) || Matches(_childState, type, name);
+    }
+
+    public bool IsPerformingSkill(string skillName)
+    {
+        return IsPerforming(ActionType.Casting, skillName)
+            || IsPerforming(ActionType.Channeling, skillName);
+    }
+
+    private static bool Matches(ActionStateData data, ActionType type, string name)
+    {
+        return data.type == type && data.name == name;
+    }
+
     public event Action<UnitActionState> OnActionStateChanged = delegate { };
 
     [Server]

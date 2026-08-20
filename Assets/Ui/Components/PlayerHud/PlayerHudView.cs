@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -45,6 +46,20 @@ namespace ShadowInfection.UI.PlayerHud
         public static AbilitySlotVm Empty => new AbilitySlotVm(false, 0f, 0f, false, 0f, null, string.Empty);
     }
 
+    internal readonly struct PlayerHudInfoLineVm
+    {
+        public readonly string Text;
+        public readonly float Opacity;
+        public readonly bool IsError;
+
+        public PlayerHudInfoLineVm(string text, float opacity, bool isError)
+        {
+            Text = text ?? string.Empty;
+            Opacity = opacity;
+            IsError = isError;
+        }
+    }
+
     internal sealed class PlayerHudView
     {
         private readonly Label labelWave;
@@ -79,6 +94,8 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly Label labelStatArmor;
         private readonly Label labelStatMagicResist;
         private readonly Label labelStatCritChance;
+        private readonly VisualElement infoFeed;
+        private readonly List<Label> infoLabels = new();
 
         public PlayerHudView(VisualElement root)
         {
@@ -117,11 +134,13 @@ namespace ShadowInfection.UI.PlayerHud
             labelStatArmor = root.Q<Label>("labelStatArmor");
             labelStatMagicResist = root.Q<Label>("labelStatMagicResist");
             labelStatCritChance = root.Q<Label>("labelStatCritChance");
+            infoFeed = root.Q<VisualElement>("playerInfoFeed");
 
             SetPickingIgnoreRecursive(root.Q<VisualElement>("roundInfos"));
             SetPickingIgnoreRecursive(root.Q<Label>("labelRoundStarted")?.parent);
             SetPickingIgnoreRecursive(root.Q<CastBar>("playerCastbar"));
             SetPickingIgnoreRecursive(root.Q(className: "si-hud-bottom"));
+            SetPickingIgnoreRecursive(infoFeed);
 
             Reset();
         }
@@ -149,6 +168,7 @@ namespace ShadowInfection.UI.PlayerHud
             SetAbilitySlot(PlayerHudAbilitySlot.Ultimate, AbilitySlotVm.Empty);
             ResetCastBar();
             HideCastBar();
+            ClearInfoLines();
             if (playerCastbar != null)
                 playerCastbar.style.opacity = 1f;
         }
@@ -373,6 +393,50 @@ namespace ShadowInfection.UI.PlayerHud
             SetCastBarTime(string.Empty);
             SetCastBarName(string.Empty);
             SetCastBarFeedback(Color.clear, false);
+        }
+
+        public void ClearInfoLines()
+        {
+            SetInfoLines(null);
+        }
+
+        public void SetInfoLines(IReadOnlyList<PlayerHudInfoLineVm> lines)
+        {
+            if (infoFeed == null)
+                return;
+
+            var count = lines != null ? lines.Count : 0;
+            EnsureInfoLabelCount(count);
+
+            for (var i = 0; i < infoLabels.Count; i++)
+            {
+                var label = infoLabels[i];
+                if (i < count)
+                {
+                    label.text = lines[i].Text;
+                    label.style.opacity = lines[i].Opacity;
+                    label.EnableInClassList("si-player-info-feed__line--error", lines[i].IsError);
+                    label.style.display = DisplayStyle.Flex;
+                }
+                else
+                {
+                    label.text = string.Empty;
+                    label.EnableInClassList("si-player-info-feed__line--error", false);
+                    label.style.display = DisplayStyle.None;
+                }
+            }
+        }
+
+        private void EnsureInfoLabelCount(int count)
+        {
+            while (infoLabels.Count < count)
+            {
+                var label = new Label();
+                label.AddToClassList("si-player-info-feed__line");
+                label.pickingMode = PickingMode.Ignore;
+                infoFeed.Add(label);
+                infoLabels.Add(label);
+            }
         }
 
         private AbilityCooldownElement GetAbilityElement(PlayerHudAbilitySlot slot)

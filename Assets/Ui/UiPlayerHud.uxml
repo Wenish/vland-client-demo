@@ -81,5 +81,6 @@
                 </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement name="playerInfoFeed" picking-mode="Ignore" class="si-player-info-feed"/>
     <ui:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>
 </ui:UXML>

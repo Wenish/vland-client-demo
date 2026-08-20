@@ -137,26 +137,30 @@ public class NetworkedSkillInstance : NetworkBehaviour
     private int _lastCastStartFrame = -1;
 
     [Server]
-    public void Cast(Vector3? aimPoint)
+    public SkillCastResult Cast(Vector3? aimPoint)
     {
-        if (unit == null || unit.IsDead || unit.IsKnockedUp) return;
+        if (unit == null || unit.IsDead || unit.IsKnockedUp)
+            return SkillCastResult.Rejected;
 
         // If a cast is already running, signal it instead of restarting
         if (_runningCastCoroutine != null && _runningCastContext != null && !_runningCastContext.IsCancelled)
         {
             Debug.Log($"[Cast] Signaling running cast for {skillName} (busy={unit.unitActionState.IsActive})");
             _runningCastContext.SignalTrigger();
-            return;
+            return SkillCastResult.SignaledRunningCast;
         }
 
-        if (IsOnCooldown || skillData == null) return;
+        if (skillData == null)
+            return SkillCastResult.Rejected;
+        if (IsOnCooldown)
+            return SkillCastResult.OnCooldown;
 
         var currentWeaponType = unit.currentWeapon != null
             ? (WeaponType?)unit.currentWeapon.weaponType
             : null;
         if (!skillData.CanBeUsedWithWeapon(currentWeaponType))
         {
-            return;
+            return SkillCastResult.Rejected;
         }
 
         // Skills yield to other skills, but auto-attack should not block a player ability.
@@ -168,12 +172,13 @@ public class NetworkedSkillInstance : NetworkBehaviour
             }
             else
             {
-                return;
+                return SkillCastResult.Rejected;
             }
         }
 
         // Prevent duplicate admission within the same server frame (e.g. very fast spam / duplicate command packets).
-        if (_lastCastStartFrame == Time.frameCount) return;
+        if (_lastCastStartFrame == Time.frameCount)
+            return SkillCastResult.Rejected;
 
         if (_runningCastCoroutine != null)
         {
@@ -186,6 +191,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
             aimRotation = aimPoint.HasValue ? Quaternion.LookRotation(aimPoint.Value - unit.transform.position) : null
         };
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
+        return SkillCastResult.Started;
     }
 
     [Server]

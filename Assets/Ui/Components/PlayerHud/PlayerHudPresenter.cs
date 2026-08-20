@@ -30,7 +30,9 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly ISubscriber<WaveStartedEvent> waveStarted;
         private readonly ISubscriber<WaveProgressChangedEvent> waveProgress;
         private readonly ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned;
+        private readonly ISubscriber<PlayerHudInfoMessageEvent> infoMessages;
         private readonly PlayerHudCastBarDriver castBarDriver;
+        private readonly PlayerHudInfoFeedDriver infoFeedDriver;
 
         private PlayerHudView view;
         private R3.DisposableBag subscriptions;
@@ -66,14 +68,17 @@ namespace ShadowInfection.UI.PlayerHud
             ISubscriber<PlayerGoldChangedEvent> goldChanged,
             ISubscriber<WaveStartedEvent> waveStarted,
             ISubscriber<WaveProgressChangedEvent> waveProgress,
-            ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned)
+            ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned,
+            ISubscriber<PlayerHudInfoMessageEvent> infoMessages)
         {
             this.settings = settings;
             this.goldChanged = goldChanged;
             this.waveStarted = waveStarted;
             this.waveProgress = waveProgress;
             this.myUnitSpawned = myUnitSpawned;
+            this.infoMessages = infoMessages;
             castBarDriver = new PlayerHudCastBarDriver(settings, ResolveSkillIcon);
+            infoFeedDriver = new PlayerHudInfoFeedDriver(settings);
         }
 
         public void Bind(PlayerHudView nextView, Color successColor, CancellationToken token)
@@ -88,16 +93,22 @@ namespace ShadowInfection.UI.PlayerHud
             view.Reset();
             TickMatchWidgetsVisibility();
             castBarDriver.Bind(view, successColor, destroyToken);
+            infoFeedDriver.Bind(view);
 
             subscriptions.Add(goldChanged.Subscribe(OnGoldChanged));
             subscriptions.Add(waveStarted.Subscribe(OnWaveStarted));
             subscriptions.Add(waveProgress.Subscribe(OnWaveProgressChanged));
             subscriptions.Add(myUnitSpawned.Subscribe(OnMyPlayerUnitSpawned));
+            subscriptions.Add(infoMessages.Subscribe(OnInfoMessage));
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, destroyToken)
                     .Subscribe(_ =>
                     {
-                        if (!enabled || view == null)
+                        if (view == null)
+                            return;
+
+                        infoFeedDriver.Tick();
+                        if (!enabled)
                             return;
 
                         TickMatchWidgetsVisibility();
@@ -115,6 +126,7 @@ namespace ShadowInfection.UI.PlayerHud
             bannerHandle.TryCancel();
             UnbindPlayerUnit();
             castBarDriver.Unbind();
+            infoFeedDriver.Unbind();
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
             view = null;
@@ -238,6 +250,14 @@ namespace ShadowInfection.UI.PlayerHud
                 skill.RecastWindowRemaining,
                 cachedData.iconTexture,
                 cachedTooltip);
+        }
+
+        private void OnInfoMessage(PlayerHudInfoMessageEvent message)
+        {
+            if (view == null)
+                return;
+
+            infoFeedDriver.Enqueue(message);
         }
 
         private void OnGoldChanged(PlayerGoldChangedEvent playerGoldChangedEvent)

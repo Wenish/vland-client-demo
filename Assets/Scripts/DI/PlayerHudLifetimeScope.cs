@@ -32,6 +32,18 @@ namespace ShadowInfection.DI
         [Min(0f)]
         private float castBarSuccessFadeSeconds = 1f;
 
+        [SerializeField]
+        [Min(0.1f)]
+        private float infoMessageDurationSeconds = 2f;
+
+        [SerializeField]
+        [Min(0f)]
+        private float infoMessageFadeSeconds = 0.4f;
+
+        [SerializeField]
+        [Min(1)]
+        private int infoMessageMaxVisible = 4;
+
         protected override void Awake()
         {
             parentReference = ParentReference.Create<GameLifetimeScope>();
@@ -59,7 +71,10 @@ namespace ShadowInfection.DI
                 bannerHoldSeconds,
                 bannerFadeOutSeconds,
                 castBarInterruptFadeSeconds,
-                castBarSuccessFadeSeconds));
+                castBarSuccessFadeSeconds,
+                infoMessageDurationSeconds,
+                infoMessageFadeSeconds,
+                infoMessageMaxVisible));
             builder.Register<PlayerHudPresenter>(Lifetime.Scoped);
             builder.RegisterComponent(controller);
         }

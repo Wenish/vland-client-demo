@@ -110,22 +110,23 @@ public class SkillSystem : NetworkBehaviour
     }
 
     [Server]
-    public void CastSkill(SkillSlotType slot, int index, Vector3? aimPoint)
+    public SkillCastResult CastSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {
         if (unit.IsDead)
         {
             Debug.Log("Unit is dead, cannot cast skill.");
-            return;
+            return SkillCastResult.Rejected;
         }
 
         if (unit.IsKnockedUp)
         {
-            return;
+            return SkillCastResult.Rejected;
         }
 
         var list = GetList(slot);
-        if (index < 0 || index >= list.Count) return;
-        list[index].Cast(aimPoint);
+        if (index < 0 || index >= list.Count)
+            return SkillCastResult.Rejected;
+        return list[index].Cast(aimPoint);
     }
 
     [Server]
@@ -267,4 +268,12 @@ public enum SkillSlotType
     Passive,
     Normal,
     Ultimate
+}
+
+public enum SkillCastResult
+{
+    Started,
+    SignaledRunningCast,
+    OnCooldown,
+    Rejected
 }
