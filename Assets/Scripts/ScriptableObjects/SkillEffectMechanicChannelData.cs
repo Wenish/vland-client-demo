@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -20,6 +21,7 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     }
 
     [Tooltip("Seconds to channel before continuing.")]
+    [MinValue(0f)]
     public float channelDuration = 2f;
 
     [Tooltip("Percentage (0–1) of the caster’s base move speed allowed during channel.")]
@@ -31,15 +33,20 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     public float turnSpeedPercent = 0f;
 
     [Header("Ticking (optional)")]
-    [Tooltip("Optional effect chain to execute periodically during the channel.")]
-    public SkillEffectChainData tickEffect;
-
     [Tooltip("Number of evenly spaced ticks to execute within channelDuration. 0 disables ticking.")]
-    [Min(0)]
+    [MinValue(0)]
     public int tickCount = 0;
 
+    [Tooltip("Optional effect chain to execute periodically during the channel.")]
+    [ShowIf(nameof(HasTicks))]
+    [Expandable]
+    public SkillEffectChainData tickEffect;
+
     [Tooltip("How to schedule ticks during the channel.")]
+    [ShowIf(nameof(HasTicks))]
     public ChannelTickMode tickMode = ChannelTickMode.EvenlySpacedEndAligned;
+
+    private bool HasTicks() => tickCount > 0;
 
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 

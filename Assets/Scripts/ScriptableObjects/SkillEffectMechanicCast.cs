@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -12,6 +13,7 @@ using UnityEngine;
 public class SkillEffectMechanicCast : SkillEffectData
 {
     [Tooltip("Seconds to cast before continuing.")]
+    [MinValue(0f)]
     public float castDuration = 2f;
 
     [Tooltip("Percentage (0–1) of the caster’s base move speed allowed during cast.")]

@@ -1,14 +1,19 @@
 
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SkillEffectMechanicProjectile", menuName = "Game/Skills/Effects/Mechanic/Projectile")]
 public class SkillEffectMechanicProjectile : SkillEffectMechanic
 {
+    [Required]
+    [Expandable]
     public ProjectileData projectileData;
 
+    [MinValue(0f)]
     public float spawnDistance = 0f;
 
+    [Expandable]
     public SkillEffectChainData onHitEffectChain;
 
     public override List<UnitController> DoMechanic(CastContext castContext, List<UnitController> targets)

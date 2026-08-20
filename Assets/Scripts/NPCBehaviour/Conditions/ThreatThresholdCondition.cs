@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -38,7 +39,10 @@ namespace NPCBehaviour
 
         [Header("Target Settings")]
         [Tooltip("Use current target (only for TargetAboveThreshold mode)")]
+        [ShowIf(nameof(ShowTargetSettings))]
         public bool useCurrentTarget = true;
+
+        private bool ShowTargetSettings() => mode == ThresholdMode.TargetAboveThreshold;
 
         public override bool Evaluate(BehaviourContext context)
         {

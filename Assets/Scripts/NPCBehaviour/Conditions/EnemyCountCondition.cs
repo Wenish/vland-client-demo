@@ -1,4 +1,5 @@
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -19,9 +20,11 @@ namespace NPCBehaviour
 
         [Header("Enemy Count Check")]
         public ComparisonType comparison = ComparisonType.GreaterThan;
+        [MinValue(0)]
         public int enemyCount = 3;
 
         [Tooltip("Range to detect enemies")]
+        [MinValue(0f)]
         public float detectionRange = 15f;
 
         public override bool Evaluate(BehaviourContext context)

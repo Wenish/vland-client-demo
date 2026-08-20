@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -13,19 +14,29 @@ namespace NPCBehaviour
         [Header("Profile Info")]
         public string profileName;
 
-        [TextArea(2, 4)]
+        [ResizableTextArea]
         public string profileDescription;
 
         [Header("States")]
         [Tooltip("Initial state when this profile becomes active")]
+        [Required]
+        [Expandable]
+        [ValidateInput(nameof(InitialStateIsListed), "Initial state should also be in Available States")]
         public BehaviourState initialState;
 
         [Tooltip("All available states in this profile")]
+        [Expandable]
         public List<BehaviourState> availableStates = new();
 
         [Header("Global Transitions")]
         [Tooltip("Transitions that can trigger from any state")]
+        [Expandable]
         public List<BehaviourTransition> globalTransitions = new();
+
+        private bool InitialStateIsListed()
+        {
+            return initialState == null || availableStates == null || availableStates.Contains(initialState);
+        }
 
         /// <summary>
         /// Get the initial state for this profile.

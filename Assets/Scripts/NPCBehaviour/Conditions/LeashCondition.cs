@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -11,6 +12,7 @@ namespace NPCBehaviour
     {
         [Header("Leash Distance")]
         [Tooltip("Distance from spawn before leash triggers (should be less than reset distance)")]
+        [MinValue(0f)]
         public float leashDistance = 35f;
 
         public override bool Evaluate(BehaviourContext context)

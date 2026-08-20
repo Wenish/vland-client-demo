@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SkillEffectTargetCone", menuName = "Game/Skills/Effects/Target/Cone")]
 public class SkillEffectTargetCone : SkillEffectTarget
 {
+    [MinValue(0f)]
     public float range = 5f;
+    [MinValue(0f)]
+    [MaxValue(360f)]
     public float angle = 45f;
     public LayerMask unitLayer;
 

@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -17,13 +18,18 @@ namespace NPCBehaviour
 
         [Header("Distance Check")]
         public ComparisonType comparison = ComparisonType.LessThan;
+        [MinValue(0f)]
         public float distance = 5f;
         
         [Tooltip("Only used for Between comparison")]
+        [ShowIf(nameof(UseBetween))]
+        [MinValue(0f)]
         public float maxDistance = 10f;
 
         [Tooltip("Check distance to current target (if false, checks if ANY enemy is in range)")]
         public bool useCurrentTarget = true;
+
+        private bool UseBetween() => comparison == ComparisonType.Between;
 
         public override bool Evaluate(BehaviourContext context)
         {

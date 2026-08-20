@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +13,7 @@ namespace NPCBehaviour
     {
         [Header("Patrol Behaviour")]
         [Tooltip("Transitions from this state")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Header("Patrol Type")]
@@ -19,17 +21,25 @@ namespace NPCBehaviour
 
         [Header("Random Patrol")]
         [Tooltip("Range for random waypoints")]
+        [ShowIf(nameof(IsRandomPatrol))]
+        [MinValue(0f)]
         public float randomWaypointRange = 10f;
 
         [Tooltip("Time to wait at each waypoint")]
+        [MinValue(0f)]
         public float waypointWaitTime = 2f;
 
         [Header("Fixed Waypoints")]
         [Tooltip("Fixed patrol points (only used if patrolType is FixedWaypoints)")]
+        [ShowIf(nameof(IsFixedPatrol))]
         public List<Vector3> waypoints = new();
 
         [Tooltip("Should patrol loop back to start?")]
+        [ShowIf(nameof(IsFixedPatrol))]
         public bool loopWaypoints = true;
+
+        private bool IsRandomPatrol() => patrolType == PatrolType.Random;
+        private bool IsFixedPatrol() => patrolType == PatrolType.FixedWaypoints;
 
         public override void OnEnter(BehaviourContext context)
         {

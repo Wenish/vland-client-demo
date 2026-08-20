@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 public abstract class SkillEffectTarget : SkillEffectData
@@ -25,22 +26,29 @@ public abstract class SkillEffectTarget : SkillEffectData
 
     [Header("General Target Filters")]
     [Tooltip("Which relative teams are allowed (relative to caster).")]
+    [EnumFlags]
     public TargetTeam teamMask = TargetTeam.Enemies; // default like before
 
     [Tooltip("Which life states are allowed.")]
+    [EnumFlags]
     public LifeMask lifeMask = LifeMask.Alive;
 
     [Tooltip("Ensure returned list contains unique units.")]
     public bool distinct = true;
 
     [Tooltip("Maximum number of targets to keep (0 = unlimited).")]
+    [MinValue(0)]
     public int maxTargets = 0;
 
     [Tooltip("If true and maxTargets > 0, randomize final order before trimming.")]
+    [ShowIf(nameof(HasMaxTargets))]
     public bool randomizeOrder = false;
 
     [Tooltip("Optional: sort by distance to caster before trimming (ignored if randomizeOrder).")]
+    [HideIf(nameof(randomizeOrder))]
     public bool sortByDistance = true;
+
+    private bool HasMaxTargets() => maxTargets > 0;
 
     protected bool PassesTeamMask(CastContext context, UnitController candidate)
     {

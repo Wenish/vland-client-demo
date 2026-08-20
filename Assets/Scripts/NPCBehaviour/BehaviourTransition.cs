@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -12,9 +13,12 @@ namespace NPCBehaviour
     {
         [Header("Transition")]
         [Tooltip("Target state to transition to")]
+        [Required]
+        [Expandable]
         public BehaviourState targetState;
 
         [Tooltip("All conditions must be true for this transition to trigger")]
+        [Expandable]
         public List<BehaviourCondition> conditions = new();
 
         [Tooltip("Priority when multiple transitions are valid (higher = more important)")]

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -14,7 +15,10 @@ namespace NPCBehaviour
         [System.Serializable]
         public class PrioritySkill
         {
+            [AllowNesting]
             public string skillName;
+            [AllowNesting]
+            [MinValue(1)]
             [Tooltip("Lower priority number = higher priority (1 is highest)")]
             public int priority = 1;
         }

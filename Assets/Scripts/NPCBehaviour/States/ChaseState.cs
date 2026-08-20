@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,13 +15,16 @@ namespace NPCBehaviour
     {
         [Header("Chase Behaviour")]
         [Tooltip("Transitions from this state")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Header("Target Selection")]
         [Tooltip("How often to update target (in seconds)")]
+        [MinValue(0.05f)]
         public float targetUpdateInterval = 0.5f;
 
         [Tooltip("Maximum distance to detect enemies")]
+        [MinValue(0f)]
         public float detectionRange = 30f;
 
         [Tooltip("Prioritize closest target")]
@@ -31,6 +35,7 @@ namespace NPCBehaviour
 
         [Header("Movement")]
         [Tooltip("How close to get to target before stopping")]
+        [MinValue(0f)]
         public float stoppingDistance = 2f;
 
         public override void OnEnter(BehaviourContext context)

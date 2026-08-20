@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,13 +17,16 @@ namespace NPCBehaviour
     {
         [Header("Transitions")]
         [Tooltip("Transitions from this state (typically back to Idle)")]
+        [Expandable]
         public List<BehaviourTransition> transitions = new();
 
         [Header("Reset Behaviour")]
         [Tooltip("How fast to move back to spawn (units per second)")]
+        [MinValue(0f)]
         public float resetSpeed = 5f;
 
         [Tooltip("Distance to spawn point before reset completes")]
+        [MinValue(0f)]
         public float stoppingDistance = 0.5f;
 
         [Tooltip("Should we clear threat when resetting?")]

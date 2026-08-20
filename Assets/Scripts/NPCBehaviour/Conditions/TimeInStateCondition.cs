@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -10,6 +11,7 @@ namespace NPCBehaviour
     {
         [Header("Time Check")]
         [Tooltip("Minimum time in seconds that must pass in current state")]
+        [MinValue(0f)]
         public float minTimeInState = 5f;
 
         public override bool Evaluate(BehaviourContext context)

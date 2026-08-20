@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -24,7 +25,10 @@ namespace NPCBehaviour
 
         [Range(0f, 1f)]
         [Tooltip("Only used for Between comparison")]
+        [ShowIf(nameof(UseBetween))]
         public float maxHealthPercent = 1f;
+
+        private bool UseBetween() => comparison == ComparisonType.Between;
 
         public override bool Evaluate(BehaviourContext context)
         {

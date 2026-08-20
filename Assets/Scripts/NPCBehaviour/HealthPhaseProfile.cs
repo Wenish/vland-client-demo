@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -13,28 +14,35 @@ namespace NPCBehaviour
         [System.Serializable]
         public class HealthPhase
         {
+            [AllowNesting]
             [Tooltip("Name of this phase (for debugging)")]
             public string phaseName;
 
+            [AllowNesting]
             [Range(0f, 1f)]
             [Tooltip("Health percentage threshold to trigger this phase (0 = 0%, 1 = 100%)")]
             public float healthThreshold;
 
+            [AllowNesting]
+            [Required]
+            [Expandable]
             [Tooltip("Behaviour profile to use during this phase")]
             public BehaviourProfile behaviourProfile;
 
-            [Header("Optional Events")]
+            [AllowNesting]
             [Tooltip("Skills to add when entering this phase")]
             public List<string> skillsToAdd = new();
 
+            [AllowNesting]
             [Tooltip("Skills to remove when entering this phase")]
             public List<string> skillsToRemove = new();
 
-            [Header("Visual/Audio (Optional)")]
+            [AllowNesting]
             [Tooltip("Play an effect when this phase begins")]
             public GameObject phaseTransitionEffect;
 
-            [TextArea(2, 3)]
+            [AllowNesting]
+            [ResizableTextArea]
             [Tooltip("Debug/designer notes about this phase")]
             public string notes;
         }
