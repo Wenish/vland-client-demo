@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Mirror;
@@ -67,17 +68,18 @@ public class WeaponController : NetworkBehaviour
         {
             await Task.Delay((int)delay, cancellationToken);
         }
-        catch (TaskCanceledException)
+        catch (OperationCanceledException)
         {
-            // Attack was interrupted
-            attacker.unitActionState.SetUnitActionStateToIdle();
-            attacker.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
-            isAttacking = false;
+            FinishCancelledAttack(attacker, moveSpeedModifier);
             return;
+        }
+        finally
+        {
+            DisposeAttackCancellation();
         }
 
         if (attacker == null) return;
-        attacker.unitActionState.SetUnitActionStateToIdle();
+        ClearAttackingStateIfOwned(attacker);
         attacker.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
         if (attacker.IsDead)
         {
@@ -99,9 +101,31 @@ public class WeaponController : NetworkBehaviour
         if (attackCancellationTokenSource != null && !attackCancellationTokenSource.Token.IsCancellationRequested)
         {
             attackCancellationTokenSource.Cancel();
-            attackCancellationTokenSource.Dispose();
-            attackCancellationTokenSource = null;
         }
         isAttacking = false;
+    }
+
+    private void FinishCancelledAttack(UnitController attacker, StatModifier moveSpeedModifier)
+    {
+        ClearAttackingStateIfOwned(attacker);
+        if (attacker != null && attacker.unitMediator != null)
+        {
+            attacker.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
+        }
+        isAttacking = false;
+    }
+
+    private static void ClearAttackingStateIfOwned(UnitController attacker)
+    {
+        if (attacker == null || attacker.unitActionState == null) return;
+        if (attacker.unitActionState.state.type != UnitActionState.ActionType.Attacking) return;
+        attacker.unitActionState.SetUnitActionStateToIdle();
+    }
+
+    private void DisposeAttackCancellation()
+    {
+        if (attackCancellationTokenSource == null) return;
+        attackCancellationTokenSource.Dispose();
+        attackCancellationTokenSource = null;
     }
 }
