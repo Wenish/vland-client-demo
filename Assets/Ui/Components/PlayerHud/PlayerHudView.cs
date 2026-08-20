@@ -1,0 +1,410 @@
+using Cysharp.Text;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace ShadowInfection.UI.PlayerHud
+{
+    internal enum PlayerHudAbilitySlot
+    {
+        Passive,
+        BaseAttack,
+        Normal1,
+        Normal2,
+        Normal3,
+        Ultimate
+    }
+
+    internal readonly struct AbilitySlotVm
+    {
+        public readonly bool HasSkill;
+        public readonly float CooldownRemaining;
+        public readonly float CooldownProgress;
+        public readonly bool IsRecastAvailable;
+        public readonly float RecastRemaining;
+        public readonly Texture2D Icon;
+        public readonly string Tooltip;
+
+        public AbilitySlotVm(
+            bool hasSkill,
+            float cooldownRemaining,
+            float cooldownProgress,
+            bool isRecastAvailable,
+            float recastRemaining,
+            Texture2D icon,
+            string tooltip)
+        {
+            HasSkill = hasSkill;
+            CooldownRemaining = cooldownRemaining;
+            CooldownProgress = cooldownProgress;
+            IsRecastAvailable = isRecastAvailable;
+            RecastRemaining = recastRemaining;
+            Icon = icon;
+            Tooltip = tooltip;
+        }
+
+        public static AbilitySlotVm Empty => new AbilitySlotVm(false, 0f, 0f, false, 0f, null, string.Empty);
+    }
+
+    internal sealed class PlayerHudView
+    {
+        private readonly Label labelWave;
+        private readonly Label labelRoundStarted;
+        private readonly Label labelGold;
+        private readonly Label labelWavePercent;
+        private readonly Label labelCompletion;
+        private readonly Label labelMatchTimer;
+        private readonly VisualElement roundCompletionFill;
+        private readonly VisualElement playerVitalsContainer;
+        private readonly VisualElement playerHealthContainer;
+        private readonly VisualElement playerHealthFill;
+        private readonly Label labelPlayerHealthValue;
+        private readonly VisualElement playerShieldContainer;
+        private readonly VisualElement playerShieldFill;
+        private readonly Label labelPlayerShieldValue;
+        private readonly AbilityCooldownElement skillPassive;
+        private readonly AbilityCooldownElement baseAttack;
+        private readonly AbilityCooldownElement skillNormal1;
+        private readonly AbilityCooldownElement skillNormal2;
+        private readonly AbilityCooldownElement skillNormal3;
+        private readonly AbilityCooldownElement skillUltimate;
+        private readonly CastBar playerCastbar;
+        private readonly VisualElement playerStatsContainer;
+        private readonly Label labelStatAttackPower;
+        private readonly Label labelStatAbilityPower;
+        private readonly Label labelStatAttackSpeed;
+        private readonly Label labelStatMovementSpeed;
+        private readonly Label labelStatDamageReduction;
+        private readonly Label labelStatArmor;
+        private readonly Label labelStatMagicResist;
+        private readonly Label labelStatCritChance;
+
+        public PlayerHudView(VisualElement root)
+        {
+            root.pickingMode = PickingMode.Ignore;
+            UiGameplayInputGuard.Apply(root);
+
+            labelWave = root.Q<Label>("labelWave");
+            labelRoundStarted = root.Q<Label>("labelRoundStarted");
+            labelGold = root.Q<Label>("labelGold");
+            labelWavePercent = root.Q<Label>("labelWavePercent");
+            labelCompletion = root.Q<Label>("labelCompletion");
+            labelMatchTimer = root.Q<Label>("labelMatchTimer");
+            roundCompletionFill = root.Q<VisualElement>("roundCompletionFill");
+            playerVitalsContainer = root.Q<VisualElement>("playerVitalsContainer");
+            playerHealthContainer = root.Q<VisualElement>("playerHealthContainer");
+            playerHealthFill = root.Q<VisualElement>("playerHealthFill");
+            labelPlayerHealthValue = root.Q<Label>("labelPlayerHealthValue");
+            playerShieldContainer = root.Q<VisualElement>("playerShieldContainer");
+            playerShieldFill = root.Q<VisualElement>("playerShieldFill");
+            labelPlayerShieldValue = root.Q<Label>("labelPlayerShieldValue");
+            skillPassive = root.Q<AbilityCooldownElement>("skillPassive");
+            baseAttack = root.Q<AbilityCooldownElement>("baseAttack");
+            skillNormal1 = root.Q<AbilityCooldownElement>("skillNormal1");
+            skillNormal2 = root.Q<AbilityCooldownElement>("skillNormal2");
+            skillNormal3 = root.Q<AbilityCooldownElement>("skillNormal3");
+            skillUltimate = root.Q<AbilityCooldownElement>("skillUltimate");
+            playerCastbar = root.Q<CastBar>("playerCastbar");
+            playerStatsContainer = root.Q<VisualElement>("playerStatsContainer");
+            labelStatAttackPower = root.Q<Label>("labelStatAttackPower");
+            labelStatAbilityPower = root.Q<Label>("labelStatAbilityPower");
+            labelStatAttackSpeed = root.Q<Label>("labelStatAttackSpeed");
+            labelStatMovementSpeed = root.Q<Label>("labelStatMovementSpeed");
+            labelStatDamageReduction = root.Q<Label>("labelStatDamageReduction");
+            labelStatArmor = root.Q<Label>("labelStatArmor");
+            labelStatMagicResist = root.Q<Label>("labelStatMagicResist");
+            labelStatCritChance = root.Q<Label>("labelStatCritChance");
+
+            SetPickingIgnoreRecursive(root.Q<VisualElement>("roundInfos"));
+            SetPickingIgnoreRecursive(root.Q<Label>("labelRoundStarted")?.parent);
+            SetPickingIgnoreRecursive(root.Q<CastBar>("playerCastbar"));
+            SetPickingIgnoreRecursive(root.Q(className: "si-hud-bottom"));
+
+            Reset();
+        }
+
+        public void Reset()
+        {
+            if (labelWave != null)
+                labelWave.text = string.Empty;
+            if (labelRoundStarted != null)
+            {
+                labelRoundStarted.text = string.Empty;
+                labelRoundStarted.style.opacity = 0f;
+            }
+
+            SetGold(0);
+            SetRoundProgress(0, 0f);
+            HidePlayerVitals();
+            HidePlayerStats();
+            SetAbilitySlot(PlayerHudAbilitySlot.Passive, AbilitySlotVm.Empty);
+            SetAbilitySlot(PlayerHudAbilitySlot.BaseAttack, AbilitySlotVm.Empty);
+            SetAbilitySlot(PlayerHudAbilitySlot.Normal1, AbilitySlotVm.Empty);
+            SetAbilitySlot(PlayerHudAbilitySlot.Normal2, AbilitySlotVm.Empty);
+            SetAbilitySlot(PlayerHudAbilitySlot.Normal3, AbilitySlotVm.Empty);
+            SetAbilitySlot(PlayerHudAbilitySlot.Ultimate, AbilitySlotVm.Empty);
+            ResetCastBar();
+            HideCastBar();
+            if (playerCastbar != null)
+                playerCastbar.style.opacity = 1f;
+        }
+
+        public void SetGold(int gold)
+        {
+            if (labelGold == null)
+                return;
+
+            labelGold.text = ZString.Format("{0}", gold);
+        }
+
+        public void SetMatchTimer(int elapsedSeconds)
+        {
+            if (labelMatchTimer == null)
+                return;
+
+            var minutes = elapsedSeconds / 60;
+            var seconds = elapsedSeconds % 60;
+            labelMatchTimer.text = ZString.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+
+        public void SetRoundProgress(int waveNumber, float percentKilled)
+        {
+            if (labelWave != null)
+                labelWave.text = waveNumber > 0 ? ZString.Format("Round {0}", waveNumber) : "Round";
+
+            if (labelWavePercent != null)
+                labelWavePercent.text = ZString.Format("{0:0.0}%", percentKilled);
+
+            if (labelCompletion != null)
+                labelCompletion.text = ZString.Format("Completion {0:0}%", percentKilled);
+
+            if (roundCompletionFill != null)
+                roundCompletionFill.style.width = Length.Percent(Mathf.Clamp(percentKilled, 0f, 100f));
+        }
+
+        public void SetRoundStartedText(int waveNumber)
+        {
+            if (labelRoundStarted == null)
+                return;
+
+            labelRoundStarted.text = ZString.Format("Round\n{0}", waveNumber);
+        }
+
+        public void SetRoundStartedOpacity(float opacity)
+        {
+            if (labelRoundStarted == null)
+                return;
+
+            labelRoundStarted.style.opacity = opacity;
+        }
+
+        public void SetHealth(int current, int max)
+        {
+            if (labelPlayerHealthValue != null)
+                labelPlayerHealthValue.text = ZString.Format("{0} / {1}", Mathf.Max(0, current), Mathf.Max(0, max));
+
+            SetBarFill(playerHealthFill, current, max);
+            if (playerHealthContainer != null)
+                playerHealthContainer.style.display = max > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        public void SetShield(int current, int max)
+        {
+            if (labelPlayerShieldValue != null)
+                labelPlayerShieldValue.text = ZString.Format("{0} / {1}", Mathf.Max(0, current), Mathf.Max(0, max));
+
+            SetBarFill(playerShieldFill, current, max);
+            if (playerShieldContainer != null)
+                playerShieldContainer.style.display = max > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        public void ShowPlayerVitals()
+        {
+            if (playerVitalsContainer != null)
+                playerVitalsContainer.style.display = DisplayStyle.Flex;
+        }
+
+        public void HidePlayerVitals()
+        {
+            if (playerVitalsContainer != null)
+                playerVitalsContainer.style.display = DisplayStyle.None;
+
+            SetHealth(0, 0);
+            SetShield(0, 0);
+        }
+
+        public void ShowPlayerStats()
+        {
+            if (playerStatsContainer != null)
+                playerStatsContainer.style.display = DisplayStyle.Flex;
+        }
+
+        public void HidePlayerStats()
+        {
+            if (playerStatsContainer != null)
+                playerStatsContainer.style.display = DisplayStyle.None;
+        }
+
+        public void SetStat(StatType statType, float value)
+        {
+            switch (statType)
+            {
+                case StatType.AttackPower:
+                    if (labelStatAttackPower != null)
+                        labelStatAttackPower.text = ZString.Format("ATK: {0:0}", value);
+                    break;
+                case StatType.AbilityPower:
+                    if (labelStatAbilityPower != null)
+                        labelStatAbilityPower.text = ZString.Format("AP: {0:0}", value);
+                    break;
+                case StatType.AttackSpeed:
+                    if (labelStatAttackSpeed != null)
+                        labelStatAttackSpeed.text = ZString.Format("AS: {0:0.00}x", value);
+                    break;
+                case StatType.MovementSpeed:
+                    if (labelStatMovementSpeed != null)
+                        labelStatMovementSpeed.text = ZString.Format("SPD: {0:0.0}", value);
+                    break;
+                case StatType.DamageReduction:
+                    if (labelStatDamageReduction != null)
+                        labelStatDamageReduction.text = ZString.Format("DR: {0:0}%", value);
+                    break;
+                case StatType.Armor:
+                    if (labelStatArmor != null)
+                        labelStatArmor.text = ZString.Format("ARM: {0:0}", value);
+                    break;
+                case StatType.MagicResist:
+                    if (labelStatMagicResist != null)
+                        labelStatMagicResist.text = ZString.Format("MR: {0:0}", value);
+                    break;
+                case StatType.CritChance:
+                    if (labelStatCritChance != null)
+                        labelStatCritChance.text = ZString.Format("CRIT: {0:0}%", value);
+                    break;
+            }
+        }
+
+        public void SetAbilitySlot(PlayerHudAbilitySlot slot, in AbilitySlotVm vm)
+        {
+            var element = GetAbilityElement(slot);
+            if (element == null)
+                return;
+
+            if (!vm.HasSkill)
+            {
+                ResetAbility(element);
+                return;
+            }
+
+            element.CooldownRemaining = vm.CooldownRemaining;
+            element.CooldownProgress = vm.CooldownProgress;
+            element.IsRecastAvailable = vm.IsRecastAvailable;
+            element.RecastRemaining = vm.RecastRemaining;
+            element.IconTexture = vm.Icon;
+            element.TooltipText = vm.Tooltip ?? string.Empty;
+        }
+
+        public void ShowCastBar()
+        {
+            if (playerCastbar != null)
+                playerCastbar.style.display = DisplayStyle.Flex;
+        }
+
+        public void HideCastBar()
+        {
+            if (playerCastbar != null)
+                playerCastbar.style.display = DisplayStyle.None;
+        }
+
+        public void SetCastBarOpacity(float opacity)
+        {
+            if (playerCastbar != null)
+                playerCastbar.style.opacity = opacity;
+        }
+
+        public void SetCastBarProgress(float progress)
+        {
+            if (playerCastbar != null)
+                playerCastbar.Progress = progress;
+        }
+
+        public void SetCastBarTime(string text)
+        {
+            if (playerCastbar != null)
+                playerCastbar.TextTime = text ?? string.Empty;
+        }
+
+        public void SetCastBarName(string text)
+        {
+            if (playerCastbar != null)
+                playerCastbar.TextName = text ?? string.Empty;
+        }
+
+        public void SetCastBarIcon(Texture2D icon)
+        {
+            if (playerCastbar != null)
+                playerCastbar.IconTexture = icon;
+        }
+
+        public void SetCastBarFeedback(Color color, bool visible)
+        {
+            if (playerCastbar == null)
+                return;
+
+            playerCastbar.SetFeedbackColor(color);
+            playerCastbar.ShowFeedback(visible);
+        }
+
+        public void ResetCastBar()
+        {
+            SetCastBarTime(string.Empty);
+            SetCastBarName(string.Empty);
+            SetCastBarFeedback(Color.clear, false);
+        }
+
+        private AbilityCooldownElement GetAbilityElement(PlayerHudAbilitySlot slot)
+        {
+            return slot switch
+            {
+                PlayerHudAbilitySlot.Passive => skillPassive,
+                PlayerHudAbilitySlot.BaseAttack => baseAttack,
+                PlayerHudAbilitySlot.Normal1 => skillNormal1,
+                PlayerHudAbilitySlot.Normal2 => skillNormal2,
+                PlayerHudAbilitySlot.Normal3 => skillNormal3,
+                PlayerHudAbilitySlot.Ultimate => skillUltimate,
+                _ => null
+            };
+        }
+
+        private static void ResetAbility(AbilityCooldownElement element)
+        {
+            element.CooldownRemaining = 0f;
+            element.CooldownProgress = 0f;
+            element.IsRecastAvailable = false;
+            element.RecastRemaining = 0f;
+            element.IconTexture = null;
+            element.TooltipText = string.Empty;
+        }
+
+        private static void SetBarFill(VisualElement fillElement, int current, int max)
+        {
+            if (fillElement == null)
+                return;
+
+            var percent = max <= 0 ? 0f : Mathf.Clamp01((float)current / max) * 100f;
+            fillElement.style.width = Length.Percent(percent);
+        }
+
+        private static void SetPickingIgnoreRecursive(VisualElement element)
+        {
+            if (element == null)
+                return;
+
+            if (element is AbilityCooldownElement)
+                return;
+
+            element.pickingMode = PickingMode.Ignore;
+            foreach (var child in element.Children())
+                SetPickingIgnoreRecursive(child);
+        }
+    }
+}

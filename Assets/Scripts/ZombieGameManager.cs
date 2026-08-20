@@ -699,7 +699,7 @@ public class ZombieGameManager : NetworkBehaviour
     private void RaiseOnNewWaveStartedEvent(int waveNumber, int totalZombies)
     {
         OnNewWaveStarted(waveNumber);
-        EventManager.Instance.Publish(new WaveStartedEvent(waveNumber, totalZombies));
+        GameEventPublish.ToBoth(new WaveStartedEvent(waveNumber, totalZombies));
         RpcWaveStarted(waveNumber, totalZombies);
     }
 
@@ -712,7 +712,7 @@ public class ZombieGameManager : NetworkBehaviour
         }
 
         OnNewWaveStarted(waveNumber);
-        EventManager.Instance.Publish(new WaveStartedEvent(waveNumber, totalZombies));
+        GameEventPublish.ToBoth(new WaveStartedEvent(waveNumber, totalZombies));
     }
 
     [Server]
@@ -1254,7 +1254,7 @@ public class ZombieGameManager : NetworkBehaviour
     {
         float percent = CurrentWaveKilledPercent;
         OnWaveProgressChanged(percent, currentWaveKilledCount, currentWaveTotalCount);
-        EventManager.Instance.Publish(new WaveProgressChangedEvent(currentWave, currentWaveKilledCount, currentWaveTotalCount, percent));
+        GameEventPublish.ToMessagePipe(new WaveProgressChangedEvent(currentWave, currentWaveKilledCount, currentWaveTotalCount, percent));
     }
 
     [Server]

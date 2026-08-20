@@ -74,7 +74,7 @@ public class PlayerInput : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(_myUnitController));
+            GameEventPublish.ToBoth(new MyPlayerUnitSpawnedEvent(_myUnitController));
         }
     }
 
@@ -334,7 +334,7 @@ public class PlayerInput : NetworkBehaviour
         var unitController = myUnit.GetComponent<UnitController>();
         _myUnitController = unitController;
         SetCameraTargetToPlayerUnit();
-        EventManager.Instance.Publish(new MyPlayerUnitSpawnedEvent(unitController));
+        GameEventPublish.ToBoth(new MyPlayerUnitSpawnedEvent(unitController));
     }
 
 

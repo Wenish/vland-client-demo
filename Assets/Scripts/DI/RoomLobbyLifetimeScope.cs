@@ -12,6 +12,18 @@ namespace ShadowInfection.DI
         [Min(0.05f)]
         private float refreshIntervalSeconds = 0.2f;
 
+        protected override void Awake()
+        {
+            parentReference = ParentReference.Create<GameLifetimeScope>();
+            parentReference.Object = GameLifetimeScope.FindOrCreate();
+            base.Awake();
+        }
+
+        protected override LifetimeScope FindParent()
+        {
+            return GameLifetimeScope.FindOrCreate();
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(new RoomLobbySettings(refreshIntervalSeconds));
