@@ -36,7 +36,15 @@ MonoBehaviour:
     m_Name: package.openupm.com
     m_Url: https://package.openupm.com
     m_Scopes:
+    - com.annulusgames.lit-motion
+    - com.cysharp.messagepipe
+    - com.cysharp.messagepipe.vcontainer
+    - com.cysharp.r3
+    - com.cysharp.unitask
+    - com.dbrizov.naughtyattributes
+    - com.github-glitchenzo.nugetforunity
     - com.openupm
+    - jp.hadashikick.vcontainer
     m_IsDefault: 0
     m_IsUnityRegistry: 0
     m_Capabilities: 0
