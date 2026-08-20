@@ -3,6 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class UnitAnimationController : MonoBehaviour
 {
+    private const string AttackLayerName = "Attack";
+    private const string AttackTriggerName = "Attack";
+    private const string AttackIdleStateName = "None";
+
     public float maxSpeed = 5f;
     UnitController unitController;
     Animator animator;
@@ -21,6 +25,7 @@ public class UnitAnimationController : MonoBehaviour
         unitController.OnHealthChange += HandleOnHealthChange;
         unitController.OnTakeDamage += HandleOnTakeDamage;
         unitController.OnWeaponChange += HandleOnWeaponChange;
+        unitController.OnActionInterrupted += HandleOnActionInterrupted;
 
         SelectAnimator(unitController);
     }
@@ -32,6 +37,7 @@ public class UnitAnimationController : MonoBehaviour
             unitController.OnHealthChange -= HandleOnHealthChange;
             unitController.OnTakeDamage -= HandleOnTakeDamage;
             unitController.OnWeaponChange -= HandleOnWeaponChange;
+            unitController.OnActionInterrupted -= HandleOnActionInterrupted;
         }    
     }
 
@@ -64,6 +70,30 @@ public class UnitAnimationController : MonoBehaviour
         }
         animator.SetInteger("AttackVersion", obj.attackIndex % 2);
         animator.SetTrigger("Attack");
+    }
+
+    private void HandleOnActionInterrupted(
+        (UnitController target, UnitActionState.ActionStateData interruptedAction) data)
+    {
+        if (data.interruptedAction.type != UnitActionState.ActionType.Attacking)
+            return;
+
+        InterruptAttackAnimation();
+    }
+
+    private void InterruptAttackAnimation()
+    {
+        if (animator == null || !animator.isActiveAndEnabled)
+            return;
+
+        animator.ResetTrigger(AttackTriggerName);
+
+        int attackLayer = animator.GetLayerIndex(AttackLayerName);
+        if (attackLayer < 0)
+            return;
+
+        animator.Play(AttackIdleStateName, attackLayer, 0f);
+        animator.Update(0f);
     }
 
     private void HandleOnHealthChange((int current, int max) health)

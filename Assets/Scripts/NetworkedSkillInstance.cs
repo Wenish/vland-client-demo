@@ -159,8 +159,18 @@ public class NetworkedSkillInstance : NetworkBehaviour
             return;
         }
 
-        // If the unit is busy (casting/attacking/etc), only block if the skill doesn't allow activation while busy
-        if (unit.unitActionState.IsActive && !skillData.canActivateWhileBusy) return;
+        // Skills yield to other skills, but auto-attack should not block a player ability.
+        if (unit.unitActionState.IsActive && !skillData.canActivateWhileBusy)
+        {
+            if (unit.unitActionState.state.type == UnitActionState.ActionType.Attacking)
+            {
+                unit.InterruptAction();
+            }
+            else
+            {
+                return;
+            }
+        }
 
         // Prevent duplicate admission within the same server frame (e.g. very fast spam / duplicate command packets).
         if (_lastCastStartFrame == Time.frameCount) return;
