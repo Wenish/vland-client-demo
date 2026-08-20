@@ -25,16 +25,23 @@ jobs:
     steps:
       # 1. Checkout
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           lfs: false
 
-      # 2. Disk space before cleanup (debug)
+      # 2. Restore ignored NuGetForUnity packages (R3, etc.) before .NET is deleted
+      - name: Restore NuGetForUnity packages
+        run: |
+          dotnet tool restore
+          dotnet nugetforunity restore .
+          ls -la Assets/Packages
+
+      # 3. Disk space before cleanup (debug)
       - name: Disk space before cleanup
         run: df -h
 
-      # 3. FREE DISK SPACE (critical for Unity Docker images)
+      # 4. FREE DISK SPACE (critical for Unity Docker images)
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -43,13 +50,13 @@ jobs:
           sudo rm -rf /opt/hostedtoolcache
           sudo docker system prune -af
 
-      # 4. Disk space after cleanup (debug)
+      # 5. Disk space after cleanup (debug)
       - name: Disk space after cleanup
         run: df -h
 
-      # 5. Cache Unity Library
+      # 6. Cache Unity Library
       - name: Cache Library
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
@@ -57,7 +64,7 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-
 
-      # 6. Extract version from tag
+      # 7. Extract version from tag
       - name: Extract version from tag
         id: version
         shell: bash
@@ -72,10 +79,10 @@ jobs:
           ver="${ref#v}"
           echo "version=$ver" >> "$GITHUB_OUTPUT"
 
-      # 7. Build with Unity
+      # 8. Build with Unity
       - name: Build with Unity
         id: buildStep
-        uses: game-ci/unity-builder@v4
+        uses: game-ci/unity-builder@v5
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -85,14 +92,14 @@ jobs:
           versioning: Semantic
           buildName: "Shadow Infection"
 
-      # 8. Zip build
+      # 9. Zip build
       - name: Zip build
         run: |
           mkdir -p artifacts
           cd build/${{ matrix.targetPlatform }}
           zip -r "../../artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip" .
 
-      # 9. Upload artifact
+      # 10. Upload artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
