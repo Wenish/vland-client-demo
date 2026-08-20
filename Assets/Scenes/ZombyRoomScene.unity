@@ -9755,6 +9755,7 @@ GameObject:
   - component: {fileID: 1381927147}
   - component: {fileID: 1381927146}
   - component: {fileID: 1381927145}
+  - component: {fileID: 1381927148}
   m_Layer: 0
   m_Name: UiDocumentRoomLobby
   m_TagString: Untagged
@@ -9781,7 +9782,6 @@ MonoBehaviour:
   hoverCursorTexture: {fileID: 2800000, guid: 5f8252ad3e9b547c1be980e2638f433c, type: 3}
   uiCursorTexture: {fileID: 2800000, guid: 7dd2a1cc508c64aa891e32dd530a2437, type: 3}
   panelSettings: {fileID: 11400000, guid: 4430eaa22e4440149b9be804527f4244, type: 2}
-  refreshIntervalSeconds: 0.2
 --- !u!114 &1381927146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9820,6 +9820,71 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1381927148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381927144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3b02d5c7e9a4b48c6d2f1e0a9b8c742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.RoomLobbyLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []
+  refreshIntervalSeconds: 0.2
+--- !u!1 &1381927200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1381927201}
+  - component: {fileID: 1381927202}
+  m_Layer: 0
+  m_Name: GameLifetimeScope
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1381927201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381927200}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1381927202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381927200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2a91c4b6d8f4a37b5c1e0d9f8a7b631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.GameLifetimeScope
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
 --- !u!1 &1386574153
 GameObject:
   m_ObjectHideFlags: 0
@@ -16653,6 +16718,7 @@ SceneRoots:
   - {fileID: 1019430616}
   - {fileID: 483945542}
   - {fileID: 1381927147}
+  - {fileID: 1381927201}
   - {fileID: 3469072228368854234}
   - {fileID: 1508718432}
   - {fileID: 713260365}
