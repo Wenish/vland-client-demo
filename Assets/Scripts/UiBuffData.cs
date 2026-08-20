@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[Serializable]
 public class UiBuffData
 {
     public string InstanceId; // unique per buff instance

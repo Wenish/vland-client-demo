@@ -6,8 +6,7 @@ public class UnitNetworkBuffs : NetworkBehaviour
 {
     public readonly SyncList<NetworkBuffData> NetworkBuffs = new();
 
-    [SerializeField]
-    public BuffSystem _buffSystem;
+    BuffSystem _buffSystem;
 
     public class NetworkBuffData
     {
