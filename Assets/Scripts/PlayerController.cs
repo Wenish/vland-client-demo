@@ -17,7 +17,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnGoldChanged(int oldValue, int newValue)
     {
-        EventManager.Instance.Publish(new PlayerGoldChangedEvent(this, oldValue, newValue));
+        GameEventPublish.ToMessagePipe(new PlayerGoldChangedEvent(this, oldValue, newValue));
     }
 
     [SerializeField]
