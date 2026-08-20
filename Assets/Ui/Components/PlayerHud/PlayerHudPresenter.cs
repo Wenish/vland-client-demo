@@ -4,6 +4,7 @@ using Cysharp.Text;
 using Cysharp.Threading.Tasks;
 using LitMotion;
 using MessagePipe;
+using Mirror;
 using MyGame.Events;
 using R3;
 using UnityEngine;
@@ -38,6 +39,7 @@ namespace ShadowInfection.UI.PlayerHud
         private MotionHandle goldHandle;
         private MotionHandle bannerHandle;
         private bool enabled;
+        private bool matchWidgetsVisible;
         private float matchStartTime;
         private int lastElapsedSeconds = -1;
         private int displayedGold;
@@ -82,7 +84,9 @@ namespace ShadowInfection.UI.PlayerHud
             matchStartTime = Time.time;
             lastElapsedSeconds = -1;
             displayedGold = 0;
+            matchWidgetsVisible = false;
             view.Reset();
+            TickMatchWidgetsVisibility();
             castBarDriver.Bind(view, successColor, destroyToken);
 
             subscriptions.Add(goldChanged.Subscribe(OnGoldChanged));
@@ -96,8 +100,10 @@ namespace ShadowInfection.UI.PlayerHud
                         if (!enabled || view == null)
                             return;
 
+                        TickMatchWidgetsVisibility();
                         TickCooldowns();
-                        TickMatchTimer(Time.time);
+                        if (matchWidgetsVisible)
+                            TickMatchTimer(Time.time);
                     }));
         }
 
@@ -117,6 +123,28 @@ namespace ShadowInfection.UI.PlayerHud
         public void SetEnabled(bool value)
         {
             enabled = value;
+        }
+
+        private void TickMatchWidgetsVisibility()
+        {
+            var visible = !IsInRoomLobby();
+            if (visible == matchWidgetsVisible)
+                return;
+
+            SetMatchWidgetsVisible(visible);
+        }
+
+        private void SetMatchWidgetsVisible(bool visible)
+        {
+            matchWidgetsVisible = visible;
+            view?.SetMatchWidgetsVisible(visible);
+        }
+
+        private static bool IsInRoomLobby()
+        {
+            return NetworkManager.singleton is NetworkRoomManager room
+                && !string.IsNullOrWhiteSpace(room.RoomScene)
+                && Utils.IsSceneActive(room.RoomScene);
         }
 
         private void TickMatchTimer(float time)

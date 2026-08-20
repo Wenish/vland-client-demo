@@ -53,6 +53,8 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly Label labelWavePercent;
         private readonly Label labelCompletion;
         private readonly Label labelMatchTimer;
+        private readonly VisualElement roundInfos;
+        private readonly VisualElement goldContainer;
         private readonly VisualElement roundCompletionFill;
         private readonly VisualElement playerVitalsContainer;
         private readonly VisualElement playerHealthContainer;
@@ -89,6 +91,8 @@ namespace ShadowInfection.UI.PlayerHud
             labelWavePercent = root.Q<Label>("labelWavePercent");
             labelCompletion = root.Q<Label>("labelCompletion");
             labelMatchTimer = root.Q<Label>("labelMatchTimer");
+            roundInfos = root.Q<VisualElement>("roundInfos");
+            goldContainer = root.Q<VisualElement>("goldContainer");
             roundCompletionFill = root.Q<VisualElement>("roundCompletionFill");
             playerVitalsContainer = root.Q<VisualElement>("playerVitalsContainer");
             playerHealthContainer = root.Q<VisualElement>("playerHealthContainer");
@@ -134,6 +138,7 @@ namespace ShadowInfection.UI.PlayerHud
 
             SetGold(0);
             SetRoundProgress(0, 0f);
+            SetMatchWidgetsVisible(false);
             HidePlayerVitals();
             HidePlayerStats();
             SetAbilitySlot(PlayerHudAbilitySlot.Passive, AbilitySlotVm.Empty);
@@ -154,6 +159,15 @@ namespace ShadowInfection.UI.PlayerHud
                 return;
 
             labelGold.text = ZString.Format("{0}", gold);
+        }
+
+        public void SetMatchWidgetsVisible(bool visible)
+        {
+            var display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            if (roundInfos != null)
+                roundInfos.style.display = display;
+            if (goldContainer != null)
+                goldContainer.style.display = display;
         }
 
         public void SetMatchTimer(int elapsedSeconds)
