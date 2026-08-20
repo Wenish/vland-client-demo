@@ -6,7 +6,7 @@
     <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-basis: 50%; align-items: center; justify-content: center;">
         <ui:Label text="Round&#10;1" name="labelRoundStarted" class="si-title" style="white-space: nowrap; -unity-text-align: upper-center; font-size: 64px; color: rgb(255, 244, 231);"/>
     </ui:VisualElement>
-    <ui:VisualElement name="roundInfos" class="si-round-infos" picking-mode="Ignore">
+    <ui:VisualElement name="roundInfos" class="si-round-infos" picking-mode="Ignore" style="display: none;">
         <ui:VisualElement class="si-round-stats">
             <ui:VisualElement class="si-round-stat">
                 <ui:VisualElement class="si-round-stat__icon si-round-stat__icon--clock"/>
@@ -46,7 +46,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement class="si-hud-main">
-                    <ui:VisualElement class="si-gold si-gold--compact">
+                    <ui:VisualElement name="goldContainer" class="si-gold si-gold--compact" style="display: none;">
                         <ui:VisualElement class="si-gold__icon"/>
                         <ui:Label text="0" name="labelGold" class="si-gold__value"/>
                     </ui:VisualElement>
