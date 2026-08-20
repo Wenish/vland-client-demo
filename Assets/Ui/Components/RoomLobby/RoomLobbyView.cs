@@ -24,7 +24,7 @@ namespace ShadowInfection.UI.RoomLobby
             this.root = root;
             subtitle = root.Q<Label>("subtitle");
             localStatus = root.Q<Label>("localStatus");
-            readyButton = root.Q<Button>("readyButton");
+            readyButton = root.Q<OrnateButton>("readyButton") ?? root.Q<Button>("readyButton");
             playerListScroll = root.Q<ScrollView>("playerListScroll");
             playerListContent = root.Q<VisualElement>("playerListContent");
 
@@ -32,6 +32,8 @@ namespace ShadowInfection.UI.RoomLobby
 
             if (readyButton != null)
                 readyButton.clicked += () => ReadyButtonClicked?.Invoke();
+            else
+                UnityEngine.Debug.LogError("RoomLobbyView: readyButton was not found in the lobby UI.");
         }
 
         private bool isVisible;

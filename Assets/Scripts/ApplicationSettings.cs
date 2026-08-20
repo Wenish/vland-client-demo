@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -279,9 +280,37 @@ public class ApplicationSettings : MonoBehaviour
         SaveSettings();
     }
 
+    public const int MinNicknameLength = 3;
+    public const int MaxNicknameLength = 30;
+
+    public string GetEffectiveNickname(string fallback = "Player")
+    {
+        return GetEffectiveNickname(Nickname, fallback);
+    }
+
+    public static string GetEffectiveNickname(string raw, string fallback = "Player")
+    {
+        var sanitized = SanitizeNickname(raw);
+        return sanitized.Length >= MinNicknameLength ? sanitized : fallback;
+    }
+
+    public static string SanitizeNickname(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+            return string.Empty;
+
+        var sanitized = raw.Trim();
+        sanitized = new string(sanitized.Where(c => char.IsLetterOrDigit(c) || c == ' ' || c == '_' || c == '-').ToArray());
+
+        if (sanitized.Length > MaxNicknameLength)
+            sanitized = sanitized.Substring(0, MaxNicknameLength);
+
+        return sanitized;
+    }
+
     public void SetNickname(string nickname)
     {
-        Nickname = nickname;
+        Nickname = nickname ?? string.Empty;
         SaveSettings();
     }
 

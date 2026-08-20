@@ -341,7 +341,7 @@ public class LoadoutWindowController : MonoBehaviour
     {
         LocalLoadout newLocalLoadout = new LocalLoadout
         {
-            UnitName = ApplicationSettings.Instance?.Nickname ?? "Player",
+            UnitName = ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname),
             WeaponId = _window.GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
             PassiveId = _window.GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
             Normal1Id = _window.GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,

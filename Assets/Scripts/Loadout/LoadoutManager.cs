@@ -81,7 +81,7 @@ public class LoadoutManager : MonoBehaviour
         {
             _current = new LocalLoadout
             {
-                UnitName = ApplicationSettings.Instance != null ? ApplicationSettings.Instance.Nickname : "Player",
+                UnitName = ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname),
                 WeaponId = string.Empty,
                 PassiveId = string.Empty,
                 Normal1Id = string.Empty,
@@ -97,6 +97,7 @@ public class LoadoutManager : MonoBehaviour
             var json = PlayerPrefs.GetString(PlayerPrefsKey, "{}");
             _current = JsonUtility.FromJson<LocalLoadout>(json);
             if (_current == null) _current = new LocalLoadout();
+            _current.UnitName = ApplicationSettings.GetEffectiveNickname(_current.UnitName);
 
             Debug.Log($"[LoadoutManager] Loaded prefs: {json}");
         }

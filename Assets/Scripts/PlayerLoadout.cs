@@ -93,8 +93,9 @@ public class PlayerLoadout : NetworkBehaviour
             yield break;
         }
 
-        CmdRequestSetName(ApplicationSettings.Instance.Nickname);
-        SendLoadoutToServer(_loadoutManager.Get());
+        CmdRequestSetName(ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname));
+        var loadout = _loadoutManager.Get();
+        SendLoadoutToServer(loadout);
         _deferredSyncCoroutine = null;
     }
 
@@ -102,8 +103,10 @@ public class PlayerLoadout : NetworkBehaviour
     {
         if (newLoadout == null) return;
 
+        var unitName = ApplicationSettings.GetEffectiveNickname(newLoadout.UnitName);
+
         CmdRequestSetLoadout(
-            newLoadout.UnitName,
+            unitName,
             newLoadout.WeaponId,
             newLoadout.GetNormals(),
             newLoadout.UltimateId,
@@ -121,17 +124,10 @@ public class PlayerLoadout : NetworkBehaviour
         // This minimal implementation skips detailed rate limiting for brevity.
 
         // Validate name
-        string sanitized = (desiredName ?? "Player").Trim();
-        if (sanitized.Length < 3 || sanitized.Length > 30)
+        string sanitized = ApplicationSettings.SanitizeNickname(desiredName);
+        if (sanitized.Length < ApplicationSettings.MinNicknameLength || sanitized.Length > ApplicationSettings.MaxNicknameLength)
         {
             Debug.LogWarning("Name must be 3-30 chars.");
-            return;
-        }
-        // restrict to alnum, space, _ and -
-        sanitized = new string(sanitized.Where(c => char.IsLetterOrDigit(c) || c == ' ' || c == '_' || c == '-').ToArray());
-        if (sanitized.Length < 3)
-        {
-            Debug.LogWarning("Name contains invalid characters.");
             return;
         }
 
@@ -151,16 +147,11 @@ public class PlayerLoadout : NetworkBehaviour
         // This minimal implementation skips detailed rate limiting for brevity.
 
         // Validate name
-        string sanitized = (desiredUnitName ?? "Player").Trim();
+        string sanitized = ApplicationSettings.GetEffectiveNickname(desiredUnitName);
         if (sanitized.Length < 3 || sanitized.Length > 20)
         {
             TargetAckSetLoadout(connectionToClient, false, "Name must be 3-20 chars.");
-        }
-        // restrict to alnum, space, _ and -
-        sanitized = new string(sanitized.Where(c => char.IsLetterOrDigit(c) || c == ' ' || c == '_' || c == '-').ToArray());
-        if (sanitized.Length < 3)
-        {
-            TargetAckSetLoadout(connectionToClient, false, "Name contains invalid characters.");
+            return;
         }
 
         // Validate weapon

@@ -1,13 +1,15 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace ShadowInfection.UI.RoomLobby
 {
     [DisallowMultipleComponent]
-    [DefaultExecutionOrder(-100)]
     public sealed class RoomLobbyController : MonoBehaviour
     {
         private const int LobbySortingOrder = 50;
+        private const int RootWaitFrames = 16;
+
         [Header("Assets")]
         [SerializeField] private VisualTreeAsset roomLobbyUxml;
         [SerializeField] private StyleSheet gameBaseStyle;
@@ -23,29 +25,63 @@ namespace ShadowInfection.UI.RoomLobby
         private UIDocument uiDocument;
         private RoomLobbyView view;
         private MirrorRoomLobbyPresenter presenter;
-        private VisualElement lobbyShell;
         private VisualElement lobbyRoot;
+        private bool mounted;
 
         private void Awake()
         {
             uiDocument = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
             uiDocument.sortingOrder = LobbySortingOrder;
-            EnsurePanelSettings();
+        }
 
+        private IEnumerator Start()
+        {
             if (roomLobbyUxml == null)
             {
                 UnityEngine.Debug.LogError("RoomLobbyController: Assign RoomLobby.uxml in the inspector.");
-                enabled = false;
-                return;
+                yield break;
             }
 
-            MountLobbyUi();
+            yield return WaitForDocumentRoot();
+
+            if (!MountLobbyUi())
+            {
+                UnityEngine.Debug.LogError(
+                    "RoomLobbyController: UIDocument root is missing after waiting. " +
+                    $"panelSettings={(uiDocument != null && uiDocument.panelSettings != null)} " +
+                    $"visualTreeAsset={(uiDocument != null && uiDocument.visualTreeAsset != null)} " +
+                    $"uiDocumentEnabled={(uiDocument != null && uiDocument.enabled)}");
+                yield break;
+            }
+
             RegisterCursors();
             UiCursorRefresh.SetGameplayPointerEnabled(false);
             UiCursorRefresh.ScheduleForRoot(lobbyRoot, LobbySortingOrder);
             UiCursorRefresh.ScheduleForRoot(uiDocument.rootVisualElement, LobbySortingOrder);
             view = new RoomLobbyView(lobbyRoot);
             presenter = new MirrorRoomLobbyPresenter(view, refreshIntervalSeconds);
+            presenter.SetEnabled(isActiveAndEnabled);
+        }
+
+        private IEnumerator WaitForDocumentRoot()
+        {
+            EnsurePanelSettings();
+
+            if (uiDocument.visualTreeAsset == null)
+                uiDocument.visualTreeAsset = roomLobbyUxml;
+
+            if (!uiDocument.enabled)
+                uiDocument.enabled = true;
+
+            if (uiDocument.rootVisualElement == null)
+            {
+                uiDocument.enabled = false;
+                yield return null;
+                uiDocument.enabled = true;
+            }
+
+            for (var i = 0; i < RootWaitFrames && uiDocument.rootVisualElement == null; i++)
+                yield return null;
         }
 
         private void OnEnable()
@@ -53,31 +89,63 @@ namespace ShadowInfection.UI.RoomLobby
             presenter?.SetEnabled(true);
         }
 
-        private void MountLobbyUi()
+        private bool MountLobbyUi()
         {
+            if (mounted)
+                return true;
+
             var documentRoot = uiDocument.rootVisualElement;
+            if (documentRoot == null)
+                return false;
+
             documentRoot.pickingMode = PickingMode.Ignore;
+            StretchToFill(documentRoot);
 
-            lobbyShell?.RemoveFromHierarchy();
-
-            lobbyShell = roomLobbyUxml.Instantiate();
-            lobbyShell.pickingMode = PickingMode.Ignore;
-            lobbyShell.style.flexGrow = 1;
-            lobbyShell.style.width = Length.Percent(100);
-            lobbyShell.style.height = Length.Percent(100);
-
-            ApplyStyleSheets(documentRoot, lobbyShell);
-
-            documentRoot.Add(lobbyShell);
-
-            lobbyRoot = lobbyShell.Q<VisualElement>("roomLobbyRoot") ?? lobbyShell;
+            lobbyRoot = FindByName(documentRoot, "roomLobbyRoot") ?? documentRoot;
             lobbyRoot.pickingMode = PickingMode.Ignore;
+            StretchToFill(lobbyRoot);
+            ApplyStyleSheets(documentRoot, lobbyRoot);
 
-            var lobbyPanel = lobbyRoot.Q<VisualElement>("roomLobbyPanel");
+            var lobbyPanel = FindByName(lobbyRoot, "roomLobbyPanel");
             if (lobbyPanel != null)
             {
                 lobbyPanel.pickingMode = PickingMode.Position;
+                PinPanelTopLeft(lobbyPanel);
             }
+
+            mounted = true;
+            return true;
+        }
+
+        private static VisualElement FindByName(VisualElement root, string name)
+        {
+            if (root == null)
+                return null;
+
+            if (root.name == name)
+                return root;
+
+            return root.Q<VisualElement>(name);
+        }
+
+        private static void StretchToFill(VisualElement element)
+        {
+            if (element == null)
+                return;
+
+            element.style.flexGrow = 1;
+            element.style.width = Length.Percent(100);
+            element.style.height = Length.Percent(100);
+        }
+
+        private static void PinPanelTopLeft(VisualElement panel)
+        {
+            panel.style.position = Position.Absolute;
+            panel.style.left = 24;
+            panel.style.top = 24;
+            panel.style.right = StyleKeyword.Auto;
+            panel.style.bottom = StyleKeyword.Auto;
+            panel.style.flexShrink = 0;
         }
 
         private void ApplyStyleSheets(params VisualElement[] targets)
@@ -111,7 +179,6 @@ namespace ShadowInfection.UI.RoomLobby
         private void OnDestroy()
         {
             presenter?.SetEnabled(false);
-            lobbyShell?.RemoveFromHierarchy();
         }
 
         private void OnDisable()
@@ -126,6 +193,9 @@ namespace ShadowInfection.UI.RoomLobby
 
         private void EnsurePanelSettings()
         {
+            if (uiDocument == null)
+                return;
+
             if (uiDocument.panelSettings != null)
                 return;
 
@@ -149,7 +219,7 @@ namespace ShadowInfection.UI.RoomLobby
                 }
             }
 
-            uiDocument.panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+            uiDocument.panelSettings = panelSettings;
         }
 
 #if UNITY_EDITOR
