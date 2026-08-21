@@ -27,7 +27,6 @@ namespace Vland.UI
         private readonly Label emptyLabel;
         private readonly Label goldValue;
         private readonly Label pageLabel;
-        private readonly Label footerError;
         private readonly Label tooltipName;
         private readonly Label tooltipType;
         private readonly Label tooltipStats;
@@ -84,7 +83,6 @@ namespace Vland.UI
             emptyLabel = root.Q<Label>("emptyLabel");
             goldValue = root.Q<Label>("vendorGoldValue");
             pageLabel = root.Q<Label>("pageLabel");
-            footerError = root.Q<Label>("footerError");
             tooltipName = root.Q<Label>("tooltipName");
             tooltipType = root.Q<Label>("tooltipType");
             tooltipStats = root.Q<Label>("tooltipStats");
@@ -129,6 +127,9 @@ namespace Vland.UI
                 buybackButton.SetEnabled(false);
                 buybackButton.focusable = false;
             }
+
+            if (tooltip != null)
+                tooltip.pickingMode = PickingMode.Position;
 
             if (titleBar != null)
             {
@@ -218,16 +219,6 @@ namespace Vland.UI
         {
             if (goldValue != null)
                 goldValue.text = gold.ToString();
-        }
-
-        public void SetFooterError(string text)
-        {
-            if (footerError == null)
-                return;
-
-            var hasError = !string.IsNullOrEmpty(text);
-            footerError.text = text ?? string.Empty;
-            footerError.style.display = hasError ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public void SetPage(int pageIndex, int pageCount, bool show)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class StatSystem
 {
@@ -35,15 +36,14 @@ public class StatSystem
 
     public void SetBaseStat(StatType stat, float value)
     {
-        if (baseStats.ContainsKey(stat))
-        {
-            baseStats[stat] = value;
-            OnStatChanged?.Invoke(stat);
-        }
-        else
-        {
+        if (!baseStats.TryGetValue(stat, out var current))
             throw new ArgumentException($"Stat {stat} does not exist.");
-        }
+
+        if (Mathf.Approximately(current, value))
+            return;
+
+        baseStats[stat] = value;
+        OnStatChanged?.Invoke(stat);
     }
 
     public void ApplyModifier(StatModifier mod)

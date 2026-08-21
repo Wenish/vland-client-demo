@@ -29,6 +29,7 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly Dictionary<string, int> upgradeCounts = new();
         private readonly Dictionary<string, int> buyStocks = new();
         private readonly List<VendorRowVm> pageRows = new();
+        private StatSystem boundStats;
 
         private VendorDefinition Catalog => session != null ? session.Catalog : null;
 
@@ -88,6 +89,7 @@ namespace ShadowInfection.UI.VendorWindow
 
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
+            UnbindPlayerStats();
             view = null;
             session = null;
             player = null;
@@ -127,12 +129,15 @@ namespace ShadowInfection.UI.VendorWindow
             var catalog = nextSession.Catalog;
             view.SetVendor(catalog.DisplayName, catalog.subtitle, catalog.portrait);
             view.SetOpen(true);
-            view.SetFooterError(null);
             RestorePosition();
+            BindPlayerStats();
             Refresh();
 
             if (player != null && player.isLocalPlayer)
+            {
+                player.CmdBeginVendorTrade(nextSession.VendorId);
                 player.CmdRequestVendorSnapshot(nextSession.VendorId);
+            }
         }
 
         public void Close()
@@ -141,9 +146,11 @@ namespace ShadowInfection.UI.VendorWindow
                 return;
 
             PersistPosition();
+            if (player != null && player.isLocalPlayer)
+                player.CmdEndVendorTrade();
+            UnbindPlayerStats();
             session = null;
             selectedId = null;
-            view.SetFooterError(null);
             view.SetOpen(false);
         }
 
@@ -156,6 +163,28 @@ namespace ShadowInfection.UI.VendorWindow
         public void CloseIfZone(InteractionZone zone)
         {
             CloseIfInteractable(zone);
+        }
+
+        private void BindPlayerStats()
+        {
+            UnbindPlayerStats();
+            var unit = player != null ? player.GetControlledUnit() : null;
+            boundStats = unit != null && unit.unitMediator != null ? unit.unitMediator.Stats : null;
+            if (boundStats != null)
+                boundStats.OnStatChanged += OnBoundStatChanged;
+        }
+
+        private void UnbindPlayerStats()
+        {
+            if (boundStats != null)
+                boundStats.OnStatChanged -= OnBoundStatChanged;
+            boundStats = null;
+        }
+
+        private void OnBoundStatChanged(StatType _)
+        {
+            if (IsOpen)
+                Refresh();
         }
 
         private void TickInput()
@@ -187,7 +216,6 @@ namespace ShadowInfection.UI.VendorWindow
             tab = nextTab;
             page = 0;
             selectedId = null;
-            view?.SetFooterError(null);
             Refresh();
         }
 
@@ -244,7 +272,6 @@ namespace ShadowInfection.UI.VendorWindow
             if (!string.IsNullOrEmpty(evt.EntryId) && evt.TimesBought > 0)
                 upgradeCounts[evt.EntryId] = evt.TimesBought;
 
-            view.SetFooterError(evt.Success ? null : evt.Message);
             Refresh();
             if (player != null && player.isLocalPlayer && session != null)
                 player.CmdRequestVendorSnapshot(session.VendorId);
@@ -252,7 +279,9 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void OnVendorSnapshot(VendorSnapshotEvent evt)
         {
-            if (!IsOpen || evt == null)
+            if (!IsOpen || evt == null || player == null)
+                return;
+            if (evt.Buyer != null && evt.Buyer != player)
                 return;
 
             upgradeCounts.Clear();
@@ -468,10 +497,7 @@ namespace ShadowInfection.UI.VendorWindow
 
         private StatSystem ResolveStats()
         {
-            if (player == null || player.Unit == null)
-                return null;
-
-            var unit = player.Unit.GetComponent<UnitController>();
+            var unit = player != null ? player.GetControlledUnit() : null;
             return unit != null && unit.unitMediator != null ? unit.unitMediator.Stats : null;
         }
 

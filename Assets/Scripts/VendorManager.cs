@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
 public class VendorManager : NetworkBehaviour
 {
     public static VendorManager Instance { get; private set; }
+    private const float VendorRangePadding = 1.5f;
 
     private void Awake()
     {
@@ -28,11 +30,61 @@ public class VendorManager : NetworkBehaviour
         if (buyer == null)
             return null;
 
-        var session = buyer.ActiveVendor?.GetVendorSession();
-        if (session == null || session.VendorId != vendorId || !session.IsAvailableTo(buyer))
+        if (!buyer.TryEnsureVendorTrade(vendorId))
+            return null;
+
+        var session = buyer.ServerVendorSession;
+        if (session == null || session.Catalog == null)
+            return null;
+
+        if (!string.IsNullOrEmpty(vendorId) && session.VendorId != vendorId)
+            return null;
+
+        if (!session.IsAvailableTo(buyer))
             return null;
 
         return session;
+    }
+
+    public static InteractionZone FindReachableVendor(UnitController unit, string vendorId)
+    {
+        if (unit == null)
+            return null;
+
+        InteractionZone best = null;
+        var bestSqr = float.MaxValue;
+        var zones = FindObjectsByType<InteractionZone>(FindObjectsSortMode.None);
+        foreach (var zone in zones)
+        {
+            if (zone == null || zone.InteractionType != InteractionType.OpenVendor || zone.VendorCatalog == null)
+                continue;
+            if (!string.IsNullOrEmpty(vendorId) && zone.VendorCatalog.vendorId != vendorId)
+                continue;
+            if (!IsUnitInVendorRange(unit, zone))
+                continue;
+
+            var sqr = (zone.transform.position - unit.transform.position).sqrMagnitude;
+            if (sqr >= bestSqr)
+                continue;
+
+            bestSqr = sqr;
+            best = zone;
+        }
+
+        return best;
+    }
+
+    public static bool IsUnitInVendorRange(UnitController unit, InteractionZone zone)
+    {
+        if (unit == null || zone == null)
+            return false;
+
+        var zoneCollider = zone.GetComponent<Collider>();
+        if (zoneCollider == null)
+            return Vector3.Distance(unit.transform.position, zone.transform.position) <= 3f + VendorRangePadding;
+
+        var closest = zoneCollider.ClosestPoint(unit.transform.position);
+        return (closest - unit.transform.position).sqrMagnitude <= VendorRangePadding * VendorRangePadding;
     }
 
     [Server]
@@ -61,16 +113,10 @@ public class VendorManager : NetworkBehaviour
             return;
         }
 
-        if (buyer.Unit == null)
-        {
-            message = "Buyer unit is not ready.";
-            return;
-        }
-
-        var unitController = buyer.Unit.GetComponent<UnitController>();
+        var unitController = buyer.GetControlledUnit();
         if (unitController == null)
         {
-            message = "Buyer does not have a unit.";
+            message = "Buyer unit is not ready.";
             return;
         }
 
@@ -112,8 +158,8 @@ public class VendorManager : NetworkBehaviour
 
         if (catalog.buyEntries != null && catalog.buyEntries.Count > 0)
         {
-            var listedIds = new System.Collections.Generic.List<string>(catalog.buyEntries.Count);
-            var listedStock = new System.Collections.Generic.List<int>(catalog.buyEntries.Count);
+            var listedIds = new List<string>(catalog.buyEntries.Count);
+            var listedStock = new List<int>(catalog.buyEntries.Count);
             foreach (var entry in catalog.buyEntries)
             {
                 if (entry == null || entry.weapon == null)
@@ -130,8 +176,8 @@ public class VendorManager : NetworkBehaviour
         if (catalog.upgradeEntries == null || catalog.upgradeEntries.Count == 0)
             return;
 
-        var ids = new System.Collections.Generic.List<string>(catalog.upgradeEntries.Count);
-        var values = new System.Collections.Generic.List<int>(catalog.upgradeEntries.Count);
+        var ids = new List<string>(catalog.upgradeEntries.Count);
+        var values = new List<int>(catalog.upgradeEntries.Count);
         var upgradeManager = UpgradeManager.Instance;
 
         foreach (var upgrade in catalog.upgradeEntries)

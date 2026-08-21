@@ -11,6 +11,52 @@ public static class UiPointerState
 
     public static bool IsPointerOverBlockingElement => _hoverCount > 0;
 
+    /// <summary>
+    /// Returns the smallest registered blocking element on this panel that
+    /// contains the panel-space point. Used so full-screen Ignore hosts do not
+    /// leak cursor picking through to HUD / world panels.
+    /// </summary>
+    public static VisualElement PickBlockingElement(IPanel panel, Vector2 panelPosition)
+    {
+        if (panel == null)
+            return null;
+
+        VisualElement best = null;
+        var bestArea = float.MaxValue;
+        foreach (var pair in _registered)
+        {
+            var element = pair.Key;
+            if (element == null || element.panel != panel)
+                continue;
+            if (!IsDisplayedInHierarchy(element))
+                continue;
+
+            var bounds = element.worldBound;
+            if (!bounds.Contains(panelPosition))
+                continue;
+
+            var area = Mathf.Max(0f, bounds.width) * Mathf.Max(0f, bounds.height);
+            if (area >= bestArea)
+                continue;
+
+            bestArea = area;
+            best = element;
+        }
+
+        return best;
+    }
+
+    private static bool IsDisplayedInHierarchy(VisualElement element)
+    {
+        for (var current = element; current != null; current = current.parent)
+        {
+            if (current.resolvedStyle.display == DisplayStyle.None)
+                return false;
+        }
+
+        return true;
+    }
+
     public static void RegisterBlockingElement(VisualElement element)
     {
         if (element == null) return;

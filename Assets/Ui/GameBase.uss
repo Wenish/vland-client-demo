@@ -57,6 +57,10 @@ Label,
     cursor: var(--cursor-hover);
 }
 
+.vendor-row--buyable {
+    cursor: var(--cursor-trade);
+}
+
 .main-menu-stack {
     align-items: stretch;
     width: 320px;

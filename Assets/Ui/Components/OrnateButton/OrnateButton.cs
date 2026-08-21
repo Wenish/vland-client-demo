@@ -7,6 +7,7 @@ public partial class OrnateButton : Button
     public const string UssClassName = "si-button";
 
     private bool _hoverPlayed;
+    private bool _cursorPushed;
 
     public OrnateButton()
     {
@@ -21,7 +22,11 @@ public partial class OrnateButton : Button
 
     private void OnPointerEnter(PointerEnterEvent evt)
     {
-        UiCursorRefresh.PushInteractiveHover();
+        if (!_cursorPushed)
+        {
+            _cursorPushed = true;
+            UiCursorRefresh.PushInteractiveHover();
+        }
 
         if (_hoverPlayed)
             return;
@@ -44,6 +49,10 @@ public partial class OrnateButton : Button
     private void ReleaseInteractiveHover()
     {
         _hoverPlayed = false;
+        if (!_cursorPushed)
+            return;
+
+        _cursorPushed = false;
         UiCursorRefresh.PopInteractiveHover();
     }
 

@@ -24,7 +24,7 @@ public static class UiCursorRefresh
 
     private static bool _gameplayPointerEnabled;
     private static int _interactiveHoverDepth;
-    private static int _tradeHoverDepth;
+    private static CursorKind _appliedKind;
 
     private static readonly HashSet<IPanel> HookedPanels = new HashSet<IPanel>();
     private static readonly HashSet<VisualElement> AttachedRoots = new HashSet<VisualElement>();
@@ -41,6 +41,9 @@ public static class UiCursorRefresh
         _defaultCursor = defaultCursor;
         if (tradeCursor != null)
             _tradeCursor = tradeCursor;
+
+        _appliedKind = CursorKind.Unknown;
+        ApplyHardwareCursor();
     }
 
     public static void SetTradeCursor(Texture2D tradeCursor)
@@ -77,27 +80,7 @@ public static class UiCursorRefresh
 
         // DetachFromPanel can fire while the panel layout store is torn down.
         // Pick() would ValidateLayout and NRE; hover-only updates are safe.
-        if (_interactiveHoverDepth > 0 || _tradeHoverDepth > 0)
-        {
-            ApplyHardwareCursor();
-            return;
-        }
-
-        ScheduleApplyHardwareCursor();
-    }
-
-    public static void PushTradeHover()
-    {
-        _tradeHoverDepth++;
-        ApplyHardwareCursor();
-    }
-
-    public static void PopTradeHover()
-    {
-        if (_tradeHoverDepth > 0)
-            _tradeHoverDepth--;
-
-        if (_tradeHoverDepth > 0 || _interactiveHoverDepth > 0)
+        if (_interactiveHoverDepth > 0)
         {
             ApplyHardwareCursor();
             return;
@@ -109,7 +92,7 @@ public static class UiCursorRefresh
     public static void ResetInteractiveHover()
     {
         _interactiveHoverDepth = 0;
-        _tradeHoverDepth = 0;
+        _appliedKind = CursorKind.Unknown;
         ApplyHardwareCursor();
     }
 
@@ -187,23 +170,7 @@ public static class UiCursorRefresh
 
     private static void ApplyHardwareCursor()
     {
-        if (_tradeHoverDepth > 0)
-        {
-            if (_tradeCursor != null)
-                UnityEngine.Cursor.SetCursor(_tradeCursor, TradeHotspot, CursorMode.Auto);
-            else if (_hoverCursor != null)
-                UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
-            return;
-        }
-
-        if (_interactiveHoverDepth > 0)
-        {
-            if (_hoverCursor != null)
-                UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
-            return;
-        }
-
-        ApplyHardwareCursorForPick(PickBestElementAtMouse());
+        ApplyKind(ResolveCursorKind(PickBestElementAtMouse()));
     }
 
     private static void ScheduleApplyHardwareCursor()
@@ -217,7 +184,7 @@ public static class UiCursorRefresh
             return;
         }
 
-        ApplyHardwareCursorForPick(null);
+        ApplyKind(ResolveCursorKind(null));
     }
 
     private static VisualElement PickBestElementAtMouse()
@@ -246,7 +213,14 @@ public static class UiCursorRefresh
         try
         {
             Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(panel, screenPos);
-            return panel.Pick(panelPos);
+            var picked = panel.Pick(panelPos);
+            if (picked != null)
+                return picked;
+
+            // Full-screen Ignore hosts (vendor/loadout overlays) make Pick()
+            // return null beside chrome. Keep the higher panel if a blocking
+            // window still contains the pointer so HUD/world cannot steal it.
+            return UiPointerState.PickBlockingElement(panel, panelPos);
         }
         catch (System.NullReferenceException)
         {
@@ -261,46 +235,66 @@ public static class UiCursorRefresh
         return PanelSortingOrders.TryGetValue(panel, out var sortingOrder) ? sortingOrder : 0;
     }
 
-    private static void ApplyHardwareCursorForPick(VisualElement picked)
+    private static void ApplyKind(CursorKind kind)
     {
-        switch (ResolveCursorKind(picked))
+        Texture2D texture = null;
+        var hotspot = DefaultHotspot;
+        switch (kind)
         {
             case CursorKind.Trade:
-                if (_tradeCursor != null)
-                    UnityEngine.Cursor.SetCursor(_tradeCursor, TradeHotspot, CursorMode.Auto);
-                else if (_hoverCursor != null)
-                    UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
+                texture = _tradeCursor != null ? _tradeCursor : _hoverCursor;
+                hotspot = _tradeCursor != null ? TradeHotspot : HoverHotspot;
+                if (_tradeCursor == null)
+                    kind = CursorKind.Hover;
                 break;
-            case CursorKind.Hover when _hoverCursor != null:
-                UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
+            case CursorKind.Hover:
+                texture = _hoverCursor;
+                hotspot = HoverHotspot;
                 break;
-            case CursorKind.Default when _defaultCursor != null:
-                UnityEngine.Cursor.SetCursor(_defaultCursor, DefaultHotspot, CursorMode.Auto);
+            case CursorKind.Default:
+                texture = _defaultCursor;
+                hotspot = DefaultHotspot;
                 break;
-            case CursorKind.Pointer when _pointerCursor != null:
-                UnityEngine.Cursor.SetCursor(_pointerCursor, PointerHotspot, CursorMode.Auto);
+            case CursorKind.Pointer:
+                texture = _pointerCursor;
+                hotspot = PointerHotspot;
                 break;
+            default:
+                return;
         }
+
+        if (texture == null || kind == _appliedKind)
+            return;
+
+        UnityEngine.Cursor.SetCursor(texture, hotspot, CursorMode.Auto);
+        _appliedKind = kind;
     }
 
     private static CursorKind ResolveCursorKind(VisualElement picked)
     {
         if (picked == null)
+        {
+            if (_interactiveHoverDepth > 0)
+                return CursorKind.Hover;
             return _gameplayPointerEnabled ? CursorKind.Pointer : CursorKind.Default;
+        }
 
-        var hasDefault = false;
+        var insideUiChrome = false;
         for (var element = picked; element != null; element = element.parent)
         {
             if (IsTradeCursorElement(element))
                 return CursorKind.Trade;
             if (IsHoverCursorElement(element))
                 return CursorKind.Hover;
-            if (IsDefaultCursorElement(element))
-                hasDefault = true;
+            if (IsUiChromeElement(element))
+                insideUiChrome = true;
         }
 
-        if (hasDefault)
+        if (insideUiChrome)
             return CursorKind.Default;
+
+        if (_interactiveHoverDepth > 0)
+            return CursorKind.Hover;
 
         return _gameplayPointerEnabled ? CursorKind.Pointer : CursorKind.Default;
     }
@@ -315,6 +309,9 @@ public static class UiCursorRefresh
 
     private static bool IsHoverCursorElement(VisualElement element)
     {
+        if (!element.enabledSelf)
+            return false;
+
         if (element is Button or TextField or Toggle or Slider or DropdownField or IntegerField or FloatField)
             return true;
 
@@ -348,9 +345,9 @@ public static class UiCursorRefresh
             "unity-base-popup-field__text");
     }
 
-    private static bool IsDefaultCursorElement(VisualElement element)
+    private static bool IsUiChromeElement(VisualElement element)
     {
-        if (element is Label)
+        if (element is Label || element is VendorRow)
             return true;
 
         return HasAnyClass(
@@ -389,11 +386,19 @@ public static class UiCursorRefresh
             "loadout-slots",
             "loadout-filters",
             "loadout-empty",
+            "vendor",
+            "vendor-host",
             "vendor-panel",
-            "vendor-title",
+            "vendor-tabs",
+            "vendor-portrait",
+            "vendor-title__text",
             "vendor-hint",
             "vendor-list",
+            "vendor-row",
             "vendor-footer",
+            "vendor-gold",
+            "vendor-page",
+            "vendor-buyback",
             "vendor-tooltip",
             "vendor-empty",
             "loadout-row__icon",
