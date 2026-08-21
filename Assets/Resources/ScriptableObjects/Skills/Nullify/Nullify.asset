@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Nullify
   skillType: 0
+  tags: 8
   description: Strips up to 2 buffs from an enemy.
   cooldown: 15
   castCost: 0

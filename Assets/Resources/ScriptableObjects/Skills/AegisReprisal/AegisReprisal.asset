@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Aegis Reprisal
   skillType: 0
+  tags: 5
   description: For 3 seconds, every hit you receive is partially returned to your
     attacker.
   cooldown: 12

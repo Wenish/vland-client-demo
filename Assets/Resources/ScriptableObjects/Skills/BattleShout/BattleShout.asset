@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Battle Shout
   skillType: 0
+  tags: 2
   description: Unleash a powerful shout that inspires you and all nearby allies,
     increasing attack power by 10% for 10 seconds.
   cooldown: 30

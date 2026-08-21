@@ -32,14 +32,20 @@ Label,
 .si-panel,
 .si-panel__title,
 .si-panel__label,
-.si-hud-panel {
+.si-hud-panel,
+.loadout,
+.loadout-overlay,
+.loadout-panel {
     cursor: var(--cursor-ui);
 }
 
-.loadout-tile,
-.loadout-tile__icon,
-.slot,
-.slot__icon {
+.loadout-row,
+.loadout-row__icon,
+.loadout-slot,
+.loadout-slot__icon,
+.loadout-filter,
+.loadout-open-button,
+.loadout-close-button {
     cursor: var(--cursor-hover);
 }
 

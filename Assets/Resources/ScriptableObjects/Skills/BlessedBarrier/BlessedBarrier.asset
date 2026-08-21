@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Blessed Barrier
   skillType: 0
+  tags: 2
   description: Shields a player for 20.
   cooldown: 2
   castCost: 0

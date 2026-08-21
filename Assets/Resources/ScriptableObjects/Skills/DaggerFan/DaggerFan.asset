@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Dagger Fan
   skillType: 0
+  tags: 1
   description: 'Slash in a cone in front of you, dealing physical damage and applying
     a brief slow. Enemies hit are marked for a short duration. Recast within the
     window to strike again: this follow-up consumes marks to deal bonus damage. If

@@ -1,11 +1,31 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
     <Style src="project://database/Assets/Ui/Components/LoadoutWindow/LoadoutPanel.uss?fileID=7433441132597879392&amp;guid=944f6fbfff0544f328370fe0becc3d5e&amp;type=3#LoadoutPanel" />
-    <ui:VisualElement picking-mode="Ignore" class="loadout-container">
-        <ui:VisualElement picking-mode="Ignore" class="loadout-container__spacer" />
-        <ui:VisualElement name="LoadoutPanel" picking-mode="Position" class="loadout-panel">
-            <ui:Label text="Loadout" picking-mode="Position" class="loadout-header" />
-            <Vland.UI.LoadoutWindow name="LoadoutWindow" Columns="4" RowsBeforeScroll="2" class="loadout-window" />
+    <Style src="project://database/Assets/Ui/Components/LoadoutWindow/LoadoutWindow.uss?fileID=7433441132597879392&amp;guid=fd95136e139f74611ac3c86a490dd7f5&amp;type=3#LoadoutWindow" />
+    <ui:VisualElement name="loadoutRoot" picking-mode="Ignore" class="loadout">
+        <ui:VisualElement name="loadoutOverlay" picking-mode="Position" class="loadout-overlay" style="display: none;">
+            <ui:VisualElement name="LoadoutPanel" picking-mode="Position" class="si-panel loadout-panel">
+                <ui:VisualElement name="headerRow" class="loadout-header-row">
+                    <ui:Label text="Loadout" name="header" class="loadout-header" />
+                    <OrnateButton name="closeButton" text="Close" class="si-button si-button--compact loadout-close-button" />
+                </ui:VisualElement>
+                <ui:VisualElement name="slotsBar" class="loadout-slots" />
+                <ui:Label name="subheading" text="Choosing: Weapon" class="loadout-subheading" />
+                <ui:VisualElement name="filterBar" class="loadout-filters" />
+                <ui:VisualElement name="body" class="loadout-body">
+                    <ui:ScrollView name="itemScroll" mode="Vertical" horizontal-scroller-visibility="Hidden" class="loadout-scroll">
+                        <ui:VisualElement name="itemList" class="loadout-list" />
+                    </ui:ScrollView>
+                    <ui:VisualElement name="detailPane" class="loadout-detail">
+                        <ui:VisualElement name="detailIcon" class="loadout-detail__icon" />
+                        <ui:Label name="detailName" text="" class="loadout-detail__name" />
+                        <ui:VisualElement name="detailTags" class="loadout-detail__tags" />
+                        <ui:Label name="detailMeta" text="" class="loadout-detail__meta" />
+                        <ui:Label name="detailDescription" text="" class="loadout-detail__description" />
+                        <ui:Label name="detailEmpty" text="Select a slot, then pick a weapon or skill." class="loadout-detail__empty" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

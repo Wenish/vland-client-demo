@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Shadow Step
   skillType: 0
+  tags: 17
   description: Jump to an enemy and strike him for 10 damage.
   cooldown: 12
   castCost: 0

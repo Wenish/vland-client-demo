@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Let Hell Rain
   skillType: 2
+  tags: 1
   description: Calls down a meteor storm for 8 seconds, damaging all enemies in the
     area.
   cooldown: 70

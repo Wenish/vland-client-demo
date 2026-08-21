@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Ice Blast
   skillType: 0
+  tags: 1
   description: Makes damage to all enemy in a line in front of you.
   cooldown: 10
   castCost: 0

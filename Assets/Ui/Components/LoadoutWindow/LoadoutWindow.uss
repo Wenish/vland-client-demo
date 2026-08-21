@@ -1,165 +1,304 @@
-/* Root */
-.loadout-window {
-    flex-grow: 1;
-    flex-direction: column;
-    padding: 8px;
-    cursor: var(--cursor-ui);
-}
-
-/* Slots bar */
-.slots-bar {
+.loadout-slots {
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
+    flex-shrink: 0;
 }
 
-.slot {
-    width: 52px;
-    height: 52px;
-    padding: 3px;
+.loadout-slot {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 84px;
+    margin-right: 8px;
+    padding-top: 8px;
+    padding-right: 6px;
+    padding-bottom: 8px;
+    padding-left: 6px;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    border-width: 2px;
-    border-color: rgb(152, 119, 81);
-    background-color: rgba(2, 19, 52, 0.7);
+    justify-content: flex-start;
+    background-color: rgba(0, 4, 10, 0.45);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(152, 119, 81);
+    border-right-color: rgb(152, 119, 81);
+    border-top-color: rgb(152, 119, 81);
+    border-bottom-color: rgb(152, 119, 81);
     cursor: var(--cursor-hover);
 }
 
-.slot.active {
-    border-color: rgb(253, 199, 135);
+.loadout-slot:last-child {
+    margin-right: 0;
+}
+
+.loadout-slot--active {
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
     background-color: rgba(253, 199, 135, 0.12);
 }
 
-.slot__icon {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.3);
+.loadout-slot__icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0.35);
     background-size: cover;
     background-position: center;
-    border-radius: 6px;
-    cursor: var(--cursor-hover);
-}
-
-.slot__label { display: none; }
-
-/* Scroll container */
-.loadout-scroll,
-.loadout-scroll .unity-scroll-view__content-viewport,
-.loadout-scroll .unity-scroll-view__content-container,
-.loadout-grid,
-.loadout-subheading,
-.slots-bar {
-    cursor: var(--cursor-ui);
-}
-
-.loadout-scroll {
-    flex-grow: 1;
-}
-
-/* Subheading */
-.loadout-subheading {
-    margin-top: 8px;
     margin-bottom: 6px;
-    font-size: 18px;
-    color: rgb(254, 221, 183);
-    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
-}
-
-.loadout-grid .loadout-tile,
-.loadout-grid .loadout-tile__icon,
-.slots-bar .slot,
-.slots-bar .slot__icon {
     cursor: var(--cursor-hover);
 }
 
-/* Grid */
-.loadout-grid {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-content: flex-start;
-}
-
-/* Tile */
-.loadout-tile {
-    padding: 3px; /* small internal gap used for both row/column spacing */
-    border-radius: 6px;
-    border-width: 0px;
-    background-color: rgba(0,0,0,0.0);
-    cursor: var(--cursor-hover);
-}
-
-.loadout-tile:hover { background-color: rgba(255,255,255,0.04); }
-
-.loadout-tile.selected { background-color: rgba(253, 199, 135, 0.12); }
-.loadout-tile.selected > .loadout-tile__icon { border-color: rgb(253, 199, 135); }
-
-.loadout-tile__icon {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.25);
-    background-size: cover;
-    background-position: center;
-    border-radius: 6px;
-    border-width: 1px;
-    border-color: #2e2e2e;
-    cursor: var(--cursor-hover);
-}
-
-.loadout-tile__label {
-    margin-top: 4px;
-    -unity-text-align: middle-center;
-    font-size: 11px;
-    color: rgb(204, 208, 214);
-    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
-}
-
-
-/* Hide and collapse the arrow buttons completely */
-.loadout-scroll .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
-.loadout-scroll .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
-    display: none;
-    height: 0;
-    min-height: 0;
+.loadout-slot__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 12px;
+    color: rgb(255, 244, 231);
+    -unity-text-align: upper-center;
+    white-space: normal;
+    overflow: hidden;
     margin: 0;
     padding: 0;
+    cursor: var(--cursor-hover);
 }
 
-.loadout-scroll .unity-base-slider--vertical {
-    width: 12px;
-    min-width: 12px;
+.loadout-slot__role {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 11px;
+    color: rgba(204, 208, 214, 0.8);
+    -unity-text-align: upper-center;
+    margin-top: 2px;
+    margin-bottom: 0;
+    padding: 0;
+    cursor: var(--cursor-hover);
 }
 
-.loadout-scroll .unity-scroller--vertical > .unity-scroller__slider {
+.loadout-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+.loadout-filter {
+    min-height: 28px;
+    max-height: 28px;
+    min-width: auto;
+    height: 28px;
     margin-top: 0;
+    margin-bottom: 6px;
+    margin-right: 6px;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 13px;
+    letter-spacing: 0;
+    color: rgb(204, 208, 214);
+    background-image: none;
+    background-color: rgba(255, 244, 231, 0.06);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.35);
+    border-right-color: rgba(202, 159, 108, 0.35);
+    border-top-color: rgba(202, 159, 108, 0.35);
+    border-bottom-color: rgba(202, 159, 108, 0.35);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    cursor: var(--cursor-hover);
+}
+
+.loadout-filter:hover {
+    color: rgb(255, 244, 231);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.loadout-filter--active {
+    color: rgb(254, 221, 183);
+    background-color: rgba(253, 199, 135, 0.16);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.loadout-row {
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 6px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    background-color: rgba(255, 244, 231, 0.04);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.25);
+    border-right-color: rgba(202, 159, 108, 0.25);
+    border-top-color: rgba(202, 159, 108, 0.25);
+    border-bottom-color: rgba(202, 159, 108, 0.25);
+    cursor: var(--cursor-hover);
+}
+
+.loadout-row:hover {
+    background-color: rgba(255, 244, 231, 0.08);
+}
+
+.loadout-row--selected {
+    background-color: rgba(253, 199, 135, 0.14);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.loadout-row--last {
     margin-bottom: 0;
 }
 
-.loadout-scroll .unity-scroller--vertical {
-    width: 12px;
-}
-
-.loadout-scroll .unity-scroller--vertical,
-.loadout-scroll .unity-base-slider--vertical,
-.loadout-scroll .unity-base-slider__tracker {
-    cursor: var(--cursor-ui);
-}
-
-.loadout-scroll .unity-base-slider__dragger {
-    background-color: rgba(160, 160, 160, 1);
-    width: 10px;
-    min-width: 10px;
-    left: 1px;
-    border-radius: 4px;
+.loadout-row__icon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    margin-right: 12px;
+    background-color: rgba(0, 0, 0, 0.35);
+    background-size: cover;
+    background-position: center;
     cursor: var(--cursor-hover);
 }
 
-.loadout-scroll .unity-base-slider--vertical .unity-base-slider__tracker {
-    background-color: rgba(15, 15, 15, 0.8);
-    width: 10px;
-    min-width: 10px;
-    left: 1px;
-    border-radius: 4px;
-    border-width: 0px;
+.loadout-row__body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: column;
+    min-width: 0;
+    cursor: var(--cursor-hover);
+}
+
+.loadout-row__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+    margin: 0;
+    padding: 0;
+    white-space: normal;
+    cursor: var(--cursor-hover);
+}
+
+.loadout-row__meta-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 4px;
+    cursor: var(--cursor-hover);
+}
+
+.loadout-row__meta {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 12px;
+    color: rgb(254, 221, 183);
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 6px;
+    padding: 0;
+    cursor: var(--cursor-hover);
+}
+
+.loadout-row__summary {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(204, 208, 214);
+    margin-top: 4px;
+    margin-bottom: 0;
+    padding: 0;
+    white-space: normal;
+    cursor: var(--cursor-hover);
+}
+
+.loadout-chip {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 11px;
+    color: rgb(254, 221, 183);
+    background-color: rgba(253, 199, 135, 0.12);
+    margin-right: 6px;
+    margin-top: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.loadout-empty {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgba(204, 208, 214, 0.75);
+    white-space: normal;
+    padding-top: 12px;
+    padding-right: 8px;
+    padding-bottom: 12px;
+    padding-left: 8px;
+    cursor: var(--cursor-ui);
+}
+
+.loadout-detail__icon {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.35);
+    background-size: cover;
+    background-position: center;
+}
+
+.loadout-detail__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 22px;
+    color: rgb(254, 221, 183);
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.loadout-detail__tags {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.loadout-detail__meta {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(204, 208, 214);
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.loadout-detail__description {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgb(204, 208, 214);
+    white-space: normal;
+    flex-grow: 1;
+}
+
+.loadout-detail__empty {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgba(204, 208, 214, 0.75);
+    white-space: normal;
 }

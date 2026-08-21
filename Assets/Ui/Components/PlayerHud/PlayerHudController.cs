@@ -52,6 +52,8 @@ namespace ShadowInfection.UI.PlayerHud
             RegisterCursors();
             UiCursorRefresh.ScheduleForRoot(root);
             view = new PlayerHudView(root);
+            view.LoadoutButtonClicked += OnLoadoutButtonClicked;
+            view.SetLoadoutButtonVisible(LoadoutWindowController.Instance != null);
             presenter.Bind(view, castSuccessColor, destroyCancellationToken);
             presenter.SetEnabled(isActiveAndEnabled);
         }
@@ -68,9 +70,21 @@ namespace ShadowInfection.UI.PlayerHud
 
         private void OnDestroy()
         {
+            if (view != null)
+                view.LoadoutButtonClicked -= OnLoadoutButtonClicked;
+
             UiCursorRefresh.SetGameplayPointerEnabled(false);
             presenter?.SetEnabled(false);
             presenter?.Unbind();
+        }
+
+        private static void OnLoadoutButtonClicked()
+        {
+            var loadout = LoadoutWindowController.Instance;
+            if (loadout == null)
+                return;
+
+            loadout.SetOpen(true);
         }
 
         private void RegisterCursors()

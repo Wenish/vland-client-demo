@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Second Wind
   skillType: 1
+  tags: 4
   description: 5 seconds after taking damage gain 50 health back.
   cooldown: 30
   castCost: 0

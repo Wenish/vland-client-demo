@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Blazing Shot
   skillType: 0
+  tags: 1
   description: Fire a blazing bullet that pierces through enemies, dealing 70 damage
     and burning them for 3 seconds.
   cooldown: 12

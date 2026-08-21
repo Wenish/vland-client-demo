@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Threatening Presence
   skillType: 1
+  tags: 4
   description: Draws the attention of nearby enemies, increases max health, and has
     a chance to restore health when hit.
   cooldown: 0
