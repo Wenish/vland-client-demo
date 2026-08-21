@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MyGame.Events;
 using UnityEngine;
 
-public class InteractionZone : MonoBehaviour
+public class InteractionZone : MonoBehaviour, IVendorInteractable
 {
     [Header("Scriptable Config")]
     [SerializeField]
@@ -38,6 +38,18 @@ public class InteractionZone : MonoBehaviour
     private HashSet<UnitController> unitsInZone = new HashSet<UnitController>();
     private Dictionary<UnitController, System.Action> deathListeners = new Dictionary<UnitController, System.Action>();
     private Dictionary<UnitController, System.Action> reviveListeners = new Dictionary<UnitController, System.Action>();
+    private CatalogVendorSession vendorSession;
+
+    public IVendorSession GetVendorSession()
+    {
+        if (vendorCatalog == null)
+            return null;
+
+        if (vendorSession == null || vendorSession.Catalog != vendorCatalog)
+            vendorSession = new CatalogVendorSession(vendorCatalog, this);
+
+        return vendorSession;
+    }
 
     private void OnTriggerEnter(Collider other)
     {

@@ -21,14 +21,16 @@ namespace ShadowInfection.UI.VendorWindow
 
         private VendorView view;
         private R3.DisposableBag subscriptions;
-        private VendorDefinition catalog;
-        private InteractionZone sessionZone;
+        private IVendorSession session;
         private PlayerController player;
         private VendorTab tab = VendorTab.Buy;
         private int page;
         private string selectedId;
         private readonly Dictionary<string, int> upgradeCounts = new();
+        private readonly Dictionary<string, int> buyStocks = new();
         private readonly List<VendorRowVm> pageRows = new();
+
+        private VendorDefinition Catalog => session != null ? session.Catalog : null;
 
         public bool IsOpen => view != null && view.IsOpen;
 
@@ -87,14 +89,16 @@ namespace ShadowInfection.UI.VendorWindow
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
             view = null;
-            sessionZone = null;
-            catalog = null;
+            session = null;
             player = null;
         }
 
         public void Open(VendorDefinition nextCatalog)
         {
-            Open(null, nextCatalog, ResolveLocalPlayer());
+            if (nextCatalog == null)
+                return;
+
+            Open(new CatalogVendorSession(nextCatalog), ResolveLocalPlayer());
         }
 
         public void Open(InteractionZone zone, PlayerController nextPlayer)
@@ -102,7 +106,33 @@ namespace ShadowInfection.UI.VendorWindow
             if (zone == null)
                 return;
 
-            Open(zone, zone.VendorCatalog, nextPlayer);
+            Open(zone.GetVendorSession(), nextPlayer);
+        }
+
+        public void Open(IVendorSession nextSession, PlayerController nextPlayer)
+        {
+            if (view == null || nextSession == null || nextSession.Catalog == null)
+                return;
+
+            LoadoutWindowController.Instance?.SetOpen(false);
+
+            session = nextSession;
+            player = nextPlayer != null ? nextPlayer : ResolveLocalPlayer();
+            tab = nextSession.OpeningTab;
+            page = 0;
+            selectedId = null;
+            upgradeCounts.Clear();
+            buyStocks.Clear();
+
+            var catalog = nextSession.Catalog;
+            view.SetVendor(catalog.DisplayName, catalog.subtitle, catalog.portrait);
+            view.SetOpen(true);
+            view.SetFooterError(null);
+            RestorePosition();
+            Refresh();
+
+            if (player != null && player.isLocalPlayer)
+                player.CmdRequestVendorSnapshot(nextSession.VendorId);
         }
 
         public void Close()
@@ -111,42 +141,21 @@ namespace ShadowInfection.UI.VendorWindow
                 return;
 
             PersistPosition();
-            sessionZone = null;
-            catalog = null;
+            session = null;
             selectedId = null;
             view.SetFooterError(null);
             view.SetOpen(false);
         }
 
-        public void CloseIfZone(InteractionZone zone)
+        public void CloseIfInteractable(IVendorInteractable interactable)
         {
-            if (zone != null && zone == sessionZone)
+            if (interactable != null && session != null && session.BelongsToInteractable(interactable))
                 Close();
         }
 
-        private void Open(InteractionZone zone, VendorDefinition nextCatalog, PlayerController nextPlayer)
+        public void CloseIfZone(InteractionZone zone)
         {
-            if (view == null || nextCatalog == null)
-                return;
-
-            LoadoutWindowController.Instance?.SetOpen(false);
-
-            sessionZone = zone;
-            catalog = nextCatalog;
-            player = nextPlayer != null ? nextPlayer : ResolveLocalPlayer();
-            tab = zone != null ? zone.DefaultTab : nextCatalog.defaultTab;
-            page = 0;
-            selectedId = null;
-            upgradeCounts.Clear();
-
-            view.SetVendor(nextCatalog.DisplayName, nextCatalog.subtitle, nextCatalog.portrait);
-            view.SetOpen(true);
-            view.SetFooterError(null);
-            RestorePosition();
-            Refresh();
-
-            if (player != null && player.isLocalPlayer)
-                player.CmdRequestVendorSnapshot(nextCatalog.vendorId);
+            CloseIfInteractable(zone);
         }
 
         private void TickInput()
@@ -166,6 +175,9 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void SetTab(VendorTab nextTab)
         {
+            if (Catalog != null && !Catalog.IsTabEnabled(nextTab))
+                return;
+
             if (tab == nextTab && IsOpen)
             {
                 Refresh();
@@ -209,7 +221,7 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void OnRowTransactRequested(string id)
         {
-            if (player == null || catalog == null)
+            if (player == null || session == null)
                 return;
 
             var rows = BuildRows();
@@ -220,7 +232,7 @@ namespace ShadowInfection.UI.VendorWindow
             selectedId = id;
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySound("UiButtonClick");
-            player.CmdVendorTransact(catalog.vendorId, (byte)model.Tab, model.Id);
+            player.CmdVendorTransact(session.VendorId, (byte)model.Tab, model.Id);
             RefreshVisibleRows(rows);
         }
 
@@ -234,6 +246,8 @@ namespace ShadowInfection.UI.VendorWindow
 
             view.SetFooterError(evt.Success ? null : evt.Message);
             Refresh();
+            if (player != null && player.isLocalPlayer && session != null)
+                player.CmdRequestVendorSnapshot(session.VendorId);
         }
 
         private void OnVendorSnapshot(VendorSnapshotEvent evt)
@@ -247,6 +261,17 @@ namespace ShadowInfection.UI.VendorWindow
             {
                 if (!string.IsNullOrEmpty(evt.UpgradeIds[i]))
                     upgradeCounts[evt.UpgradeIds[i]] = evt.PurchaseCounts[i];
+            }
+
+            buyStocks.Clear();
+            if (evt.BuyIds != null && evt.BuyStocks != null)
+            {
+                var buyCount = Mathf.Min(evt.BuyIds.Length, evt.BuyStocks.Length);
+                for (var i = 0; i < buyCount; i++)
+                {
+                    if (!string.IsNullOrEmpty(evt.BuyIds[i]))
+                        buyStocks[evt.BuyIds[i]] = evt.BuyStocks[i];
+                }
             }
 
             Refresh();
@@ -268,10 +293,13 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void Refresh()
         {
-            if (view == null || catalog == null)
+            if (view == null || Catalog == null)
                 return;
 
-            view.SetTabVisibility(HasBuyEntries, true, HasUpgradeEntries);
+            view.SetTabVisibility(
+                Catalog.IsTabEnabled(VendorTab.Buy),
+                Catalog.IsTabEnabled(VendorTab.Sell),
+                Catalog.IsTabEnabled(VendorTab.Upgrades));
             if (!IsTabAvailable(tab))
                 tab = FirstAvailableTab();
 
@@ -308,7 +336,7 @@ namespace ShadowInfection.UI.VendorWindow
         private List<VendorRowVm> BuildRows()
         {
             var rows = new List<VendorRowVm>();
-            if (catalog == null)
+            if (Catalog == null)
                 return rows;
 
             switch (tab)
@@ -326,17 +354,27 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void BuildBuyRows(List<VendorRowVm> rows)
         {
-            if (catalog.buyEntries == null)
+            if (Catalog.buyEntries == null)
                 return;
 
             var gold = player != null ? player.Gold : 0;
-            foreach (var entry in catalog.buyEntries)
+            foreach (var entry in Catalog.buyEntries)
             {
                 if (entry == null || entry.weapon == null)
                     continue;
 
+                var stock = ResolveBuyStock(entry.ResolvedId);
+                var soldOut = stock == 0;
                 var shortfall = Mathf.Max(0, entry.goldCost - gold);
-                var unaffordable = shortfall > 0;
+                var unaffordable = !soldOut && shortfall > 0;
+                string subtitle;
+                if (soldOut)
+                    subtitle = "Sold out";
+                else if (unaffordable)
+                    subtitle = $"{shortfall} short";
+                else
+                    subtitle = entry.weapon.weaponType.ToString();
+
                 rows.Add(new VendorRowVm
                 {
                     Id = entry.ResolvedId,
@@ -344,14 +382,15 @@ namespace ShadowInfection.UI.VendorWindow
                     Icon = entry.weapon.iconTexture,
                     IconClass = "vendor-row__icon--weapon",
                     Name = entry.weapon.weaponName,
-                    Subtitle = unaffordable ? $"{shortfall} short" : entry.weapon.weaponType.ToString(),
+                    Subtitle = subtitle,
                     TypeLine = entry.weapon.weaponType.ToString(),
                     StatBlock = $"Damage: +{entry.weapon.attackPower} · Range: {entry.weapon.attackRange}",
                     PriceGold = entry.goldCost,
-                    StackCount = 1,
-                    Dimmed = unaffordable,
-                    Locked = false,
-                    CanTransact = true,
+                    StackCount = stock > 1 ? stock : 1,
+                    Dimmed = soldOut || unaffordable,
+                    Locked = soldOut,
+                    CanTransact = !soldOut,
+                    PriceNote = soldOut ? "sold out" : null,
                     TooltipAction = "Right-click to buy"
                 });
             }
@@ -359,7 +398,7 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void BuildUpgradeRows(List<VendorRowVm> rows)
         {
-            if (catalog.upgradeEntries == null)
+            if (Catalog.upgradeEntries == null)
                 return;
 
             var gold = player != null ? player.Gold : 0;
@@ -368,7 +407,7 @@ namespace ShadowInfection.UI.VendorWindow
                 : 1;
             var stats = ResolveStats();
 
-            foreach (var upgrade in catalog.upgradeEntries)
+            foreach (var upgrade in Catalog.upgradeEntries)
             {
                 if (upgrade == null)
                     continue;
@@ -509,60 +548,14 @@ namespace ShadowInfection.UI.VendorWindow
             return Mirror.NetworkClient.localPlayer.GetComponent<PlayerController>();
         }
 
-        private bool HasBuyEntries
-        {
-            get
-            {
-                if (catalog?.buyEntries == null)
-                    return false;
-
-                foreach (var entry in catalog.buyEntries)
-                {
-                    if (entry?.weapon != null)
-                        return true;
-                }
-
-                return false;
-            }
-        }
-
-        private bool HasUpgradeEntries
-        {
-            get
-            {
-                if (catalog?.upgradeEntries == null)
-                    return false;
-
-                foreach (var upgrade in catalog.upgradeEntries)
-                {
-                    if (upgrade != null)
-                        return true;
-                }
-
-                return false;
-            }
-        }
-
         private bool IsTabAvailable(VendorTab candidate)
         {
-            switch (candidate)
-            {
-                case VendorTab.Buy:
-                    return HasBuyEntries;
-                case VendorTab.Upgrades:
-                    return HasUpgradeEntries;
-                default:
-                    return true;
-            }
+            return Catalog != null && Catalog.IsTabEnabled(candidate);
         }
 
         private VendorTab FirstAvailableTab()
         {
-            if (HasBuyEntries)
-                return VendorTab.Buy;
-            if (HasUpgradeEntries)
-                return VendorTab.Upgrades;
-            return VendorTab.Sell;
+            return Catalog != null ? Catalog.ResolveDefaultTab() : VendorTab.Buy;
         }
 
         private VendorTab NextVisibleTab()
@@ -576,6 +569,13 @@ namespace ShadowInfection.UI.VendorWindow
             }
 
             return tab;
+        }
+
+        private int ResolveBuyStock(string entryId)
+        {
+            if (buyStocks.TryGetValue(entryId, out var stock))
+                return stock;
+            return session != null ? session.GetBuyStock(entryId) : VendorStock.Unlimited;
         }
 
         private void RestorePosition()

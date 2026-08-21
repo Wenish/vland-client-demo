@@ -11,6 +11,7 @@ namespace ShadowInfection.UI.PlayerHud
         [SerializeField] private Texture2D aimCursorTexture;
         [SerializeField] private Texture2D hoverCursorTexture;
         [SerializeField] private Texture2D uiCursorTexture;
+        [SerializeField] private Texture2D tradeCursorTexture;
 
         private UIDocument uiDocument;
         private PlayerHudView view;
@@ -92,7 +93,7 @@ namespace ShadowInfection.UI.PlayerHud
             if (aimCursorTexture == null && hoverCursorTexture == null && uiCursorTexture == null)
                 return;
 
-            UiCursorRefresh.Configure(aimCursorTexture, hoverCursorTexture, uiCursorTexture);
+            UiCursorRefresh.Configure(aimCursorTexture, hoverCursorTexture, uiCursorTexture, tradeCursorTexture);
         }
 
 #if UNITY_EDITOR
@@ -114,6 +115,12 @@ namespace ShadowInfection.UI.PlayerHud
             {
                 uiCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
                     "Assets/Art/Cursors/CursorDefaultAlternativ_32.png");
+            }
+
+            if (tradeCursorTexture == null)
+            {
+                tradeCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    "Assets/Art/Cursors/CursorTrade_32.png");
             }
         }
 #endif

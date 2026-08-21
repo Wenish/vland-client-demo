@@ -17,10 +17,14 @@ MonoBehaviour:
   subtitle: Close quarters
   portrait: {fileID: 0}
   defaultTab: 0
+  showBuyTab: 1
+  showSellTab: 0
+  showUpgradesTab: 1
   buyEntries:
   - entryId: buy_daggers
     weapon: {fileID: 11400000, guid: b6aba4df57a0e4e4987b7fa1680d0b07, type: 2}
     goldCost: 500
     stock: 0
+  sellEntries: []
   upgradeEntries:
   - {fileID: 11400000, guid: d7bca252a21cb2948aa2fda34e7de3fd, type: 2}

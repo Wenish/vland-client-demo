@@ -73,6 +73,7 @@ MonoBehaviour:
   aimCursorTexture: {fileID: 2800000, guid: e6d3e27aaa79942b98e995d56accf2b0, type: 3}
   hoverCursorTexture: {fileID: 2800000, guid: 5f8252ad3e9b547c1be980e2638f433c, type: 3}
   uiCursorTexture: {fileID: 2800000, guid: 7dd2a1cc508c64aa891e32dd530a2437, type: 3}
+  tradeCursorTexture: {fileID: 2800000, guid: f3e99fc2895d66141a9c1cf99b80dc87, type: 3}
 --- !u!114 &4128571930482617391
 MonoBehaviour:
   m_ObjectHideFlags: 0

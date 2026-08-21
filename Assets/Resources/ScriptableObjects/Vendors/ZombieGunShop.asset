@@ -17,10 +17,14 @@ MonoBehaviour:
   subtitle: Heavy firepower
   portrait: {fileID: 0}
   defaultTab: 0
+  showBuyTab: 1
+  showSellTab: 0
+  showUpgradesTab: 1
   buyEntries:
   - entryId: buy_gun
     weapon: {fileID: 11400000, guid: f287fcc8010e8481898e3987f5ebe009, type: 2}
     goldCost: 500
     stock: 0
+  sellEntries: []
   upgradeEntries:
   - {fileID: 11400000, guid: c08ccdfba921adf46a06b2d0a8f7af6f, type: 2}

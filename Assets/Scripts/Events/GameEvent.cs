@@ -369,11 +369,22 @@ namespace MyGame.Events
     {
         public string[] UpgradeIds { get; }
         public int[] PurchaseCounts { get; }
+        public string[] BuyIds { get; }
+        public int[] BuyStocks { get; }
+        public int VendorGold { get; }
 
-        public VendorSnapshotEvent(string[] upgradeIds, int[] purchaseCounts)
+        public VendorSnapshotEvent(
+            string[] upgradeIds,
+            int[] purchaseCounts,
+            string[] buyIds = null,
+            int[] buyStocks = null,
+            int vendorGold = -1)
         {
             UpgradeIds = upgradeIds ?? System.Array.Empty<string>();
             PurchaseCounts = purchaseCounts ?? System.Array.Empty<int>();
+            BuyIds = buyIds ?? System.Array.Empty<string>();
+            BuyStocks = buyStocks ?? System.Array.Empty<int>();
+            VendorGold = vendorGold;
         }
     }
 

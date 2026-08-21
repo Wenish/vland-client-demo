@@ -17,10 +17,14 @@ MonoBehaviour:
   subtitle: Starter steel
   portrait: {fileID: 0}
   defaultTab: 0
+  showBuyTab: 1
+  showSellTab: 0
+  showUpgradesTab: 1
   buyEntries:
   - entryId: buy_sword
     weapon: {fileID: 11400000, guid: 923d2dec128b0d348a65e81a8c3ac9fc, type: 2}
     goldCost: 0
     stock: 0
+  sellEntries: []
   upgradeEntries:
   - {fileID: 11400000, guid: 69850887d5c592c4e836d6e30adf3b83, type: 2}

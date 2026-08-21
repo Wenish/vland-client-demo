@@ -6,31 +6,49 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Vland.UI;
 
-// Drives hardware cursors for gameplay (pointer), interactive UI (hover), and
-// non-interactive UI (default). UnityEngine.Cursor.SetCursor is used because
-// UI Toolkit USS cursors do not reliably win once a hardware cursor is set.
+// Drives hardware cursors for gameplay (pointer), interactive UI (hover),
+// buyable vendor rows (trade), and non-interactive UI (default).
+// UnityEngine.Cursor.SetCursor is used because UI Toolkit USS cursors do not
+// reliably win once a hardware cursor is set.
 public static class UiCursorRefresh
 {
     public static readonly Vector2 PointerHotspot = new Vector2(16f, 16f);
     public static readonly Vector2 HoverHotspot = Vector2.zero;
     public static readonly Vector2 DefaultHotspot = Vector2.zero;
+    public static readonly Vector2 TradeHotspot = Vector2.zero;
 
     private static Texture2D _pointerCursor;
     private static Texture2D _hoverCursor;
     private static Texture2D _defaultCursor;
+    private static Texture2D _tradeCursor;
 
     private static bool _gameplayPointerEnabled;
     private static int _interactiveHoverDepth;
+    private static int _tradeHoverDepth;
 
     private static readonly HashSet<IPanel> HookedPanels = new HashSet<IPanel>();
     private static readonly HashSet<VisualElement> AttachedRoots = new HashSet<VisualElement>();
     private static readonly Dictionary<IPanel, int> PanelSortingOrders = new Dictionary<IPanel, int>();
 
-    public static void Configure(Texture2D pointerCursor, Texture2D hoverCursor, Texture2D defaultCursor)
+    public static void Configure(
+        Texture2D pointerCursor,
+        Texture2D hoverCursor,
+        Texture2D defaultCursor,
+        Texture2D tradeCursor = null)
     {
         _pointerCursor = pointerCursor;
         _hoverCursor = hoverCursor;
         _defaultCursor = defaultCursor;
+        if (tradeCursor != null)
+            _tradeCursor = tradeCursor;
+    }
+
+    public static void SetTradeCursor(Texture2D tradeCursor)
+    {
+        if (tradeCursor != null)
+            _tradeCursor = tradeCursor;
+
+        ApplyHardwareCursor();
     }
 
     /// <summary>
@@ -59,7 +77,27 @@ public static class UiCursorRefresh
 
         // DetachFromPanel can fire while the panel layout store is torn down.
         // Pick() would ValidateLayout and NRE; hover-only updates are safe.
-        if (_interactiveHoverDepth > 0)
+        if (_interactiveHoverDepth > 0 || _tradeHoverDepth > 0)
+        {
+            ApplyHardwareCursor();
+            return;
+        }
+
+        ScheduleApplyHardwareCursor();
+    }
+
+    public static void PushTradeHover()
+    {
+        _tradeHoverDepth++;
+        ApplyHardwareCursor();
+    }
+
+    public static void PopTradeHover()
+    {
+        if (_tradeHoverDepth > 0)
+            _tradeHoverDepth--;
+
+        if (_tradeHoverDepth > 0 || _interactiveHoverDepth > 0)
         {
             ApplyHardwareCursor();
             return;
@@ -71,6 +109,7 @@ public static class UiCursorRefresh
     public static void ResetInteractiveHover()
     {
         _interactiveHoverDepth = 0;
+        _tradeHoverDepth = 0;
         ApplyHardwareCursor();
     }
 
@@ -148,6 +187,15 @@ public static class UiCursorRefresh
 
     private static void ApplyHardwareCursor()
     {
+        if (_tradeHoverDepth > 0)
+        {
+            if (_tradeCursor != null)
+                UnityEngine.Cursor.SetCursor(_tradeCursor, TradeHotspot, CursorMode.Auto);
+            else if (_hoverCursor != null)
+                UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
+            return;
+        }
+
         if (_interactiveHoverDepth > 0)
         {
             if (_hoverCursor != null)
@@ -217,6 +265,12 @@ public static class UiCursorRefresh
     {
         switch (ResolveCursorKind(picked))
         {
+            case CursorKind.Trade:
+                if (_tradeCursor != null)
+                    UnityEngine.Cursor.SetCursor(_tradeCursor, TradeHotspot, CursorMode.Auto);
+                else if (_hoverCursor != null)
+                    UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
+                break;
             case CursorKind.Hover when _hoverCursor != null:
                 UnityEngine.Cursor.SetCursor(_hoverCursor, HoverHotspot, CursorMode.Auto);
                 break;
@@ -237,6 +291,8 @@ public static class UiCursorRefresh
         var hasDefault = false;
         for (var element = picked; element != null; element = element.parent)
         {
+            if (IsTradeCursorElement(element))
+                return CursorKind.Trade;
             if (IsHoverCursorElement(element))
                 return CursorKind.Hover;
             if (IsDefaultCursorElement(element))
@@ -249,13 +305,24 @@ public static class UiCursorRefresh
         return _gameplayPointerEnabled ? CursorKind.Pointer : CursorKind.Default;
     }
 
+    private static bool IsTradeCursorElement(VisualElement element)
+    {
+        if (element is VendorRow row && row.Model != null && row.Model.CanTransact && !row.Model.Locked)
+            return true;
+
+        return element.ClassListContains("vendor-row--buyable");
+    }
+
     private static bool IsHoverCursorElement(VisualElement element)
     {
         if (element is Button or TextField or Toggle or Slider or DropdownField or IntegerField or FloatField)
             return true;
 
-        if (element is OrnateButton or AbilityCooldownElement or LoadoutRow or VendorRow)
+        if (element is OrnateButton or AbilityCooldownElement or LoadoutRow)
             return true;
+
+        if (element is VendorRow row)
+            return row.Model != null && !row.Model.Locked && !row.Model.CanTransact;
 
         return HasAnyClass(
             element,
@@ -270,7 +337,6 @@ public static class UiCursorRefresh
             "loadout-filter",
             "loadout-open-button",
             "loadout-close-button",
-            "vendor-row",
             "vendor-tab",
             "vendor-title",
             "vendor-close-button",
@@ -379,5 +445,6 @@ public static class UiCursorRefresh
         Pointer,
         Default,
         Hover,
+        Trade,
     }
 }
