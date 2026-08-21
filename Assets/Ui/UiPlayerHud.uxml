@@ -29,7 +29,6 @@
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; flex-direction: column; justify-content: flex-end; align-items: center; flex-basis: 50%;">
-        <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" icon-texture="project://database/Assets/Art/Skills/monk_hands.jpg?fileID=2800000&amp;guid=32e55def1e718487e909fb7642359dde&amp;type=3#monk_hands" progress="0.84" text-time="4.2s" text-name="Healing Hands" name="playerCastbar"/>
         <ui:VisualElement picking-mode="Ignore" class="si-hud-bottom">
             <ui:VisualElement name="playerStatsContainer" class="si-player-stats" style="display: none;">
                 <ui:VisualElement class="si-player-stats__column si-player-stats__column--left">
@@ -50,6 +49,7 @@
                         <ui:VisualElement class="si-gold__icon"/>
                         <ui:Label text="0" name="labelGold" class="si-gold__value"/>
                     </ui:VisualElement>
+                    <ui:VisualElement class="si-hud-combat-row">
                     <ui:VisualElement class="si-hud-combat">
                     <ui:VisualElement name="playerVitalsContainer" class="si-vitals">
                         <ui:VisualElement name="playerShieldContainer" class="si-vital-row">
@@ -78,9 +78,12 @@
                         <AbilityCooldownElement name="skillUltimate" cooldown-progress="-0.3" cooldown-remaining="-0.07" enabled="true" icon-texture="project://database/Assets/Art/Skills/ritual_ghost_healing.jpg?fileID=2800000&amp;guid=29a96695c13274ef5b2ec61422d1b054&amp;type=3#ritual_ghost_healing" activation-key="X" class="ability-container--ultimate"/>
                     </ui:VisualElement>
                     </ui:VisualElement>
+                    <OrnateButton name="loadoutButton" text="Loadout" class="si-button si-button--compact si-hud-loadout-button" style="display: none;"/>
+                    </ui:VisualElement>
                 </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" icon-texture="project://database/Assets/Art/Skills/monk_hands.jpg?fileID=2800000&amp;guid=32e55def1e718487e909fb7642359dde&amp;type=3#monk_hands" progress="0.84" text-time="4.2s" text-name="Healing Hands" name="playerCastbar" picking-mode="Ignore" class="si-player-castbar"/>
     <ui:VisualElement name="playerInfoFeed" picking-mode="Ignore" class="si-player-info-feed"/>
     <ui:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>
 </ui:UXML>
