@@ -6249,7 +6249,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -6257,8 +6257,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: vendorCatalog
+      value: 
+      objectReference: {fileID: 11400000, guid: 21a8f0b14c3d4e5f9a0b1c2d3e4f6002, type: 2}
     - target: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: m_Name
       value: InteractionZone Weapon 2
@@ -11002,7 +11006,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -11010,8 +11014,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: vendorCatalog
+      value: 
+      objectReference: {fileID: 11400000, guid: 21a8f0b14c3d4e5f9a0b1c2d3e4f6005, type: 2}
     - target: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: m_Name
       value: InteractionZone Weapon 5
@@ -14418,7 +14426,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 500
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -14426,8 +14434,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: vendorCatalog
+      value: 
+      objectReference: {fileID: 11400000, guid: 21a8f0b14c3d4e5f9a0b1c2d3e4f6004, type: 2}
     - target: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: m_Name
       value: InteractionZone Weapon 4
@@ -15245,7 +15257,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: goldCost
-      value: 500
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionId
@@ -15253,8 +15265,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: vendorCatalog
+      value: 
+      objectReference: {fileID: 11400000, guid: 21a8f0b14c3d4e5f9a0b1c2d3e4f6003, type: 2}
     - target: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: m_Name
       value: InteractionZone Weapon 3
@@ -18663,6 +18679,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 3421598832
+  _assetId: 0
+  serverOnly: 1
+  visibility: 0
+  hasSpawned: 0
+--- !u!1 &1876500100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1876500102}
+  - component: {fileID: 1876500101}
+  - component: {fileID: 1876500103}
+  m_Layer: 0
+  m_Name: VendorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1876500101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1876500100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d2b5c38e4f4b7f0d1e2c3b4a5f6d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VendorManager
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!4 &1876500102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1876500100}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1876500103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1876500100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 3482719056
   _assetId: 0
   serverOnly: 1
   visibility: 0
@@ -26876,6 +26957,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: vendorCatalog
+      value: 
+      objectReference: {fileID: 11400000, guid: 21a8f0b14c3d4e5f9a0b1c2d3e4f6006, type: 2}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: defaultTab
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
@@ -30323,8 +30412,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: interactionType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 798276579995439250, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
+      propertyPath: vendorCatalog
+      value: 
+      objectReference: {fileID: 11400000, guid: 21a8f0b14c3d4e5f9a0b1c2d3e4f6001, type: 2}
     - target: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
       propertyPath: m_Name
       value: InteractionZone Weapon 1
@@ -32072,6 +32165,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f63ef50d4ef5b4ff79bffc68b2176c74, type: 3}
+--- !u!1001 &1876500200
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6500852558582956570, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_Name
+      value: UiDocumentVendorWindow
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713888471920108062, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 03d8b1c94eaf41d56d7e8c9b0a1f2345, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -32102,6 +32252,8 @@ SceneRoots:
   - {fileID: 49581358}
   - {fileID: 1407247995}
   - {fileID: 1287889018}
+  - {fileID: 1876500102}
+  - {fileID: 1876500200}
   - {fileID: 8165713679862201908}
   - {fileID: 864273879}
   - {fileID: 5953568556793817622}

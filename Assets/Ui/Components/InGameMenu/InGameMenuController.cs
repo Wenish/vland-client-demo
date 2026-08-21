@@ -1,4 +1,5 @@
 using Mirror;
+using ShadowInfection.UI.VendorWindow;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -66,6 +67,12 @@ public class InGameMenuController : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
+            if (VendorWindowController.Instance != null && VendorWindowController.Instance.IsOpen)
+            {
+                VendorWindowController.Instance.Close();
+                return;
+            }
+
             if (IsMenuOpen())
             {
                 CloseMenu();
@@ -79,6 +86,7 @@ public class InGameMenuController : MonoBehaviour
 
     public void OpenMenu()
     {
+        VendorWindowController.Instance?.Close();
         inGameMenuRoot.style.display = DisplayStyle.Flex;
     }
 

@@ -73,48 +73,88 @@ public class UpgradeManager : NetworkBehaviour
             return;
         }
 
+        if (!TryPurchase(buyer, upgrade, finalCost, out var message, out _))
+        {
+            PublishResult(buyer, false, message, upgrade != null ? upgrade.upgradeId : string.Empty, 0);
+            return;
+        }
+
+        PublishResult(buyer, true, message, upgrade.upgradeId, finalCost);
+    }
+
+    [Server]
+    public bool TryPurchase(PlayerController buyer, UpgradeDefinition upgrade, int finalCost, out string message, out int timesBought)
+    {
+        message = string.Empty;
+        timesBought = 0;
+
+        if (buyer == null)
+        {
+            message = "Buyer is missing.";
+            return false;
+        }
+
+        if (upgrade == null)
+        {
+            message = "Upgrade is not configured.";
+            return false;
+        }
+
         if (upgradeDatabase != null && !upgradeDatabase.ContainsUpgrade(upgrade.upgradeId))
         {
-            PublishResult(buyer, false, "Upgrade is not registered in database.", upgrade.upgradeId, 0);
-            return;
+            message = "Upgrade is not registered in database.";
+            return false;
         }
 
         if (!CanPurchaseUpgrade(buyer, upgrade))
         {
-            PublishResult(buyer, false, "Upgrade purchase limit reached.", upgrade.upgradeId, 0);
-            return;
+            message = "Upgrade purchase limit reached.";
+            return false;
         }
 
         if (buyer.Unit == null)
         {
-            PublishResult(buyer, false, "Buyer unit is not ready.", upgrade.upgradeId, 0);
-            return;
+            message = "Buyer unit is not ready.";
+            return false;
         }
 
         var unitController = buyer.Unit.GetComponent<UnitController>();
         if (unitController == null || unitController.unitMediator == null)
         {
-            PublishResult(buyer, false, "Buyer does not have a valid UnitMediator.", upgrade.upgradeId, 0);
-            return;
+            message = "Buyer does not have a valid UnitMediator.";
+            return false;
         }
 
         if (unitController.IsDead)
         {
-            PublishResult(buyer, false, "Cannot buy upgrades while dead.", upgrade.upgradeId, 0);
-            return;
+            message = "Cannot buy upgrades while dead.";
+            return false;
+        }
+
+        if (finalCost < 0)
+        {
+            message = "Upgrade has invalid cost.";
+            return false;
         }
 
         if (!buyer.SpendGold(finalCost))
         {
-            PublishResult(buyer, false, "Not enough gold.", upgrade.upgradeId, 0);
-            return;
+            message = "Not enough gold.";
+            return false;
         }
 
         var buff = upgrade.CreateBuff(unitController.unitMediator);
         unitController.unitMediator.AddBuff(buff);
         RegisterPurchase(buyer, upgrade.upgradeId);
+        timesBought = GetPurchaseCount(buyer, upgrade.upgradeId);
+        message = $"Purchased {upgrade.DisplayName}";
+        return true;
+    }
 
-        PublishResult(buyer, true, $"Purchased {upgrade.DisplayName}", upgrade.upgradeId, finalCost);
+    [Server]
+    public int GetPurchaseCountFor(PlayerController buyer, string upgradeId)
+    {
+        return GetPurchaseCount(buyer, upgradeId);
     }
 
     [Server]
@@ -132,6 +172,11 @@ public class UpgradeManager : NetworkBehaviour
     [Server]
     private int GetPurchaseCount(PlayerController buyer, string upgradeId)
     {
+        if (buyer == null)
+        {
+            return 0;
+        }
+
         if (!_purchaseCountsByPlayer.TryGetValue(buyer.netId, out var perUpgrade))
         {
             return 0;

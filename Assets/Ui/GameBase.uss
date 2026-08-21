@@ -35,7 +35,10 @@ Label,
 .si-hud-panel,
 .loadout,
 .loadout-overlay,
-.loadout-panel {
+.loadout-panel,
+.vendor,
+.vendor-host,
+.vendor-panel {
     cursor: var(--cursor-ui);
 }
 
@@ -45,7 +48,12 @@ Label,
 .loadout-slot__icon,
 .loadout-filter,
 .loadout-open-button,
-.loadout-close-button {
+.loadout-close-button,
+.vendor-row,
+.vendor-tab,
+.vendor-title,
+.vendor-close-button,
+.vendor-page__btn {
     cursor: var(--cursor-hover);
 }
 

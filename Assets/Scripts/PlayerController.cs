@@ -3,6 +3,7 @@ using UnityEngine;
 using Mirror;
 using Game.Scripts.Controllers;
 using MyGame.Events;
+using ShadowInfection.UI.VendorWindow;
 using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
@@ -17,7 +18,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnGoldChanged(int oldValue, int newValue)
     {
-        GameEventPublish.ToMessagePipe(new PlayerGoldChangedEvent(this, oldValue, newValue));
+        GameEventPublish.ToBoth(new PlayerGoldChangedEvent(this, oldValue, newValue));
     }
 
     [SerializeField]
@@ -99,6 +100,9 @@ public class PlayerController : NetworkBehaviour
 
             if (Keyboard.current.fKey.wasPressedThisFrame)
             {
+                if (TryOpenVendorWindow())
+                    return;
+
                 CmdInteract();
             }
         }
@@ -197,14 +201,76 @@ public class PlayerController : NetworkBehaviour
         var hasThisPlayerExitedInteractionZone = unitExitedInteractionZone.Unit == _unitController;
         if (hasThisPlayerExitedInteractionZone)
         {
+            if (isLocalPlayer)
+                VendorWindowController.Instance?.CloseIfZone(unitExitedInteractionZone.Zone);
             _interactionZone = null;
         }
+    }
+
+    private bool TryOpenVendorWindow()
+    {
+        if (_interactionZone == null || _interactionZone.InteractionType != InteractionType.OpenVendor)
+            return false;
+
+        if (_interactionZone.VendorCatalog == null)
+        {
+            Debug.LogWarning("OpenVendor zone is missing a VendorDefinition.", _interactionZone);
+            return true;
+        }
+
+        VendorWindowController.Instance?.Open(_interactionZone, this);
+        return true;
+    }
+
+    [Command]
+    public void CmdVendorTransact(string vendorId, byte tab, string entryId)
+    {
+        if (VendorManager.Instance == null)
+        {
+            TargetVendorTransactResult(false, "Vendor is not available.", entryId, 0);
+            return;
+        }
+
+        VendorManager.Instance.TryTransact(this, vendorId, (VendorTab)tab, entryId, out var success, out var message, out var timesBought);
+        TargetVendorTransactResult(success, message, entryId, timesBought);
+    }
+
+    [Command]
+    public void CmdRequestVendorSnapshot(string vendorId)
+    {
+        if (VendorManager.Instance == null)
+            return;
+
+        VendorManager.Instance.BuildSnapshot(this, vendorId, out var ids, out var counts);
+        TargetVendorSnapshot(ids, counts);
+    }
+
+    [TargetRpc]
+    private void TargetVendorTransactResult(bool success, string message, string entryId, int timesBought)
+    {
+        GameEventPublish.ToBoth(new VendorTransactResultEvent(this, success, message, entryId, timesBought));
+        if (!isLocalPlayer)
+            return;
+
+        PlayerActionFeedback.Show(
+            message,
+            "vendor:" + entryId,
+            kind: success ? PlayerHudInfoKind.Info : PlayerHudInfoKind.Error);
+    }
+
+    [TargetRpc]
+    private void TargetVendorSnapshot(string[] upgradeIds, int[] purchaseCounts)
+    {
+        GameEventPublish.ToBoth(new VendorSnapshotEvent(upgradeIds, purchaseCounts));
     }
 
     [Command]
     public void CmdInteract()
     {
         if (_interactionZone == null) return;
+
+        if (_interactionZone.InteractionType == InteractionType.OpenVendor)
+            return;
 
         if (_interactionZone.InteractionType == InteractionType.BuyUpgrade)
         {

@@ -1,0 +1,531 @@
+.vendor {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    cursor: var(--cursor-ui);
+}
+
+.vendor-host {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    cursor: var(--cursor-ui);
+}
+
+.vendor-panel {
+    position: absolute;
+    left: 96px;
+    top: 220px;
+    width: 400px;
+    height: 520px;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    cursor: var(--cursor-ui);
+}
+
+.vendor-title {
+    flex-direction: row;
+    align-items: center;
+    height: 44px;
+    flex-shrink: 0;
+    margin-bottom: 6px;
+    cursor: var(--cursor-hover);
+}
+
+.vendor-portrait {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    background-color: rgba(0, 0, 0, 0.35);
+    background-size: cover;
+    background-position: center;
+    -unity-background-scale-mode: scale-to-fit;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.55);
+    border-right-color: rgba(202, 159, 108, 0.55);
+    border-top-color: rgba(202, 159, 108, 0.55);
+    border-bottom-color: rgba(202, 159, 108, 0.55);
+}
+
+.vendor-portrait--fallback {
+    background-image: var(--icon-coins);
+    -unity-background-image-tint-color: rgb(214, 165, 108);
+}
+
+.vendor-title__text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vendor-title__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 18px;
+    color: rgb(254, 221, 183);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-title__subtitle {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 11px;
+    color: rgb(204, 208, 214);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-close-button {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 6px;
+    min-width: 40px;
+    min-height: 32px;
+    width: 40px;
+    height: 32px;
+    font-size: 16px;
+    letter-spacing: 0;
+    padding-left: 0;
+    padding-right: 0;
+    flex-shrink: 0;
+}
+
+.vendor-tabs {
+    flex-direction: row;
+    align-items: stretch;
+    height: 34px;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+.vendor-tab {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    height: 34px;
+    min-height: 34px;
+    margin-right: 4px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel/Cinzel-Bold.ttf?fileID=12800000&guid=a2b3c4d5e6f7081920a1b2c3d4e5f602&type=3#Cinzel-Bold");
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: rgb(204, 208, 214);
+    background-color: rgba(0, 4, 10, 0.45);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(152, 119, 81);
+    border-right-color: rgb(152, 119, 81);
+    border-top-color: rgb(152, 119, 81);
+    border-bottom-color: rgb(152, 119, 81);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    cursor: var(--cursor-hover);
+}
+
+.vendor-tab--last {
+    margin-right: 0;
+}
+
+.vendor-tab:hover {
+    color: rgb(255, 244, 231);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+    background-color: rgba(255, 244, 231, 0.08);
+}
+
+.vendor-tab--active {
+    color: rgb(254, 221, 183);
+    background-color: rgba(253, 199, 135, 0.12);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.vendor-hint {
+    height: 26px;
+    flex-shrink: 0;
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 12px;
+    color: rgb(254, 221, 183);
+    margin: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-list {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.vendor-empty {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgba(204, 208, 214, 0.75);
+    white-space: normal;
+    padding-top: 12px;
+    padding-right: 8px;
+    padding-bottom: 12px;
+    padding-left: 8px;
+}
+
+.vendor-row {
+    flex-direction: row;
+    align-items: center;
+    height: 48px;
+    width: 100%;
+    margin-bottom: 2px;
+    padding-top: 6px;
+    padding-right: 8px;
+    padding-bottom: 6px;
+    padding-left: 8px;
+    background-color: rgba(255, 244, 231, 0.04);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.25);
+    border-right-color: rgba(202, 159, 108, 0.25);
+    border-top-color: rgba(202, 159, 108, 0.25);
+    border-bottom-color: rgba(202, 159, 108, 0.25);
+    cursor: var(--cursor-hover);
+}
+
+.vendor-row--last {
+    margin-bottom: 0;
+}
+
+.vendor-row:hover {
+    background-color: rgba(255, 244, 231, 0.08);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.vendor-row--selected {
+    background-color: rgba(253, 199, 135, 0.14);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.vendor-row--disabled {
+    opacity: 0.45;
+}
+
+.vendor-row--locked:hover {
+    background-color: rgba(255, 244, 231, 0.04);
+    border-left-color: rgba(202, 159, 108, 0.25);
+    border-right-color: rgba(202, 159, 108, 0.25);
+    border-top-color: rgba(202, 159, 108, 0.25);
+    border-bottom-color: rgba(202, 159, 108, 0.25);
+}
+
+.vendor-row__icon {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    background-color: rgba(0, 0, 0, 0.35);
+    background-size: cover;
+    background-position: center;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(214, 165, 108);
+}
+
+.vendor-row__icon--health {
+    background-image: var(--icon-health);
+}
+
+.vendor-row__icon--attack {
+    background-image: var(--icon-sword);
+}
+
+.vendor-row__icon--armor {
+    background-image: var(--icon-shield);
+}
+
+.vendor-row__icon--upgrade {
+    background-image: var(--icon-chart-up);
+}
+
+.vendor-row__icon--weapon {
+    -unity-background-image-tint-color: rgb(255, 244, 231);
+}
+
+.vendor-row__stack {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: 10px;
+    color: rgb(255, 244, 231);
+    background-color: rgba(0, 4, 10, 0.8);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.vendor-row__body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vendor-row__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 13px;
+    color: rgb(255, 244, 231);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-row__subtitle {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 11px;
+    color: rgb(204, 208, 214);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-row__spacer {
+    width: 8px;
+    flex-shrink: 0;
+}
+
+.vendor-row__price {
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.vendor-row__price-note {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 10px;
+    color: rgb(204, 208, 214);
+    margin: 0;
+    padding: 0;
+}
+
+.vendor-gold {
+    flex-direction: row;
+    align-items: center;
+}
+
+.vendor-gold__icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    background-image: var(--icon-coins);
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(214, 165, 108);
+}
+
+.vendor-gold__value {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 13px;
+    color: rgb(255, 244, 231);
+    margin: 0;
+    padding: 0;
+}
+
+.vendor-footer {
+    height: 38px;
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.vendor-gold--footer {
+    flex-shrink: 0;
+}
+
+.vendor-footer__error {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: 8px;
+    margin-right: 8px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 11px;
+    color: rgb(253, 199, 135);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-page {
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.vendor-page__btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    color: rgb(254, 221, 183);
+    background-color: rgba(0, 4, 10, 0.45);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(152, 119, 81);
+    border-right-color: rgb(152, 119, 81);
+    border-top-color: rgb(152, 119, 81);
+    border-bottom-color: rgb(152, 119, 81);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    cursor: var(--cursor-hover);
+}
+
+.vendor-page__btn:disabled {
+    opacity: 0.35;
+    cursor: var(--cursor-ui);
+}
+
+.vendor-page__label {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 11px;
+    color: rgb(254, 221, 183);
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.vendor-buyback {
+    flex-grow: 1;
+    height: 28px;
+    min-height: 28px;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: rgba(0, 4, 10, 0.45);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(152, 119, 81);
+    border-right-color: rgb(152, 119, 81);
+    border-top-color: rgb(152, 119, 81);
+    border-bottom-color: rgb(152, 119, 81);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    opacity: 0.45;
+}
+
+.vendor-buyback__label {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 11px;
+    color: rgb(204, 208, 214);
+    margin: 0;
+}
+
+.vendor-tooltip {
+    position: absolute;
+    width: 240px;
+    flex-direction: column;
+    padding-top: 8px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    padding-left: 10px;
+}
+
+.vendor-tooltip__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 14px;
+    color: rgb(254, 221, 183);
+    white-space: normal;
+    margin-bottom: 2px;
+}
+
+.vendor-tooltip__type,
+.vendor-tooltip__stats,
+.vendor-tooltip__flavour,
+.vendor-tooltip__permanent,
+.vendor-tooltip__action {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 12px;
+    color: rgb(204, 208, 214);
+    white-space: normal;
+    margin-bottom: 2px;
+}
+
+.vendor-tooltip__permanent {
+    color: rgb(254, 221, 183);
+}
+
+.vendor-tooltip__separator {
+    height: 1px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    background-color: rgba(202, 159, 108, 0.45);
+}
+
+.vendor-tooltip__footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vendor-tooltip__action {
+    margin-bottom: 0;
+    flex-shrink: 1;
+    min-width: 0;
+}

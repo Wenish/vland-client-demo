@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using Vland.UI;
 
 // Drives hardware cursors for gameplay (pointer), interactive UI (hover), and
 // non-interactive UI (default). UnityEngine.Cursor.SetCursor is used because
@@ -253,7 +254,7 @@ public static class UiCursorRefresh
         if (element is Button or TextField or Toggle or Slider or DropdownField or IntegerField or FloatField)
             return true;
 
-        if (element is OrnateButton or AbilityCooldownElement or LoadoutRow)
+        if (element is OrnateButton or AbilityCooldownElement or LoadoutRow or VendorRow)
             return true;
 
         return HasAnyClass(
@@ -269,6 +270,11 @@ public static class UiCursorRefresh
             "loadout-filter",
             "loadout-open-button",
             "loadout-close-button",
+            "vendor-row",
+            "vendor-tab",
+            "vendor-title",
+            "vendor-close-button",
+            "vendor-page__btn",
             "unity-base-field__input",
             "unity-text-element__selectable",
             "unity-base-slider__dragger",
@@ -317,6 +323,13 @@ public static class UiCursorRefresh
             "loadout-slots",
             "loadout-filters",
             "loadout-empty",
+            "vendor-panel",
+            "vendor-title",
+            "vendor-hint",
+            "vendor-list",
+            "vendor-footer",
+            "vendor-tooltip",
+            "vendor-empty",
             "loadout-row__icon",
             "loadout-row__body",
             "loadout-row__meta-row",
