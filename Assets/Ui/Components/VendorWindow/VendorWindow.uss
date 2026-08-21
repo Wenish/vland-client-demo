@@ -226,6 +226,10 @@
     cursor: var(--cursor-hover);
 }
 
+.vendor-row--buyable {
+    cursor: var(--cursor-trade);
+}
+
 .vendor-row--last {
     margin-bottom: 0;
 }

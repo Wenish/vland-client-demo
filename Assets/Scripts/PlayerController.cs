@@ -25,6 +25,7 @@ public class PlayerController : NetworkBehaviour
     private InteractionZone _interactionZone;
 
     public InteractionZone InteractionZone => _interactionZone;
+    public IVendorInteractable ActiveVendor { get; private set; }
 
     void Start()
     {
@@ -193,6 +194,8 @@ public class PlayerController : NetworkBehaviour
         if (hasThisPlayerEnteredInteractionZone)
         {
             _interactionZone = unitEnteredInteractionZone.Zone;
+            if (_interactionZone != null && _interactionZone.InteractionType == InteractionType.OpenVendor)
+                ActiveVendor = _interactionZone;
         }
     }
 
@@ -202,7 +205,9 @@ public class PlayerController : NetworkBehaviour
         if (hasThisPlayerExitedInteractionZone)
         {
             if (isLocalPlayer)
-                VendorWindowController.Instance?.CloseIfZone(unitExitedInteractionZone.Zone);
+                VendorWindowController.Instance?.CloseIfInteractable(unitExitedInteractionZone.Zone);
+            if (ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
+                ActiveVendor = null;
             _interactionZone = null;
         }
     }
@@ -212,13 +217,16 @@ public class PlayerController : NetworkBehaviour
         if (_interactionZone == null || _interactionZone.InteractionType != InteractionType.OpenVendor)
             return false;
 
-        if (_interactionZone.VendorCatalog == null)
+        var session = ActiveVendor != null
+            ? ActiveVendor.GetVendorSession()
+            : _interactionZone.GetVendorSession();
+        if (session == null)
         {
             Debug.LogWarning("OpenVendor zone is missing a VendorDefinition.", _interactionZone);
             return true;
         }
 
-        VendorWindowController.Instance?.Open(_interactionZone, this);
+        VendorWindowController.Instance?.Open(session, this);
         return true;
     }
 
@@ -241,8 +249,8 @@ public class PlayerController : NetworkBehaviour
         if (VendorManager.Instance == null)
             return;
 
-        VendorManager.Instance.BuildSnapshot(this, vendorId, out var ids, out var counts);
-        TargetVendorSnapshot(ids, counts);
+        VendorManager.Instance.BuildSnapshot(this, vendorId, out var ids, out var counts, out var buyIds, out var buyStocks, out var vendorGold);
+        TargetVendorSnapshot(ids, counts, buyIds, buyStocks, vendorGold);
     }
 
     [TargetRpc]
@@ -259,9 +267,9 @@ public class PlayerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void TargetVendorSnapshot(string[] upgradeIds, int[] purchaseCounts)
+    private void TargetVendorSnapshot(string[] upgradeIds, int[] purchaseCounts, string[] buyIds, int[] buyStocks, int vendorGold)
     {
-        GameEventPublish.ToBoth(new VendorSnapshotEvent(upgradeIds, purchaseCounts));
+        GameEventPublish.ToBoth(new VendorSnapshotEvent(upgradeIds, purchaseCounts, buyIds, buyStocks, vendorGold));
     }
 
     [Command]

@@ -14,6 +14,7 @@ namespace ShadowInfection.UI.VendorWindow
 
         public UIDocument uiDocument;
         public StyleSheet vendorWindowUss;
+        [SerializeField] private Texture2D tradeCursorTexture;
 
         private VendorView view;
         private VendorWindowPresenter presenter;
@@ -61,6 +62,7 @@ namespace ShadowInfection.UI.VendorWindow
                 root.styleSheets.Add(vendorWindowUss);
 
             var vendorRoot = root.Q<VisualElement>("vendorRoot") ?? root;
+            UiCursorRefresh.SetTradeCursor(tradeCursorTexture);
             UiCursorRefresh.ScheduleForRoot(vendorRoot, VendorSortingOrder);
 
             view = new VendorView(vendorRoot);
@@ -74,6 +76,11 @@ namespace ShadowInfection.UI.VendorWindow
 
             presenter?.Unbind();
             view?.Dispose();
+        }
+
+        public void Open(IVendorSession session, PlayerController player)
+        {
+            presenter?.Open(session, player);
         }
 
         public void Open(VendorDefinition catalog)
@@ -91,9 +98,25 @@ namespace ShadowInfection.UI.VendorWindow
             presenter?.Close();
         }
 
+        public void CloseIfInteractable(IVendorInteractable interactable)
+        {
+            presenter?.CloseIfInteractable(interactable);
+        }
+
         public void CloseIfZone(InteractionZone zone)
         {
-            presenter?.CloseIfZone(zone);
+            presenter?.CloseIfInteractable(zone);
         }
+
+#if UNITY_EDITOR
+        private void Reset()
+        {
+            if (tradeCursorTexture == null)
+            {
+                tradeCursorTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    "Assets/Art/Cursors/CursorTrade_32.png");
+            }
+        }
+#endif
     }
 }

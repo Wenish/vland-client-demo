@@ -16,7 +16,7 @@ public class VendorBuyEntry
     public WeaponData weapon;
     [Min(0)]
     public int goldCost;
-    [Tooltip("0 or less means unlimited stock.")]
+    [Tooltip("Initial listed stock copied into a runtime session. 0 or less means unlimited. Do not treat this asset as live NPC inventory.")]
     public int stock;
 
     public string ResolvedId
@@ -32,6 +32,15 @@ public class VendorBuyEntry
     public bool IsUnlimitedStock => stock <= 0;
 }
 
+[Serializable]
+public class VendorSellEntry
+{
+    public string entryId;
+    public string displayName;
+    [Min(0)]
+    public int goldValue;
+}
+
 [CreateAssetMenu(fileName = "Vendor", menuName = "Game/Vendors/Vendor")]
 public class VendorDefinition : ScriptableObject
 {
@@ -41,12 +50,48 @@ public class VendorDefinition : ScriptableObject
     public string subtitle = "Weapons and upgrades";
     public Texture2D portrait;
 
-    [Header("Catalog")]
+    [Header("Tabs")]
+    [Tooltip("Which tab opens first. Disabled tabs are skipped.")]
     public VendorTab defaultTab = VendorTab.Buy;
+    public bool showBuyTab = true;
+    public bool showSellTab = true;
+    public bool showUpgradesTab = true;
+
+    [Header("Catalog")]
+    [Tooltip("Template offers. Live stock and NPC gold belong on IVendorSession, not this asset.")]
     public List<VendorBuyEntry> buyEntries = new List<VendorBuyEntry>();
+    public List<VendorSellEntry> sellEntries = new List<VendorSellEntry>();
     public List<UpgradeDefinition> upgradeEntries = new List<UpgradeDefinition>();
 
     public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? name : displayName;
+
+    public bool IsTabEnabled(VendorTab tab)
+    {
+        switch (tab)
+        {
+            case VendorTab.Buy:
+                return showBuyTab;
+            case VendorTab.Sell:
+                return showSellTab;
+            case VendorTab.Upgrades:
+                return showUpgradesTab;
+            default:
+                return false;
+        }
+    }
+
+    public VendorTab ResolveDefaultTab()
+    {
+        if (IsTabEnabled(defaultTab))
+            return defaultTab;
+        if (showBuyTab)
+            return VendorTab.Buy;
+        if (showUpgradesTab)
+            return VendorTab.Upgrades;
+        if (showSellTab)
+            return VendorTab.Sell;
+        return defaultTab;
+    }
 
     public bool TryGetBuyEntry(string id, out VendorBuyEntry entry)
     {

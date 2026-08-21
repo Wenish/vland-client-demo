@@ -23,6 +23,19 @@ public class VendorManager : NetworkBehaviour
     }
 
     [Server]
+    public IVendorSession ResolveSession(PlayerController buyer, string vendorId)
+    {
+        if (buyer == null)
+            return null;
+
+        var session = buyer.ActiveVendor?.GetVendorSession();
+        if (session == null || session.VendorId != vendorId || !session.IsAvailableTo(buyer))
+            return null;
+
+        return session;
+    }
+
+    [Server]
     public void TryTransact(PlayerController buyer, string vendorId, VendorTab tab, string entryId, out bool success, out string message, out int timesBought)
     {
         success = false;
@@ -35,17 +48,16 @@ public class VendorManager : NetworkBehaviour
             return;
         }
 
-        var zone = buyer.InteractionZone;
-        if (zone == null || zone.InteractionType != InteractionType.OpenVendor)
+        var session = ResolveSession(buyer, vendorId);
+        if (session == null || session.Catalog == null)
         {
             message = "You are not trading.";
             return;
         }
 
-        var catalog = zone.VendorCatalog;
-        if (catalog == null || catalog.vendorId != vendorId)
+        if (!session.Catalog.IsTabEnabled(tab))
         {
-            message = "This vendor is not available.";
+            message = "That tab cannot be used here.";
             return;
         }
 
@@ -71,10 +83,10 @@ public class VendorManager : NetworkBehaviour
         switch (tab)
         {
             case VendorTab.Buy:
-                TryBuyWeapon(buyer, unitController, catalog, entryId, out success, out message);
+                TryBuyWeapon(buyer, unitController, session, entryId, out success, out message);
                 return;
             case VendorTab.Upgrades:
-                TryBuyUpgrade(buyer, catalog, entryId, out success, out message, out timesBought);
+                TryBuyUpgrade(buyer, session.Catalog, entryId, out success, out message, out timesBought);
                 return;
             default:
                 message = "That tab cannot be used yet.";
@@ -83,19 +95,38 @@ public class VendorManager : NetworkBehaviour
     }
 
     [Server]
-    public void BuildSnapshot(PlayerController buyer, string vendorId, out string[] upgradeIds, out int[] counts)
+    public void BuildSnapshot(PlayerController buyer, string vendorId, out string[] upgradeIds, out int[] counts, out string[] buyIds, out int[] buyStocks, out int vendorGold)
     {
         upgradeIds = System.Array.Empty<string>();
         counts = System.Array.Empty<int>();
+        buyIds = System.Array.Empty<string>();
+        buyStocks = System.Array.Empty<int>();
+        vendorGold = VendorStock.Unlimited;
 
-        if (buyer == null)
+        var session = ResolveSession(buyer, vendorId);
+        if (session == null || session.Catalog == null)
             return;
 
-        var zone = buyer.InteractionZone;
-        if (zone == null || zone.VendorCatalog == null || zone.VendorCatalog.vendorId != vendorId)
-            return;
+        vendorGold = session.HasWallet ? session.Gold : VendorStock.Unlimited;
+        var catalog = session.Catalog;
 
-        var catalog = zone.VendorCatalog;
+        if (catalog.buyEntries != null && catalog.buyEntries.Count > 0)
+        {
+            var listedIds = new System.Collections.Generic.List<string>(catalog.buyEntries.Count);
+            var listedStock = new System.Collections.Generic.List<int>(catalog.buyEntries.Count);
+            foreach (var entry in catalog.buyEntries)
+            {
+                if (entry == null || entry.weapon == null)
+                    continue;
+
+                listedIds.Add(entry.ResolvedId);
+                listedStock.Add(session.GetBuyStock(entry.ResolvedId));
+            }
+
+            buyIds = listedIds.ToArray();
+            buyStocks = listedStock.ToArray();
+        }
+
         if (catalog.upgradeEntries == null || catalog.upgradeEntries.Count == 0)
             return;
 
@@ -120,7 +151,7 @@ public class VendorManager : NetworkBehaviour
     private static void TryBuyWeapon(
         PlayerController buyer,
         UnitController unitController,
-        VendorDefinition catalog,
+        IVendorSession session,
         string entryId,
         out bool success,
         out string message)
@@ -128,6 +159,7 @@ public class VendorManager : NetworkBehaviour
         success = false;
         message = string.Empty;
 
+        var catalog = session.Catalog;
         if (!catalog.TryGetBuyEntry(entryId, out var entry) || entry.weapon == null)
         {
             message = "That item is not sold here.";
@@ -140,9 +172,31 @@ public class VendorManager : NetworkBehaviour
             return;
         }
 
+        var stock = session.GetBuyStock(entry.ResolvedId);
+        if (stock == 0)
+        {
+            message = "Sold out.";
+            return;
+        }
+
         if (!buyer.SpendGold(entry.goldCost))
         {
             message = "Not enough gold.";
+            return;
+        }
+
+        if (!session.TryCreditGold(entry.goldCost))
+        {
+            buyer.AddGold(entry.goldCost);
+            message = "The vendor cannot take that payment.";
+            return;
+        }
+
+        if (!session.TryConsumeBuyStock(entry.ResolvedId))
+        {
+            buyer.AddGold(entry.goldCost);
+            session.TrySpendGold(entry.goldCost);
+            message = "Sold out.";
             return;
         }
 

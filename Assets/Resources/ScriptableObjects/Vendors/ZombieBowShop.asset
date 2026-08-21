@@ -17,10 +17,14 @@ MonoBehaviour:
   subtitle: Ranged hunting
   portrait: {fileID: 0}
   defaultTab: 0
+  showBuyTab: 1
+  showSellTab: 0
+  showUpgradesTab: 1
   buyEntries:
   - entryId: buy_short_bow
     weapon: {fileID: 11400000, guid: c8313ed289195d541a854ac0e7c818f8, type: 2}
     goldCost: 10
     stock: 0
+  sellEntries: []
   upgradeEntries:
   - {fileID: 11400000, guid: b9451a586ec05f34baf58ee20b5671de, type: 2}
