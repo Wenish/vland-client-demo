@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -18,14 +19,18 @@ public partial class HudStatItem : VisualElement
     public const string TimerUssClassName = "si-round-stat--timer";
     public const string IconUssClassName = "si-round-stat__icon";
     public const string ValueUssClassName = "si-round-stat__value";
+    public const string GlyphUssClassName = "si-round-stat__glyph";
 
-    private const float ValueSlotEm = 0.8f;
-    private const float ValueSlotPaddingPx = 2f;
+    private const float DigitSlotEm = 0.62f;
+    private const float OtherSlotEm = 0.34f;
 
     private readonly VisualElement iconElement;
-    private readonly Label valueLabel;
-    private int reservedValueLength;
-    private float reservedValueWidth;
+    private readonly VisualElement valueRow;
+    private readonly Label measureProbe;
+    private readonly List<Label> glyphLabels = new();
+
+    private float digitSlotWidth;
+    private float otherSlotWidth;
 
     [SerializeField, DontCreateProperty]
     private HudStatIcon iconKind;
@@ -53,8 +58,7 @@ public partial class HudStatItem : VisualElement
         set
         {
             valueText = value ?? string.Empty;
-            valueLabel.text = valueText;
-            UpdateReservedValueWidth();
+            RefreshGlyphs();
         }
     }
 
@@ -67,41 +71,134 @@ public partial class HudStatItem : VisualElement
         iconElement.AddToClassList(IconUssClassName);
         iconElement.AddToClassList(GetIconClass(iconKind));
 
-        valueLabel = new Label { name = "value", pickingMode = PickingMode.Ignore };
-        valueLabel.AddToClassList(ValueUssClassName);
+        valueRow = new VisualElement { name = "value", pickingMode = PickingMode.Ignore };
+        valueRow.AddToClassList(ValueUssClassName);
+
+        measureProbe = CreateGlyphLabel();
+        measureProbe.style.position = Position.Absolute;
+        measureProbe.style.left = -9999;
+        measureProbe.style.visibility = Visibility.Hidden;
+        valueRow.Add(measureProbe);
 
         Add(iconElement);
-        Add(valueLabel);
+        Add(valueRow);
 
         EnableInClassList(TimerUssClassName, iconKind == HudStatIcon.Clock);
-        RegisterCallback<AttachToPanelEvent>(_ => UpdateReservedValueWidth());
-        RegisterCallback<GeometryChangedEvent>(_ => UpdateReservedValueWidth());
+        RegisterCallback<AttachToPanelEvent>(_ => RefreshGlyphs());
+        RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
     }
 
-    private void UpdateReservedValueWidth()
+    private void OnGeometryChanged(GeometryChangedEvent evt)
     {
-        if (valueLabel == null)
+        var previousDigit = digitSlotWidth;
+        var previousOther = otherSlotWidth;
+        RefreshSlotWidths();
+        if (previousDigit > 0f
+            && Mathf.Approximately(previousDigit, digitSlotWidth)
+            && Mathf.Approximately(previousOther, otherSlotWidth))
             return;
 
-        var length = valueText.Length;
-        if (length == 0 || length < reservedValueLength)
-            return;
+        ApplyGlyphs();
+    }
 
-        var fontSize = valueLabel.resolvedStyle.fontSize;
+    private void RefreshGlyphs()
+    {
+        RefreshSlotWidths();
+        ApplyGlyphs();
+    }
+
+    private void ApplyGlyphs()
+    {
+        var text = valueText ?? string.Empty;
+        EnsureGlyphCount(text.Length);
+
+        for (var i = 0; i < glyphLabels.Count; i++)
+        {
+            var glyph = glyphLabels[i];
+            if (i >= text.Length)
+            {
+                glyph.style.display = DisplayStyle.None;
+                continue;
+            }
+
+            var character = text[i];
+            glyph.text = character.ToString();
+            glyph.style.display = DisplayStyle.Flex;
+
+            var width = char.IsDigit(character) ? digitSlotWidth : otherSlotWidth;
+            glyph.style.width = width;
+            glyph.style.minWidth = width;
+            glyph.style.maxWidth = width;
+        }
+    }
+
+    private void RefreshSlotWidths()
+    {
+        var fontSize = measureProbe.resolvedStyle.fontSize;
         if (fontSize <= 0f)
             fontSize = 16f;
 
-        var width = Mathf.Ceil(fontSize * ValueSlotEm * length + ValueSlotPaddingPx);
-        if (length == reservedValueLength && width <= reservedValueWidth)
-            return;
+        var digitWidth = MeasureWidestDigit();
+        if (digitWidth <= 0f)
+            digitWidth = fontSize * DigitSlotEm;
 
-        reservedValueLength = length;
-        reservedValueWidth = Mathf.Max(reservedValueWidth, width);
+        var otherWidth = MeasureTextWidth(":");
+        if (otherWidth <= 0f)
+            otherWidth = fontSize * OtherSlotEm;
 
-        var size = reservedValueWidth;
-        valueLabel.style.width = size;
-        valueLabel.style.minWidth = size;
-        valueLabel.style.maxWidth = size;
+        digitSlotWidth = Mathf.Ceil(digitWidth);
+        otherSlotWidth = Mathf.Ceil(otherWidth);
+    }
+
+    private float MeasureWidestDigit()
+    {
+        var max = 0f;
+        for (var digit = '0'; digit <= '9'; digit++)
+            max = Mathf.Max(max, MeasureTextWidth(digit.ToString()));
+        return max;
+    }
+
+    private float MeasureTextWidth(string text)
+    {
+        if (panel == null)
+            return 0f;
+
+        var size = measureProbe.MeasureTextSize(
+            text,
+            0,
+            MeasureMode.Undefined,
+            0,
+            MeasureMode.Undefined);
+        return size.x;
+    }
+
+    private void EnsureGlyphCount(int count)
+    {
+        while (glyphLabels.Count < count)
+        {
+            var glyph = CreateGlyphLabel();
+            valueRow.Add(glyph);
+            glyphLabels.Add(glyph);
+        }
+    }
+
+    private static Label CreateGlyphLabel()
+    {
+        var glyph = new Label { pickingMode = PickingMode.Ignore };
+        glyph.AddToClassList(GlyphUssClassName);
+        glyph.style.marginTop = 0;
+        glyph.style.marginBottom = 0;
+        glyph.style.marginLeft = 0;
+        glyph.style.marginRight = 0;
+        glyph.style.paddingTop = 0;
+        glyph.style.paddingBottom = 0;
+        glyph.style.paddingLeft = 0;
+        glyph.style.paddingRight = 0;
+        glyph.style.unityTextAlign = TextAnchor.MiddleCenter;
+        glyph.style.overflow = Overflow.Hidden;
+        glyph.style.whiteSpace = WhiteSpace.NoWrap;
+        glyph.style.flexShrink = 0;
+        return glyph;
     }
 
     private static string GetIconClass(HudStatIcon icon)

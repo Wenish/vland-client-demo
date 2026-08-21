@@ -350,10 +350,10 @@
     flex-shrink: 0;
     overflow: hidden;
     margin-bottom: 0;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     padding-left: 48px;
-    padding-right: 18px;
+    padding-right: 16px;
     background-color: rgba(0, 0, 0, 0);
     background-image: var(--hud-fade-right);
     -unity-background-scale-mode: stretch-to-fill;
@@ -375,7 +375,7 @@
     flex-direction: row;
     align-items: center;
     flex-shrink: 0;
-    margin-right: 16px;
+    margin-right: 32px;
 }
 
 .si-round-stat--timer {
@@ -411,6 +411,22 @@
 }
 
 .si-round-stat__value {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    flex-grow: 0;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.si-round-stat__glyph {
     -unity-font-definition: var(--font-body);
     font-size: 16px;
     color: rgb(255, 244, 231);
@@ -426,13 +442,7 @@
     padding-bottom: 0;
     padding-left: 0;
     padding-right: 0;
-    -unity-text-align: middle-left;
-}
-
-.si-round-stat--timer .si-round-stat__value {
-    width: 66px;
-    min-width: 66px;
-    max-width: 66px;
+    -unity-text-align: middle-center;
 }
 
 .si-round-box {
@@ -441,10 +451,10 @@
     min-width: 196px;
     flex-shrink: 0;
     overflow: hidden;
-    padding-top: 12px;
+    padding-top: 6px;
     padding-bottom: 12px;
     padding-left: 28px;
-    padding-right: 18px;
+    padding-right: 16px;
     background-color: rgba(0, 0, 0, 0);
     background-image: var(--hud-fade-right);
     -unity-background-scale-mode: stretch-to-fill;
@@ -455,7 +465,7 @@
     -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
     font-size: 22px;
     color: rgb(255, 244, 231);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .si-round-completion-row {
