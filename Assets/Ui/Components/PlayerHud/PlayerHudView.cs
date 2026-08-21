@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Text;
 using UnityEngine;
@@ -84,6 +85,7 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly AbilityCooldownElement skillNormal2;
         private readonly AbilityCooldownElement skillNormal3;
         private readonly AbilityCooldownElement skillUltimate;
+        private readonly Button loadoutButton;
         private readonly CastBar playerCastbar;
         private readonly VisualElement playerStatsContainer;
         private readonly Label labelStatAttackPower;
@@ -96,6 +98,8 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly Label labelStatCritChance;
         private readonly VisualElement infoFeed;
         private readonly List<Label> infoLabels = new();
+
+        public event Action LoadoutButtonClicked;
 
         public PlayerHudView(VisualElement root)
         {
@@ -124,6 +128,7 @@ namespace ShadowInfection.UI.PlayerHud
             skillNormal2 = root.Q<AbilityCooldownElement>("skillNormal2");
             skillNormal3 = root.Q<AbilityCooldownElement>("skillNormal3");
             skillUltimate = root.Q<AbilityCooldownElement>("skillUltimate");
+            loadoutButton = root.Q<OrnateButton>("loadoutButton") ?? root.Q<Button>("loadoutButton");
             playerCastbar = root.Q<CastBar>("playerCastbar");
             playerStatsContainer = root.Q<VisualElement>("playerStatsContainer");
             labelStatAttackPower = root.Q<Label>("labelStatAttackPower");
@@ -142,7 +147,22 @@ namespace ShadowInfection.UI.PlayerHud
             SetPickingIgnoreRecursive(root.Q(className: "si-hud-bottom"));
             SetPickingIgnoreRecursive(infoFeed);
 
+            if (loadoutButton != null)
+            {
+                loadoutButton.pickingMode = PickingMode.Position;
+                UiPointerState.RegisterBlockingElement(loadoutButton);
+                loadoutButton.clicked += () => LoadoutButtonClicked?.Invoke();
+            }
+
             Reset();
+        }
+
+        public void SetLoadoutButtonVisible(bool visible)
+        {
+            if (loadoutButton == null)
+                return;
+
+            loadoutButton.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public void Reset()
@@ -477,7 +497,7 @@ namespace ShadowInfection.UI.PlayerHud
             if (element == null)
                 return;
 
-            if (element is AbilityCooldownElement)
+            if (element is AbilityCooldownElement or OrnateButton)
                 return;
 
             element.pickingMode = PickingMode.Ignore;
