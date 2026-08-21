@@ -49,6 +49,8 @@ MonoBehaviour:
   interactionId: 0
   interactionType: 0
   goldCost: 0
+  vendorCatalog: {fileID: 0}
+  defaultTab: 0
 --- !u!135 &6403887692248817249
 SphereCollider:
   m_ObjectHideFlags: 0

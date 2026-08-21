@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8c1a4b27d3f4a6e9c0d1b2a3f4e5c6d, type: 3}
+  m_Name: ZombieGunShop
+  m_EditorClassIdentifier: Assembly-CSharp::VendorDefinition
+  vendorId: zombie_gun
+  displayName: Gunsmith
+  subtitle: Heavy firepower
+  portrait: {fileID: 0}
+  defaultTab: 0
+  buyEntries:
+  - entryId: buy_gun
+    weapon: {fileID: 11400000, guid: f287fcc8010e8481898e3987f5ebe009, type: 2}
+    goldCost: 500
+    stock: 0
+  upgradeEntries:
+  - {fileID: 11400000, guid: c08ccdfba921adf46a06b2d0a8f7af6f, type: 2}

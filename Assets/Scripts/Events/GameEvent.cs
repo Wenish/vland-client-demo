@@ -347,6 +347,36 @@ namespace MyGame.Events
         }
     }
 
+    public class VendorTransactResultEvent : GameEvent
+    {
+        public PlayerController Buyer { get; }
+        public bool Success { get; }
+        public string Message { get; }
+        public string EntryId { get; }
+        public int TimesBought { get; }
+
+        public VendorTransactResultEvent(PlayerController buyer, bool success, string message, string entryId, int timesBought)
+        {
+            Buyer = buyer;
+            Success = success;
+            Message = message ?? string.Empty;
+            EntryId = entryId ?? string.Empty;
+            TimesBought = timesBought;
+        }
+    }
+
+    public class VendorSnapshotEvent : GameEvent
+    {
+        public string[] UpgradeIds { get; }
+        public int[] PurchaseCounts { get; }
+
+        public VendorSnapshotEvent(string[] upgradeIds, int[] purchaseCounts)
+        {
+            UpgradeIds = upgradeIds ?? System.Array.Empty<string>();
+            PurchaseCounts = purchaseCounts ?? System.Array.Empty<int>();
+        }
+    }
+
     public class WorldPingEvent : GameEvent
     {
         public Vector3 Position { get; }

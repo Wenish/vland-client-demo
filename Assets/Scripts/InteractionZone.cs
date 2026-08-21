@@ -13,6 +13,15 @@ public class InteractionZone : MonoBehaviour
     public InteractionType interactionType;
     public int goldCost = 0;
 
+    [Header("Vendor")]
+    [SerializeField]
+    private VendorDefinition vendorCatalog;
+    [SerializeField]
+    private VendorTab defaultTab = VendorTab.Buy;
+
+    public VendorDefinition VendorCatalog => vendorCatalog;
+    public VendorTab DefaultTab => defaultTab;
+
     [Header("Tooltip Overrides")]
     [SerializeField]
     [Tooltip("Optional custom first line. Leave empty to use default action text.")]
@@ -126,6 +135,9 @@ public class InteractionZone : MonoBehaviour
     {
         var prompt = ResolvePromptLine();
 
+        if (InteractionType == InteractionType.OpenVendor)
+            return prompt;
+
         if (TryGetComponent<UpgradeStationZone>(out var upgradeStationZone) && upgradeStationZone.HasMultipleOffers)
         {
             var offerLines = upgradeStationZone.GetTooltipOfferLines();
@@ -174,6 +186,8 @@ public class InteractionZone : MonoBehaviour
                     return "Press 1-9 to buy an upgrade";
                 }
                 return "Press F to buy an upgrade";
+            case InteractionType.OpenVendor:
+                return "Press F to trade";
             default:
                 return "Press F to interact";
         }
@@ -216,7 +230,8 @@ public enum InteractionType : byte
 {
     OpenGate,
     BuyWeapon,
-    BuyUpgrade
+    BuyUpgrade,
+    OpenVendor
 }
 
 [CreateAssetMenu(fileName = "InteractionZoneDefinition", menuName = "Game/Interaction/Zone Definition")]

@@ -1,0 +1,57 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
+    <Style src="project://database/Assets/Ui/Components/VendorWindow/VendorWindow.uss?fileID=7433441132597879392&amp;guid=f2c7a0b83d9e40c45c6d7b8a9f0e1234&amp;type=3#VendorWindow" />
+    <ui:VisualElement name="vendorRoot" picking-mode="Ignore" class="vendor">
+        <ui:VisualElement name="vendorHost" picking-mode="Ignore" class="vendor-host" style="display: none;">
+            <ui:VisualElement name="VendorPanel" picking-mode="Position" class="si-panel vendor-panel">
+                <ui:VisualElement name="titleBar" class="vendor-title">
+                    <ui:VisualElement name="vendorPortrait" class="vendor-portrait vendor-portrait--fallback" />
+                    <ui:VisualElement class="vendor-title__text">
+                        <ui:Label name="vendorName" text="Trader" class="vendor-title__name" />
+                        <ui:Label name="vendorSubtitle" text="" class="vendor-title__subtitle" />
+                    </ui:VisualElement>
+                    <OrnateButton name="closeButton" text="X" class="si-button si-button--compact vendor-close-button" />
+                </ui:VisualElement>
+                <ui:VisualElement name="tabStrip" class="vendor-tabs">
+                    <ui:Button name="tabBuy" text="BUY" class="vendor-tab vendor-tab--active" />
+                    <ui:Button name="tabSell" text="SELL" class="vendor-tab" />
+                    <ui:Button name="tabUpgrades" text="UPGRADES" class="vendor-tab vendor-tab--last" />
+                </ui:VisualElement>
+                <ui:Label name="hintLine" text="Right-click to buy. Hover for details." class="vendor-hint" />
+                <ui:VisualElement name="rowList" class="vendor-list">
+                    <ui:Label name="emptyLabel" text="Nothing to sell." class="vendor-empty" style="display: none;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="footer" class="vendor-footer">
+                    <ui:VisualElement name="vendorGold" class="vendor-gold vendor-gold--footer">
+                        <ui:VisualElement class="vendor-gold__icon" />
+                        <ui:Label name="vendorGoldValue" text="0" class="vendor-gold__value" />
+                    </ui:VisualElement>
+                    <ui:Label name="footerError" text="" class="vendor-footer__error" style="display: none;" />
+                    <ui:VisualElement name="pageControl" class="vendor-page">
+                        <ui:Button name="pagePrev" text="‹" class="vendor-page__btn" />
+                        <ui:Label name="pageLabel" text="PAGE 1 / 1" class="vendor-page__label" />
+                        <ui:Button name="pageNext" text="›" class="vendor-page__btn" />
+                    </ui:VisualElement>
+                    <ui:Button name="buybackButton" text="" class="vendor-buyback" style="display: none;">
+                        <ui:Label name="buybackLabel" text="BUYBACK (0)" class="vendor-buyback__label" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="vendorTooltip" picking-mode="Ignore" class="si-hud-panel vendor-tooltip" style="display: none;">
+                <ui:Label name="tooltipName" text="" class="vendor-tooltip__name" />
+                <ui:Label name="tooltipType" text="" class="vendor-tooltip__type" />
+                <ui:Label name="tooltipStats" text="" class="vendor-tooltip__stats" />
+                <ui:Label name="tooltipFlavour" text="" class="vendor-tooltip__flavour" />
+                <ui:Label name="tooltipPermanent" text="Permanent. Cannot be sold back." class="vendor-tooltip__permanent" style="display: none;" />
+                <ui:VisualElement name="tooltipSeparator" class="vendor-tooltip__separator" />
+                <ui:VisualElement class="vendor-tooltip__footer">
+                    <ui:Label name="tooltipAction" text="Right-click to buy" class="vendor-tooltip__action" />
+                    <ui:VisualElement class="vendor-gold">
+                        <ui:VisualElement class="vendor-gold__icon" />
+                        <ui:Label name="tooltipPrice" text="0" class="vendor-gold__value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
