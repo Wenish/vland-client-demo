@@ -13,6 +13,7 @@ public class UnitAnimationController : MonoBehaviour
 
     void Awake() {
         animator = GetComponent<Animator>();
+        animator.applyRootMotion = false;
         unitController = GetComponentInParent<UnitController>();
         if (unitController == null)
         {
@@ -136,6 +137,7 @@ public class UnitAnimationController : MonoBehaviour
             // If no weapon yet, keep current controller; OnWeaponChange will refresh it later.
         }
 
+        animator.applyRootMotion = false;
         animator.SetInteger("Health", unitController.health);
 
         if (unitController.currentWeapon != null) {

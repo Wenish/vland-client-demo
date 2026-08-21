@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: -4208733349736724816}
   - component: {fileID: 8437615050127335106}
   - component: {fileID: -3108773104642818051}
-  - component: {fileID: -135528591289134065}
   - component: {fileID: -8639825436896791559}
   m_Layer: 3
   m_Name: Unit
@@ -310,29 +309,6 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &-135528591289134065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321437018096114333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83392ae5c1b731446909f252fd494ae4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 5838834780239747934}
-  clientAuthority: 0
-  syncVelocity: 1
-  clearVelocity: 0
-  velocitySensitivity: 0.1
-  syncAngularVelocity: 1
-  clearAngularVelocity: 0
-  angularVelocitySensitivity: 0.1
 --- !u!114 &-8639825436896791559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,7 +334,7 @@ MonoBehaviour:
   interpolateRotation: 1
   interpolateScale: 1
   coordinateSpace: 0
-  timelineOffset: 0
+  timelineOffset: 1
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}

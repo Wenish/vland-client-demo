@@ -204,6 +204,7 @@ public class UnitController : NetworkBehaviour
             Destroy(modelInstance);
         }
         modelInstance = Instantiate(modelData.prefab, transform.position, transform.rotation, transform);
+        DisableRootMotion(modelInstance);
         OnModelChange((this, modelInstance));
     }
 
@@ -279,10 +280,26 @@ public class UnitController : NetworkBehaviour
         weaponController = GetComponent<WeaponController>();
         unitMediator = GetComponent<UnitMediator>();
         unitActionState = GetComponent<UnitActionState>();
+        unitRigidbody = GetComponent<Rigidbody>();
+        unitCollider = GetComponent<Collider>();
     }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        ConfigureClientObserverPhysics();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        if (unitRigidbody == null)
+            unitRigidbody = GetComponent<Rigidbody>();
+        if (unitCollider == null)
+            unitCollider = GetComponent<Collider>();
+
+        ConfigureClientObserverPhysics();
+
         if (isServer)
         {
             if (!string.IsNullOrEmpty(modelName))
@@ -295,8 +312,6 @@ public class UnitController : NetworkBehaviour
                 EquipWeapon(weaponName);
             }
         }
-        unitRigidbody = GetComponent<Rigidbody>();
-        unitCollider = GetComponent<Collider>();
         RaiseHealthChangeEvent();
         RaiseShieldChangeEvent();
 
@@ -333,6 +348,39 @@ public class UnitController : NetworkBehaviour
                 }
             }
         }
+    }
+
+    private void ConfigureClientObserverPhysics()
+    {
+        if (isServer)
+            return;
+
+        if (unitRigidbody == null)
+            unitRigidbody = GetComponent<Rigidbody>();
+        if (unitRigidbody == null)
+            return;
+
+        // Velocity sync on a dynamic rigidbody fights NetworkTransform interpolation
+        // and makes units jitter on clients even with low RTT.
+        if (TryGetComponent<Mirror.Experimental.NetworkRigidbody>(out var networkRigidbody))
+            networkRigidbody.enabled = false;
+
+        unitRigidbody.linearVelocity = Vector3.zero;
+        unitRigidbody.angularVelocity = Vector3.zero;
+        unitRigidbody.interpolation = RigidbodyInterpolation.None;
+        // Continuous sweep CCD is invalid on kinematic bodies; switch first.
+        unitRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        unitRigidbody.isKinematic = true;
+    }
+
+    private static void DisableRootMotion(GameObject model)
+    {
+        if (model == null)
+            return;
+
+        var animators = model.GetComponentsInChildren<Animator>(true);
+        for (int i = 0; i < animators.Length; i++)
+            animators[i].applyRootMotion = false;
     }
 
     void FixedUpdate()
