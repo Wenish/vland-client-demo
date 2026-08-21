@@ -14,6 +14,10 @@
 .si-round-infos,
 .si-round-title,
 .si-round-completion-label,
+.si-round-completion-row,
+.si-round-completion-left,
+.si-round-completion-percent,
+.si-round-stats__underline,
 .si-player-info-feed,
 .si-player-info-feed__line {
     cursor: var(--cursor-ui);
@@ -178,6 +182,7 @@
     margin-right: 6px;
     background-image: var(--icon-coins);
     -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(214, 165, 108);
 }
 
 .si-gold__value {
@@ -329,36 +334,52 @@
 
 .si-round-infos {
     position: absolute;
-    top: 18px;
-    right: 18px;
-    align-items: stretch;
-    min-width: 220px;
+    top: 0;
+    right: 0;
+    align-items: flex-end;
+    width: auto;
 }
 
 .si-round-stats {
+    position: relative;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    margin-bottom: 8px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    padding-left: 10px;
-    padding-right: 10px;
-    background-color: rgba(2, 19, 52, 0.72);
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgba(202, 159, 108, 0.45);
-    border-right-color: rgba(202, 159, 108, 0.45);
-    border-top-color: rgba(202, 159, 108, 0.45);
-    border-bottom-color: rgba(202, 159, 108, 0.45);
+    align-self: flex-end;
+    width: auto;
+    flex-shrink: 0;
+    overflow: hidden;
+    margin-bottom: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 48px;
+    padding-right: 18px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: var(--hud-fade-right);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgba(2, 19, 52, 0.72);
+}
+
+.si-round-stats__underline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-image: var(--hud-fade-right);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgba(220, 228, 236, 0.45);
 }
 
 .si-round-stat {
     flex-direction: row;
     align-items: center;
-    margin-right: 10px;
+    flex-shrink: 0;
+    margin-right: 16px;
+}
+
+.si-round-stat--timer {
+    margin-right: 0;
 }
 
 .si-round-stat__icon {
@@ -366,6 +387,7 @@
     height: 16px;
     margin-right: 6px;
     -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(214, 165, 108);
 }
 
 .si-round-stat__icon--clock {
@@ -384,44 +406,87 @@
     background-image: var(--icon-chart-up);
 }
 
+.si-round-stat__icon--trophy {
+    background-image: var(--icon-trophy);
+}
+
 .si-round-stat__value {
-    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
-    font-size: 13px;
+    -unity-font-definition: var(--font-body);
+    font-size: 16px;
     color: rgb(255, 244, 231);
+    flex-shrink: 0;
+    flex-grow: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    -unity-text-align: middle-left;
+}
+
+.si-round-stat--timer .si-round-stat__value {
+    width: 66px;
+    min-width: 66px;
+    max-width: 66px;
 }
 
 .si-round-box {
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
-    background-color: rgba(2, 19, 52, 0.72);
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgba(202, 159, 108, 0.55);
-    border-right-color: rgba(202, 159, 108, 0.55);
-    border-top-color: rgba(202, 159, 108, 0.55);
-    border-bottom-color: rgba(202, 159, 108, 0.55);
+    align-self: flex-end;
+    width: auto;
+    min-width: 196px;
+    flex-shrink: 0;
+    overflow: hidden;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 28px;
+    padding-right: 18px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: var(--hud-fade-right);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgba(2, 19, 52, 0.72);
 }
 
 .si-round-title {
     -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
     font-size: 22px;
     color: rgb(255, 244, 231);
+    margin-bottom: 8px;
+}
+
+.si-round-completion-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 6px;
+}
+
+.si-round-completion-left {
+    flex-direction: row;
+    align-items: center;
 }
 
 .si-round-completion-label {
     -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
     font-size: 12px;
     color: rgb(204, 208, 214);
-    margin-bottom: 4px;
+    margin-bottom: 0;
+}
+
+.si-round-completion-percent {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 12px;
+    color: rgb(204, 208, 214);
+    margin-bottom: 0;
+    margin-left: 8px;
 }
 
 .si-round-track {
-    height: 8px;
+    height: 6px;
     background-color: rgba(0, 4, 10, 0.9);
     overflow: hidden;
 }

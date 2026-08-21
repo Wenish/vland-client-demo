@@ -41,6 +41,7 @@
     --icon-mouse-left: url("project://database/Assets/Art/Ui/Icons/icon-mouse-left.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7eaf&type=3#icon-mouse-left");
     --icon-chart-up: url("project://database/Assets/Art/Ui/Icons/icon-chart-up.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7eb2&type=3#icon-chart-up");
     --icon-trophy: url("project://database/Assets/Art/Ui/Icons/icon-trophy.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7eb3&type=3#icon-trophy");
+    --hud-fade-right: url("project://database/Assets/Art/Ui/hud-fade-right.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7eb4&type=3#hud-fade-right");
 }
 
 .si-cursor-pointer {
@@ -77,4 +78,5 @@
     margin-right: 8px;
     background-image: var(--icon-trophy);
     -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(214, 165, 108);
 }

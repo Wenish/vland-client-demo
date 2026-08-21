@@ -7,21 +7,17 @@
         <ui:Label text="Round&#10;1" name="labelRoundStarted" class="si-title" style="white-space: nowrap; -unity-text-align: upper-center; font-size: 64px; color: rgb(255, 244, 231);"/>
     </ui:VisualElement>
     <ui:VisualElement name="roundInfos" class="si-round-infos" picking-mode="Ignore" style="display: none;">
-        <ui:VisualElement class="si-round-stats">
-            <ui:VisualElement class="si-round-stat">
-                <ui:VisualElement class="si-round-stat__icon si-round-stat__icon--clock"/>
-                <ui:Label text="00:00" name="labelMatchTimer" class="si-round-stat__value"/>
-            </ui:VisualElement>
-            <ui:VisualElement class="si-round-stat">
-                <ui:VisualElement class="si-round-stat__icon si-round-stat__icon--skull"/>
-                <ui:Label text="0.0%" name="labelWavePercent" class="si-round-stat__value"/>
-            </ui:VisualElement>
+        <ui:VisualElement name="roundStats" class="si-round-stats">
+            <HudStatItem name="statScore" icon="ChartUp" value="0"/>
+            <HudStatItem name="statKills" icon="Skull" value="0"/>
+            <HudStatItem name="statTimer" icon="Clock" value="00:00"/>
+            <ui:VisualElement class="si-round-stats__underline" picking-mode="Ignore"/>
         </ui:VisualElement>
-        <ui:VisualElement class="si-round-box">
+        <ui:VisualElement name="roundBox" class="si-round-box">
             <ui:Label text="Round" name="labelWave" class="si-round-title"/>
-            <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 4px;">
-                <ui:VisualElement class="si-round-stat__icon si-round-stat__icon--chart-up"/>
-                <ui:Label text="Completion 0%" name="labelCompletion" class="si-round-completion-label" style="margin-bottom: 0;"/>
+            <ui:VisualElement class="si-round-completion-row">
+                <ui:Label text="Completion" name="labelCompletion" class="si-round-completion-label"/>
+                <ui:Label text="0%" name="labelCompletionPercent" class="si-round-completion-percent"/>
             </ui:VisualElement>
             <ui:VisualElement class="si-round-track">
                 <ui:VisualElement name="roundCompletionFill" class="si-round-fill"/>

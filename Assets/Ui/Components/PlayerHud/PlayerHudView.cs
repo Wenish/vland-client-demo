@@ -66,10 +66,12 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly Label labelWave;
         private readonly Label labelRoundStarted;
         private readonly Label labelGold;
-        private readonly Label labelWavePercent;
-        private readonly Label labelCompletion;
-        private readonly Label labelMatchTimer;
+        private readonly Label labelCompletionPercent;
+        private readonly HudStatItem statScore;
+        private readonly HudStatItem statKills;
+        private readonly HudStatItem statTimer;
         private readonly VisualElement roundInfos;
+        private readonly VisualElement roundBox;
         private readonly VisualElement goldContainer;
         private readonly VisualElement roundCompletionFill;
         private readonly VisualElement playerVitalsContainer;
@@ -109,10 +111,12 @@ namespace ShadowInfection.UI.PlayerHud
             labelWave = root.Q<Label>("labelWave");
             labelRoundStarted = root.Q<Label>("labelRoundStarted");
             labelGold = root.Q<Label>("labelGold");
-            labelWavePercent = root.Q<Label>("labelWavePercent");
-            labelCompletion = root.Q<Label>("labelCompletion");
-            labelMatchTimer = root.Q<Label>("labelMatchTimer");
+            labelCompletionPercent = root.Q<Label>("labelCompletionPercent");
+            statScore = root.Q<HudStatItem>("statScore");
+            statKills = root.Q<HudStatItem>("statKills");
+            statTimer = root.Q<HudStatItem>("statTimer");
             roundInfos = root.Q<VisualElement>("roundInfos");
+            roundBox = root.Q<VisualElement>("roundBox");
             goldContainer = root.Q<VisualElement>("goldContainer");
             roundCompletionFill = root.Q<VisualElement>("roundCompletionFill");
             playerVitalsContainer = root.Q<VisualElement>("playerVitalsContainer");
@@ -176,7 +180,11 @@ namespace ShadowInfection.UI.PlayerHud
             }
 
             SetGold(0);
+            SetPersonalScore(0);
+            SetPersonalKills(0);
+            SetMatchTimer(0);
             SetRoundProgress(0, 0f);
+            SetZombieGameInfoVisible(false);
             SetMatchWidgetsVisible(false);
             HidePlayerVitals();
             HidePlayerStats();
@@ -210,14 +218,37 @@ namespace ShadowInfection.UI.PlayerHud
                 goldContainer.style.display = display;
         }
 
+        public void SetZombieGameInfoVisible(bool visible)
+        {
+            var display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            if (statScore != null)
+                statScore.style.display = display;
+            if (statKills != null)
+                statKills.style.display = display;
+            if (roundBox != null)
+                roundBox.style.display = display;
+        }
+
+        public void SetPersonalScore(int score)
+        {
+            if (statScore != null)
+                statScore.Value = ZString.Format("{0}", Mathf.Max(0, score));
+        }
+
+        public void SetPersonalKills(int kills)
+        {
+            if (statKills != null)
+                statKills.Value = ZString.Format("{0}", Mathf.Max(0, kills));
+        }
+
         public void SetMatchTimer(int elapsedSeconds)
         {
-            if (labelMatchTimer == null)
+            if (statTimer == null)
                 return;
 
             var minutes = elapsedSeconds / 60;
             var seconds = elapsedSeconds % 60;
-            labelMatchTimer.text = ZString.Format("{0:00}:{1:00}", minutes, seconds);
+            statTimer.Value = ZString.Format("{0:00}:{1:00}", minutes, seconds);
         }
 
         public void SetRoundProgress(int waveNumber, float percentKilled)
@@ -225,11 +256,8 @@ namespace ShadowInfection.UI.PlayerHud
             if (labelWave != null)
                 labelWave.text = waveNumber > 0 ? ZString.Format("Round {0}", waveNumber) : "Round";
 
-            if (labelWavePercent != null)
-                labelWavePercent.text = ZString.Format("{0:0.0}%", percentKilled);
-
-            if (labelCompletion != null)
-                labelCompletion.text = ZString.Format("Completion {0:0}%", percentKilled);
+            if (labelCompletionPercent != null)
+                labelCompletionPercent.text = ZString.Format("{0:0}%", percentKilled);
 
             if (roundCompletionFill != null)
                 roundCompletionFill.style.width = Length.Percent(Mathf.Clamp(percentKilled, 0f, 100f));

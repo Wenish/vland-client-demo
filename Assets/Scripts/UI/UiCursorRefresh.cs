@@ -56,7 +56,15 @@ public static class UiCursorRefresh
         if (_interactiveHoverDepth > 0)
             _interactiveHoverDepth--;
 
-        ApplyHardwareCursor();
+        // DetachFromPanel can fire while the panel layout store is torn down.
+        // Pick() would ValidateLayout and NRE; hover-only updates are safe.
+        if (_interactiveHoverDepth > 0)
+        {
+            ApplyHardwareCursor();
+            return;
+        }
+
+        ScheduleApplyHardwareCursor();
     }
 
     public static void ResetInteractiveHover()
@@ -149,23 +157,54 @@ public static class UiCursorRefresh
         ApplyHardwareCursorForPick(PickBestElementAtMouse());
     }
 
+    private static void ScheduleApplyHardwareCursor()
+    {
+        foreach (var root in AttachedRoots)
+        {
+            if (root?.panel == null)
+                continue;
+
+            root.schedule.Execute(ApplyHardwareCursor);
+            return;
+        }
+
+        ApplyHardwareCursorForPick(null);
+    }
+
     private static VisualElement PickBestElementAtMouse()
     {
         Vector2 screenPos = Mouse.current != null
             ? Mouse.current.position.ReadValue()
             : new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
 
-        foreach (var panel in HookedPanels
-                     .Where(panel => panel?.visualTree != null)
-                     .OrderByDescending(GetPanelSortingOrder))
+        HookedPanels.RemoveWhere(panel => panel?.visualTree == null);
+
+        foreach (var panel in HookedPanels.OrderByDescending(GetPanelSortingOrder))
         {
-            Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(panel, screenPos);
-            var picked = panel.Pick(panelPos);
+            var picked = TryPick(panel, screenPos);
             if (picked != null)
                 return picked;
         }
 
         return null;
+    }
+
+    private static VisualElement TryPick(IPanel panel, Vector2 screenPos)
+    {
+        if (panel?.visualTree == null)
+            return null;
+
+        try
+        {
+            Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(panel, screenPos);
+            return panel.Pick(panelPos);
+        }
+        catch (System.NullReferenceException)
+        {
+            // Unity UITK can NRE in LayoutDataAccess while a document hierarchy
+            // is rebuilt (DetachFromPanel / ValidateLayout).
+            return null;
+        }
     }
 
     private static int GetPanelSortingOrder(IPanel panel)
