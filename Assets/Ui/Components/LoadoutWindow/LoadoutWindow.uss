@@ -34,12 +34,24 @@
     margin-right: 0;
 }
 
+.loadout-slot:hover {
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+    background-color: rgba(255, 244, 231, 0.08);
+}
+
 .loadout-slot--active {
     border-left-color: rgb(253, 199, 135);
     border-right-color: rgb(253, 199, 135);
     border-top-color: rgb(253, 199, 135);
     border-bottom-color: rgb(253, 199, 135);
     background-color: rgba(253, 199, 135, 0.12);
+}
+
+.loadout-slot--active:hover {
+    background-color: rgba(253, 199, 135, 0.18);
 }
 
 .loadout-slot__icon {
