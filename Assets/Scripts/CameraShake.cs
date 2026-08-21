@@ -1,11 +1,9 @@
-using System.Collections;
 using MyGame.Events;
 using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
     public Camera mainCamera;
-    private Quaternion originalRotation;
     public float shakeDuration = 0.1f;
     public float shakeMagnitude = 0.1f;
     public float shakeSpeed = 20f;
@@ -13,7 +11,20 @@ public class CameraShake : MonoBehaviour
 
     public UnitController myUnit;
 
-    private Coroutine shakeRoutine;
+    Quaternion restRotation;
+    Quaternion returnFromRotation;
+    bool hasRestRotation;
+    float shakeElapsed;
+    float returnElapsed;
+    float seed;
+    Phase phase;
+
+    enum Phase
+    {
+        Idle,
+        Shaking,
+        Returning
+    }
 
     private void Start()
     {
@@ -21,9 +32,16 @@ public class CameraShake : MonoBehaviour
         {
             mainCamera = GetComponent<Camera>();
         }
-        originalRotation = mainCamera.transform.localRotation;
+
+        CaptureRestRotation();
         EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
         EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
+    }
+
+    void OnDisable()
+    {
+        RestoreRestRotation();
+        phase = Phase.Idle;
     }
 
     void OnDestroy()
@@ -49,48 +67,96 @@ public class CameraShake : MonoBehaviour
 
     public void TriggerShake()
     {
-        // Capture the current rotation so we return to the pre-shake pose
-        originalRotation = mainCamera.transform.localRotation;
-
-        if (shakeRoutine != null)
+        if (phase == Phase.Idle)
         {
-            StopCoroutine(shakeRoutine);
+            CaptureRestRotation();
         }
 
-        shakeRoutine = StartCoroutine(Shake());
+        shakeElapsed = 0f;
+        seed = Random.value * 100f;
+        phase = Phase.Shaking;
     }
 
-    private IEnumerator Shake()
+    void LateUpdate()
     {
-        float elapsed = 0f;
-        float seed = Random.value * 100f;
-
-        while (elapsed < shakeDuration)
+        if (mainCamera == null || phase == Phase.Idle)
         {
-            float t = elapsed * shakeSpeed;
-            float rotX = (Mathf.PerlinNoise(seed, t) - 0.5f) * 2f * shakeMagnitude * 10f;
-            float rotY = (Mathf.PerlinNoise(seed + 1f, t) - 0.5f) * 2f * shakeMagnitude * 10f;
-
-            mainCamera.transform.localRotation = originalRotation * Quaternion.Euler(rotX, rotY, 0f);
-
-            elapsed += Time.deltaTime;
-            yield return null;
+            return;
         }
 
-        // Smoothly return to the original rotation
-        Quaternion startRotation = mainCamera.transform.localRotation;
-        if (returnDuration > 0f)
+        if (phase == Phase.Shaking)
         {
-            float t = 0f;
-            while (t < 1f)
+            shakeElapsed += Time.deltaTime;
+            if (shakeElapsed < shakeDuration)
             {
-                t += Time.deltaTime / returnDuration;
-                mainCamera.transform.localRotation = Quaternion.Slerp(startRotation, originalRotation, t);
-                yield return null;
+                ApplyShakeOffset(shakeElapsed);
+                return;
             }
+
+            if (returnDuration > 0f)
+            {
+                phase = Phase.Returning;
+                returnElapsed = 0f;
+                returnFromRotation = mainCamera.transform.localRotation;
+                ApplyReturn(0f);
+            }
+            else
+            {
+                RestoreRestRotation();
+                phase = Phase.Idle;
+            }
+
+            return;
         }
 
-        mainCamera.transform.localRotation = originalRotation;
-        shakeRoutine = null;
+        returnElapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(returnElapsed / returnDuration);
+        ApplyReturn(t);
+        if (t >= 1f)
+        {
+            RestoreRestRotation();
+            phase = Phase.Idle;
+        }
+    }
+
+    void CaptureRestRotation()
+    {
+        if (mainCamera == null)
+        {
+            return;
+        }
+
+        restRotation = mainCamera.transform.localRotation;
+        hasRestRotation = true;
+    }
+
+    void RestoreRestRotation()
+    {
+        if (mainCamera == null || !hasRestRotation)
+        {
+            return;
+        }
+
+        mainCamera.transform.localRotation = restRotation;
+    }
+
+    void ApplyShakeOffset(float elapsed)
+    {
+        float t = elapsed * shakeSpeed;
+        float rotX = (Mathf.PerlinNoise(seed, t) - 0.5f) * 2f * shakeMagnitude * 10f;
+        float rotY = (Mathf.PerlinNoise(seed + 1f, t) - 0.5f) * 2f * shakeMagnitude * 10f;
+        Vector3 restEuler = restRotation.eulerAngles;
+        mainCamera.transform.localRotation = Quaternion.Euler(restEuler.x + rotX, restEuler.y + rotY, restEuler.z);
+    }
+
+    void ApplyReturn(float t)
+    {
+        Vector3 fromEuler = returnFromRotation.eulerAngles;
+        Vector3 restEuler = restRotation.eulerAngles;
+        mainCamera.transform.localRotation = Quaternion.Euler(
+            Mathf.LerpAngle(fromEuler.x, restEuler.x, t),
+            Mathf.LerpAngle(fromEuler.y, restEuler.y, t),
+            restEuler.z
+        );
     }
 }
