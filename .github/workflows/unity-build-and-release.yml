@@ -101,7 +101,7 @@ jobs:
 
       # 10. Upload artifact
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip
           path: artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip
@@ -114,7 +114,7 @@ jobs:
 
     steps:
       - name: Download all build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
