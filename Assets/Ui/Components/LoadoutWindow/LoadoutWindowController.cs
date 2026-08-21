@@ -1,31 +1,39 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using Vland.UI;
 
-// Attach to a GameObject with a UIDocument. Assign the VisualTree to include LoadoutWindow.uxml and add the USS.
 [DefaultExecutionOrder(100)]
 public class LoadoutWindowController : MonoBehaviour
 {
-    private const int LoadoutSortingOrder = 50;
+    private const int LoadoutSortingOrder = 60;
+
+    public static LoadoutWindowController Instance { get; private set; }
 
     public UIDocument uiDocument;
-    public VisualTreeAsset loadoutPanelUxml; // can be LoadoutPanel.uxml now
-    public StyleSheet loadoutWindowUss;       // existing loadout element styles
-    public StyleSheet loadoutPanelUss;        // right-side panel styles
+    public VisualTreeAsset loadoutPanelUxml;
+    public StyleSheet loadoutWindowUss;
+    public StyleSheet loadoutPanelUss;
 
-    private LoadoutWindow _window;
+    private LoadoutView _view;
+    private LoadoutSlot _activeSlot = LoadoutSlot.Weapon;
+    private SkillTag? _tagFilter;
+    private readonly Dictionary<LoadoutSlot, LoadoutItem> _selected = new();
+    private bool _applyPending;
 
     private DatabaseManager _db => DatabaseManager.Instance;
     private LoadoutManager _loadoutManager => LoadoutManager.Instance;
 
     private void Awake()
     {
-        if (uiDocument == null) uiDocument = GetComponent<UIDocument>();
+        if (uiDocument == null)
+            uiDocument = GetComponent<UIDocument>();
         if (uiDocument == null)
         {
-            Debug.LogError("UIDocument missing.");
+            Debug.LogError("LoadoutWindowController: UIDocument missing.");
             return;
         }
 
@@ -33,269 +41,316 @@ public class LoadoutWindowController : MonoBehaviour
 
         var root = uiDocument.rootVisualElement;
         root.pickingMode = PickingMode.Ignore;
-        root.styleSheets.Add(loadoutWindowUss);
-        if (loadoutPanelUss != null) root.styleSheets.Add(loadoutPanelUss);
+        if (loadoutWindowUss != null)
+            root.styleSheets.Add(loadoutWindowUss);
+        if (loadoutPanelUss != null)
+            root.styleSheets.Add(loadoutPanelUss);
         if (loadoutPanelUxml != null)
-        {
             loadoutPanelUxml.CloneTree(root);
-        }
 
-        _window = root.Q<LoadoutWindow>();
-        if (_window == null)
-        {
-            Debug.LogError("LoadoutWindow element not found in UXML.");
-            return;
-        }
+        var loadoutRoot = root.Q<VisualElement>("loadoutRoot") ?? root;
+        UiCursorRefresh.ScheduleForRoot(loadoutRoot, LoadoutSortingOrder);
 
-        var panelElement = root.Q<VisualElement>(name: "LoadoutPanel");
-        if (panelElement != null)
-        {
-            panelElement.pickingMode = PickingMode.Position;
-            UiPointerState.RegisterBlockingElement(panelElement);
-            UiGameplayInputGuard.Apply(panelElement);
-            UiCursorRefresh.ScheduleForRoot(panelElement, LoadoutSortingOrder);
-        }
+        _view = new LoadoutView(loadoutRoot);
+        _view.CloseClicked += () => _view.SetOpen(false);
+        _view.OpenClicked += () => _view.SetOpen(true);
+        _view.OverlayClicked += () => _view.SetOpen(false);
+        _view.SlotClicked += HandleSlotClicked;
+        _view.ItemClicked += HandleItemClicked;
+        _view.FilterClicked += HandleFilterClicked;
 
-        // Initialize selections from saved local loadout before wiring events
+        foreach (var slot in LoadoutSlots.All)
+            _selected[slot] = LoadoutItem.Empty;
+
         TryInitializeFromSavedLoadout();
-
-        // Auto-apply loadout on selection changes (with small debounce to coalesce swaps)
-        _window.OnSelectionChanged += HandleSelectionChanged;
-
-        // Default populate and listen to slot changes
-        _window.OnActiveSlotChanged += slot =>
-        {
-            // When user clicks a slot in the slot bar, switch grid list accordingly
-            if (slot == LoadoutSlot.Weapon) PopulateGridFor(LoadoutSlot.Weapon);
-            else if (slot == LoadoutSlot.Passive) PopulateGridFor(LoadoutSlot.Passive);
-            else if (slot == LoadoutSlot.Ultimate) PopulateGridFor(LoadoutSlot.Ultimate);
-            else PopulateGridFor(LoadoutSlot.Normal1);
-        };
-
+        _view.SetActiveSlot(_activeSlot);
+        _view.SetFilter(_tagFilter, _activeSlot != LoadoutSlot.Weapon);
         ClearIncompatibleSkillSelections();
+        RefreshList();
         ApplyCurrentLoadout();
+        Instance = this;
+    }
+
+    public void SetOpen(bool open)
+    {
+        _view?.SetOpen(open);
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current == null || !Keyboard.current.iKey.wasPressedThisFrame)
+            return;
+        if (_view == null)
+            return;
+
+        _view.SetOpen(!_view.IsOpen);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+        _view?.Dispose();
+    }
+
+    private void HandleSlotClicked(LoadoutSlot slot)
+    {
+        _activeSlot = slot;
+        _view.SetActiveSlot(slot);
+        _view.SetFilter(_tagFilter, slot != LoadoutSlot.Weapon);
+        RefreshList();
+    }
+
+    private void HandleFilterClicked(SkillTag? tag)
+    {
+        _tagFilter = tag;
+        _view.SetFilter(_tagFilter, _activeSlot != LoadoutSlot.Weapon);
+        RefreshList();
+    }
+
+    private void HandleItemClicked(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return;
+
+        var items = BuildItemsForActiveSlot();
+        var clicked = items.FirstOrDefault(item => item.id == id);
+        if (!clicked.HasId)
+            return;
+
+        if (LoadoutSlots.IsNormal(_activeSlot))
+        {
+            LoadoutSlot? otherWithSame = null;
+            foreach (var slot in LoadoutSlots.All)
+            {
+                if (!LoadoutSlots.IsNormal(slot) || slot == _activeSlot)
+                    continue;
+                if (_selected.TryGetValue(slot, out var existing) && existing.id == id)
+                {
+                    otherWithSame = slot;
+                    break;
+                }
+            }
+
+            if (otherWithSame.HasValue)
+            {
+                var other = otherWithSame.Value;
+                var previous = _selected[_activeSlot];
+                AssignSlot(_activeSlot, clicked);
+                if (previous.HasId)
+                    AssignSlot(other, previous);
+                else
+                    AssignSlot(other, LoadoutItem.Empty);
+
+                ScheduleApply();
+                RefreshList();
+                return;
+            }
+        }
+
+        AssignSlot(_activeSlot, clicked);
+
+        if (_activeSlot == LoadoutSlot.Weapon)
+        {
+            ClearIncompatibleSkillSelections();
+            RefreshList();
+        }
+        else
+        {
+            RefreshList();
+        }
+
+        ScheduleApply();
     }
 
     private void TryInitializeFromSavedLoadout()
     {
-        if (_loadoutManager == null) return;
+        if (_loadoutManager == null)
+            return;
+
         var saved = _loadoutManager.Get();
-        if (saved == null) return;
+        if (saved == null)
+            return;
 
-        // Helper local to build tiles with icons where possible
-        LoadoutTile MakeWeaponTile(string id)
-        {
-            Texture2D icon = null;
-            string display = id;
-            if (!string.IsNullOrEmpty(id) && _db != null && _db.weaponDatabase != null)
-            {
-                var w = _db.weaponDatabase.GetWeaponByName(id);
-                if (w != null)
-                {
-                    icon = w.iconTexture;
-                    display = w.weaponName;
-                }
-            }
-            return new LoadoutTile { Id = id, DisplayName = display, Icon = icon };
-        }
-
-        LoadoutTile MakeSkillTile(string id)
-        {
-            Texture2D icon = null;
-            string display = id;
-            if (!string.IsNullOrEmpty(id) && _db != null && _db.skillDatabase != null)
-            {
-                var s = _db.skillDatabase.GetSkillByName(id);
-                if (s != null)
-                {
-                    icon = s.iconTexture;
-                    display = s.skillName;
-                }
-            }
-            return new LoadoutTile { Id = id, DisplayName = display, Icon = icon };
-        }
-
-        // Apply saved ids into the window previews (no events fired). Skip empties.
-        if (!string.IsNullOrEmpty(saved.WeaponId))
-            _window.SelectForSlot(LoadoutSlot.Weapon, MakeWeaponTile(saved.WeaponId));
-        if (!string.IsNullOrEmpty(saved.PassiveId))
-            _window.SelectForSlot(LoadoutSlot.Passive, MakeSkillTile(saved.PassiveId));
-        if (!string.IsNullOrEmpty(saved.Normal1Id))
-            _window.SelectForSlot(LoadoutSlot.Normal1, MakeSkillTile(saved.Normal1Id));
-        if (!string.IsNullOrEmpty(saved.Normal2Id))
-            _window.SelectForSlot(LoadoutSlot.Normal2, MakeSkillTile(saved.Normal2Id));
-        if (!string.IsNullOrEmpty(saved.Normal3Id))
-            _window.SelectForSlot(LoadoutSlot.Normal3, MakeSkillTile(saved.Normal3Id));
-        if (!string.IsNullOrEmpty(saved.UltimateId))
-            _window.SelectForSlot(LoadoutSlot.Ultimate, MakeSkillTile(saved.UltimateId));
-
-        // Populate initial grid for the active slot so highlight can reflect selection
-        // LoadoutWindow defaults to Weapon as active on attach; we mirror that grid here
-        PopulateGridFor(LoadoutSlot.Weapon);
+        AssignSlot(LoadoutSlot.Weapon, MakeWeaponItem(saved.WeaponId));
+        AssignSlot(LoadoutSlot.Passive, MakeSkillItem(saved.PassiveId, LoadoutSlot.Passive));
+        AssignSlot(LoadoutSlot.Normal1, MakeSkillItem(saved.Normal1Id, LoadoutSlot.Normal1));
+        AssignSlot(LoadoutSlot.Normal2, MakeSkillItem(saved.Normal2Id, LoadoutSlot.Normal2));
+        AssignSlot(LoadoutSlot.Normal3, MakeSkillItem(saved.Normal3Id, LoadoutSlot.Normal3));
+        AssignSlot(LoadoutSlot.Ultimate, MakeSkillItem(saved.UltimateId, LoadoutSlot.Ultimate));
     }
 
-    private void PopulateGridFor(LoadoutSlot slot)
+    private void AssignSlot(LoadoutSlot slot, LoadoutItem item)
+    {
+        _selected[slot] = item.HasId ? item : LoadoutItem.Empty;
+        _view?.SetSlot(slot, _selected[slot]);
+    }
+
+    private void RefreshList()
+    {
+        if (_view == null)
+            return;
+
+        var items = BuildItemsForActiveSlot();
+        var selectedId = GetSelectedId(_activeSlot);
+        _view.SetItems(items, selectedId, BuildEmptyMessage());
+        _view.SetSubheading(BuildSubheading(items.Count));
+        _view.SetFilter(_tagFilter, _activeSlot != LoadoutSlot.Weapon);
+    }
+
+    private List<LoadoutItem> BuildItemsForActiveSlot()
     {
         var items = new List<LoadoutItem>();
         if (_db == null)
-        {
-            Debug.LogWarning("DatabaseManager missing.");
-            return;
-        }
+            return items;
 
         var selectedWeaponType = GetSelectedWeaponType();
 
-        if (slot == LoadoutSlot.Weapon)
+        if (_activeSlot == LoadoutSlot.Weapon)
         {
-            if (_db.weaponDatabase != null)
-            {
-                foreach (var w in _db.weaponDatabase.allWeapons.Where(w => w != null && !w.npcOnly))
-                {
-                    items.Add(new LoadoutItem
-                    {
-                        id = w.weaponName,
-                        name = w.weaponName,
-                        icon = w.iconTexture,
-                        slot = LoadoutSlot.Weapon,
-                        description = GetWeaponTooltip(w)
-                    });
-                }
-            }
-        }
-        else if (slot == LoadoutSlot.Passive)
-        {
-            if (_db.skillDatabase != null)
-            {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Passive && !s.npcOnly && s.CanBeUsedWithWeapon(selectedWeaponType)))
-                {
-                    items.Add(new LoadoutItem
-                    {
-                        id = s.skillName,
-                        name = s.skillName,
-                        icon = s.iconTexture,
-                        slot = LoadoutSlot.Passive,
-                        description = GetSkillTooltip(s)
-                    });
-                }
-            }
-        }
-        else if (slot == LoadoutSlot.Ultimate)
-        {
-            if (_db.skillDatabase != null)
-            {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Ultimate && !s.npcOnly && s.CanBeUsedWithWeapon(selectedWeaponType)))
-                {
-                    items.Add(new LoadoutItem
-                    {
-                        id = s.skillName,
-                        name = s.skillName,
-                        icon = s.iconTexture,
-                        slot = LoadoutSlot.Ultimate,
-                        description = GetSkillTooltip(s)
-                    });
-                }
-            }
-        }
-        else
-        {
-            // normals
-            if (_db.skillDatabase != null)
-            {
-                foreach (var s in _db.skillDatabase.allSkills.Where(s => s != null && s.skillType == SkillType.Normal && !s.npcOnly && s.CanBeUsedWithWeapon(selectedWeaponType)))
-                {
-                    items.Add(new LoadoutItem
-                    {
-                        id = s.skillName,
-                        name = s.skillName,
-                        icon = s.iconTexture,
-                        slot = LoadoutSlot.Normal1, // all normals compatible; UI target slot set via _window.SetActiveSlot
-                        description = GetSkillTooltip(s)
-                    });
-                }
-            }
+            if (_db.weaponDatabase == null)
+                return items;
+
+            foreach (var weapon in _db.weaponDatabase.allWeapons.Where(weapon => weapon != null && !weapon.npcOnly))
+                items.Add(ToWeaponItem(weapon));
+            return items;
         }
 
-        _window.SetItems(items, slot == LoadoutSlot.Normal1 || slot == LoadoutSlot.Normal2 || slot == LoadoutSlot.Normal3 ? LoadoutSlot.Normal1 : slot);
+        if (_db.skillDatabase == null)
+            return items;
+
+        var expectedType = _activeSlot == LoadoutSlot.Passive
+            ? SkillType.Passive
+            : _activeSlot == LoadoutSlot.Ultimate
+                ? SkillType.Ultimate
+                : SkillType.Normal;
+
+        foreach (var skill in _db.skillDatabase.allSkills)
+        {
+            if (skill == null || skill.npcOnly || skill.skillType != expectedType)
+                continue;
+            if (!skill.CanBeUsedWithWeapon(selectedWeaponType))
+                continue;
+            if (_tagFilter.HasValue && !skill.HasTag(_tagFilter.Value))
+                continue;
+
+            items.Add(ToSkillItem(skill, expectedType == SkillType.Normal ? LoadoutSlot.Normal1 : _activeSlot));
+        }
+
+        return items;
     }
 
-    private string GetSkillTooltip(SkillData skillData)
+    private string BuildSubheading(int visibleCount)
     {
-        var title = $"<size=20><b>{skillData.skillName}</b></size>";
-        var type = $"<size=16><color=#cccccc>Type: {skillData.skillType}</color></size>";
-        var requiredWeapon = $"<size=16><color=#cccccc>Required Weapon: {skillData.GetRequiredWeaponLabel()}</color></size>";
-        var cooldown = $"<size=16><color=#cccccc>Cooldown: {skillData.cooldown}s</color></size>";
-        var description = $"<size=16>{skillData.description}</size>";
+        var choosing = LoadoutSlots.ChoosingLabel(_activeSlot);
+        if (_activeSlot == LoadoutSlot.Weapon)
+            return $"{choosing} · {visibleCount} weapons";
 
-        var text = "";
-        text += $"{title}\n";
-        text += $"{type}\n";
-        text += $"{requiredWeapon}\n";
-        text += skillData.cooldown != 0 ? $"{cooldown}\n" : "";
-        text += $"\n{description}";
-
-        return text;
+        var typeLabel = LoadoutSlots.SlotTypeLabel(_activeSlot);
+        var weapon = GetSelectedWeapon();
+        var weaponText = weapon != null
+            ? $"compatible with {weapon.weaponName}"
+            : "that work with any weapon";
+        var tagText = _tagFilter.HasValue ? $"{SkillTagUtil.GetLabel(_tagFilter.Value)} · " : string.Empty;
+        return $"{choosing} · {tagText}{typeLabel} {weaponText}";
     }
 
-    private string GetWeaponTooltip(WeaponData weaponData)
+    private string BuildEmptyMessage()
     {
-        var title = $"<size=20><b>{weaponData.weaponName}</b></size>";
-        var type = $"<size=16>Type: {weaponData.weaponType}</size>";
-        var damage = $"<size=16>Damage: +{weaponData.attackPower}</size>";
-        var range = $"<size=16>Range: {weaponData.attackRange}</size>";
+        if (_activeSlot == LoadoutSlot.Weapon)
+            return "No weapons available.";
 
-        return $"{title}\n<color=#cccccc>{type}\n{damage}\n{range}</color>";
+        var weapon = GetSelectedWeapon();
+        var weaponText = weapon != null ? weapon.weaponName : "this slot";
+        if (_tagFilter.HasValue)
+            return $"No {SkillTagUtil.GetLabel(_tagFilter.Value)} skills for this slot with {weaponText}.";
+
+        return weapon != null
+            ? $"No skills for this slot with {weapon.weaponName}."
+            : "No skills for this slot. Choose a weapon to unlock more.";
     }
 
-    private bool _applyPending;
-    private Coroutine _applyRoutine;
-
-    private void HandleSelectionChanged(LoadoutSlot slot, string id)
+    private LoadoutItem MakeWeaponItem(string id)
     {
-        if (slot == LoadoutSlot.Weapon)
+        if (string.IsNullOrEmpty(id) || _db?.weaponDatabase == null)
+            return LoadoutItem.Empty;
+
+        var weapon = _db.weaponDatabase.GetWeaponByName(id);
+        return weapon != null ? ToWeaponItem(weapon) : LoadoutItem.Empty;
+    }
+
+    private LoadoutItem MakeSkillItem(string id, LoadoutSlot slot)
+    {
+        if (string.IsNullOrEmpty(id) || _db?.skillDatabase == null)
+            return LoadoutItem.Empty;
+
+        var skill = _db.skillDatabase.GetSkillByName(id);
+        return skill != null ? ToSkillItem(skill, slot) : LoadoutItem.Empty;
+    }
+
+    private static LoadoutItem ToWeaponItem(WeaponData weapon)
+    {
+        return new LoadoutItem
         {
-            ClearIncompatibleSkillSelections();
+            id = weapon.weaponName,
+            name = weapon.weaponName,
+            icon = weapon.iconTexture,
+            slot = LoadoutSlot.Weapon,
+            isWeapon = true,
+            summary = $"Type: {weapon.weaponType}",
+            meta = $"Damage: +{weapon.attackPower} · Range: {weapon.attackRange}",
+            description = $"Type: {weapon.weaponType}\nDamage: +{weapon.attackPower}\nRange: {weapon.attackRange}",
+        };
+    }
 
-            var activeSlot = _window.ActiveSlot;
-            if (activeSlot != LoadoutSlot.Weapon)
-            {
-                PopulateGridFor(activeSlot);
-            }
-        }
+    private static LoadoutItem ToSkillItem(SkillData skill, LoadoutSlot slot)
+    {
+        var cooldownText = skill.cooldown > 0 ? $"{skill.cooldown}s cooldown" : skill.skillType.ToString();
+        var required = skill.GetRequiredWeaponLabel();
+        var meta = skill.RequiredWeapon.HasValue
+            ? $"{cooldownText} · Requires {required}"
+            : cooldownText;
 
-        if (_applyPending) return;
-        _applyPending = true;
-        _applyRoutine = StartCoroutine(ApplyAtEndOfFrame());
+        return new LoadoutItem
+        {
+            id = skill.skillName,
+            name = skill.skillName,
+            icon = skill.iconTexture,
+            slot = slot,
+            tags = skill.tags,
+            summary = skill.GetOneLineSummary(),
+            meta = meta,
+            description = $"{skill.description}\n\nRequired weapon: {required}",
+        };
+    }
+
+    private string GetSelectedId(LoadoutSlot slot)
+    {
+        return _selected.TryGetValue(slot, out var item) ? item.id : null;
+    }
+
+    private WeaponData GetSelectedWeapon()
+    {
+        if (_db?.weaponDatabase == null)
+            return null;
+
+        var id = GetSelectedId(LoadoutSlot.Weapon);
+        return string.IsNullOrWhiteSpace(id) ? null : _db.weaponDatabase.GetWeaponByName(id);
     }
 
     private WeaponType? GetSelectedWeaponType()
     {
-        if (_db == null || _db.weaponDatabase == null)
-        {
-            return null;
-        }
-
-        var selectedWeaponId = _window.GetSelectedId(LoadoutSlot.Weapon);
-        if (string.IsNullOrWhiteSpace(selectedWeaponId))
-        {
-            return null;
-        }
-
-        var weapon = _db.weaponDatabase.GetWeaponByName(selectedWeaponId);
-        return weapon != null ? weapon.weaponType : null;
+        return GetSelectedWeapon()?.weaponType;
     }
 
     private void ClearIncompatibleSkillSelections()
     {
-        if (_db == null || _db.skillDatabase == null)
-        {
+        if (_db?.skillDatabase == null)
             return;
-        }
 
         var weaponType = GetSelectedWeaponType();
         if (!weaponType.HasValue)
-        {
             return;
-        }
 
         var slotsToCheck = new[]
         {
@@ -308,46 +363,46 @@ public class LoadoutWindowController : MonoBehaviour
 
         foreach (var slot in slotsToCheck)
         {
-            var selectedId = _window.GetSelectedId(slot);
+            var selectedId = GetSelectedId(slot);
             if (string.IsNullOrWhiteSpace(selectedId))
-            {
                 continue;
-            }
 
             var skill = _db.skillDatabase.GetSkillByName(selectedId);
-            if (skill == null)
-            {
-                _window.SelectById(slot, null);
-                continue;
-            }
-
-            if (!skill.CanBeUsedWithWeapon(weaponType))
-            {
-                _window.SelectById(slot, null);
-            }
+            if (skill == null || !skill.CanBeUsedWithWeapon(weaponType))
+                AssignSlot(slot, LoadoutItem.Empty);
         }
     }
 
-    private System.Collections.IEnumerator ApplyAtEndOfFrame()
+    private void ScheduleApply()
     {
-        // wait one frame to coalesce multiple events from swaps
+        if (_applyPending)
+            return;
+
+        _applyPending = true;
+        StartCoroutine(ApplyAtEndOfFrame());
+    }
+
+    private IEnumerator ApplyAtEndOfFrame()
+    {
         yield return null;
         ApplyCurrentLoadout();
         _applyPending = false;
-        _applyRoutine = null;
     }
 
     private void ApplyCurrentLoadout()
     {
-        LocalLoadout newLocalLoadout = new LocalLoadout
+        if (_loadoutManager == null)
+            return;
+
+        var newLocalLoadout = new LocalLoadout
         {
             UnitName = ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname),
-            WeaponId = _window.GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
-            PassiveId = _window.GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
-            Normal1Id = _window.GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,
-            Normal2Id = _window.GetSelectedId(LoadoutSlot.Normal2) ?? string.Empty,
-            Normal3Id = _window.GetSelectedId(LoadoutSlot.Normal3) ?? string.Empty,
-            UltimateId = _window.GetSelectedId(LoadoutSlot.Ultimate) ?? string.Empty
+            WeaponId = GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
+            PassiveId = GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
+            Normal1Id = GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,
+            Normal2Id = GetSelectedId(LoadoutSlot.Normal2) ?? string.Empty,
+            Normal3Id = GetSelectedId(LoadoutSlot.Normal3) ?? string.Empty,
+            UltimateId = GetSelectedId(LoadoutSlot.Ultimate) ?? string.Empty
         };
 
         _loadoutManager.Set(newLocalLoadout);

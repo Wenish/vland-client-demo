@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Breath of Renewal
   skillType: 0
+  tags: 2
   description: Heals for 30.
   cooldown: 3
   castCost: 0

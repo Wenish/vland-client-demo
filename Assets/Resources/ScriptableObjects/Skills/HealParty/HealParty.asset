@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Heal Party
   skillType: 0
+  tags: 2
   description: Heal all area near you for 15 health.
   cooldown: 9
   castCost: 0

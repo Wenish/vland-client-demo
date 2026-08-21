@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Rune of Healing
   skillType: 2
+  tags: 2
   description: Heals 30 health. Heals an additional 60 health if the target is below
     50% health.
   cooldown: 6

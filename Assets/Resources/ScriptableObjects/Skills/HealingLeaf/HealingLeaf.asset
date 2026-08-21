@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Healing Leaf
   skillType: 0
+  tags: 2
   description: Heals over Time
   cooldown: 6
   castCost: 0

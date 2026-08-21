@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Self Preservation
   skillType: 1
+  tags: 2
   description: Every time you heal an ally you gain 5 healh.
   cooldown: 0
   castCost: 0

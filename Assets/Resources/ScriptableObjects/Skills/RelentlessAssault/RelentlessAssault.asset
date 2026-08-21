@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Relentless Assault
   skillType: 1
+  tags: 1
   description: Increases attack speed by 33%.
   cooldown: 0
   castCost: 0

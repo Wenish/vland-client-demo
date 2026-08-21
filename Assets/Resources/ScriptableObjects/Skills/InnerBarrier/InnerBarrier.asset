@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Inner Barrier
   skillType: 0
+  tags: 4
   description: Reduces the incoming damage by 35% for 5 seconds.
   cooldown: 8
   castCost: 0

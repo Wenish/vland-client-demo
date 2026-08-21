@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Circle of Renewal
   skillType: 0
+  tags: 2
   description: Creates a healing zone at the target location, restoring 5 Health
     per second to you and all allies within its area.
   cooldown: 18

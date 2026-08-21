@@ -3,7 +3,8 @@
 .cast-bar {
     width: 240px;
     height: 24px;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: stretch;
     cursor: var(--cursor-ui);
     background-color: rgba(2, 19, 52, 0.85);
     border-top-width: 1px;
@@ -44,6 +45,13 @@
 
 .cast-bar__icon {
     width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.cast-bar__track {
+    flex-grow: 1;
     height: 22px;
 }
 

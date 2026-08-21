@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Purge of Light
   skillType: 0
+  tags: 1
   description: Ignite the ground with holy light for 10 seconds, dealing 15 magic
     damage per second to enemies inside.
   cooldown: 18

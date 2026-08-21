@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Purify
   skillType: 0
+  tags: 2
   description: Cleanses all harmful afflictions from an ally.
   cooldown: 10
   castCost: 0

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Echo Cleave
   skillType: 0
+  tags: 1
   description: Slash to gain Echo stacks, recast to unleash a stronger finisher.
   cooldown: 8
   castCost: 0
