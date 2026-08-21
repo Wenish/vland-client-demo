@@ -692,6 +692,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: -1596275993
@@ -719,7 +720,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 2
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4479819751214886118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1503,3 +1504,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitUiBuffBarPresenter
   BuffBar: {fileID: 4014778243891955848}
   UnitNetworkBuffs: {fileID: 0}
+  _currentBuffs: []
