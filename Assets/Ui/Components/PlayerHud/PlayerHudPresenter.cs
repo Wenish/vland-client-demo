@@ -42,9 +42,12 @@ namespace ShadowInfection.UI.PlayerHud
         private MotionHandle bannerHandle;
         private bool enabled;
         private bool matchWidgetsVisible;
+        private bool zombieGameInfoVisible;
+        private bool localZombieStatsBound;
         private float matchStartTime;
         private int lastElapsedSeconds = -1;
         private int displayedGold;
+        private ZombieGameManager zombieGameManager;
 
         private UnitController playerUnit;
         private WeaponController weaponController;
@@ -90,8 +93,11 @@ namespace ShadowInfection.UI.PlayerHud
             lastElapsedSeconds = -1;
             displayedGold = 0;
             matchWidgetsVisible = false;
+            zombieGameInfoVisible = false;
+            localZombieStatsBound = false;
             view.Reset();
             TickMatchWidgetsVisibility();
+            TickZombieGameInfo();
             castBarDriver.Bind(view, successColor, destroyToken);
             infoFeedDriver.Bind(view);
 
@@ -112,6 +118,7 @@ namespace ShadowInfection.UI.PlayerHud
                             return;
 
                         TickMatchWidgetsVisibility();
+                        TickZombieGameInfo();
                         TickCooldowns();
                         if (matchWidgetsVisible)
                             TickMatchTimer(Time.time);
@@ -127,6 +134,7 @@ namespace ShadowInfection.UI.PlayerHud
             UnbindPlayerUnit();
             castBarDriver.Unbind();
             infoFeedDriver.Unbind();
+            UnbindZombieGameManager();
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
             view = null;
@@ -150,6 +158,131 @@ namespace ShadowInfection.UI.PlayerHud
         {
             matchWidgetsVisible = visible;
             view?.SetMatchWidgetsVisible(visible);
+        }
+
+        private void TickZombieGameInfo()
+        {
+            TryBindZombieGameManager();
+
+            var visible = matchWidgetsVisible && zombieGameManager != null;
+            if (visible != zombieGameInfoVisible)
+            {
+                zombieGameInfoVisible = visible;
+                view?.SetZombieGameInfoVisible(visible);
+                if (visible)
+                    RefreshZombieGameInfo();
+                return;
+            }
+
+            if (visible && !localZombieStatsBound)
+                RefreshLocalScoreAndKills();
+        }
+
+        private void TryBindZombieGameManager()
+        {
+            if (zombieGameManager != null)
+                return;
+
+            zombieGameManager = null;
+            var manager = ZombieGameManager.Singleton;
+            if (manager == null)
+                return;
+
+            zombieGameManager = manager;
+            zombieGameManager.OnLeaderboardChanged += OnZombieLeaderboardChanged;
+            RefreshZombieGameInfo();
+        }
+
+        private void UnbindZombieGameManager()
+        {
+            if (zombieGameManager != null)
+                zombieGameManager.OnLeaderboardChanged -= OnZombieLeaderboardChanged;
+
+            zombieGameManager = null;
+            zombieGameInfoVisible = false;
+            localZombieStatsBound = false;
+            view?.SetZombieGameInfoVisible(false);
+        }
+
+        private void OnZombieLeaderboardChanged()
+        {
+            RefreshLocalScoreAndKills();
+        }
+
+        private void RefreshZombieGameInfo()
+        {
+            if (view == null || zombieGameManager == null)
+                return;
+
+            view.SetRoundProgress(zombieGameManager.CurrentWave, zombieGameManager.CurrentWaveKilledPercent);
+            RefreshLocalScoreAndKills();
+        }
+
+        private void RefreshLocalScoreAndKills()
+        {
+            if (view == null)
+                return;
+
+            if (!TryGetLocalLeaderboardEntry(out var entry))
+            {
+                localZombieStatsBound = false;
+                view.SetPersonalScore(0);
+                view.SetPersonalKills(0);
+                return;
+            }
+
+            localZombieStatsBound = true;
+            view.SetPersonalScore(entry.Points);
+            view.SetPersonalKills(entry.Kills);
+        }
+
+        private bool TryGetLocalLeaderboardEntry(out ZombieGameManager.ZombieLeaderboardEntry entry)
+        {
+            entry = default;
+            if (zombieGameManager == null || !TryGetLocalConnectionId(out var connectionId))
+                return false;
+
+            var rows = zombieGameManager.LeaderboardEntries;
+            if (rows == null)
+                return false;
+
+            for (var i = 0; i < rows.Count; i++)
+            {
+                if (rows[i].ConnectionId != connectionId)
+                    continue;
+
+                entry = rows[i];
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetLocalConnectionId(out int connectionId)
+        {
+            connectionId = default;
+
+            if (NetworkServer.active && NetworkServer.localConnection != null)
+            {
+                connectionId = NetworkServer.localConnection.connectionId;
+                return true;
+            }
+
+            var localPlayer = FindLocalPlayer();
+            if (localPlayer == null || localPlayer.Unit == null || PlayerUnitsManager.Instance == null)
+                return false;
+
+            var rows = PlayerUnitsManager.Instance.playerUnits;
+            for (var i = 0; i < rows.Count; i++)
+            {
+                if (rows[i].Unit != localPlayer.Unit)
+                    continue;
+
+                connectionId = rows[i].ConnectionId;
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsInRoomLobby()
