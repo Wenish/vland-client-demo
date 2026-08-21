@@ -26,7 +26,6 @@
                         <ui:VisualElement class="vendor-gold__icon" />
                         <ui:Label name="vendorGoldValue" text="0" class="vendor-gold__value" />
                     </ui:VisualElement>
-                    <ui:Label name="footerError" text="" class="vendor-footer__error" style="display: none;" />
                     <ui:VisualElement name="pageControl" class="vendor-page">
                         <ui:Button name="pagePrev" text="‹" class="vendor-page__btn" />
                         <ui:Label name="pageLabel" text="PAGE 1 / 1" class="vendor-page__label" />
@@ -37,7 +36,7 @@
                     </ui:Button>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="vendorTooltip" picking-mode="Ignore" class="si-hud-panel vendor-tooltip" style="display: none;">
+            <ui:VisualElement name="vendorTooltip" picking-mode="Position" class="si-hud-panel vendor-tooltip" style="display: none;">
                 <ui:Label name="tooltipName" text="" class="vendor-tooltip__name" />
                 <ui:Label name="tooltipType" text="" class="vendor-tooltip__type" />
                 <ui:Label name="tooltipStats" text="" class="vendor-tooltip__stats" />

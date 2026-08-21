@@ -35,14 +35,6 @@ namespace Vland.UI
         public event Action Unhovered;
 
         private bool _selected;
-        private HoverPush hoverPush;
-
-        private enum HoverPush
-        {
-            None,
-            Hover,
-            Trade
-        }
 
         public bool SelectedState
         {
@@ -129,9 +121,8 @@ namespace Vland.UI
             Add(price);
 
             RegisterCallback<PointerDownEvent>(OnPointerDown);
-            RegisterCallback<PointerEnterEvent>(OnPointerEnter, TrickleDown.TrickleDown);
-            RegisterCallback<PointerLeaveEvent>(OnPointerLeave, TrickleDown.TrickleDown);
-            RegisterCallback<DetachFromPanelEvent>(_ => ClearHoverCursor());
+            RegisterCallback<PointerEnterEvent>(OnPointerEnter);
+            RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
         }
 
         private void OnPointerDown(PointerDownEvent evt)
@@ -154,41 +145,12 @@ namespace Vland.UI
 
         private void OnPointerEnter(PointerEnterEvent evt)
         {
-            PushHoverCursor();
             Hovered?.Invoke(this, evt.position);
         }
 
         private void OnPointerLeave(PointerLeaveEvent evt)
         {
-            ClearHoverCursor();
             Unhovered?.Invoke();
-        }
-
-        private void PushHoverCursor()
-        {
-            ClearHoverCursor();
-            if (Model.CanTransact && !Model.Locked)
-            {
-                UiCursorRefresh.PushTradeHover();
-                hoverPush = HoverPush.Trade;
-                return;
-            }
-
-            if (!Model.Locked)
-            {
-                UiCursorRefresh.PushInteractiveHover();
-                hoverPush = HoverPush.Hover;
-            }
-        }
-
-        private void ClearHoverCursor()
-        {
-            if (hoverPush == HoverPush.Trade)
-                UiCursorRefresh.PopTradeHover();
-            else if (hoverPush == HoverPush.Hover)
-                UiCursorRefresh.PopInteractiveHover();
-
-            hoverPush = HoverPush.None;
         }
     }
 }

@@ -25,6 +25,8 @@ public interface IVendorSession
 public interface IVendorInteractable
 {
     IVendorSession GetVendorSession();
+    IVendorSession GetSessionFor(PlayerController player);
+    void EndSessionFor(PlayerController player);
 }
 
 public static class VendorStock

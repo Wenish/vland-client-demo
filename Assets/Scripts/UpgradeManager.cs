@@ -112,13 +112,13 @@ public class UpgradeManager : NetworkBehaviour
             return false;
         }
 
-        if (buyer.Unit == null)
+        if (buyer.GetControlledUnit() == null)
         {
             message = "Buyer unit is not ready.";
             return false;
         }
 
-        var unitController = buyer.Unit.GetComponent<UnitController>();
+        var unitController = buyer.GetControlledUnit();
         if (unitController == null || unitController.unitMediator == null)
         {
             message = "Buyer does not have a valid UnitMediator.";

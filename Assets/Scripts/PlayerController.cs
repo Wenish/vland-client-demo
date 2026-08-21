@@ -26,32 +26,36 @@ public class PlayerController : NetworkBehaviour
 
     public InteractionZone InteractionZone => _interactionZone;
     public IVendorInteractable ActiveVendor { get; private set; }
+    public IVendorSession ServerVendorSession { get; private set; }
+
+    public UnitController GetControlledUnit()
+    {
+        if (_unitController != null)
+            return _unitController;
+
+        CacheControlledUnit();
+        return _unitController;
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        BindControlledUnit();
+        EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
+        EventManager.Instance.Subscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
+        EventManager.Instance.Subscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+    }
 
     void Start()
     {
-        if (isServer)
-        {
-            Unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionToClient.connectionId);
-            if (Unit != null)
-            {
-                _unitController = Unit.GetComponent<UnitController>();
-            }
-            EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
-            EventManager.Instance.Subscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
-            EventManager.Instance.Subscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-        }
-
         EventManager.Instance.Subscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
         EventManager.Instance.Subscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
     }
 
     void OnPlayerUnitSpawned(PlayerUnitSpawnedEvent e)
     {
-        if (e.ConnectionId == connectionToClient.connectionId)
-        {
-            Unit = e.Unit;
-            _unitController = Unit.GetComponent<UnitController>();
-        }
+        if (connectionToClient != null && e.ConnectionId == connectionToClient.connectionId)
+            BindControlledUnit(e.Unit);
     }
 
     public override void OnStartLocalPlayer()
@@ -77,6 +81,7 @@ public class PlayerController : NetworkBehaviour
             EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
             EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
             EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
+            EndVendorTrade();
         }
         EventManager.Instance.Unsubscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
         EventManager.Instance.Unsubscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
@@ -190,26 +195,26 @@ public class PlayerController : NetworkBehaviour
 
     void OnUnitEnteredInteractionZone(UnitEnteredInteractionZone unitEnteredInteractionZone)
     {
-        var hasThisPlayerEnteredInteractionZone = unitEnteredInteractionZone.Unit == _unitController;
-        if (hasThisPlayerEnteredInteractionZone)
-        {
-            _interactionZone = unitEnteredInteractionZone.Zone;
-            if (_interactionZone != null && _interactionZone.InteractionType == InteractionType.OpenVendor)
-                ActiveVendor = _interactionZone;
-        }
+        if (unitEnteredInteractionZone.Unit != GetControlledUnit())
+            return;
+
+        _interactionZone = unitEnteredInteractionZone.Zone;
+        if (_interactionZone != null && _interactionZone.InteractionType == InteractionType.OpenVendor)
+            ActiveVendor = _interactionZone;
     }
 
     void OnUnitExitedInteractionZone(UnitExitedInteractionZone unitExitedInteractionZone)
     {
-        var hasThisPlayerExitedInteractionZone = unitExitedInteractionZone.Unit == _unitController;
-        if (hasThisPlayerExitedInteractionZone)
-        {
-            if (isLocalPlayer)
-                VendorWindowController.Instance?.CloseIfInteractable(unitExitedInteractionZone.Zone);
-            if (ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
-                ActiveVendor = null;
-            _interactionZone = null;
-        }
+        if (unitExitedInteractionZone.Unit != GetControlledUnit())
+            return;
+
+        if (isLocalPlayer)
+            VendorWindowController.Instance?.CloseIfInteractable(unitExitedInteractionZone.Zone);
+        if (isServer && ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
+            EndVendorTrade();
+        if (ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
+            ActiveVendor = null;
+        _interactionZone = null;
     }
 
     private bool TryOpenVendorWindow()
@@ -217,17 +222,80 @@ public class PlayerController : NetworkBehaviour
         if (_interactionZone == null || _interactionZone.InteractionType != InteractionType.OpenVendor)
             return false;
 
-        var session = ActiveVendor != null
-            ? ActiveVendor.GetVendorSession()
-            : _interactionZone.GetVendorSession();
+        var session = _interactionZone.GetVendorSession();
         if (session == null)
         {
             Debug.LogWarning("OpenVendor zone is missing a VendorDefinition.", _interactionZone);
             return true;
         }
 
+        CmdBeginVendorTrade(session.VendorId);
         VendorWindowController.Instance?.Open(session, this);
         return true;
+    }
+
+    [Command]
+    public void CmdBeginVendorTrade(string vendorId)
+    {
+        TryEnsureVendorTrade(vendorId);
+    }
+
+    [Command]
+    public void CmdEndVendorTrade()
+    {
+        EndVendorTrade();
+    }
+
+    [Server]
+    public bool TryEnsureVendorTrade(string vendorId)
+    {
+        var unit = GetControlledUnit();
+        if (unit == null)
+            return false;
+
+        var zone = VendorManager.FindReachableVendor(unit, vendorId);
+        if (zone == null && _interactionZone != null && _interactionZone.InteractionType == InteractionType.OpenVendor)
+        {
+            if (string.IsNullOrEmpty(vendorId) ||
+                (_interactionZone.VendorCatalog != null && _interactionZone.VendorCatalog.vendorId == vendorId))
+            {
+                zone = _interactionZone;
+            }
+        }
+
+        if (zone == null || zone.VendorCatalog == null)
+        {
+            EndVendorTrade();
+            return false;
+        }
+
+        _interactionZone = zone;
+        ActiveVendor = zone;
+        ServerVendorSession = zone.GetSessionFor(this);
+        return ServerVendorSession != null && ServerVendorSession.IsAvailableTo(this);
+    }
+
+    [Server]
+    private void EndVendorTrade()
+    {
+        ActiveVendor?.EndSessionFor(this);
+        ServerVendorSession = null;
+        ActiveVendor = null;
+    }
+
+    private void BindControlledUnit(GameObject unitOverride = null)
+    {
+        if (unitOverride != null)
+            Unit = unitOverride;
+        else if (PlayerUnitsManager.Instance != null && connectionToClient != null)
+            Unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionToClient.connectionId);
+
+        CacheControlledUnit();
+    }
+
+    private void CacheControlledUnit()
+    {
+        _unitController = Unit != null ? Unit.GetComponent<UnitController>() : null;
     }
 
     [Command]
@@ -269,7 +337,7 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     private void TargetVendorSnapshot(string[] upgradeIds, int[] purchaseCounts, string[] buyIds, int[] buyStocks, int vendorGold)
     {
-        GameEventPublish.ToBoth(new VendorSnapshotEvent(upgradeIds, purchaseCounts, buyIds, buyStocks, vendorGold));
+        GameEventPublish.ToBoth(new VendorSnapshotEvent(this, upgradeIds, purchaseCounts, buyIds, buyStocks, vendorGold));
     }
 
     [Command]

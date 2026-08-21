@@ -43,7 +43,7 @@ public sealed class CatalogVendorSession : IVendorSession
             return false;
 
         if (source is InteractionZone zone)
-            return player.InteractionZone == zone;
+            return VendorManager.IsUnitInVendorRange(player.GetControlledUnit(), zone);
 
         return true;
     }

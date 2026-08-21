@@ -38,17 +38,43 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
     private HashSet<UnitController> unitsInZone = new HashSet<UnitController>();
     private Dictionary<UnitController, System.Action> deathListeners = new Dictionary<UnitController, System.Action>();
     private Dictionary<UnitController, System.Action> reviveListeners = new Dictionary<UnitController, System.Action>();
-    private CatalogVendorSession vendorSession;
+    private CatalogVendorSession previewSession;
+    private readonly Dictionary<uint, CatalogVendorSession> sessionsByPlayer = new Dictionary<uint, CatalogVendorSession>();
 
     public IVendorSession GetVendorSession()
+    {
+        return GetOrCreatePreviewSession();
+    }
+
+    public IVendorSession GetSessionFor(PlayerController player)
+    {
+        if (player == null || vendorCatalog == null)
+            return null;
+
+        if (!sessionsByPlayer.TryGetValue(player.netId, out var session) || session.Catalog != vendorCatalog)
+        {
+            session = new CatalogVendorSession(vendorCatalog, this);
+            sessionsByPlayer[player.netId] = session;
+        }
+
+        return session;
+    }
+
+    public void EndSessionFor(PlayerController player)
+    {
+        if (player != null)
+            sessionsByPlayer.Remove(player.netId);
+    }
+
+    private CatalogVendorSession GetOrCreatePreviewSession()
     {
         if (vendorCatalog == null)
             return null;
 
-        if (vendorSession == null || vendorSession.Catalog != vendorCatalog)
-            vendorSession = new CatalogVendorSession(vendorCatalog, this);
+        if (previewSession == null || previewSession.Catalog != vendorCatalog)
+            previewSession = new CatalogVendorSession(vendorCatalog, this);
 
-        return vendorSession;
+        return previewSession;
     }
 
     private void OnTriggerEnter(Collider other)
