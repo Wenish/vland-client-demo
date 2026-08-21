@@ -217,10 +217,14 @@ public sealed class LoadoutView
         slotsBar.Clear();
         slotElements.Clear();
 
-        foreach (var slot in LoadoutSlots.All)
+        var slots = LoadoutSlots.All;
+        for (var i = 0; i < slots.Length; i++)
         {
+            var slot = slots[i];
             var element = new VisualElement { pickingMode = PickingMode.Position };
             element.AddToClassList("loadout-slot");
+            if (i == slots.Length - 1)
+                element.AddToClassList("loadout-slot--last");
             element.userData = slot;
 
             var icon = new VisualElement { pickingMode = PickingMode.Ignore };

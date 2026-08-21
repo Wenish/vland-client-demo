@@ -30,7 +30,7 @@
     cursor: var(--cursor-hover);
 }
 
-.loadout-slot:last-child {
+.loadout-slot--last {
     margin-right: 0;
 }
 
