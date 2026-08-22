@@ -1,7 +1,8 @@
+using ShadowInfection.Match;
+
 namespace ShadowInfection.UI.ZombieMatch
 {
-    internal interface IZombieMatchCommands
+    internal interface IZombieMatchCommands : IMatchCommands
     {
-        bool TryReturnToLobby();
     }
 }

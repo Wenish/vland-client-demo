@@ -1,12 +1,10 @@
 using UnityEngine;
 using Mirror;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using ShadowInfection.DI;
+using ShadowInfection.Skirmish;
 
-public class SkirmishGameManager : MatchGameManagerBase
+public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
 {
     [Header("Team Spawns")]
     [Tooltip("Each index represents a team. Spawn 0 = Team 0, Spawn 1 = Team 1, etc.")]
@@ -53,10 +51,45 @@ public class SkirmishGameManager : MatchGameManagerBase
     public event Action<int> OnMatchEnded = delegate { };
 
     private readonly SyncDictionary<int, int> _teamRoundWins = new SyncDictionary<int, int>();
-    private Coroutine _roundLoopCoroutine;
     private bool _hasRaisedMatchEndedEvent;
     private int _lastRaisedMatchWinnerTeam = -1;
     private int _lastRaisedRoundResolutionSequence;
+    private SkirmishPlayerService playerService;
+    private SkirmishScoreService scoreService;
+    private SkirmishRoundDirector roundDirector;
+
+    public SkirmishPlayerService PlayerService => playerService;
+    public SkirmishScoreService ScoreService => scoreService;
+    public SkirmishRoundDirector RoundDirector => roundDirector;
+
+    bool ISkirmishHost.IsServer => isServer;
+    bool ISkirmishHost.IsServerOnly => isServerOnly;
+    bool ISkirmishHost.MatchEnded
+    {
+        get => MatchEnded;
+        set => MatchEnded = value;
+    }
+    int ISkirmishHost.MatchWinnerTeam
+    {
+        get => MatchWinnerTeam;
+        set => MatchWinnerTeam = value;
+    }
+    int ISkirmishHost.CurrentRound => CurrentRound;
+    RoundState ISkirmishHost.CurrentRoundState => CurrentRoundState;
+    int ISkirmishHost.TeamCount => TeamCount;
+    int ISkirmishHost.TargetRoundWins => targetRoundWins;
+    float ISkirmishHost.PreRoundCountdownSeconds => preRoundCountdownSeconds;
+    float ISkirmishHost.PostRoundDelaySeconds => postRoundDelaySeconds;
+    int ISkirmishHost.RoundResolutionSequence => RoundResolutionSequence;
+    IEnumerable<int> ISkirmishHost.AssignedConnectionIds => ConnectionTeamAssignments.Keys;
+    IEnumerable<int> ISkirmishHost.AssignedTeamIds => ConnectionTeamAssignments.Values;
+
+    internal void EnsureServices()
+    {
+        playerService ??= new SkirmishPlayerService(this);
+        scoreService ??= new SkirmishScoreService(this);
+        roundDirector ??= new SkirmishRoundDirector(this, playerService, scoreService);
+    }
 
     private void ResetRoundEndedEventState()
     {
@@ -66,9 +99,7 @@ public class SkirmishGameManager : MatchGameManagerBase
     private void RaiseRoundEndedIfNeeded(int resolutionSequence, int winnerTeam, bool isDraw)
     {
         if (resolutionSequence <= _lastRaisedRoundResolutionSequence)
-        {
             return;
-        }
 
         _lastRaisedRoundResolutionSequence = resolutionSequence;
         OnRoundEnded((winnerTeam, isDraw));
@@ -83,14 +114,10 @@ public class SkirmishGameManager : MatchGameManagerBase
     private void RaiseMatchEndedIfNeeded(int winnerTeam)
     {
         if (winnerTeam < 0)
-        {
             return;
-        }
 
         if (_hasRaisedMatchEndedEvent && _lastRaisedMatchWinnerTeam == winnerTeam)
-        {
             return;
-        }
 
         _hasRaisedMatchEndedEvent = true;
         _lastRaisedMatchWinnerTeam = winnerTeam;
@@ -104,9 +131,7 @@ public class SkirmishGameManager : MatchGameManagerBase
         CurrentRound = value;
 
         if (isServerOnly)
-        {
             OnRoundChanged(value);
-        }
     }
 
     [Server]
@@ -116,9 +141,7 @@ public class SkirmishGameManager : MatchGameManagerBase
         CurrentRoundState = value;
 
         if (isServerOnly)
-        {
             OnRoundStateChanged(value);
-        }
     }
 
     [Server]
@@ -128,9 +151,7 @@ public class SkirmishGameManager : MatchGameManagerBase
         CountdownRemaining = value;
 
         if (isServerOnly)
-        {
             OnCountdownChanged(value);
-        }
     }
 
     protected override void Awake()
@@ -150,7 +171,7 @@ public class SkirmishGameManager : MatchGameManagerBase
     public override void OnStartServer()
     {
         base.OnStartServer();
-
+        EnsureServices();
         EnsureBotFillManager();
 
         ServerEnterPreMatch();
@@ -168,13 +189,9 @@ public class SkirmishGameManager : MatchGameManagerBase
             return;
         }
 
-        AssignTeamsToNewPlayers();
-
-        if (_roundLoopCoroutine != null)
-        {
-            StopCoroutine(_roundLoopCoroutine);
-        }
-        _roundLoopCoroutine = StartCoroutine(RoundLoop());
+        playerService.AssignTeamsToNewPlayers();
+        roundDirector.Stop();
+        roundDirector.Start();
     }
 
     [Server]
@@ -182,9 +199,7 @@ public class SkirmishGameManager : MatchGameManagerBase
     {
         var botFill = GetComponent<PvpBotFillManager>();
         if (botFill == null)
-        {
             botFill = gameObject.AddComponent<PvpBotFillManager>();
-        }
 
         int teamCount = Mathf.Max(1, TeamCount);
         int targetPlayers = Mathf.Max(4, teamCount * 2);
@@ -195,325 +210,25 @@ public class SkirmishGameManager : MatchGameManagerBase
     public override void OnStopServer()
     {
         base.OnStopServer();
-
-        if (_roundLoopCoroutine != null)
-        {
-            StopCoroutine(_roundLoopCoroutine);
-            _roundLoopCoroutine = null;
-        }
-
+        roundDirector?.Stop();
         ClearTeamAssignments();
         _teamRoundWins.Clear();
         ResetMatchEndedEventState();
         ResetRoundEndedEventState();
     }
 
-    private IEnumerator RoundLoop()
+    protected override void OnDestroy()
     {
-        yield return WaitForFirstPlayerUnit();
-        ServerStartMatchLifecycle();
-
-        while (isServer && !MatchEnded)
-        {
-            SetCurrentRound(CurrentRound + 1);
-
-            AssignTeamsToNewPlayers();
-            ReviveAndTeleportAllPlayersToTeamSpawns();
-
-            SetRoundState(RoundState.PreRoundCountdown);
-            yield return RunCountdown(preRoundCountdownSeconds);
-
-            SetRoundState(RoundState.InRound);
-
-            bool roundResolved = false;
-            while (isServer && !MatchEnded && !roundResolved)
-            {
-                AssignTeamsToNewPlayers();
-
-                var roundOutcome = GetRoundOutcome();
-                if (roundOutcome.HasValue)
-                {
-                    var (winnerTeam, isDraw) = roundOutcome.Value;
-                    HandleRoundEnd(winnerTeam, isDraw);
-                    roundResolved = true;
-
-                    if (MatchEnded)
-                    {
-                        yield break;
-                    }
-                }
-
-                yield return null;
-            }
-
-            SetRoundState(RoundState.PostRoundDelay);
-            yield return RunCountdown(postRoundDelaySeconds);
-        }
-    }
-
-    [Server]
-    private IEnumerator WaitForFirstPlayerUnit()
-    {
-        while (isServer)
-        {
-            if (GameServices.PlayerUnits != null)
-            {
-                bool hasAnyPlayerUnit = GameServices.PlayerUnits.playerUnits
-                    .Any(playerUnit => playerUnit.Unit != null);
-
-                if (hasAnyPlayerUnit)
-                {
-                    yield break;
-                }
-            }
-
-            yield return null;
-        }
-    }
-
-    [Server]
-    private void AssignTeamsToNewPlayers()
-    {
-        if (GameServices.PlayerUnits == null) return;
-
-        var activeConnectionIds = new HashSet<int>();
-
-        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
-        {
-            if (playerUnit.Unit == null) continue;
-
-            activeConnectionIds.Add(playerUnit.ConnectionId);
-
-            if (ConnectionTeamAssignments.ContainsKey(playerUnit.ConnectionId))
-            {
-                continue;
-            }
-
-            int assignedTeam = FindLeastPopulatedTeam();
-            ConnectionTeamAssignments[playerUnit.ConnectionId] = assignedTeam;
-
-            var unitController = playerUnit.Unit.GetComponent<UnitController>();
-            if (unitController != null)
-            {
-                unitController.SetTeam(assignedTeam);
-            }
-        }
-
-        var removedConnections = ConnectionTeamAssignments.Keys
-            .Where(connectionId => !activeConnectionIds.Contains(connectionId))
-            .ToList();
-
-        foreach (var connectionId in removedConnections)
-        {
-            ConnectionTeamAssignments.Remove(connectionId);
-        }
-    }
-
-    [Server]
-    private int FindLeastPopulatedTeam()
-    {
-        int teamCount = teamSpawns.Count;
-        var teamPopulation = new int[teamCount];
-
-        foreach (var assignedTeam in ConnectionTeamAssignments.Values)
-        {
-            if (assignedTeam < 0 || assignedTeam >= teamCount) continue;
-            teamPopulation[assignedTeam]++;
-        }
-
-        int selectedTeam = 0;
-        int lowestCount = teamPopulation[0];
-        for (int team = 1; team < teamCount; team++)
-        {
-            if (teamPopulation[team] < lowestCount)
-            {
-                lowestCount = teamPopulation[team];
-                selectedTeam = team;
-            }
-        }
-
-        return selectedTeam;
-    }
-
-    [Server]
-    private void ReviveAndTeleportAllPlayersToTeamSpawns()
-    {
-        if (GameServices.PlayerUnits == null) return;
-
-        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
-        {
-            if (playerUnit.Unit == null) continue;
-
-            var unitController = playerUnit.Unit.GetComponent<UnitController>();
-            if (unitController == null) continue;
-
-            if (!ConnectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int teamId))
-            {
-                teamId = Mathf.Clamp(unitController.team, 0, teamSpawns.Count - 1);
-            }
-
-            teamId = Mathf.Clamp(teamId, 0, teamSpawns.Count - 1);
-            var spawn = teamSpawns[teamId];
-            if (spawn == null)
-            {
-                Debug.LogError($"[SkirmishGameManager] Team spawn for team {teamId} is missing.", this);
-                continue;
-            }
-
-            unitController.SetTeam(teamId);
-            unitController.InterruptAction();
-            unitController.SetHealth(unitController.maxHealth);
-            unitController.SetShield(unitController.maxShield);
-
-            if (playerUnit.Unit.TryGetComponent<Rigidbody>(out var rb))
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-                rb.position = spawn.position;
-                rb.rotation = spawn.rotation;
-
-                var unitTransform = playerUnit.Unit.transform;
-                unitTransform.SetPositionAndRotation(spawn.position, spawn.rotation);
-            }
-            else
-            {
-                var unitTransform = playerUnit.Unit.transform;
-                unitTransform.SetPositionAndRotation(spawn.position, spawn.rotation);
-            }
-        }
+        roundDirector?.Dispose();
+        base.OnDestroy();
     }
 
     [Server]
     protected override void OnServerPlayerTeamAssigned(int connectionId, int teamId)
     {
         base.OnServerPlayerTeamAssigned(connectionId, teamId);
-
-        if (GameServices.PlayerUnits == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
-        {
-            var playerUnit = GameServices.PlayerUnits.playerUnits[i];
-            if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
-            {
-                continue;
-            }
-
-            var unitController = playerUnit.Unit.GetComponent<UnitController>();
-            if (unitController == null)
-            {
-                return;
-            }
-
-            int clampedTeamId = Mathf.Clamp(teamId, 0, teamSpawns.Count - 1);
-            var spawn = teamSpawns[clampedTeamId];
-            if (spawn == null)
-            {
-                return;
-            }
-
-            unitController.SetTeam(clampedTeamId);
-            unitController.InterruptAction();
-            unitController.SetHealth(unitController.maxHealth);
-            unitController.SetShield(unitController.maxShield);
-
-            if (playerUnit.Unit.TryGetComponent<Rigidbody>(out var rb))
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-                rb.position = spawn.position;
-                rb.rotation = spawn.rotation;
-            }
-
-            playerUnit.Unit.transform.SetPositionAndRotation(spawn.position, spawn.rotation);
-            return;
-        }
-    }
-
-    [Server]
-    private (int winnerTeam, bool isDraw)? GetRoundOutcome()
-    {
-        if (GameServices.PlayerUnits == null) return null;
-
-        var aliveTeams = new HashSet<int>();
-
-        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
-        {
-            if (playerUnit.Unit == null) continue;
-
-            var unitController = playerUnit.Unit.GetComponent<UnitController>();
-            if (unitController == null) continue;
-            if (unitController.unitType != UnitType.Player) continue;
-            if (unitController.IsDead) continue;
-
-            int teamId = Mathf.Clamp(unitController.team, 0, teamSpawns.Count - 1);
-            aliveTeams.Add(teamId);
-
-            if (aliveTeams.Count > 1)
-            {
-                return null;
-            }
-        }
-
-        if (aliveTeams.Count == 1)
-        {
-            int winningTeam = aliveTeams.First();
-            return (winningTeam, false);
-        }
-
-        return (-1, true);
-    }
-
-    [Server]
-    private void HandleRoundEnd(int winnerTeam, bool isDraw)
-    {
-        SetRoundState(RoundState.RoundEnded);
-        LastRoundWinnerTeam = winnerTeam;
-        LastRoundWasDraw = isDraw;
-        RoundResolutionSequence++;
-
-        if (isServerOnly)
-        {
-            RaiseRoundEndedIfNeeded(RoundResolutionSequence, winnerTeam, isDraw);
-        }
-
-        if (isDraw)
-        {
-            return;
-        }
-
-        if (!_teamRoundWins.ContainsKey(winnerTeam))
-        {
-            _teamRoundWins[winnerTeam] = 0;
-        }
-
-        _teamRoundWins[winnerTeam]++;
-        LogTeamScores();
-
-        if (_teamRoundWins[winnerTeam] >= targetRoundWins)
-        {
-            MatchEnded = true;
-            MatchWinnerTeam = winnerTeam;
-            SetRoundState(RoundState.MatchEnded);
-            ServerEndMatchLifecycle(winnerTeam);
-            RaiseMatchEndedIfNeeded(winnerTeam);
-        }
-    }
-
-    [Server]
-    private IEnumerator RunCountdown(float durationSeconds)
-    {
-        float endTime = Time.time + Mathf.Max(0f, durationSeconds);
-
-        while (isServer && Time.time < endTime)
-        {
-            SetCountdownRemaining(Mathf.Max(0f, endTime - Time.time));
-            yield return null;
-        }
-
-        SetCountdownRemaining(0f);
+        EnsureServices();
+        playerService.TeleportAssignedPlayer(connectionId, teamId);
     }
 
     public int GetTeamRoundWins(int teamId)
@@ -525,18 +240,74 @@ public class SkirmishGameManager : MatchGameManagerBase
     private void LogTeamScores()
     {
         if (teamSpawns == null || teamSpawns.Count == 0)
-        {
             return;
-        }
 
         var scoreEntries = new List<string>(teamSpawns.Count);
         for (int teamId = 0; teamId < teamSpawns.Count; teamId++)
-        {
             scoreEntries.Add($"Team {teamId}: {GetTeamRoundWins(teamId)}");
-        }
 
         Debug.Log($"[SkirmishGameManager] Score Update -> {string.Join(" | ", scoreEntries)}", this);
     }
+
+    Transform ISkirmishHost.GetTeamSpawn(int teamId)
+    {
+        if (teamSpawns == null || teamId < 0 || teamId >= teamSpawns.Count)
+            return null;
+        return teamSpawns[teamId];
+    }
+
+    bool ISkirmishHost.TryGetAssignedTeam(int connectionId, out int teamId)
+    {
+        return ConnectionTeamAssignments.TryGetValue(connectionId, out teamId);
+    }
+
+    void ISkirmishHost.SetAssignedTeam(int connectionId, int teamId)
+    {
+        ConnectionTeamAssignments[connectionId] = teamId;
+    }
+
+    void ISkirmishHost.RemoveAssignedTeam(int connectionId)
+    {
+        ConnectionTeamAssignments.Remove(connectionId);
+    }
+
+    void ISkirmishHost.SetCurrentRound(int value) => SetCurrentRound(value);
+    void ISkirmishHost.SetRoundState(RoundState value) => SetRoundState(value);
+    void ISkirmishHost.SetCountdownRemaining(float value) => SetCountdownRemaining(value);
+
+    void ISkirmishHost.SetLastRoundResult(int winnerTeam, bool isDraw)
+    {
+        LastRoundWinnerTeam = winnerTeam;
+        LastRoundWasDraw = isDraw;
+    }
+
+    void ISkirmishHost.IncrementRoundResolutionSequence()
+    {
+        RoundResolutionSequence++;
+    }
+
+    void ISkirmishHost.RaiseRoundEnded(int winnerTeam, bool isDraw)
+    {
+        RaiseRoundEndedIfNeeded(RoundResolutionSequence, winnerTeam, isDraw);
+    }
+
+    void ISkirmishHost.RaiseMatchEnded(int winnerTeam)
+    {
+        RaiseMatchEndedIfNeeded(winnerTeam);
+    }
+
+    void ISkirmishHost.ServerStartMatchLifecycle() => ServerStartMatchLifecycle();
+    void ISkirmishHost.ServerEndMatchLifecycle(int winnerTeamId) => ServerEndMatchLifecycle(winnerTeamId);
+    int ISkirmishHost.GetTeamRoundWins(int teamId) => GetTeamRoundWins(teamId);
+
+    void ISkirmishHost.AddTeamRoundWin(int teamId)
+    {
+        if (!_teamRoundWins.ContainsKey(teamId))
+            _teamRoundWins[teamId] = 0;
+        _teamRoundWins[teamId]++;
+    }
+
+    void ISkirmishHost.LogTeamScores() => LogTeamScores();
 
     private void HookOnRoundNumberChanged(int oldValue, int newValue)
     {
@@ -558,9 +329,7 @@ public class SkirmishGameManager : MatchGameManagerBase
         if (!newValue) return;
 
         if (MatchWinnerTeam >= 0)
-        {
             RaiseMatchEndedIfNeeded(MatchWinnerTeam);
-        }
     }
 
     private void HookOnMatchWinnerTeamChanged(int oldValue, int newValue)

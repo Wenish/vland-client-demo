@@ -26,7 +26,7 @@ public class DestructibleResetOnSkirmishRound : NetworkBehaviour
             _objective = GetComponent<DestructibleObjective>();
         }
 
-        _manager = GameServices.Skirmish;
+        _manager = GameServices.Get<SkirmishGameManager>();
         if (_manager != null)
         {
             _manager.OnRoundStateChanged += OnRoundStateChanged;

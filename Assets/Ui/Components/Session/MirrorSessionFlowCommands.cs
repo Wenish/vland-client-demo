@@ -1,6 +1,6 @@
 using Mirror;
 using ShadowInfection.DI;
-using ShadowInfection.UI.ZombieMatch;
+using ShadowInfection.Match;
 using UnityEngine;
 
 namespace ShadowInfection.UI.Session
@@ -12,9 +12,9 @@ namespace ShadowInfection.UI.Session
             if (!NetworkServer.active)
                 return false;
 
-            if (GameServices.TryGet<IZombieMatchCommands>(out var zombieCommands)
-                && zombieCommands != null
-                && zombieCommands.TryReturnToLobby())
+            if (GameServices.TryGet<IMatchCommands>(out var matchCommands)
+                && matchCommands != null
+                && matchCommands.TryReturnToLobby())
                 return true;
 
             if (NetworkManager.singleton is NetworkRoomManager roomManager)

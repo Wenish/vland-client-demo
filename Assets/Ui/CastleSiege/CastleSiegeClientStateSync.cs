@@ -120,7 +120,7 @@ public class CastleSiegeClientStateSync : MonoBehaviour
     {
         if (_manager != null) return;
 
-        _manager = GameServices.CastleSiege;
+        _manager = GameServices.Get<CastleSiegeManager>();
         if (_manager == null) return;
 
         _manager.OnPlayerJoined += HandleManagerStateChanged;

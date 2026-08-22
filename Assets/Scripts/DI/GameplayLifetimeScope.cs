@@ -1,4 +1,6 @@
+using ShadowInfection.Match;
 using ShadowInfection.UI.ZombieMatch;
+using ShadowInfection.Zombie;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -178,13 +180,79 @@ namespace ShadowInfection.DI
             RegisterIfPresent<CastleSiegeManager>(builder, out var castle);
             RegisterIfPresent<SkirmishGameManager>(builder, out var skirmish);
 
+            if (zombie != null)
+            {
+                zombie.EnsureServices();
+                builder.RegisterInstance(zombie.WaveDirector);
+                builder.RegisterInstance(zombie.LeaderboardService);
+                builder.RegisterInstance(zombie.RunEndService);
+            }
+
+            if (castle != null)
+            {
+                castle.EnsureServices();
+                builder.RegisterInstance(castle.MatchDirector);
+                builder.RegisterInstance(castle.PlayerService);
+                builder.RegisterInstance(castle.ObjectiveService);
+            }
+
+            if (skirmish != null)
+            {
+                skirmish.EnsureServices();
+                builder.RegisterInstance(skirmish.RoundDirector);
+                builder.RegisterInstance(skirmish.PlayerService);
+                builder.RegisterInstance(skirmish.ScoreService);
+            }
+
             MatchGameManagerBase match = castle != null
                 ? castle
                 : skirmish;
             if (match != null)
                 builder.RegisterInstance(match);
 
-            var session = new ZombieGameManagerUiSession(zombie);
+            RegisterMatchContracts(builder, zombie, castle, skirmish);
+        }
+
+        private static void RegisterMatchContracts(
+            IContainerBuilder builder,
+            ZombieGameManager zombie,
+            CastleSiegeManager castle,
+            SkirmishGameManager skirmish)
+        {
+            if (zombie != null)
+            {
+                builder.RegisterInstance<IMatchActivity>(new ZombieMatchActivity(zombie));
+                builder.RegisterInstance<IUpgradeProgress>(new ZombieUpgradeProgress(zombie));
+                var session = new ZombieGameManagerUiSession(zombie);
+                builder.RegisterInstance<IZombieMatchUiSession>(session);
+                builder.RegisterInstance<IZombieMatchCommands>(session);
+                builder.RegisterInstance<IMatchCommands>(session);
+                return;
+            }
+
+            if (castle != null)
+            {
+                builder.RegisterInstance<IMatchActivity>(new CastleSiegeMatchActivity(castle));
+                builder.RegisterInstance<IPvpObjectives>(new CastleSiegePvpObjectives(castle));
+                builder.RegisterInstance<IMatchCommands>(new MatchGameManagerCommands(castle));
+                RegisterUnmatchedZombieSession(builder);
+                return;
+            }
+
+            if (skirmish != null)
+            {
+                builder.RegisterInstance<IMatchActivity>(new SkirmishMatchActivity(skirmish));
+                builder.RegisterInstance<IMatchCommands>(new MatchGameManagerCommands(skirmish));
+                RegisterUnmatchedZombieSession(builder);
+                return;
+            }
+
+            RegisterUnmatchedZombieSession(builder);
+        }
+
+        private static void RegisterUnmatchedZombieSession(IContainerBuilder builder)
+        {
+            var session = new ZombieGameManagerUiSession(null);
             builder.RegisterInstance<IZombieMatchUiSession>(session);
             builder.RegisterInstance<IZombieMatchCommands>(session);
         }

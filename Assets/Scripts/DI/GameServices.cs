@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace ShadowInfection.DI
 {
     /// <summary>
@@ -36,9 +34,6 @@ namespace ShadowInfection.DI
         public static IAreaZoneSpawner AreaZones => Get<IAreaZoneSpawner>();
         public static VendorManager Vendors => Get<VendorManager>();
         public static UpgradeManager Upgrades => Get<UpgradeManager>();
-        public static ZombieGameManager ZombieMatch => Get<ZombieGameManager>();
-        public static CastleSiegeManager CastleSiege => Get<CastleSiegeManager>();
-        public static SkirmishGameManager Skirmish => Get<SkirmishGameManager>();
         public static MatchGameManagerBase Match => Get<MatchGameManagerBase>();
     }
 }

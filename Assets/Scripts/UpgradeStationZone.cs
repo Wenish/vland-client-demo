@@ -1,4 +1,5 @@
 using ShadowInfection.DI;
+using ShadowInfection.Match;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -131,8 +132,8 @@ public class UpgradeStationZone : MonoBehaviour
             return false;
         }
 
-        var zombieMatch = GameServices.ZombieMatch;
-        var wave = zombieMatch != null ? Mathf.Max(1, zombieMatch.CurrentWave) : 1;
+        var progress = GameServices.Get<IUpgradeProgress>();
+        var wave = progress != null ? Mathf.Max(1, progress.UnlockLevel) : 1;
 
         if (!upgrade.IsUnlockedAtWave(wave))
         {
