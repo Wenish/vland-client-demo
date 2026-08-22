@@ -3,6 +3,7 @@ using Gapa.Audio.Music;
 using Gapa.Audio.VContainer;
 using MessagePipe;
 using ShadowInfection.Audio;
+using ShadowInfection.UI.Session;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 using VContainer;
@@ -258,6 +259,8 @@ namespace ShadowInfection.DI
             builder.Register<ZombieGameManagerUiSession>(Lifetime.Singleton)
                 .As<IZombieMatchUiSession>()
                 .As<IZombieMatchCommands>();
+            builder.Register<MirrorSessionFlowCommands>(Lifetime.Singleton)
+                .As<ISessionFlowCommands>();
         }
     }
 }

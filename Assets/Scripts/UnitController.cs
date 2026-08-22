@@ -767,7 +767,7 @@ public class UnitController : NetworkBehaviour
     public void OnKillEvent(UnitController killer)
     {
         InterruptAction();
-        EventManager.Instance.Publish(new UnitDiedEvent(this, killer));
+        GameEventPublish.ToBoth(new UnitDiedEvent(this, killer));
         RpcOnKill(this, killer);
     }
 
@@ -775,13 +775,13 @@ public class UnitController : NetworkBehaviour
     public void RpcOnKill(UnitController victim, UnitController killer)
     {
         if (isServer) return;
-        EventManager.Instance.Publish(new UnitDiedEvent(victim, killer));
+        GameEventPublish.ToBoth(new UnitDiedEvent(victim, killer));
     }
 
     [Server]
     public void OnTakeDamageEvent(int damage, int appliedDamage, UnitController attacker, bool wasCritical)
     {
-        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage, wasCritical));
+        GameEventPublish.ToBoth(new UnitDamagedEvent(this, attacker, damage, appliedDamage, wasCritical));
         OnTakeDamage((this, attacker));
         RpcOnTakenDamage(damage, appliedDamage, attacker, wasCritical);
     }
@@ -791,7 +791,7 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer) return;
         OnTakeDamage((this, attacker));
-        EventManager.Instance.Publish(new UnitDamagedEvent(this, attacker, damage, appliedDamage, wasCritical));
+        GameEventPublish.ToBoth(new UnitDamagedEvent(this, attacker, damage, appliedDamage, wasCritical));
     }
 
     [Server]
@@ -827,7 +827,7 @@ public class UnitController : NetworkBehaviour
         // Increase the health by the heal amount
         health = Mathf.Min(health + amount, maxHealth);
 
-        EventManager.Instance.Publish(new UnitHealedEvent(this, amount, oldHealth, health, healer));
+        GameEventPublish.ToBoth(new UnitHealedEvent(this, amount, oldHealth, health, healer));
         OnHealed(this);
 
         RpcOnHeal(amount, oldHealth, health, healer);
@@ -837,7 +837,7 @@ public class UnitController : NetworkBehaviour
     public void RpcOnHeal(int amount, int oldHealth, int newHealth, UnitController healer)
     {
         if (isServer) return;
-        EventManager.Instance.Publish(new UnitHealedEvent(this, amount, oldHealth, newHealth, healer));
+        GameEventPublish.ToBoth(new UnitHealedEvent(this, amount, oldHealth, newHealth, healer));
         OnHealed(this);
     }
 
@@ -851,7 +851,7 @@ public class UnitController : NetworkBehaviour
 
         // Increase the shield by the shield amount
         shield = Mathf.Min(shield + amount, maxShield);
-        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount, oldShield, shield, shielder));
+        GameEventPublish.ToBoth(new UnitShieldedEvent(this, amount, oldShield, shield, shielder));
         OnShielded((this, amount));
         RpcOnShield(amount, oldShield, shield, shielder);
     }
@@ -861,7 +861,7 @@ public class UnitController : NetworkBehaviour
     {
         if (isServer) return;
         OnShielded((this, amount));
-        EventManager.Instance.Publish(new UnitShieldedEvent(this, amount, oldShield, newShield, shielder));
+        GameEventPublish.ToBoth(new UnitShieldedEvent(this, amount, oldShield, newShield, shielder));
     }
 
     [Server]

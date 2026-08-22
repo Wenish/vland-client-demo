@@ -1,3 +1,5 @@
+using MessagePipe;
+using MyGame.Events.Ui;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -16,11 +18,15 @@ namespace ShadowInfection.UI.PlayerHud
         private UIDocument uiDocument;
         private PlayerHudView view;
         private PlayerHudPresenter presenter;
+        private IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
 
         [Inject]
-        internal void Construct(PlayerHudPresenter injectedPresenter)
+        internal void Construct(
+            PlayerHudPresenter injectedPresenter,
+            IPublisher<SetLoadoutWindowOpenEvent> injectedLoadoutOpen)
         {
             presenter = injectedPresenter;
+            loadoutOpen = injectedLoadoutOpen;
         }
 
         private void Awake()
@@ -54,7 +60,7 @@ namespace ShadowInfection.UI.PlayerHud
             UiCursorRefresh.ScheduleForRoot(root);
             view = new PlayerHudView(root);
             view.LoadoutButtonClicked += OnLoadoutButtonClicked;
-            view.SetLoadoutButtonVisible(LoadoutWindowController.Instance != null);
+            view.SetLoadoutButtonVisible(true);
             presenter.Bind(view, castSuccessColor, destroyCancellationToken);
             presenter.SetEnabled(isActiveAndEnabled);
         }
@@ -79,13 +85,9 @@ namespace ShadowInfection.UI.PlayerHud
             presenter?.Unbind();
         }
 
-        private static void OnLoadoutButtonClicked()
+        private void OnLoadoutButtonClicked()
         {
-            var loadout = LoadoutWindowController.Instance;
-            if (loadout == null)
-                return;
-
-            loadout.SetOpen(true);
+            loadoutOpen?.Publish(new SetLoadoutWindowOpenEvent(true));
         }
 
         private void RegisterCursors()

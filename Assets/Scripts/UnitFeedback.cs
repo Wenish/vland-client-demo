@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using MessagePipe;
 using MyGame.Events;
+using ShadowInfection.DI;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitController))]
@@ -28,6 +30,7 @@ public class UnitFeedback : MonoBehaviour
 
     private MaterialPropertyBlock _mpb;
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+    private R3.DisposableBag subscriptions;
 
     void Awake()
     {
@@ -59,8 +62,10 @@ public class UnitFeedback : MonoBehaviour
             unitController.OnShielded += HandleOnShielded;
         }
 
-        if (EventManager.Instance != null)
-            EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
+            subscriptions.Add(spawned.Subscribe(OnMyPlayerUnitSpawned));
     }
 
     void OnDisable()
@@ -79,8 +84,8 @@ public class UnitFeedback : MonoBehaviour
             unitController.OnShielded -= HandleOnShielded;
         }
 
-        if (EventManager.Instance != null)
-            EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
 
         // Clean up instanced materials (created via .materials)
         CleanupInstancedMaterials();

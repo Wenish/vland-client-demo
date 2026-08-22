@@ -1,4 +1,6 @@
+using MessagePipe;
 using MyGame.Events;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class FloatingDamageTextManager : MonoBehaviour
@@ -20,23 +22,28 @@ public class FloatingDamageTextManager : MonoBehaviour
     private Color orangeColor = new Color(255f / 255f, 105f / 255f, 0f / 255f);
     private Color yellowColor = new Color(253f / 255f, 199f / 255f, 0f / 255f);
     private Color redColor = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+    private R3.DisposableBag subscriptions;
 
     void OnEnable()
     {
-        EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
-        EventManager.Instance.Subscribe<UnitHealedEvent>(OnUnitHealed);
-        EventManager.Instance.Subscribe<UnitShieldedEvent>(OnUnitShielded);
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-        EventManager.Instance.Subscribe<UnitDroppedGoldEvent>(OnUnitDroppedGold);
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitDamagedEvent> damaged))
+            subscriptions.Add(damaged.Subscribe(OnUnitDamaged));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitHealedEvent> healed))
+            subscriptions.Add(healed.Subscribe(OnUnitHealed));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitShieldedEvent> shielded))
+            subscriptions.Add(shielded.Subscribe(OnUnitShielded));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
+            subscriptions.Add(spawned.Subscribe(OnMyPlayerUnitSpawned));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitDroppedGoldEvent> gold))
+            subscriptions.Add(gold.Subscribe(OnUnitDroppedGold));
     }
 
     void OnDisable()
     {
-        EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
-        EventManager.Instance.Unsubscribe<UnitHealedEvent>(OnUnitHealed);
-        EventManager.Instance.Unsubscribe<UnitShieldedEvent>(OnUnitShielded);
-        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-        EventManager.Instance.Unsubscribe<UnitDroppedGoldEvent>(OnUnitDroppedGold);
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
     }
 
     public void OnUnitDamaged(UnitDamagedEvent unitDamagedEvent)

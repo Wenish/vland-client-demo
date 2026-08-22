@@ -22,7 +22,7 @@ public class ZombieGameManager : NetworkBehaviour
     [SerializeField] private bool autoStartOnServer = true;
 
     [Header("Runtime State")]
-    [SyncVar(hook = nameof(HookOnCurrentWaveChanged))]
+    [SyncVar]
     [SerializeField] private int currentWave = 0;
 
     [SyncVar]
@@ -80,13 +80,6 @@ public class ZombieGameManager : NetworkBehaviour
     public float CurrentWaveKilledPercent => currentWaveTotalCount <= 0
         ? 0f
         : (currentWaveKilledCount / (float)currentWaveTotalCount) * 100f;
-
-    public event Action<int> OnNewWaveStarted = delegate { };
-    public event Action<float, int, int> OnWaveProgressChanged = delegate { };
-    public event Action OnLeaderboardChanged = delegate { };
-    public event Action<bool> OnGameOverStateChanged = delegate { };
-    public event Action<bool> OnAutoReturnToLobbyEnabledChanged = delegate { };
-    public event Action<float> OnReturnToLobbyCountdownChanged = delegate { };
 
     public IReadOnlyList<ZombieLeaderboardEntry> LeaderboardEntries => zombieLeaderboardEntries;
 
@@ -377,11 +370,6 @@ public class ZombieGameManager : NetworkBehaviour
         }
     }
 
-    private void HookOnCurrentWaveChanged(int oldValue, int newValue)
-    {
-        OnNewWaveStarted(newValue);
-    }
-
     private void HookOnWaveTotalCountChanged(int oldValue, int newValue)
     {
         RaiseWaveProgressChangedEvent();
@@ -394,19 +382,16 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void HookOnIsGameOverChanged(bool oldValue, bool newValue)
     {
-        OnGameOverStateChanged(newValue);
         GameEventPublish.ToBoth(new ZombieGameOverEvent(newValue));
     }
 
     private void HookOnAutoReturnToLobbyEnabledChanged(bool oldValue, bool newValue)
     {
-        OnAutoReturnToLobbyEnabledChanged(newValue);
         GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(newValue, returnToLobbyCountdownSeconds));
     }
 
     private void HookOnReturnToLobbyCountdownChanged(float oldValue, float newValue)
     {
-        OnReturnToLobbyCountdownChanged(newValue);
         GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
     }
 
@@ -698,7 +683,6 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void RaiseOnNewWaveStartedEvent(int waveNumber, int totalZombies)
     {
-        OnNewWaveStarted(waveNumber);
         GameEventPublish.ToBoth(new WaveStartedEvent(waveNumber, totalZombies));
         RpcWaveStarted(waveNumber, totalZombies);
     }
@@ -711,7 +695,6 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        OnNewWaveStarted(waveNumber);
         GameEventPublish.ToBoth(new WaveStartedEvent(waveNumber, totalZombies));
     }
 
@@ -845,7 +828,6 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void RaiseLeaderboardChanged()
     {
-        OnLeaderboardChanged();
         GameEventPublish.ToBoth(new ZombieLeaderboardChangedEvent(CopyLeaderboardRows()));
     }
 
@@ -1035,7 +1017,6 @@ public class ZombieGameManager : NetworkBehaviour
         isGameOver = true;
         StopZombieMode();
 
-        OnGameOverStateChanged(true);
         GameEventPublish.ToBoth(new ZombieGameOverEvent(true));
         EventManager.Instance.Publish(new ZombieRunEndedEvent(ZombieRunEndReason.AllPlayersDead));
 
@@ -1057,7 +1038,6 @@ public class ZombieGameManager : NetworkBehaviour
 
         if (isServerOnly)
         {
-            OnAutoReturnToLobbyEnabledChanged(value);
             GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(value, returnToLobbyCountdownSeconds));
         }
     }
@@ -1074,7 +1054,6 @@ public class ZombieGameManager : NetworkBehaviour
 
         if (isServerOnly)
         {
-            OnReturnToLobbyCountdownChanged(value);
             GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, value));
         }
     }
@@ -1282,7 +1261,6 @@ public class ZombieGameManager : NetworkBehaviour
     private void RaiseWaveProgressChangedEvent()
     {
         float percent = CurrentWaveKilledPercent;
-        OnWaveProgressChanged(percent, currentWaveKilledCount, currentWaveTotalCount);
         GameEventPublish.ToMessagePipe(new WaveProgressChangedEvent(currentWave, currentWaveKilledCount, currentWaveTotalCount, percent));
     }
 
@@ -1316,7 +1294,7 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
+        GameEventPublish.ToBoth(new UnitDroppedGoldEvent(zombie, amount, killer));
         RpcZombieDroppedGold(amount, zombie, killer);
 
         EventManager.Instance.Publish(new PlayerReceivesGoldEvent(killer, amount));
@@ -1331,7 +1309,7 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        EventManager.Instance.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
+        GameEventPublish.ToBoth(new UnitDroppedGoldEvent(zombie, amount, killer));
     }
 
     [ClientRpc]

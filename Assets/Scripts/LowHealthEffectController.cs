@@ -1,4 +1,6 @@
+using MessagePipe;
 using MyGame.Events;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -24,6 +26,7 @@ public class LowHealthEffectController : MonoBehaviour
     private UnitController myUnit;
     private float displayedWeight;
     private float pulsePhase;
+    private R3.DisposableBag subscriptions;
 
     void Start()
     {
@@ -31,15 +34,15 @@ public class LowHealthEffectController : MonoBehaviour
             postProcessVolume = GetComponent<Volume>();
 
         SetWeight(0f);
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
+            subscriptions.Add(spawned.Subscribe(OnPlayerUnitSpawned));
         enabled = false;
     }
 
     void OnDestroy()
     {
         UnbindUnit();
-        if (EventManager.Instance != null)
-            EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        subscriptions.Dispose();
     }
 
     void Update()

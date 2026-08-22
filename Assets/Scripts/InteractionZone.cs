@@ -93,7 +93,7 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
             reviveListeners[unit] = onRevive;
             if (!unit.IsDead)
             {
-                EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
+                GameEventPublish.ToBoth(new UnitEnteredInteractionZone(unit, this));
             }
         }
     }
@@ -111,7 +111,7 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
         // Remove interaction ability, but keep listeners for revive
         if (unitsInZone.Contains(unit))
         {
-            EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
+            GameEventPublish.ToBoth(new UnitExitedInteractionZone(unit, this));
         }
     }
 
@@ -130,7 +130,7 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
                 unit.OnRevive -= onRevive;
                 reviveListeners.Remove(unit);
             }
-            EventManager.Instance.Publish(new UnitExitedInteractionZone(unit, this));
+            GameEventPublish.ToBoth(new UnitExitedInteractionZone(unit, this));
         }
     }
 
@@ -139,7 +139,7 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
         // Only fire if the unit is still in the zone
         if (unitsInZone.Contains(unit))
         {
-            EventManager.Instance.Publish(new UnitEnteredInteractionZone(unit, this));
+            GameEventPublish.ToBoth(new UnitEnteredInteractionZone(unit, this));
         }
     }
 
