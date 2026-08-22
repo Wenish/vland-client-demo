@@ -26,7 +26,7 @@ public static class PlayerActionFeedback
         if (string.IsNullOrWhiteSpace(text))
             return;
 
-        GameEventPublish.ToMessagePipe(new PlayerHudInfoMessageEvent(text, key, durationSeconds, kind));
+        GameMessages.Publish(new PlayerHudInfoMessageEvent(text, key, durationSeconds, kind));
     }
 
     public static void ShowCooldown(string actionName)

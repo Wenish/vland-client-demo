@@ -364,7 +364,7 @@ boss.ResetEncounter();
 ### Event-Driven Spawning
 ```csharp
 // Listen to gate open event
-EventManager.Instance.Subscribe<OpenGateEvent>(OnGateOpen);
+GameMessages.Subscribe<OpenGateEvent>(ref subscriptions, OnGateOpen);
 
 void OnGateOpen(OpenGateEvent evt)
 {

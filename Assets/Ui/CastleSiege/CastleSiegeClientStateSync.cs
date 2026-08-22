@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -33,6 +34,7 @@ public class CastleSiegeClientStateSync : MonoBehaviour
     private UnitController _localUnit;
     private float _nextPollAt;
     private string _lastSignature;
+    private DisposableBag subscriptions;
 
     private void OnEnable()
     {
@@ -78,18 +80,15 @@ public class CastleSiegeClientStateSync : MonoBehaviour
 
     private void SubscribeLocalUnitEvent()
     {
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(HandleMyPlayerUnitSpawned);
-        }
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, HandleMyPlayerUnitSpawned);
     }
 
     private void UnsubscribeLocalUnitEvent()
     {
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(HandleMyPlayerUnitSpawned);
-        }
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
     private void HandleMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent evt)

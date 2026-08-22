@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using MessagePipe;
 using MyGame.Events;
-using ShadowInfection.DI;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitController))]
@@ -64,8 +62,7 @@ public class UnitFeedback : MonoBehaviour
 
         subscriptions.Dispose();
         subscriptions = new R3.DisposableBag();
-        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
-            subscriptions.Add(spawned.Subscribe(OnMyPlayerUnitSpawned));
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnMyPlayerUnitSpawned);
     }
 
     void OnDisable()

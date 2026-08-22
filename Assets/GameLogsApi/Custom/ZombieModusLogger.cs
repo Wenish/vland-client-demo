@@ -1,10 +1,12 @@
 using MyGame.Events;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ZombieModusLogger : MonoBehaviour
 {
     private GameLogManager _gameLogManager;
+    private DisposableBag subscriptions;
 
     private void Awake()
     {
@@ -17,12 +19,15 @@ public class ZombieModusLogger : MonoBehaviour
 
     private void OnEnable()
     {
-        EventManager.Instance?.Subscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
+        GameMessages.Subscribe<WaveStartedEvent>(ref subscriptions, OnWaveStartedEvent);
     }
 
     private void OnDisable()
     {
-        EventManager.Instance?.Unsubscribe<WaveStartedEvent>(OnWaveStartedEvent);
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
     private struct WaveStartedEventPayload

@@ -7,14 +7,9 @@ using UnityEngine;
 namespace MyGame.Events
 {
     /// <summary>
-    /// Base class for all game events.
-    /// </summary>
-    public abstract class GameEvent { }
-
-    /// <summary>
     /// Fired when a new zombie wave starts.
     /// </summary>
-    public class WaveStartedEvent : GameEvent
+    public class WaveStartedEvent
     {
         public int WaveNumber { get; }
         public int TotalZombies { get; }
@@ -29,7 +24,7 @@ namespace MyGame.Events
     /// <summary>
     /// Fired when zombie wave kill progress changes.
     /// </summary>
-    public class WaveProgressChangedEvent : GameEvent
+    public class WaveProgressChangedEvent
     {
         public int WaveNumber { get; }
         public int KilledCount { get; }
@@ -45,7 +40,7 @@ namespace MyGame.Events
         }
     }
 
-    public class ZombieGameOverEvent : GameEvent
+    public class ZombieGameOverEvent
     {
         public bool IsGameOver { get; }
 
@@ -55,7 +50,7 @@ namespace MyGame.Events
         }
     }
 
-    public class ZombieReturnToLobbyCountdownEvent : GameEvent
+    public class ZombieReturnToLobbyCountdownEvent
     {
         public bool IsAutoReturnActive { get; }
         public float CountdownSeconds { get; }
@@ -96,7 +91,7 @@ namespace MyGame.Events
         }
     }
 
-    public class ZombieLeaderboardChangedEvent : GameEvent
+    public class ZombieLeaderboardChangedEvent
     {
         public IReadOnlyList<ZombieLeaderboardRow> Entries { get; }
 
@@ -113,7 +108,7 @@ namespace MyGame.Events
         ReturnToLobbyAfterGameOver = 2
     }
 
-    public class ZombieRunEndedEvent : GameEvent
+    public class ZombieRunEndedEvent
     {
         public ZombieRunEndReason EndReason { get; }
 
@@ -126,7 +121,7 @@ namespace MyGame.Events
     /// <summary>
     /// Fired when a unit receives damage.
     /// </summary>
-    public class UnitDamagedEvent : GameEvent
+    public class UnitDamagedEvent
     {
         public UnitController Unit { get; }
         public UnitController Attacker { get; }
@@ -144,7 +139,7 @@ namespace MyGame.Events
         }
     }
 
-    public class UnitHealedEvent : GameEvent
+    public class UnitHealedEvent
     {
         public UnitController Unit { get; }
         public int HealAmount { get; }
@@ -163,7 +158,7 @@ namespace MyGame.Events
         }
     }
 
-    public class UnitShieldedEvent : GameEvent
+    public class UnitShieldedEvent
     {
         public UnitController Unit { get; }
         public int ShieldAmount { get; }
@@ -181,7 +176,7 @@ namespace MyGame.Events
         }
     }
 
-    public class UnitDiedEvent : GameEvent
+    public class UnitDiedEvent
     {
         public UnitController Unit { get; }
         public UnitController? Killer { get; }
@@ -193,7 +188,7 @@ namespace MyGame.Events
         }
     }
 
-    public class PlayerUnitSpawnedEvent : GameEvent
+    public class PlayerUnitSpawnedEvent
     {
         public int ConnectionId { get; }
         public GameObject Unit { get; }
@@ -205,7 +200,7 @@ namespace MyGame.Events
         }
     }
 
-    public class MyPlayerUnitSpawnedEvent : GameEvent
+    public class MyPlayerUnitSpawnedEvent
     {
         public UnitController PlayerCharacter { get; }
 
@@ -215,7 +210,7 @@ namespace MyGame.Events
         }
     }
 
-    public class UnitDroppedGoldEvent : GameEvent
+    public class UnitDroppedGoldEvent
     {
         public UnitController Unit { get; }
         public int GoldAmount { get; }
@@ -229,7 +224,7 @@ namespace MyGame.Events
         }
     }
 
-    public class PlayerReceivesGoldEvent : GameEvent
+    public class PlayerReceivesGoldEvent
     {
         public UnitController Player { get; }
         public int GoldAmount { get; }
@@ -241,7 +236,7 @@ namespace MyGame.Events
         }
     }
 
-    public class PlayerGoldChangedEvent : GameEvent
+    public class PlayerGoldChangedEvent
     {
         public PlayerController Player { get; }
         public int OldGoldAmount { get; }
@@ -265,7 +260,7 @@ namespace MyGame.Events
     /// Local-player HUD info line. Gameplay publishes this; the HUD displays it.
     /// DurationSeconds of 0 or less uses the HUD default.
     /// </summary>
-    public class PlayerHudInfoMessageEvent : GameEvent
+    public class PlayerHudInfoMessageEvent
     {
         public string Text { get; }
         public string Key { get; }
@@ -285,7 +280,7 @@ namespace MyGame.Events
         }
     }
 
-    public class UnitEnteredInteractionZone : GameEvent
+    public class UnitEnteredInteractionZone
     {
         public UnitController Unit { get; }
         public InteractionZone Zone { get; }
@@ -297,7 +292,7 @@ namespace MyGame.Events
         }
     }
     
-    public class UnitExitedInteractionZone : GameEvent
+    public class UnitExitedInteractionZone
     {
         public UnitController Unit { get; }
         public InteractionZone Zone { get; }
@@ -309,7 +304,7 @@ namespace MyGame.Events
         }
     }
 
-    public class OpenGateEvent : GameEvent
+    public class OpenGateEvent
     {
         public int GateId { get; }
         public OpenGateEvent(int gateId)
@@ -318,7 +313,7 @@ namespace MyGame.Events
         }
     }
 
-    public class CloseGateEvent : GameEvent
+    public class CloseGateEvent
     {
         public int GateId { get; }
         public CloseGateEvent(int gateId)
@@ -327,7 +322,7 @@ namespace MyGame.Events
         }
     }
 
-    public class OpenedGateEvent : GameEvent
+    public class OpenedGateEvent
     {
         public int GateId { get; }
         public OpenedGateEvent(int gateId)
@@ -336,7 +331,7 @@ namespace MyGame.Events
         }
     }
     
-    public class ClosedGateEvent : GameEvent
+    public class ClosedGateEvent
     {
         public int GateId { get; }
         public ClosedGateEvent(int gateId)
@@ -345,7 +340,7 @@ namespace MyGame.Events
         }
     }
 
-    public class BuyWeaponEvent : GameEvent
+    public class BuyWeaponEvent
     {
         public int WeaponId { get; }
         public PlayerController Buyer { get; }
@@ -356,7 +351,7 @@ namespace MyGame.Events
         }
     }
 
-    public class BuyUpgradeEvent : GameEvent
+    public class BuyUpgradeEvent
     {
         public InteractionZone Zone { get; }
         public PlayerController Buyer { get; }
@@ -370,7 +365,7 @@ namespace MyGame.Events
         }
     }
 
-    public class UpgradePurchaseResultEvent : GameEvent
+    public class UpgradePurchaseResultEvent
     {
         public PlayerController Buyer { get; }
         public bool Success { get; }
@@ -388,7 +383,7 @@ namespace MyGame.Events
         }
     }
 
-    public class VendorTransactResultEvent : GameEvent
+    public class VendorTransactResultEvent
     {
         public PlayerController Buyer { get; }
         public bool Success { get; }
@@ -406,7 +401,7 @@ namespace MyGame.Events
         }
     }
 
-    public class VendorSnapshotEvent : GameEvent
+    public class VendorSnapshotEvent
     {
         public PlayerController Buyer { get; }
         public string[] UpgradeIds { get; }
@@ -432,7 +427,7 @@ namespace MyGame.Events
         }
     }
 
-    public class WorldPingEvent : GameEvent
+    public class WorldPingEvent
     {
         public Vector3 Position { get; }
 
@@ -442,7 +437,7 @@ namespace MyGame.Events
         }
     }
 
-    public class ObjectiveDestroyedEvent : GameEvent
+    public class ObjectiveDestroyedEvent
     {
         public UnitController ObjectiveUnit { get; }
         public string ObjectiveId { get; }
@@ -458,7 +453,7 @@ namespace MyGame.Events
         }
     }
 
-    public class ObjectiveRebuiltEvent : GameEvent
+    public class ObjectiveRebuiltEvent
     {
         public UnitController ObjectiveUnit { get; }
         public string ObjectiveId { get; }

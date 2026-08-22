@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 public class UpgradeManager : NetworkBehaviour
@@ -11,6 +12,7 @@ public class UpgradeManager : NetworkBehaviour
     private UpgradeDatabase upgradeDatabase;
 
     private readonly Dictionary<uint, Dictionary<string, int>> _purchaseCountsByPlayer = new Dictionary<uint, Dictionary<string, int>>();
+    private DisposableBag serverSubscriptions;
 
     private void Awake()
     {
@@ -27,7 +29,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         if (isServer)
         {
-            EventManager.Instance.Subscribe<BuyUpgradeEvent>(OnBuyUpgradeEvent);
+            GameMessages.Subscribe<BuyUpgradeEvent>(ref serverSubscriptions, OnBuyUpgradeEvent);
         }
     }
 
@@ -38,10 +40,8 @@ public class UpgradeManager : NetworkBehaviour
             Instance = null;
         }
 
-        if (isServer)
-        {
-            EventManager.Instance.Unsubscribe<BuyUpgradeEvent>(OnBuyUpgradeEvent);
-        }
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
     }
 
     [Server]
@@ -210,6 +210,6 @@ public class UpgradeManager : NetworkBehaviour
     [Server]
     private void PublishResult(PlayerController buyer, bool success, string message, string upgradeId, int cost)
     {
-        EventManager.Instance.Publish(new UpgradePurchaseResultEvent(buyer, success, message, upgradeId, cost));
+        GameMessages.Publish(new UpgradePurchaseResultEvent(buyer, success, message, upgradeId, cost));
     }
 }

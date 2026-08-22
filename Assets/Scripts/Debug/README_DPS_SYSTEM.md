@@ -37,7 +37,7 @@ Assets/Scripts/Debug/
 ### Design Principles
 
 - **Separation of Concerns**: Tracking logic (DPSTracker) is separate from UI logic (DPSDebugWindow)
-- **Event-Driven**: Uses existing EventManager - no direct coupling to game systems
+- **Event-Driven**: Uses MessagePipe via `GameMessages` - no direct coupling to game systems
 - **Passive Observer**: Only listens to events, never modifies game state
 - **Cache & Cleanup**: Caches calculated DPS values, cleans up old data automatically
 - **Zero Dependencies**: Other systems don't know this exists
@@ -264,10 +264,10 @@ For issues or questions about the DPS system:
 1. Check this README
 2. Review code comments in `DPSTracker.cs` and `DPSDebugWindow.cs`
 3. Test with simple scenarios (one unit, known damage values)
-4. Verify EventManager and existing events are working
+4. Verify MessagePipe and existing events are working
 
 ---
 
 **Last Updated**: January 2, 2026  
 **Unity Version**: Compatible with Unity 2021.3+  
-**Dependencies**: UI Toolkit, EventManager, UnitController
+**Dependencies**: UI Toolkit, MessagePipe, UnitController

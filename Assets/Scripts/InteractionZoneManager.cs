@@ -1,4 +1,5 @@
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 public class InteractionZoneManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class InteractionZoneManager : MonoBehaviour
 
     [SerializeField]
     private InteractionZone[] interactionZones;
+    private DisposableBag subscriptions;
 
     private void Awake()
     {
@@ -23,8 +25,8 @@ public class InteractionZoneManager : MonoBehaviour
     {
         GetAllInteractionZonesInScene();
 
-        EventManager.Instance.Subscribe<OpenedGateEvent>(OnOpenedGateEvent);
-        EventManager.Instance.Subscribe<ClosedGateEvent>(OnClosedGateEvent);
+        GameMessages.Subscribe<OpenedGateEvent>(ref subscriptions, OnOpenedGateEvent);
+        GameMessages.Subscribe<ClosedGateEvent>(ref subscriptions, OnClosedGateEvent);
     }
 
     void GetAllInteractionZonesInScene()
@@ -59,8 +61,8 @@ public class InteractionZoneManager : MonoBehaviour
     }
     void OnDestroy()
     {
-        EventManager.Instance.Unsubscribe<OpenedGateEvent>(OnOpenedGateEvent);
-        EventManager.Instance.Unsubscribe<ClosedGateEvent>(OnClosedGateEvent);
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
 }

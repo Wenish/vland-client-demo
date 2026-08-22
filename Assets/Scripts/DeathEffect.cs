@@ -1,7 +1,5 @@
 using System.Collections;
-using MessagePipe;
 using MyGame.Events;
-using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -17,8 +15,7 @@ public class DeathEffectController : MonoBehaviour
 
     void Start()
     {
-        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
-            subscriptions.Add(spawned.Subscribe(OnPlayerUnitSpawned));
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnPlayerUnitSpawned);
     }
 
     void OnDestroy()

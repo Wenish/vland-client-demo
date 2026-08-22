@@ -1,5 +1,6 @@
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 public class BuyWeaponManager : NetworkBehaviour {
@@ -7,6 +8,7 @@ public class BuyWeaponManager : NetworkBehaviour {
     public static BuyWeaponManager Instance { get; private set; }
 
     public WeaponMapping[] weaponMappings;
+    private DisposableBag serverSubscriptions;
 
     [System.Serializable]
     public struct WeaponMapping
@@ -26,13 +28,12 @@ public class BuyWeaponManager : NetworkBehaviour {
 
     void Start() {
         if (isServer) {
-            EventManager.Instance.Subscribe<BuyWeaponEvent>(OnWeaponBuyEvent);
+            GameMessages.Subscribe<BuyWeaponEvent>(ref serverSubscriptions, OnWeaponBuyEvent);
         }
     }
     void OnDestroy() {
-        if (isServer) {
-            EventManager.Instance.Subscribe<BuyWeaponEvent>(OnWeaponBuyEvent);
-        }
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
     }
 
     void OnWeaponBuyEvent(BuyWeaponEvent buyWeaponEvent) {

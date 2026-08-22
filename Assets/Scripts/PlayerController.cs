@@ -4,6 +4,7 @@ using Mirror;
 using Game.Scripts.Controllers;
 using MyGame.Events;
 using MyGame.Events.Ui;
+using R3;
 using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
@@ -12,13 +13,15 @@ public class PlayerController : NetworkBehaviour
     public GameObject Unit;
 
     private UnitController _unitController;
+    private DisposableBag serverSubscriptions;
+    private DisposableBag peerSubscriptions;
 
     [SyncVar(hook = nameof(OnGoldChanged))]
     public int Gold = 0;
 
     private void OnGoldChanged(int oldValue, int newValue)
     {
-        GameEventPublish.ToBoth(new PlayerGoldChangedEvent(this, oldValue, newValue));
+        GameMessages.Publish(new PlayerGoldChangedEvent(this, oldValue, newValue));
     }
 
     [SerializeField]
@@ -41,15 +44,15 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
         BindControlledUnit();
-        EventManager.Instance.Subscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
-        EventManager.Instance.Subscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
-        EventManager.Instance.Subscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        GameMessages.Subscribe<WaveStartedEvent>(ref serverSubscriptions, OnWaveStartedHealPlayerUnitFull);
+        GameMessages.Subscribe<PlayerReceivesGoldEvent>(ref serverSubscriptions, OnPlayerReceivesGold);
+        GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
     }
 
     void Start()
     {
-        EventManager.Instance.Subscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
-        EventManager.Instance.Subscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
+        GameMessages.Subscribe<UnitEnteredInteractionZone>(ref peerSubscriptions, OnUnitEnteredInteractionZone);
+        GameMessages.Subscribe<UnitExitedInteractionZone>(ref peerSubscriptions, OnUnitExitedInteractionZone);
     }
 
     void OnPlayerUnitSpawned(PlayerUnitSpawnedEvent e)
@@ -77,14 +80,12 @@ public class PlayerController : NetworkBehaviour
     private void OnDestroy()
     {
         if (isServer)
-        {
-            EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-            EventManager.Instance.Unsubscribe<WaveStartedEvent>(OnWaveStartedHealPlayerUnitFull);
-            EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
             EndVendorTrade();
-        }
-        EventManager.Instance.Unsubscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
-        EventManager.Instance.Unsubscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
+
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
+        peerSubscriptions.Dispose();
+        peerSubscriptions = new DisposableBag();
 
         StopCoroutine(WaitForUnit());
     }
@@ -209,7 +210,7 @@ public class PlayerController : NetworkBehaviour
             return;
 
         if (isLocalPlayer)
-            GameEventPublish.ToMessagePipe(new CloseVendorWindowIfInteractableEvent(unitExitedInteractionZone.Zone));
+            GameMessages.Publish(new CloseVendorWindowIfInteractableEvent(unitExitedInteractionZone.Zone));
         if (isServer && ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
             EndVendorTrade();
         if (ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
@@ -229,7 +230,7 @@ public class PlayerController : NetworkBehaviour
             return true;
         }
 
-        GameEventPublish.ToMessagePipe(new OpenVendorWindowEvent(session, this));
+        GameMessages.Publish(new OpenVendorWindowEvent(session, this));
         return true;
     }
 
@@ -323,7 +324,7 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     private void TargetVendorTransactResult(bool success, string message, string entryId, int timesBought)
     {
-        GameEventPublish.ToBoth(new VendorTransactResultEvent(this, success, message, entryId, timesBought));
+        GameMessages.Publish(new VendorTransactResultEvent(this, success, message, entryId, timesBought));
         if (!isLocalPlayer)
             return;
 
@@ -336,7 +337,7 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     private void TargetVendorSnapshot(string[] upgradeIds, int[] purchaseCounts, string[] buyIds, int[] buyStocks, int vendorGold)
     {
-        GameEventPublish.ToBoth(new VendorSnapshotEvent(this, upgradeIds, purchaseCounts, buyIds, buyStocks, vendorGold));
+        GameMessages.Publish(new VendorSnapshotEvent(this, upgradeIds, purchaseCounts, buyIds, buyStocks, vendorGold));
     }
 
     [Command]
@@ -349,7 +350,7 @@ public class PlayerController : NetworkBehaviour
 
         if (_interactionZone.InteractionType == InteractionType.BuyUpgrade)
         {
-            EventManager.Instance.Publish(new BuyUpgradeEvent(_interactionZone, this));
+            GameMessages.Publish(new BuyUpgradeEvent(_interactionZone, this));
             return;
         }
 
@@ -365,11 +366,11 @@ public class PlayerController : NetworkBehaviour
         {
             case InteractionType.OpenGate:
                 Debug.Log("Open Gate");
-                EventManager.Instance.Publish(new OpenGateEvent(_interactionZone.InteractionId));
+                GameMessages.Publish(new OpenGateEvent(_interactionZone.InteractionId));
                 break;
             case InteractionType.BuyWeapon:
                 Debug.Log("Buy Weapon");
-                EventManager.Instance.Publish(new BuyWeaponEvent(_interactionZone.InteractionId, this));
+                GameMessages.Publish(new BuyWeaponEvent(_interactionZone.InteractionId, this));
                 break;
         }
     }
@@ -380,6 +381,6 @@ public class PlayerController : NetworkBehaviour
         if (_interactionZone == null) return;
         if (_interactionZone.InteractionType != InteractionType.BuyUpgrade) return;
 
-        EventManager.Instance.Publish(new BuyUpgradeEvent(_interactionZone, this, upgradeId));
+        GameMessages.Publish(new BuyUpgradeEvent(_interactionZone, this, upgradeId));
     }
 }

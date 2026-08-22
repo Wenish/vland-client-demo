@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using MessagePipe;
 using MyGame.Events;
-using ShadowInfection.DI;
 using TMPro;
 using UnityEngine;
 
@@ -23,12 +21,9 @@ public class FloatingInteractTextManager : MonoBehaviour
     {
         subscriptions.Dispose();
         subscriptions = new R3.DisposableBag();
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitEnteredInteractionZone> entered))
-            subscriptions.Add(entered.Subscribe(OnUnitEnteredInteractionZone));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitExitedInteractionZone> exited))
-            subscriptions.Add(exited.Subscribe(OnUnitExitedInteractionZone));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
-            subscriptions.Add(spawned.Subscribe(OnMyPlayerUnitSpawned));
+        GameMessages.Subscribe<UnitEnteredInteractionZone>(ref subscriptions, OnUnitEnteredInteractionZone);
+        GameMessages.Subscribe<UnitExitedInteractionZone>(ref subscriptions, OnUnitExitedInteractionZone);
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnMyPlayerUnitSpawned);
     }
 
     void OnDisable()

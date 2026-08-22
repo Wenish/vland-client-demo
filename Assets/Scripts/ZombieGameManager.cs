@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -62,6 +63,7 @@ public class ZombieGameManager : NetworkBehaviour
 
     private readonly HashSet<uint> trackedZombieNetIds = new HashSet<uint>();
     private readonly Dictionary<string, int> recurringRuleNextWave = new Dictionary<string, int>();
+    private DisposableBag serverSubscriptions;
     private Coroutine waveLoopCoroutine;
     private Coroutine autoReturnToLobbyCoroutine;
     private float nextLeaderboardReconcileAt = 0f;
@@ -93,10 +95,10 @@ public class ZombieGameManager : NetworkBehaviour
     {
         base.OnStartServer();
 
-        EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDied);
-        EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
-        EventManager.Instance.Subscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
-        EventManager.Instance.Subscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        GameMessages.Subscribe<UnitDiedEvent>(ref serverSubscriptions, OnUnitDied);
+        GameMessages.Subscribe<UnitDamagedEvent>(ref serverSubscriptions, OnUnitDamaged);
+        GameMessages.Subscribe<PlayerReceivesGoldEvent>(ref serverSubscriptions, OnPlayerReceivesGold);
+        GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
         ResetRecurringSpecialWaveState();
         ResetLeaderboardState();
 
@@ -127,10 +129,7 @@ public class ZombieGameManager : NetworkBehaviour
             autoReturnToLobbyCoroutine = null;
         }
 
-        EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
-        EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
-        EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
-        EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        DisposeServerSubscriptions();
     }
 
     public override void OnStopClient()
@@ -149,15 +148,14 @@ public class ZombieGameManager : NetworkBehaviour
             Singleton = null;
         }
 
-        if (isServer)
-        {
-            EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDied);
-            EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
-            EventManager.Instance.Unsubscribe<PlayerReceivesGoldEvent>(OnPlayerReceivesGold);
-            EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-        }
-
+        DisposeServerSubscriptions();
         StopAllCoroutines();
+    }
+
+    private void DisposeServerSubscriptions()
+    {
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
     }
 
     private void Update()
@@ -203,8 +201,8 @@ public class ZombieGameManager : NetworkBehaviour
         queuedSpawnCount = 0;
         runStartedAtServerTime = Time.time;
 
-        GameEventPublish.ToBoth(new ZombieGameOverEvent(false));
-        GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(false, 0f));
+        GameMessages.Publish(new ZombieGameOverEvent(false));
+        GameMessages.Publish(new ZombieReturnToLobbyCountdownEvent(false, 0f));
 
         waveLoopCoroutine = StartCoroutine(ServerWaveLoop());
     }
@@ -230,7 +228,7 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        EventManager.Instance.Publish(new ZombieRunEndedEvent(
+        GameMessages.Publish(new ZombieRunEndedEvent(
             isGameOver ? ZombieRunEndReason.ReturnToLobbyAfterGameOver : ZombieRunEndReason.HostEndedEarly));
 
         returnToLobbyRequested = true;
@@ -382,17 +380,17 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void HookOnIsGameOverChanged(bool oldValue, bool newValue)
     {
-        GameEventPublish.ToBoth(new ZombieGameOverEvent(newValue));
+        GameMessages.Publish(new ZombieGameOverEvent(newValue));
     }
 
     private void HookOnAutoReturnToLobbyEnabledChanged(bool oldValue, bool newValue)
     {
-        GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(newValue, returnToLobbyCountdownSeconds));
+        GameMessages.Publish(new ZombieReturnToLobbyCountdownEvent(newValue, returnToLobbyCountdownSeconds));
     }
 
     private void HookOnReturnToLobbyCountdownChanged(float oldValue, float newValue)
     {
-        GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
+        GameMessages.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
     }
 
     private void RefreshZombieSpawns()
@@ -683,7 +681,7 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void RaiseOnNewWaveStartedEvent(int waveNumber, int totalZombies)
     {
-        GameEventPublish.ToBoth(new WaveStartedEvent(waveNumber, totalZombies));
+        GameMessages.Publish(new WaveStartedEvent(waveNumber, totalZombies));
         RpcWaveStarted(waveNumber, totalZombies);
     }
 
@@ -695,7 +693,7 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        GameEventPublish.ToBoth(new WaveStartedEvent(waveNumber, totalZombies));
+        GameMessages.Publish(new WaveStartedEvent(waveNumber, totalZombies));
     }
 
     [Server]
@@ -828,7 +826,7 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void RaiseLeaderboardChanged()
     {
-        GameEventPublish.ToBoth(new ZombieLeaderboardChangedEvent(CopyLeaderboardRows()));
+        GameMessages.Publish(new ZombieLeaderboardChangedEvent(CopyLeaderboardRows()));
     }
 
     private ZombieLeaderboardRow[] CopyLeaderboardRows()
@@ -1017,8 +1015,8 @@ public class ZombieGameManager : NetworkBehaviour
         isGameOver = true;
         StopZombieMode();
 
-        GameEventPublish.ToBoth(new ZombieGameOverEvent(true));
-        EventManager.Instance.Publish(new ZombieRunEndedEvent(ZombieRunEndReason.AllPlayersDead));
+        GameMessages.Publish(new ZombieGameOverEvent(true));
+        GameMessages.Publish(new ZombieRunEndedEvent(ZombieRunEndReason.AllPlayersDead));
 
         if (isServerOnly && autoReturnToLobbyCoroutine == null)
         {
@@ -1038,7 +1036,7 @@ public class ZombieGameManager : NetworkBehaviour
 
         if (isServerOnly)
         {
-            GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(value, returnToLobbyCountdownSeconds));
+            GameMessages.Publish(new ZombieReturnToLobbyCountdownEvent(value, returnToLobbyCountdownSeconds));
         }
     }
 
@@ -1054,7 +1052,7 @@ public class ZombieGameManager : NetworkBehaviour
 
         if (isServerOnly)
         {
-            GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, value));
+            GameMessages.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, value));
         }
     }
 
@@ -1261,7 +1259,7 @@ public class ZombieGameManager : NetworkBehaviour
     private void RaiseWaveProgressChangedEvent()
     {
         float percent = CurrentWaveKilledPercent;
-        GameEventPublish.ToMessagePipe(new WaveProgressChangedEvent(currentWave, currentWaveKilledCount, currentWaveTotalCount, percent));
+        GameMessages.Publish(new WaveProgressChangedEvent(currentWave, currentWaveKilledCount, currentWaveTotalCount, percent));
     }
 
     [Server]
@@ -1294,10 +1292,10 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        GameEventPublish.ToBoth(new UnitDroppedGoldEvent(zombie, amount, killer));
+        GameMessages.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
         RpcZombieDroppedGold(amount, zombie, killer);
 
-        EventManager.Instance.Publish(new PlayerReceivesGoldEvent(killer, amount));
+        GameMessages.Publish(new PlayerReceivesGoldEvent(killer, amount));
         RpcPlayerReceivedGold(amount, killer);
     }
 
@@ -1309,7 +1307,7 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        GameEventPublish.ToBoth(new UnitDroppedGoldEvent(zombie, amount, killer));
+        GameMessages.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
     }
 
     [ClientRpc]
@@ -1320,7 +1318,7 @@ public class ZombieGameManager : NetworkBehaviour
             return;
         }
 
-        EventManager.Instance.Publish(new PlayerReceivesGoldEvent(player, amount));
+        GameMessages.Publish(new PlayerReceivesGoldEvent(player, amount));
     }
 
     private class WavePlan

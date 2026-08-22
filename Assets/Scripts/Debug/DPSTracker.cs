@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 namespace ShadowInfection.Debug
@@ -29,6 +30,7 @@ namespace ShadowInfection.Debug
         private Dictionary<UnitController, float> dpsCache = new Dictionary<UnitController, float>();
         private float lastCacheUpdateTime;
         private const float CACHE_UPDATE_INTERVAL = 0.1f; // Update cache 10 times per second
+        private DisposableBag subscriptions;
 
         private struct DamageRecord
         {
@@ -57,20 +59,16 @@ namespace ShadowInfection.Debug
 
         private void OnEnable()
         {
-            if (EventManager.Instance != null)
-            {
-                EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
-                EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-            }
+            subscriptions.Dispose();
+            subscriptions = new DisposableBag();
+            GameMessages.Subscribe<UnitDamagedEvent>(ref subscriptions, OnUnitDamaged);
+            GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnMyPlayerUnitSpawned);
         }
 
         private void OnDisable()
         {
-            if (EventManager.Instance != null)
-            {
-                EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
-                EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
-            }
+            subscriptions.Dispose();
+            subscriptions = new DisposableBag();
         }
 
         private void Update()

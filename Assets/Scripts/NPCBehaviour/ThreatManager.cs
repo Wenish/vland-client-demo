@@ -1,5 +1,6 @@
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -51,6 +52,7 @@ namespace NPCBehaviour
         private ThreatTable _threatTable;
         private UnitController _unit;
         private bool _isInitialized;
+        private DisposableBag subscriptions;
 
         // Public properties
         public ThreatTable ThreatTable => _threatTable;
@@ -78,9 +80,8 @@ namespace NPCBehaviour
             if (_isInitialized)
             {
                 _threatTable?.ClearAll();
-                
-                // Unsubscribe from events
-                EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
+                subscriptions.Dispose();
+                subscriptions = new DisposableBag();
             }
         }
 
@@ -101,9 +102,8 @@ namespace NPCBehaviour
 
             _threatTable = new ThreatTable(threatDecayRate, maxThreat, threatRange);
             _isInitialized = true;
-            
-            // Subscribe to damage events via EventManager
-            EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
+
+            GameMessages.Subscribe<UnitDamagedEvent>(ref subscriptions, OnUnitDamaged);
 
             if (debugMode)
                 Debug.Log($"[ThreatManager] Initialized on {gameObject.name}");

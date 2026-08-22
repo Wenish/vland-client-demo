@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 /// <summary>
-/// Attachable runtime that wires SkillEventTriggerData to the global EventManager and executes effect chains.
+/// Attachable runtime that wires SkillEventTriggerData to MessagePipe and unit instance events, then executes effect chains.
 /// Expected to live alongside NetworkedSkillInstance on the spawned skill object.
 /// </summary>
 public class ReactiveTriggerRunner : NetworkBehaviour
@@ -55,6 +56,8 @@ public class ReactiveTriggerRunner : NetworkBehaviour
     }
 
     private readonly List<Action> _unsubscribers = new();
+    private DisposableBag messageSubscriptions;
+
     private void UnsubscribeAll()
     {
         for (int i = _unsubscribers.Count - 1; i >= 0; i--)
@@ -63,6 +66,8 @@ public class ReactiveTriggerRunner : NetworkBehaviour
             catch { /* ignore */ }
         }
         _unsubscribers.Clear();
+        messageSubscriptions.Dispose();
+        messageSubscriptions = new DisposableBag();
     }
 
     /// <summary>
@@ -106,11 +111,9 @@ public class ReactiveTriggerRunner : NetworkBehaviour
     }
 
     // Convenience for subscribing to global events with method groups
-    public void Subscribe<T>(Action<T> handler) where T : GameEvent
+    public void Subscribe<T>(Action<T> handler)
     {
-        if (EventManager.Instance == null) return;
-        EventManager.Instance.Subscribe(handler);
-        _unsubscribers.Add(() => EventManager.Instance?.Unsubscribe(handler));
+        GameMessages.Subscribe(ref messageSubscriptions, handler);
     }
 
     /// <summary>

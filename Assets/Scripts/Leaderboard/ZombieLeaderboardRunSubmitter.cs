@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -24,9 +25,9 @@ public sealed class ZombieLeaderboardRunSubmitter : MonoBehaviour
     [SerializeField] private int maxRetryAttempts = 3;
     [SerializeField] private float initialRetryDelaySeconds = 1.5f;
 
-    private bool isSubscribed;
     private bool isProcessingQueue;
     private readonly Queue<QueuedSubmission> pendingSubmissions = new Queue<QueuedSubmission>();
+    private DisposableBag subscriptions;
 
     private int runSequence;
     private int activeRunSequence = -1;
@@ -61,11 +62,8 @@ public sealed class ZombieLeaderboardRunSubmitter : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
         cts = new CancellationTokenSource();
-    }
-
-    private void Update()
-    {
-        TrySubscribe();
+        GameMessages.Subscribe<ZombieGameOverEvent>(ref subscriptions, HandleZombieGameOverEvent);
+        GameMessages.Subscribe<ZombieRunEndedEvent>(ref subscriptions, HandleZombieRunEndedEvent);
     }
 
     private void OnDestroy()
@@ -85,33 +83,10 @@ public sealed class ZombieLeaderboardRunSubmitter : MonoBehaviour
         }
     }
 
-    private void TrySubscribe()
-    {
-        if (isSubscribed)
-        {
-            return;
-        }
-
-        if (EventManager.Instance == null)
-        {
-            return;
-        }
-
-        EventManager.Instance.Subscribe<ZombieGameOverEvent>(HandleZombieGameOverEvent);
-        EventManager.Instance.Subscribe<ZombieRunEndedEvent>(HandleZombieRunEndedEvent);
-        isSubscribed = true;
-    }
-
     private void Unsubscribe()
     {
-        if (!isSubscribed || EventManager.Instance == null)
-        {
-            return;
-        }
-
-        EventManager.Instance.Unsubscribe<ZombieGameOverEvent>(HandleZombieGameOverEvent);
-        EventManager.Instance.Unsubscribe<ZombieRunEndedEvent>(HandleZombieRunEndedEvent);
-        isSubscribed = false;
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
     private void HandleZombieGameOverEvent(ZombieGameOverEvent gameOverEvent)
