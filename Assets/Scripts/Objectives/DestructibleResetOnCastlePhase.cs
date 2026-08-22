@@ -1,5 +1,6 @@
 using Mirror;
-using ShadowInfection.DI;
+using MyGame.Events;
+using R3;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -10,7 +11,7 @@ public class DestructibleResetOnCastlePhase : NetworkBehaviour
     private CastleSiegeManager.MatchPhase rebuildOnPhase = CastleSiegeManager.MatchPhase.Countdown;
 
     private DestructibleObjective _objective;
-    private CastleSiegeManager _manager;
+    private DisposableBag subscriptions;
 
     private void Awake()
     {
@@ -22,35 +23,23 @@ public class DestructibleResetOnCastlePhase : NetworkBehaviour
         base.OnStartServer();
 
         if (_objective == null)
-        {
             _objective = GetComponent<DestructibleObjective>();
-        }
 
-        _manager = GameServices.Get<CastleSiegeManager>();
-        if (_manager != null)
-        {
-            _manager.OnMatchPhaseChanged += OnMatchPhaseChanged;
-        }
+        GameMessages.Subscribe<CastleSiegePhaseChangedEvent>(ref subscriptions, OnMatchPhaseChanged);
     }
 
     public override void OnStopServer()
     {
-        if (_manager != null)
-        {
-            _manager.OnMatchPhaseChanged -= OnMatchPhaseChanged;
-            _manager = null;
-        }
-
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
         base.OnStopServer();
     }
 
     [Server]
-    private void OnMatchPhaseChanged(CastleSiegeManager.MatchPhase phase)
+    private void OnMatchPhaseChanged(CastleSiegePhaseChangedEvent evt)
     {
-        if (phase != rebuildOnPhase)
-        {
+        if (evt == null || evt.Phase != rebuildOnPhase)
             return;
-        }
 
         _objective?.ServerRebuildNow();
     }

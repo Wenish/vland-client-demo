@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Mirror;
 using ShadowInfection.DI;
+using ShadowInfection.Interactions;
 using ShadowInfection.Match;
 using UnityEngine;
 
@@ -39,7 +40,10 @@ public class VendorManager : NetworkBehaviour
 
         InteractionZone best = null;
         var bestSqr = float.MaxValue;
-        var zones = FindObjectsByType<InteractionZone>();
+        var zones = GameServices.Get<IInteractionZoneRegistry>()?.Zones;
+        if (zones == null)
+            return null;
+
         foreach (var zone in zones)
         {
             if (zone == null || zone.InteractionType != InteractionType.OpenVendor || zone.VendorCatalog == null)

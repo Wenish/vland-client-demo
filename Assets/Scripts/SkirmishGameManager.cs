@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 using System;
 using System.Collections.Generic;
+using MyGame.Events;
 using ShadowInfection.Skirmish;
 
 public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
@@ -43,12 +44,6 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
 
     public override int TeamCount => teamSpawns?.Count ?? 0;
     public int TargetRoundWins => targetRoundWins;
-
-    public event Action<int> OnRoundChanged = delegate { };
-    public event Action<RoundState> OnRoundStateChanged = delegate { };
-    public event Action<float> OnCountdownChanged = delegate { };
-    public event Action<(int winnerTeam, bool isDraw)> OnRoundEnded = delegate { };
-    public event Action<int> OnMatchEnded = delegate { };
 
     private readonly SyncDictionary<int, int> _teamRoundWins = new SyncDictionary<int, int>();
     private bool _hasRaisedMatchEndedEvent;
@@ -102,7 +97,7 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
             return;
 
         _lastRaisedRoundResolutionSequence = resolutionSequence;
-        OnRoundEnded((winnerTeam, isDraw));
+        GameMessages.Publish(new SkirmishRoundEndedEvent(winnerTeam, isDraw));
     }
 
     private void ResetMatchEndedEventState()
@@ -121,7 +116,7 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
 
         _hasRaisedMatchEndedEvent = true;
         _lastRaisedMatchWinnerTeam = winnerTeam;
-        OnMatchEnded(winnerTeam);
+        GameMessages.Publish(new SkirmishMatchEndedEvent(winnerTeam));
     }
 
     [Server]
@@ -131,7 +126,7 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
         CurrentRound = value;
 
         if (isServerOnly)
-            OnRoundChanged(value);
+            GameMessages.Publish(new SkirmishRoundChangedEvent(value));
     }
 
     [Server]
@@ -141,7 +136,7 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
         CurrentRoundState = value;
 
         if (isServerOnly)
-            OnRoundStateChanged(value);
+            GameMessages.Publish(new SkirmishRoundStateChangedEvent(value));
     }
 
     [Server]
@@ -151,7 +146,7 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
         CountdownRemaining = value;
 
         if (isServerOnly)
-            OnCountdownChanged(value);
+            GameMessages.Publish(new SkirmishCountdownChangedEvent(value));
     }
 
     protected override void Awake()
@@ -311,17 +306,17 @@ public class SkirmishGameManager : MatchGameManagerBase, ISkirmishHost
 
     private void HookOnRoundNumberChanged(int oldValue, int newValue)
     {
-        OnRoundChanged(newValue);
+        GameMessages.Publish(new SkirmishRoundChangedEvent(newValue));
     }
 
     private void HookOnRoundStateChanged(RoundState oldValue, RoundState newValue)
     {
-        OnRoundStateChanged(newValue);
+        GameMessages.Publish(new SkirmishRoundStateChangedEvent(newValue));
     }
 
     private void HookOnCountdownChanged(float oldValue, float newValue)
     {
-        OnCountdownChanged(newValue);
+        GameMessages.Publish(new SkirmishCountdownChangedEvent(newValue));
     }
 
     private void HookOnMatchEndedChanged(bool oldValue, bool newValue)

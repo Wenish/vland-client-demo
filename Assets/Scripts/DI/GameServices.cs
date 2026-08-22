@@ -1,3 +1,7 @@
+using ShadowInfection.Interactions;
+using ShadowInfection.Units;
+using ShadowInfection.World;
+
 namespace ShadowInfection.DI
 {
     /// <summary>
@@ -34,6 +38,11 @@ namespace ShadowInfection.DI
         public static IAreaZoneSpawner AreaZones => Get<IAreaZoneSpawner>();
         public static VendorManager Vendors => Get<VendorManager>();
         public static UpgradeManager Upgrades => Get<UpgradeManager>();
+        public static IInteractionHandlerRegistry Interactions => Get<IInteractionHandlerRegistry>();
+        public static IInteractionZoneRegistry InteractionZones => Get<IInteractionZoneRegistry>();
+        public static IUnitRegistry UnitsAlive => Get<IUnitRegistry>();
+        public static IGateRegistry Gates => Get<IGateRegistry>();
+        public static IZombieSpawnRegistry ZombieSpawns => Get<IZombieSpawnRegistry>();
         public static MatchGameManagerBase Match => Get<MatchGameManagerBase>();
     }
 }

@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using ShadowInfection.World;
 using UnityEngine;
 
 public class ZombieSpawnController : MonoBehaviour
@@ -7,15 +6,13 @@ public class ZombieSpawnController : MonoBehaviour
     public bool isActive = false;
     public int spawnGroupId = 0;
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnEnable()
     {
-        
+        ZombieSpawnRegistry.RegisterOrDefer(this);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        ZombieSpawnRegistry.UnregisterOrDefer(this);
     }
 }

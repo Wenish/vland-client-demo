@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using ShadowInfection.Units;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -43,10 +44,9 @@ namespace NPCBehaviour
             else
             {
                 // Find closest enemy
-                var allUnits = Object.FindObjectsByType<UnitController>();
                 float closestDist = float.MaxValue;
 
-                foreach (var unit in allUnits)
+                foreach (var unit in UnitRegistryAccess.GetUnits())
                 {
                     if (unit == null || unit == context.Unit || unit.team == context.Team || unit.IsDead)
                         continue;

@@ -4,6 +4,7 @@ using Mirror;
 using MyGame.Events;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.World;
 using ShadowInfection.Zombie;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -257,7 +258,21 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
 
     private void RefreshZombieSpawns()
     {
-        zombieSpawns = FindObjectsByType<ZombieSpawnController>();
+        var registry = GameServices.Get<IZombieSpawnRegistry>();
+        if (registry == null)
+        {
+            zombieSpawns = System.Array.Empty<ZombieSpawnController>();
+            return;
+        }
+
+        var list = new List<ZombieSpawnController>(registry.Spawns.Count);
+        foreach (var spawn in registry.Spawns)
+        {
+            if (spawn != null)
+                list.Add(spawn);
+        }
+
+        zombieSpawns = list.ToArray();
     }
 
     private Vector3 GetZombieSpawnPosition()

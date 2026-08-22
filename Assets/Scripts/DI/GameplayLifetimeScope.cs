@@ -1,5 +1,8 @@
+using ShadowInfection.Interactions;
 using ShadowInfection.Match;
 using ShadowInfection.UI.ZombieMatch;
+using ShadowInfection.Units;
+using ShadowInfection.World;
 using ShadowInfection.Zombie;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -171,10 +174,21 @@ namespace ShadowInfection.DI
             RegisterIfPresent<PlayerUnitsManager>(builder, out _);
             RegisterIfPresent<VendorManager>(builder, out _);
             RegisterIfPresent<UpgradeManager>(builder, out _);
-            RegisterIfPresent<BuyWeaponManager>(builder, out _);
             RegisterIfPresent<InteractionZoneManager>(builder, out _);
             RegisterIfPresent<SpawnManager>(builder, out _);
             RegisterIfPresent<ShadowInfection.Debug.DPSTracker>(builder, out _);
+
+            builder.Register<IInteractionHandlerRegistry>(
+                _ => new InteractionHandlerRegistry(new IInteractionHandler[]
+                {
+                    new OpenGateInteractionHandler(),
+                    new BuyUpgradeInteractionHandler(),
+                }),
+                Lifetime.Singleton);
+            builder.Register<InteractionZoneRegistry>(Lifetime.Singleton).As<IInteractionZoneRegistry>();
+            builder.Register<UnitRegistry>(Lifetime.Singleton).As<IUnitRegistry>();
+            builder.Register<GateRegistry>(Lifetime.Singleton).As<IGateRegistry>();
+            builder.Register<ZombieSpawnRegistry>(Lifetime.Singleton).As<IZombieSpawnRegistry>();
 
             RegisterIfPresent<ZombieGameManager>(builder, out var zombie);
             RegisterIfPresent<CastleSiegeManager>(builder, out var castle);

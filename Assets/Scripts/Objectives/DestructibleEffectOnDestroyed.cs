@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.Units;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -146,10 +147,8 @@ public class DestructibleEffectOnDestroyed : NetworkBehaviour
             return _objective != null ? _objective.ObjectiveUnit : null;
         }
 
-        var allUnits = FindObjectsByType<UnitController>();
-        for (int i = 0; i < allUnits.Length; i++)
+        foreach (var unit in UnitRegistryAccess.GetUnits())
         {
-            var unit = allUnits[i];
             if (unit == null) continue;
             if (unit.IsDead) continue;
             if (unit.team != resolvedTeamId) continue;

@@ -1,60 +1,37 @@
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
+using MyGame.Events;
+using R3;
+using ShadowInfection.DI;
+using ShadowInfection.World;
 using UnityEngine;
 
 [RequireComponent(typeof(CastleSiegeManager))]
 public class CastleSiegeGateManager : MonoBehaviour
 {
-    CastleSiegeManager gameManager;
-    List<GateController> gateControllers = new List<GateController>();
-    
-
-    private void Awake()
-    {
-        gameManager = FindAnyObjectByType<CastleSiegeManager>();
-
-        if (gameManager == null)
-        {
-            Debug.LogError("CastleSiegeManager not found in scene.");
-        }
-
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
-        
-        Debug.Log($"[CastleSiegeGateManager] Found {gateControllers.Count} gates in the scene.");
-    }
+    private DisposableBag subscriptions;
 
     private void OnEnable()
     {
         if (!NetworkServer.active)
-        {
             return;
-        }
 
-        if (gameManager != null)
-        {
-            gameManager.OnMatchPhaseChanged += OnMatchPhaseChanged;
-        }
+        GameMessages.Subscribe<CastleSiegePhaseChangedEvent>(ref subscriptions, OnMatchPhaseChanged);
     }
 
     private void OnDisable()
     {
-        if (gameManager != null)
-        {
-            gameManager.OnMatchPhaseChanged -= OnMatchPhaseChanged;
-        }
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
-    private void OnMatchPhaseChanged(CastleSiegeManager.MatchPhase newPhase)
+    private void OnMatchPhaseChanged(CastleSiegePhaseChangedEvent evt)
     {
-        if (!NetworkServer.active)
-        {
+        if (!NetworkServer.active || evt == null)
             return;
-        }
-        
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
-        Debug.Log($"[CastleSiegeGateManager] Match phase changed to {newPhase}. Found {gateControllers.Count} gates in the scene.");
 
-        switch (newPhase)
+        switch (evt.Phase)
         {
             case CastleSiegeManager.MatchPhase.Warmup:
                 CloseAllGates();
@@ -65,19 +42,27 @@ public class CastleSiegeGateManager : MonoBehaviour
         }
     }
 
+    private static IEnumerable<GateController> GetGates()
+    {
+        var registry = GameServices.Get<IGateRegistry>();
+        return registry != null ? registry.Gates : Enumerable.Empty<GateController>();
+    }
+
     private void CloseAllGates()
     {
-        foreach (var gate in gateControllers)
+        foreach (var gate in GetGates())
         {
-            gate.CloseGate();
+            if (gate != null)
+                gate.CloseGate();
         }
     }
 
     private void OpenAllGates()
     {
-        foreach (var gate in gateControllers)
+        foreach (var gate in GetGates())
         {
-            gate.OpenGate();
+            if (gate != null)
+                gate.OpenGate();
         }
     }
 }

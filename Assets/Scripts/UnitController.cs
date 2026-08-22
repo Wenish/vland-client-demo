@@ -2,6 +2,7 @@ using System;
 using Mirror;
 using MyGame.Events;
 using ShadowInfection.DI;
+using ShadowInfection.Units;
 using UnityEngine;
 using UnityEngine.InputSystem; // New Input System
 
@@ -246,14 +247,21 @@ public class UnitController : NetworkBehaviour
     private RigidbodyConstraints _knockupSavedConstraints;
     private bool _knockupConstraintsOverridden = false;
 
+    private void OnEnable()
+    {
+        UnitRegistry.RegisterOrDefer(this);
+    }
+
     private void OnDisable()
     {
+        UnitRegistry.UnregisterOrDefer(this);
         EndKnockupConstraintOverride();
         _isKnockedUp = false;
     }
 
     private void OnDestroy()
     {
+        UnitRegistry.UnregisterOrDefer(this);
         EndKnockupConstraintOverride();
         _isKnockedUp = false;
     }

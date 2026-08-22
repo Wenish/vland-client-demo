@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using MyGame.Events;
 using ShadowInfection.CastleSiege;
 using ShadowInfection.DI;
 using UnityEngine;
@@ -37,18 +38,9 @@ public class CastleSiegeManager : MatchGameManagerBase, ICastleSiegeHost
     [SyncVar(hook = nameof(HookOnWinnerChanged))]
     public int WinnerTeamId = -1;
 
-    public event Action<MatchPhase> OnMatchPhaseChanged = delegate { };
-    public event Action OnPlayerJoined = delegate { };
-    public event Action OnPlayerLeft = delegate { };
-    public event Action<UnitController> OnUnitDied = delegate { };
-    public event Action<int> OnLordSpawned = delegate { };
-    public event Action<int> OnTeamEliminated = delegate { };
-    public event Action<int> OnMatchWinner = delegate { };
-
     private readonly HashSet<int> eliminatedTeams = new HashSet<int>();
     private readonly SyncList<byte> teamEliminatedFlags = new SyncList<byte>();
     private readonly Dictionary<int, CastleSiegeMapConfig.TeamConfig> teamConfigByTeamId = new Dictionary<int, CastleSiegeMapConfig.TeamConfig>();
-
     private double inGameStartServerTime = -1d;
     private bool lordsSpawned;
     private bool hasRaisedMatchWinnerEvent;
@@ -115,7 +107,7 @@ public class CastleSiegeManager : MatchGameManagerBase, ICastleSiegeHost
 
         hasRaisedMatchWinnerEvent = true;
         lastRaisedWinnerTeamId = winnerTeamId;
-        OnMatchWinner(winnerTeamId);
+        GameMessages.Publish(new CastleSiegeMatchWinnerEvent(winnerTeamId));
     }
 
     protected override void Awake()
@@ -230,11 +222,11 @@ public class CastleSiegeManager : MatchGameManagerBase, ICastleSiegeHost
     void ICastleSiegeHost.SetPhase(MatchPhase phase) => SetPhase(phase);
     void ICastleSiegeHost.ServerStartMatchLifecycle() => ServerStartMatchLifecycle();
     void ICastleSiegeHost.ServerEndMatchLifecycle(int winnerTeamId) => ServerEndMatchLifecycle(winnerTeamId);
-    void ICastleSiegeHost.RaisePlayerJoined() => OnPlayerJoined();
-    void ICastleSiegeHost.RaisePlayerLeft() => OnPlayerLeft();
-    void ICastleSiegeHost.RaiseUnitDied(UnitController unit) => OnUnitDied(unit);
-    void ICastleSiegeHost.RaiseLordSpawned(int teamId) => OnLordSpawned(teamId);
-    void ICastleSiegeHost.RaiseTeamEliminated(int teamId) => OnTeamEliminated(teamId);
+    void ICastleSiegeHost.RaisePlayerJoined() => GameMessages.Publish(new CastleSiegePlayerJoinedEvent());
+    void ICastleSiegeHost.RaisePlayerLeft() => GameMessages.Publish(new CastleSiegePlayerLeftEvent());
+    void ICastleSiegeHost.RaiseUnitDied(UnitController unit) => GameMessages.Publish(new CastleSiegeUnitDiedEvent(unit));
+    void ICastleSiegeHost.RaiseLordSpawned(int teamId) => GameMessages.Publish(new CastleSiegeLordSpawnedEvent(teamId));
+    void ICastleSiegeHost.RaiseTeamEliminated(int teamId) => GameMessages.Publish(new CastleSiegeTeamEliminatedEvent(teamId));
     void ICastleSiegeHost.RaiseMatchWinner(int winnerTeamId) => RaiseMatchWinnerIfNeeded(winnerTeamId);
     void ICastleSiegeHost.CancelRespawnsForTeam(int teamId) => playerService?.CancelRespawnsForTeam(teamId);
     bool ICastleSiegeHost.TryFindSpawnPosition(Vector3 basePosition, out Vector3 validPosition) => TryFindSpawnPosition(basePosition, out validPosition);
@@ -250,7 +242,7 @@ public class CastleSiegeManager : MatchGameManagerBase, ICastleSiegeHost
             playerService?.RespawnAllActivePlayersToTeamSpawns();
 
         if (NetworkServer.active)
-            OnMatchPhaseChanged(newPhase);
+            GameMessages.Publish(new CastleSiegePhaseChangedEvent(newPhase));
     }
 
     [Server]
@@ -358,7 +350,7 @@ public class CastleSiegeManager : MatchGameManagerBase, ICastleSiegeHost
         if (NetworkServer.active)
             return;
 
-        OnMatchPhaseChanged(newValue);
+        GameMessages.Publish(new CastleSiegePhaseChangedEvent(newValue));
     }
 
     private void HookOnPhaseRemainingChanged(float oldValue, float newValue)

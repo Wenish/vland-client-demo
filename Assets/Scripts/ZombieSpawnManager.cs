@@ -1,18 +1,18 @@
+using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
+using ShadowInfection.World;
 using UnityEngine;
 
 public class ZombieSpawnManager : NetworkBehaviour
 {
-    public ZombieSpawnController[] zombieSpawns;
     public GateMapping[] gateMappings;
     private DisposableBag serverSubscriptions;
 
     void Start()
     {
-        GetAllZombieSpawnInScene();
-
         if (isServer)
         {
             GameMessages.Subscribe<OpenGateEvent>(ref serverSubscriptions, OnGateOpenEvent);
@@ -25,11 +25,6 @@ public class ZombieSpawnManager : NetworkBehaviour
         serverSubscriptions = new DisposableBag();
     }
 
-    void GetAllZombieSpawnInScene()
-    {
-        zombieSpawns = FindObjectsByType<ZombieSpawnController>();
-    }
-
     [System.Serializable]
     public struct GateMapping
     {
@@ -39,19 +34,21 @@ public class ZombieSpawnManager : NetworkBehaviour
 
     void OnGateOpenEvent(OpenGateEvent openGateEvent)
     {
+        var spawns = GameServices.Get<IZombieSpawnRegistry>()?.Spawns;
+        if (spawns == null)
+            return;
+
         foreach (var gateMapping in gateMappings)
         {
-            if (gateMapping.gateId == openGateEvent.GateId)
+            if (gateMapping.gateId != openGateEvent.GateId)
+                continue;
+
+            foreach (var spawnGroupId in gateMapping.spawnGroupId)
             {
-                foreach (var spawnGroupId in gateMapping.spawnGroupId)
+                foreach (var zombieSpawn in spawns)
                 {
-                    foreach (var zombieSpawn in zombieSpawns)
-                    {
-                        if (zombieSpawn.spawnGroupId == spawnGroupId)
-                        {
-                            zombieSpawn.isActive = true;
-                        }
-                    }
+                    if (zombieSpawn != null && zombieSpawn.spawnGroupId == spawnGroupId)
+                        zombieSpawn.isActive = true;
                 }
             }
         }

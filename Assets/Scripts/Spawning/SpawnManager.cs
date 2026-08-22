@@ -29,9 +29,15 @@ public class SpawnManager : NetworkBehaviour
     {
         base.OnStartServer();
 
-        if (autoDiscoverSpawners)
+        // Spawners self-register via UnitSpawnerBase.OnStartServer.
+        // Keep autoDiscover for scenes that still rely on late-placed spawners before
+        // their OnStartServer; Discover now no-ops when registries are already populated
+        // unless forced empty — prefer self-register only.
+        if (autoDiscoverSpawners && mobSpawners.Count == 0 && bossSpawners.Count == 0)
         {
-            DiscoverSpawners();
+            // Intentionally empty: self-registration replaced FindObjectsByType discovery.
+            if (debugMode)
+                Debug.Log("[SpawnManager] Waiting for spawners to self-register (Find discovery disabled).");
         }
     }
 
@@ -40,35 +46,17 @@ public class SpawnManager : NetworkBehaviour
     #region Spawner Discovery & Registration
 
     /// <summary>
-    /// Find and register all spawners in the scene.
+    /// Legacy discovery entry point. Prefer spawner self-registration via UnitSpawnerBase.
+    /// Kept for editor/debug callers; does not scan the scene.
     /// </summary>
     [Server]
     public void DiscoverSpawners()
     {
         if (!isServer) return;
 
-        // Clear existing registries
-        mobSpawners.Clear();
-        bossSpawners.Clear();
-        allSpawners.Clear();
-
-        // Find all mob spawners
-        MobSpawner[] foundMobSpawners = FindObjectsByType<MobSpawner>();
-        foreach (var spawner in foundMobSpawners)
-        {
-            RegisterMobSpawner(spawner);
-        }
-
-        // Find all boss spawners
-        BossSpawner[] foundBossSpawners = FindObjectsByType<BossSpawner>();
-        foreach (var spawner in foundBossSpawners)
-        {
-            RegisterBossSpawner(spawner);
-        }
-
         if (debugMode)
         {
-            Debug.Log($"[SpawnManager] Discovered {mobSpawners.Count} mob spawners and {bossSpawners.Count} boss spawners");
+            Debug.Log($"[SpawnManager] DiscoverSpawners is a no-op; {mobSpawners.Count} mob and {bossSpawners.Count} boss spawners currently registered.");
         }
     }
 
