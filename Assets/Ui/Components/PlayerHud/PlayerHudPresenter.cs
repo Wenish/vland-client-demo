@@ -8,6 +8,7 @@ using MessagePipe;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 
@@ -29,6 +30,7 @@ namespace ShadowInfection.UI.PlayerHud
 
         private readonly PlayerHudSettings settings;
         private readonly IZombieMatchUiSession zombieMatchSession;
+        private readonly IGameDatabases databases;
         private readonly ISubscriber<PlayerGoldChangedEvent> goldChanged;
         private readonly ISubscriber<WaveStartedEvent> waveStarted;
         private readonly ISubscriber<WaveProgressChangedEvent> waveProgress;
@@ -76,6 +78,7 @@ namespace ShadowInfection.UI.PlayerHud
         public PlayerHudPresenter(
             PlayerHudSettings settings,
             IZombieMatchUiSession zombieMatchSession,
+            IGameDatabases databases,
             ISubscriber<PlayerGoldChangedEvent> goldChanged,
             ISubscriber<WaveStartedEvent> waveStarted,
             ISubscriber<WaveProgressChangedEvent> waveProgress,
@@ -85,6 +88,7 @@ namespace ShadowInfection.UI.PlayerHud
         {
             this.settings = settings;
             this.zombieMatchSession = zombieMatchSession;
+            this.databases = databases;
             this.goldChanged = goldChanged;
             this.waveStarted = waveStarted;
             this.waveProgress = waveProgress;
@@ -289,10 +293,14 @@ namespace ShadowInfection.UI.PlayerHud
             }
 
             var localPlayer = FindLocalPlayer();
-            if (localPlayer == null || localPlayer.Unit == null || PlayerUnitsManager.Instance == null)
+            if (localPlayer == null || localPlayer.Unit == null)
                 return false;
 
-            var rows = PlayerUnitsManager.Instance.playerUnits;
+            var playerUnits = GameServices.PlayerUnits;
+            if (playerUnits == null)
+                return false;
+
+            var rows = playerUnits.playerUnits;
             for (var i = 0; i < rows.Count; i++)
             {
                 if (rows[i].Unit != localPlayer.Unit)
@@ -633,13 +641,12 @@ namespace ShadowInfection.UI.PlayerHud
             bannerCts = null;
         }
 
-        private static Texture2D ResolveSkillIcon(string skillName)
+        private Texture2D ResolveSkillIcon(string skillName)
         {
-            var database = DatabaseManager.Instance;
-            if (database == null || database.skillDatabase == null)
+            if (databases == null || databases.Skills == null)
                 return null;
 
-            return database.skillDatabase.GetSkillByName(skillName)?.iconTexture;
+            return databases.Skills.GetSkillByName(skillName)?.iconTexture;
         }
 
         private static PlayerController FindLocalPlayer()

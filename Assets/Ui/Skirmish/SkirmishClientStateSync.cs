@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -77,7 +78,7 @@ public class SkirmishClientStateSync : MonoBehaviour
     {
         if (_manager != null) return;
 
-        _manager = SkirmishGameManager.Instance;
+        _manager = GameServices.Skirmish;
         if (_manager == null) return;
 
         _manager.OnRoundChanged += HandleManagerStateChanged;

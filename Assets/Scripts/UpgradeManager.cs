@@ -6,24 +6,11 @@ using UnityEngine;
 
 public class UpgradeManager : NetworkBehaviour
 {
-    public static UpgradeManager Instance { get; private set; }
-
     [SerializeField]
     private UpgradeDatabase upgradeDatabase;
 
     private readonly Dictionary<uint, Dictionary<string, int>> _purchaseCountsByPlayer = new Dictionary<uint, Dictionary<string, int>>();
     private DisposableBag serverSubscriptions;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
 
     private void Start()
     {
@@ -35,11 +22,6 @@ public class UpgradeManager : NetworkBehaviour
 
     private void OnDestroy()
     {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
-
         serverSubscriptions.Dispose();
         serverSubscriptions = new DisposableBag();
     }

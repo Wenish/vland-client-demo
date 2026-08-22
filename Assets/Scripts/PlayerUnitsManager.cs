@@ -2,11 +2,10 @@ using Mirror;
 using MyGame.Events;
 using UnityEngine;
 using System.Collections.Generic;
+using ShadowInfection.DI;
 
 public class PlayerUnitsManager : NetworkBehaviour
 {
-    public static PlayerUnitsManager Instance { get; private set; }
-
     private MyNetworkRoomManager roomManager;
 
     public struct PlayerUnit
@@ -20,16 +19,8 @@ public class PlayerUnitsManager : NetworkBehaviour
     private const int BotConnectionIdStart = -100000;
     private int _nextBotConnectionId = BotConnectionIdStart;
 
-
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-
         roomManager = FindAnyObjectByType<MyNetworkRoomManager>();
     }
 
@@ -233,7 +224,14 @@ public class PlayerUnitsManager : NetworkBehaviour
         }
 
         Vector3 spawnPoint = GetNextPlayerSpawnPoint();
-        var unit = UnitSpawner.Instance.SpawnUnit(unitName, spawnPoint, Quaternion.Euler(0f, 0f, 0f));
+        var spawner = GameServices.Units;
+        if (spawner == null)
+        {
+            Debug.LogError("Unit spawner is missing. Cannot spawn player unit.");
+            return null;
+        }
+
+        var unit = spawner.SpawnUnit(unitName, spawnPoint, Quaternion.Euler(0f, 0f, 0f));
 
         if (unit != null)
         {

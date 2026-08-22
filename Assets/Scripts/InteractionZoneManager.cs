@@ -4,22 +4,9 @@ using UnityEngine;
 
 public class InteractionZoneManager : MonoBehaviour
 {
-    public static InteractionZoneManager Instance { get; private set; }
-
     [SerializeField]
     private InteractionZone[] interactionZones;
     private DisposableBag subscriptions;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
 
     void Start()
     {

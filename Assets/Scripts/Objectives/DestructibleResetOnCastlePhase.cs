@@ -1,4 +1,5 @@
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -25,7 +26,7 @@ public class DestructibleResetOnCastlePhase : NetworkBehaviour
             _objective = GetComponent<DestructibleObjective>();
         }
 
-        _manager = CastleSiegeManager.Instance;
+        _manager = GameServices.CastleSiege;
         if (_manager != null)
         {
             _manager.OnMatchPhaseChanged += OnMatchPhaseChanged;

@@ -11,26 +11,46 @@ public class WeaponRangedData : WeaponData
 
     public override void PerformAttack(UnitController attacker)
     {
-        // Get the position and rotation of the attacker
+        PerformAttack(attacker, null);
+    }
+
+    public void PerformAttack(UnitController attacker, IProjectileSpawner projectileSpawner)
+    {
+        if (projectile == null)
+        {
+            Debug.LogWarning("Projectile data is missing. Cannot spawn projectile.");
+            return;
+        }
+
+        if (projectileSpawner == null)
+        {
+            Debug.LogWarning("Projectile spawner is missing. Cannot spawn projectile.");
+            return;
+        }
+
         Vector3 attackerPosition = attacker.transform.position;
         Quaternion attackerRotation = attacker.transform.rotation;
-
-        // Calculate the position to spawn the projectile
         Vector3 spawnPosition = attackerPosition + attackerRotation * Vector3.forward * spawnDistance;
 
-        // Spawn the projectile
-        var projectileInstance = ProjectileSpawner.Instance.SpawnProjectile(projectile, spawnPosition + Vector3.up, attackerRotation);
+        var projectileInstance = projectileSpawner.SpawnProjectile(
+            projectile,
+            spawnPosition + Vector3.up,
+            attackerRotation);
+        if (projectileInstance == null)
+        {
+            Debug.LogWarning("Projectile spawner returned no projectile.");
+            return;
+        }
 
-        // Get the projectile component of the spawned projectile
         ProjectileController projectileController = projectileInstance.GetComponent<ProjectileController>();
         projectileController.shooter = attacker;
 
         projectileController.OnProjectileUnitHit += OnProjectileUnitHit;
-        projectileController.OnProjectileDestroyed += (proj) => {
+        projectileController.OnProjectileDestroyed += (proj) =>
+        {
             proj.OnProjectileUnitHit -= OnProjectileUnitHit;
             proj.OnProjectileDestroyed -= (p) => { };
         };
-
     }
 
     private void OnProjectileUnitHit((UnitController target, UnitController attacker) obj)

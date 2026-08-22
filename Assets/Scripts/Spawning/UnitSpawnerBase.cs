@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 /// <summary>
@@ -90,13 +91,14 @@ public abstract class UnitSpawnerBase : NetworkBehaviour
         Quaternion spawnRotation = Quaternion.identity;
 
         // Use UnitSpawner singleton to spawn the unit
-        if (UnitSpawner.Instance == null)
+        var unitSpawner = GameServices.Units;
+        if (unitSpawner == null)
         {
-            Debug.LogError($"[UnitSpawnerBase] UnitSpawner.Instance is null! Cannot spawn unit.");
+            Debug.LogError($"[UnitSpawnerBase] Unit spawner is missing! Cannot spawn unit.");
             return null;
         }
 
-        GameObject spawnedUnit = UnitSpawner.Instance.Spawn(
+        GameObject spawnedUnit = unitSpawner.Spawn(
             config.unitData,
             spawnPosition,
             spawnRotation,

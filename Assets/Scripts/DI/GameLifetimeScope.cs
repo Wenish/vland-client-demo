@@ -42,6 +42,25 @@ namespace ShadowInfection.DI
         [SerializeField]
         private TeamColorTable teamColorTable;
 
+        [Header("Databases")]
+        [SerializeField]
+        private WeaponDatabase weaponDatabase;
+
+        [SerializeField]
+        private SkillDatabase skillDatabase;
+
+        [SerializeField]
+        private UnitDatabase unitDatabase;
+
+        [SerializeField]
+        private ModelDatabase modelDatabase;
+
+        [SerializeField]
+        private ProjectileDatabase projectileDatabase;
+
+        [SerializeField]
+        private AreaZoneDatabase areaZoneDatabase;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
         {
@@ -257,15 +276,83 @@ namespace ShadowInfection.DI
 
             builder.RegisterInstance(colorTable);
             builder.Register<ITeamColorService, TeamColorService>(Lifetime.Singleton);
-            builder.Register<ZombieGameManagerUiSession>(Lifetime.Singleton)
-                .As<IZombieMatchUiSession>()
-                .As<IZombieMatchCommands>();
+
+            RegisterDatabases(builder);
+            RegisterLoadoutManager(builder);
+            RegisterApplicationSettings(builder);
+
             builder.Register<MirrorSessionFlowCommands>(Lifetime.Singleton)
                 .As<ISessionFlowCommands>();
             builder.Register<LoadoutManagerStore>(Lifetime.Singleton)
                 .As<ILoadoutStore>();
             builder.Register<DatabaseLoadoutCatalog>(Lifetime.Singleton)
                 .As<ILoadoutCatalog>();
+
+            var unmatchedSession = new ZombieGameManagerUiSession(null);
+            builder.RegisterInstance<IZombieMatchUiSession>(unmatchedSession);
+            builder.RegisterInstance<IZombieMatchCommands>(unmatchedSession);
+        }
+
+        private void RegisterDatabases(IContainerBuilder builder)
+        {
+            var weapons = LoadDatabase(weaponDatabase, "ScriptableObjects/WeaponDatabase")
+                ?? ScriptableObject.CreateInstance<WeaponDatabase>();
+            var skills = LoadDatabase(skillDatabase, "ScriptableObjects/SkillDatabase")
+                ?? ScriptableObject.CreateInstance<SkillDatabase>();
+            var units = LoadDatabase(unitDatabase, "ScriptableObjects/UnitDatabase")
+                ?? ScriptableObject.CreateInstance<UnitDatabase>();
+            var models = LoadDatabase(modelDatabase, "ScriptableObjects/ModelDatabase")
+                ?? ScriptableObject.CreateInstance<ModelDatabase>();
+            var projectiles = LoadDatabase(projectileDatabase, "ScriptableObjects/ProjectileDatabase")
+                ?? ScriptableObject.CreateInstance<ProjectileDatabase>();
+            var areaZones = LoadDatabase(areaZoneDatabase, "ScriptableObjects/AreaZoneDatabase")
+                ?? ScriptableObject.CreateInstance<AreaZoneDatabase>();
+
+            builder.RegisterInstance(weapons);
+            builder.RegisterInstance(skills);
+            builder.RegisterInstance(units);
+            builder.RegisterInstance(models);
+            builder.RegisterInstance(projectiles);
+            builder.RegisterInstance(areaZones);
+            builder.RegisterInstance<IGameDatabases>(new GameDatabases(
+                weapons, skills, units, models, projectiles, areaZones));
+        }
+
+        private static T LoadDatabase<T>(T serialized, string resourcePath) where T : ScriptableObject
+        {
+            if (serialized != null)
+                return serialized;
+
+            var loaded = Resources.Load<T>(resourcePath);
+            if (loaded == null)
+                UnityEngine.Debug.LogError($"Missing {typeof(T).Name} at Resources/{resourcePath}.");
+
+            return loaded;
+        }
+
+        private void RegisterLoadoutManager(IContainerBuilder builder)
+        {
+            var loadout = GetComponent<LoadoutManager>();
+            if (loadout == null)
+                loadout = FindAnyObjectByType<LoadoutManager>(FindObjectsInactive.Include);
+            if (loadout == null)
+                loadout = gameObject.AddComponent<LoadoutManager>();
+
+            builder.RegisterComponent(loadout);
+        }
+
+        private void RegisterApplicationSettings(IContainerBuilder builder)
+        {
+            builder.Register<ApplicationSettings>(_ =>
+            {
+                var settings = FindAnyObjectByType<ApplicationSettings>(FindObjectsInactive.Include);
+                if (settings != null)
+                    return settings;
+
+                var host = instance != null ? instance.gameObject : gameObject;
+                return host.GetComponent<ApplicationSettings>()
+                    ?? host.AddComponent<ApplicationSettings>();
+            }, Lifetime.Singleton);
         }
     }
 }

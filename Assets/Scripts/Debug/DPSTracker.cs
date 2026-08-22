@@ -13,8 +13,6 @@ namespace ShadowInfection.Debug
     /// </summary>
     public class DPSTracker : MonoBehaviour
     {
-        public static DPSTracker Instance { get; private set; }
-
         [Header("Configuration")]
         [Tooltip("Time window for DPS calculation (in seconds)")]
         [SerializeField]
@@ -48,12 +46,6 @@ namespace ShadowInfection.Debug
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
 

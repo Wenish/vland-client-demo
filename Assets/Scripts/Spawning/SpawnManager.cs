@@ -10,8 +10,6 @@ using UnityEngine;
 /// </summary>
 public class SpawnManager : NetworkBehaviour
 {
-    public static SpawnManager Instance { get; private set; }
-
     [Header("Spawner Registry")]
     [Tooltip("Automatically find all spawners in the scene on start")]
     public bool autoDiscoverSpawners = true;
@@ -27,18 +25,6 @@ public class SpawnManager : NetworkBehaviour
 
     #region Unity Lifecycle
 
-    private void Awake()
-    {
-        // Singleton pattern
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
-
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -46,14 +32,6 @@ public class SpawnManager : NetworkBehaviour
         if (autoDiscoverSpawners)
         {
             DiscoverSpawners();
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (Instance == this)
-        {
-            Instance = null;
         }
     }
 

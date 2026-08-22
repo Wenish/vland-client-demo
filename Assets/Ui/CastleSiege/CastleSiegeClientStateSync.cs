@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -119,7 +120,7 @@ public class CastleSiegeClientStateSync : MonoBehaviour
     {
         if (_manager != null) return;
 
-        _manager = CastleSiegeManager.Instance;
+        _manager = GameServices.CastleSiege;
         if (_manager == null) return;
 
         _manager.OnPlayerJoined += HandleManagerStateChanged;

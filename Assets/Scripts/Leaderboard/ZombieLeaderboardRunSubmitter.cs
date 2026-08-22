@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -173,7 +174,7 @@ public sealed class ZombieLeaderboardRunSubmitter : MonoBehaviour
         payload = null;
         error = null;
 
-        var gameManager = ZombieGameManager.Singleton;
+        var gameManager = GameServices.ZombieMatch;
         if (gameManager == null)
         {
             error = "ZombieGameManager not available.";

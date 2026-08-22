@@ -1,28 +1,13 @@
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class VendorManager : NetworkBehaviour
 {
-    public static VendorManager Instance { get; private set; }
     private const float VendorRangePadding = 1.5f;
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
-
-    private void OnDestroy()
-    {
-        if (Instance == this)
-            Instance = null;
-    }
+    private UpgradeManager Upgrades => GameServices.Upgrades;
 
     [Server]
     public IVendorSession ResolveSession(PlayerController buyer, string vendorId)
@@ -178,7 +163,7 @@ public class VendorManager : NetworkBehaviour
 
         var ids = new List<string>(catalog.upgradeEntries.Count);
         var values = new List<int>(catalog.upgradeEntries.Count);
-        var upgradeManager = UpgradeManager.Instance;
+        var upgradeManager = Upgrades;
 
         foreach (var upgrade in catalog.upgradeEntries)
         {
@@ -254,7 +239,7 @@ public class VendorManager : NetworkBehaviour
     }
 
     [Server]
-    private static void TryBuyUpgrade(
+    private void TryBuyUpgrade(
         PlayerController buyer,
         VendorDefinition catalog,
         string entryId,
@@ -272,20 +257,22 @@ public class VendorManager : NetworkBehaviour
             return;
         }
 
-        var wave = ZombieGameManager.Singleton != null ? Mathf.Max(1, ZombieGameManager.Singleton.CurrentWave) : 1;
+        var zombieMatch = GameServices.ZombieMatch;
+        var wave = zombieMatch != null ? Mathf.Max(1, zombieMatch.CurrentWave) : 1;
         if (!upgrade.IsUnlockedAtWave(wave))
         {
             message = "Upgrade is not unlocked yet.";
             return;
         }
 
-        if (UpgradeManager.Instance == null)
+        var upgrades = Upgrades;
+        if (upgrades == null)
         {
             message = "Upgrades are not available.";
             return;
         }
 
-        success = UpgradeManager.Instance.TryPurchase(buyer, upgrade, upgrade.baseGoldCost, out message, out timesBought);
+        success = upgrades.TryPurchase(buyer, upgrade, upgrade.baseGoldCost, out message, out timesBought);
         if (success)
         {
             message = upgrade.baseGoldCost > 0

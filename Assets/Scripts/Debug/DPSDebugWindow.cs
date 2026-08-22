@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
@@ -201,14 +202,15 @@ namespace ShadowInfection.Debug
 
         private void UpdateDisplay()
         {
-            if (DPSTracker.Instance == null)
+            var tracker = GameServices.Get<DPSTracker>();
+            if (tracker == null)
             {
                 statusLabel.text = "DPS Tracker not found";
                 ClearDPSList();
                 return;
             }
 
-            if (!DPSTracker.Instance.IsInitialized())
+            if (!tracker.IsInitialized())
             {
                 statusLabel.text = "Waiting for player spawn...";
                 ClearDPSList();
@@ -216,7 +218,7 @@ namespace ShadowInfection.Debug
             }
 
             // Get active DPS units
-            var activeUnits = DPSTracker.Instance.GetActiveDPSUnits();
+            var activeUnits = tracker.GetActiveDPSUnits();
 
             // Filter and limit
             activeUnits.RemoveAll(u => u.dps < minimumDPSToShow);
@@ -226,7 +228,7 @@ namespace ShadowInfection.Debug
             }
 
             // Update status
-            float timeWindow = DPSTracker.Instance.GetTimeWindow();
+            float timeWindow = tracker.GetTimeWindow();
             statusLabel.text = $"{activeUnits.Count} active units ({timeWindow:F0}s window) | F3 to toggle";
 
             // Update DPS list

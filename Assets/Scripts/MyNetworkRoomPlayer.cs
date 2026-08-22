@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using ShadowInfection.DI;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-room-player
@@ -54,7 +55,7 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
     public override void OnStartLocalPlayer()
     {
         // Send nickname to server so it syncs to all clients
-        string localNickname = ApplicationSettings.Instance?.Nickname;
+        string localNickname = GameServices.Settings?.Nickname;
         if (!string.IsNullOrWhiteSpace(localNickname))
         {
             CmdSetNickName(localNickname);

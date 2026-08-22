@@ -5,6 +5,7 @@ using Game.Scripts.Controllers;
 using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection.DI;
 using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
@@ -287,8 +288,8 @@ public class PlayerController : NetworkBehaviour
     {
         if (unitOverride != null)
             Unit = unitOverride;
-        else if (PlayerUnitsManager.Instance != null && connectionToClient != null)
-            Unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionToClient.connectionId);
+        else if (GameServices.PlayerUnits != null && connectionToClient != null)
+            Unit = GameServices.PlayerUnits.GetPlayerUnit(connectionToClient.connectionId);
 
         CacheControlledUnit();
     }
@@ -301,23 +302,23 @@ public class PlayerController : NetworkBehaviour
     [Command]
     public void CmdVendorTransact(string vendorId, byte tab, string entryId)
     {
-        if (VendorManager.Instance == null)
+        if (GameServices.Vendors == null)
         {
             TargetVendorTransactResult(false, "Vendor is not available.", entryId, 0);
             return;
         }
 
-        VendorManager.Instance.TryTransact(this, vendorId, (VendorTab)tab, entryId, out var success, out var message, out var timesBought);
+        GameServices.Vendors.TryTransact(this, vendorId, (VendorTab)tab, entryId, out var success, out var message, out var timesBought);
         TargetVendorTransactResult(success, message, entryId, timesBought);
     }
 
     [Command]
     public void CmdRequestVendorSnapshot(string vendorId)
     {
-        if (VendorManager.Instance == null)
+        if (GameServices.Vendors == null)
             return;
 
-        VendorManager.Instance.BuildSnapshot(this, vendorId, out var ids, out var counts, out var buyIds, out var buyStocks, out var vendorGold);
+        GameServices.Vendors.BuildSnapshot(this, vendorId, out var ids, out var counts, out var buyIds, out var buyStocks, out var vendorGold);
         TargetVendorSnapshot(ids, counts, buyIds, buyStocks, vendorGold);
     }
 

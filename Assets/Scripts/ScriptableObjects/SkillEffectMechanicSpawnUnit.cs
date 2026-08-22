@@ -49,7 +49,14 @@ public class SkillEffectMechanicSpawnUnit : SkillEffectMechanic
             return;
         }
 
-        var unitInstance = UnitSpawner.Instance.Spawn(unitData, position, rotation);
+        var unitSpawner = castContext.UnitSpawner;
+        if (unitSpawner == null)
+        {
+            Debug.LogWarning("Unit spawner is missing. Cannot spawn unit.");
+            return;
+        }
+
+        var unitInstance = unitSpawner.Spawn(unitData, position, rotation);
 
         var unitController = unitInstance.GetComponent<UnitController>();
         unitController.SetTeam(castContext.caster.team);

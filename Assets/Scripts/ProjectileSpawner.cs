@@ -1,20 +1,12 @@
 using Mirror;
 using UnityEngine;
 
-public class ProjectileSpawner : NetworkBehaviour
+public class ProjectileSpawner : NetworkBehaviour, IProjectileSpawner
 {
-    public static ProjectileSpawner Instance { get; private set; }
     public GameObject projectilePrefab;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
         projectilePrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Projectile");
     }
 

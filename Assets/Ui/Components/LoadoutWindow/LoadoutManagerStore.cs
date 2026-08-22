@@ -7,53 +7,30 @@ namespace ShadowInfection.UI.LoadoutWindow
     internal sealed class LoadoutManagerStore : ILoadoutStore, IDisposable
     {
         private readonly IPublisher<LoadoutChangedEvent> loadoutChanged;
-        private LoadoutManager boundManager;
+        private readonly LoadoutManager manager;
 
-        public LoadoutManagerStore(IPublisher<LoadoutChangedEvent> loadoutChanged)
+        public LoadoutManagerStore(LoadoutManager manager, IPublisher<LoadoutChangedEvent> loadoutChanged)
         {
+            this.manager = manager;
             this.loadoutChanged = loadoutChanged;
+            if (this.manager != null)
+                this.manager.OnLoadoutChanged += PublishChanged;
         }
 
         public LocalLoadout Get()
         {
-            return ResolveManager()?.Get();
+            return manager != null ? manager.Get() : null;
         }
 
         public void Set(LocalLoadout loadout)
         {
-            ResolveManager()?.Set(loadout);
+            manager?.Set(loadout);
         }
 
         public void Dispose()
         {
-            UnbindManager();
-        }
-
-        private LoadoutManager ResolveManager()
-        {
-            var manager = LoadoutManager.Instance;
-            if (manager == null)
-            {
-                UnbindManager();
-                return null;
-            }
-
-            if (boundManager == manager)
-                return boundManager;
-
-            UnbindManager();
-            boundManager = manager;
-            boundManager.OnLoadoutChanged += PublishChanged;
-            return boundManager;
-        }
-
-        private void UnbindManager()
-        {
-            if (boundManager == null)
-                return;
-
-            boundManager.OnLoadoutChanged -= PublishChanged;
-            boundManager = null;
+            if (manager != null)
+                manager.OnLoadoutChanged -= PublishChanged;
         }
 
         private void PublishChanged(LocalLoadout loadout)

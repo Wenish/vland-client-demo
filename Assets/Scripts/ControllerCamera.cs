@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -73,9 +74,10 @@ namespace Game.Scripts.Controllers
         private List<UnitController> GetAlivePlayerUnits()
         {
             var result = new List<UnitController>();
-            if (PlayerUnitsManager.Instance == null) return result;
+            var playerUnits = GameServices.PlayerUnits;
+            if (playerUnits == null) return result;
 
-            foreach (var pu in PlayerUnitsManager.Instance.playerUnits)
+            foreach (var pu in playerUnits.playerUnits)
             {
                 if (pu.Unit == null) continue;
                 var uc = pu.Unit.GetComponent<UnitController>();

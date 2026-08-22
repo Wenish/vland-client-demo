@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using ShadowInfection.DI;
 
 public class ControllerCastbar : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class ControllerCastbar : MonoBehaviour
     public RectTransform sliderIcon;
     public RectTransform sliderIconBorder;
     private Image sliderIconImage;
-    private DatabaseManager databaseManager;
+    private IGameDatabases databases;
     private UnitActionState unitActionState;
     private Coroutine _currentCastbarCoroutine;
     private void Awake()
@@ -22,7 +23,7 @@ public class ControllerCastbar : MonoBehaviour
         HideCastbar();
         unitActionState = GetComponentInParent<UnitActionState>();
         unitActionState.OnActionStateChanged += HandleOnActionStateChanged;
-        databaseManager = DatabaseManager.Instance;
+        databases = GameServices.Databases;
         sliderIconImage = sliderIcon.GetComponent<Image>();
     }
 
@@ -98,7 +99,13 @@ public class ControllerCastbar : MonoBehaviour
 
     private void SetWeaponIcon(string weaponName)
     {
-        var weaponData = databaseManager.weaponDatabase.GetWeaponByName(weaponName);
+        var weaponData = databases?.Weapons?.GetWeaponByName(weaponName);
+        if (weaponData == null)
+        {
+            sliderIcon.gameObject.SetActive(false);
+            return;
+        }
+
         sliderIcon.gameObject.SetActive(true);
         var icon = weaponData.iconTexture != null
             ? Sprite.Create(weaponData.iconTexture, new Rect(0, 0, weaponData.iconTexture.width, weaponData.iconTexture.height), Vector2.zero)
@@ -115,7 +122,13 @@ public class ControllerCastbar : MonoBehaviour
 
     private void SetSkillIcon(string skillName)
     {
-        var skillData = databaseManager.skillDatabase.GetSkillByName(skillName);
+        var skillData = databases?.Skills?.GetSkillByName(skillName);
+        if (skillData == null)
+        {
+            sliderIcon.gameObject.SetActive(false);
+            return;
+        }
+
         sliderIcon.gameObject.SetActive(true);
         var icon = skillData.iconTexture != null
             ? Sprite.Create(skillData.iconTexture, new Rect(0, 0, skillData.iconTexture.width, skillData.iconTexture.height), Vector2.zero)

@@ -38,7 +38,14 @@ public class SkillEffectMechanicProjectile : SkillEffectMechanic
 
         Vector3 spawnPosition = targetPosition + targetRotation * Vector3.forward * spawnDistance;
 
-        var projectileInstance = ProjectileSpawner.Instance.SpawnProjectile(projectileData, spawnPosition + Vector3.up, targetRotation);
+        var projectileInstance = castContext.ProjectileSpawner != null
+            ? castContext.ProjectileSpawner.SpawnProjectile(projectileData, spawnPosition + Vector3.up, targetRotation)
+            : null;
+        if (projectileInstance == null)
+        {
+            Debug.LogWarning("Projectile spawner is missing. Cannot spawn projectile.");
+            return;
+        }
 
         ProjectileController projectileController = projectileInstance.GetComponent<ProjectileController>();
         projectileController.shooter = target;

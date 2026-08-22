@@ -1,20 +1,28 @@
 using System;
 using System.Collections.Generic;
+using ShadowInfection.DI;
 
 namespace ShadowInfection.UI.LoadoutWindow
 {
     internal sealed class DatabaseLoadoutCatalog : ILoadoutCatalog
     {
+        private readonly IGameDatabases databases;
+
+        public DatabaseLoadoutCatalog(IGameDatabases databases)
+        {
+            this.databases = databases;
+        }
+
         public IReadOnlyList<WeaponData> GetPlayerWeapons()
         {
-            var weapons = DatabaseManager.Instance?.weaponDatabase?.allWeapons;
-            if (weapons == null || weapons.Count == 0)
+            var all = databases != null && databases.Weapons != null ? databases.Weapons.allWeapons : null;
+            if (all == null || all.Count == 0)
                 return Array.Empty<WeaponData>();
 
-            var result = new List<WeaponData>(weapons.Count);
-            for (var i = 0; i < weapons.Count; i++)
+            var result = new List<WeaponData>(all.Count);
+            for (var i = 0; i < all.Count; i++)
             {
-                var weapon = weapons[i];
+                var weapon = all[i];
                 if (weapon != null && !weapon.npcOnly)
                     result.Add(weapon);
             }
@@ -24,14 +32,14 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         public IReadOnlyList<SkillData> GetPlayerSkills()
         {
-            var skills = DatabaseManager.Instance?.skillDatabase?.allSkills;
-            if (skills == null || skills.Count == 0)
+            var all = databases != null && databases.Skills != null ? databases.Skills.allSkills : null;
+            if (all == null || all.Count == 0)
                 return Array.Empty<SkillData>();
 
-            var result = new List<SkillData>(skills.Count);
-            for (var i = 0; i < skills.Count; i++)
+            var result = new List<SkillData>(all.Count);
+            for (var i = 0; i < all.Count; i++)
             {
-                var skill = skills[i];
+                var skill = all[i];
                 if (skill != null && !skill.npcOnly)
                     result.Add(skill);
             }
@@ -41,18 +49,18 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         public WeaponData GetWeapon(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id) || databases == null || databases.Weapons == null)
                 return null;
 
-            return DatabaseManager.Instance?.weaponDatabase?.GetWeaponByName(id);
+            return databases.Weapons.GetWeaponByName(id);
         }
 
         public SkillData GetSkill(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id) || databases == null || databases.Skills == null)
                 return null;
 
-            return DatabaseManager.Instance?.skillDatabase?.GetSkillByName(id);
+            return databases.Skills.GetSkillByName(id);
         }
     }
 }

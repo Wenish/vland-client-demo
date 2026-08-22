@@ -4,11 +4,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ShadowInfection.DI;
 
 public class SkirmishGameManager : MatchGameManagerBase
 {
-    public static SkirmishGameManager Instance { get; private set; }
-
     [Header("Team Spawns")]
     [Tooltip("Each index represents a team. Spawn 0 = Team 0, Spawn 1 = Team 1, etc.")]
     [SerializeField] private List<Transform> teamSpawns = new List<Transform>();
@@ -137,14 +136,6 @@ public class SkirmishGameManager : MatchGameManagerBase
     protected override void Awake()
     {
         base.Awake();
-
-        if (Instance != null && Instance != this)
-        {
-            Debug.LogWarning("Multiple instances of SkirmishGameManager detected. Destroying duplicate.", this);
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
         ResetMatchEndedEventState();
         ResetRoundEndedEventState();
     }
@@ -265,9 +256,9 @@ public class SkirmishGameManager : MatchGameManagerBase
     {
         while (isServer)
         {
-            if (PlayerUnitsManager.Instance != null)
+            if (GameServices.PlayerUnits != null)
             {
-                bool hasAnyPlayerUnit = PlayerUnitsManager.Instance.playerUnits
+                bool hasAnyPlayerUnit = GameServices.PlayerUnits.playerUnits
                     .Any(playerUnit => playerUnit.Unit != null);
 
                 if (hasAnyPlayerUnit)
@@ -283,11 +274,11 @@ public class SkirmishGameManager : MatchGameManagerBase
     [Server]
     private void AssignTeamsToNewPlayers()
     {
-        if (PlayerUnitsManager.Instance == null) return;
+        if (GameServices.PlayerUnits == null) return;
 
         var activeConnectionIds = new HashSet<int>();
 
-        foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
         {
             if (playerUnit.Unit == null) continue;
 
@@ -347,9 +338,9 @@ public class SkirmishGameManager : MatchGameManagerBase
     [Server]
     private void ReviveAndTeleportAllPlayersToTeamSpawns()
     {
-        if (PlayerUnitsManager.Instance == null) return;
+        if (GameServices.PlayerUnits == null) return;
 
-        foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
         {
             if (playerUnit.Unit == null) continue;
 
@@ -397,14 +388,14 @@ public class SkirmishGameManager : MatchGameManagerBase
     {
         base.OnServerPlayerTeamAssigned(connectionId, teamId);
 
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return;
         }
 
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnit = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
             {
                 continue;
@@ -444,11 +435,11 @@ public class SkirmishGameManager : MatchGameManagerBase
     [Server]
     private (int winnerTeam, bool isDraw)? GetRoundOutcome()
     {
-        if (PlayerUnitsManager.Instance == null) return null;
+        if (GameServices.PlayerUnits == null) return null;
 
         var aliveTeams = new HashSet<int>();
 
-        foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
         {
             if (playerUnit.Unit == null) continue;
 

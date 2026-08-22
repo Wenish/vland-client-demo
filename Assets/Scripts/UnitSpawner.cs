@@ -1,21 +1,14 @@
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
-public class UnitSpawner : NetworkBehaviour
+public class UnitSpawner : NetworkBehaviour, IUnitSpawner
 {
-    public static UnitSpawner Instance { get; private set; }
     public GameObject unitPrefab;
     public GameObject unitNpcPrefab;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
         unitPrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "Unit");
         unitNpcPrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "UnitNpc");
     }
@@ -23,7 +16,8 @@ public class UnitSpawner : NetworkBehaviour
     [Server]
     public GameObject SpawnUnit(string unitName, Vector3 position, Quaternion rotation, bool isNpc = false)
     {
-        UnitData unitData = DatabaseManager.Instance.unitDatabase.GetUnitByName(unitName);
+        var units = GameServices.Databases?.Units;
+        UnitData unitData = units != null ? units.GetUnitByName(unitName) : null;
         if (unitData == null)
         {
             Debug.LogError($"Unit {unitName} not found in database.");
