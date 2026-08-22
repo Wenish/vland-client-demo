@@ -246,7 +246,7 @@ public class PlayerUnitsManager : NetworkBehaviour
         }
 
         playerUnits.Add(new PlayerUnit { ConnectionId = connectionId, Unit = unit });
-        EventManager.Instance.Publish(new PlayerUnitSpawnedEvent(connectionId, unit));
+        GameMessages.Publish(new PlayerUnitSpawnedEvent(connectionId, unit));
         RpcPlayerUnitSpawned(connectionId, unit);
         return unit;
     }
@@ -295,7 +295,7 @@ public class PlayerUnitsManager : NetworkBehaviour
     public void RpcPlayerUnitSpawned(int connectionId, GameObject unit)
     {
         if (isServer) return;
-        EventManager.Instance.Publish(new PlayerUnitSpawnedEvent(connectionId, unit));
+        GameMessages.Publish(new PlayerUnitSpawnedEvent(connectionId, unit));
     }
 
     public void DespawnPlayerUnit(NetworkConnectionToClient conn)

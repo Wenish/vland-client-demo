@@ -75,7 +75,7 @@
 ## Dependencies
 
 ### Required Unity Systems
-- EventManager (existing)
+- MessagePipe (existing)
 - UnitController (existing)
 - UnitDamagedEvent (existing)
 - MyPlayerUnitSpawnedEvent (existing)

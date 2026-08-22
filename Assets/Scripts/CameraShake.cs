@@ -1,6 +1,4 @@
-using MessagePipe;
 using MyGame.Events;
-using ShadowInfection.DI;
 using UnityEngine;
 
 public class CameraShake : MonoBehaviour
@@ -37,10 +35,8 @@ public class CameraShake : MonoBehaviour
         }
 
         CaptureRestRotation();
-        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
-            subscriptions.Add(spawned.Subscribe(OnPlayerUnitSpawned));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitDamagedEvent> damaged))
-            subscriptions.Add(damaged.Subscribe(OnUnitDamaged));
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnPlayerUnitSpawned);
+        GameMessages.Subscribe<UnitDamagedEvent>(ref subscriptions, OnUnitDamaged);
     }
 
     void OnDisable()

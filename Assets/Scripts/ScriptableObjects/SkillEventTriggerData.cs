@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// Base asset for event-driven skill triggers.
-/// Derived assets subscribe to a specific GameEvent type and decide whether to fire.
+/// Derived assets subscribe to a specific message type and decide whether to fire.
 /// When fired, their configured effect chain executes using a fresh CastContext.
 /// </summary>
 public abstract class SkillEventTriggerData : ScriptableObject
@@ -23,7 +23,7 @@ public abstract class SkillEventTriggerData : ScriptableObject
 
     /// <summary>
     /// Called by ReactiveTriggerRunner to set up subscriptions for this trigger.
-    /// Implementations should call runner.Subscribe<T>(...) for their event type and keep no runtime state here.
+    /// Implementations should call runner.Subscribe<T>(...) for their message type and keep no runtime state here.
     /// </summary>
     public abstract void Subscribe(ReactiveTriggerRunner runner);
 

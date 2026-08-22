@@ -1,11 +1,13 @@
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 public class ZombieSpawnManager : NetworkBehaviour
 {
     public ZombieSpawnController[] zombieSpawns;
     public GateMapping[] gateMappings;
+    private DisposableBag serverSubscriptions;
 
     void Start()
     {
@@ -13,13 +15,14 @@ public class ZombieSpawnManager : NetworkBehaviour
 
         if (isServer)
         {
-            EventManager.Instance.Subscribe<OpenGateEvent>(OnGateOpenEvent);
+            GameMessages.Subscribe<OpenGateEvent>(ref serverSubscriptions, OnGateOpenEvent);
         }
     }
 
     void OnDestroy()
     {
-        EventManager.Instance.Unsubscribe<OpenGateEvent>(OnGateOpenEvent);
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
     }
 
     void GetAllZombieSpawnInScene()

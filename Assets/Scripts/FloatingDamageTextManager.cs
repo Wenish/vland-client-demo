@@ -1,6 +1,4 @@
-using MessagePipe;
 using MyGame.Events;
-using ShadowInfection.DI;
 using UnityEngine;
 
 public class FloatingDamageTextManager : MonoBehaviour
@@ -28,16 +26,11 @@ public class FloatingDamageTextManager : MonoBehaviour
     {
         subscriptions.Dispose();
         subscriptions = new R3.DisposableBag();
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitDamagedEvent> damaged))
-            subscriptions.Add(damaged.Subscribe(OnUnitDamaged));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitHealedEvent> healed))
-            subscriptions.Add(healed.Subscribe(OnUnitHealed));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitShieldedEvent> shielded))
-            subscriptions.Add(shielded.Subscribe(OnUnitShielded));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
-            subscriptions.Add(spawned.Subscribe(OnMyPlayerUnitSpawned));
-        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitDroppedGoldEvent> gold))
-            subscriptions.Add(gold.Subscribe(OnUnitDroppedGold));
+        GameMessages.Subscribe<UnitDamagedEvent>(ref subscriptions, OnUnitDamaged);
+        GameMessages.Subscribe<UnitHealedEvent>(ref subscriptions, OnUnitHealed);
+        GameMessages.Subscribe<UnitShieldedEvent>(ref subscriptions, OnUnitShielded);
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnMyPlayerUnitSpawned);
+        GameMessages.Subscribe<UnitDroppedGoldEvent>(ref subscriptions, OnUnitDroppedGold);
     }
 
     void OnDisable()

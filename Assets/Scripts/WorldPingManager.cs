@@ -1,18 +1,21 @@
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 public class WorldPingManager : MonoBehaviour
 {
     public GameObject pingPrefab;
+    private DisposableBag subscriptions;
 
     private void Start()
     {
-        EventManager.Instance.Subscribe<WorldPingEvent>(OnWorldPingEvent);
+        GameMessages.Subscribe<WorldPingEvent>(ref subscriptions, OnWorldPingEvent);
     }
 
     private void OnDestroy()
     {
-        EventManager.Instance.Unsubscribe<WorldPingEvent>(OnWorldPingEvent);
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
     private void OnWorldPingEvent(WorldPingEvent pingEvent)

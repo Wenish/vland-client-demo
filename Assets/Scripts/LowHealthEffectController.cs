@@ -1,6 +1,4 @@
-using MessagePipe;
 using MyGame.Events;
-using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -34,8 +32,7 @@ public class LowHealthEffectController : MonoBehaviour
             postProcessVolume = GetComponent<Volume>();
 
         SetWeight(0f);
-        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
-            subscriptions.Add(spawned.Subscribe(OnPlayerUnitSpawned));
+        GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnPlayerUnitSpawned);
         enabled = false;
     }
 

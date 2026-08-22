@@ -1,5 +1,6 @@
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -28,6 +29,7 @@ public class GateController : NetworkBehaviour
     private Vector3 closedPosition;
     private Vector3 openPosition;
     private Coroutine moveCoroutine;
+    private DisposableBag serverSubscriptions;
 
     private void Start()
     {
@@ -60,22 +62,14 @@ public class GateController : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        // Subscribe to events when running on the server
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.Subscribe<OpenGateEvent>(OnOpenGateEvent);
-            EventManager.Instance.Subscribe<CloseGateEvent>(OnCloseGateEvent);
-        }
+        GameMessages.Subscribe<OpenGateEvent>(ref serverSubscriptions, OnOpenGateEvent);
+        GameMessages.Subscribe<CloseGateEvent>(ref serverSubscriptions, OnCloseGateEvent);
     }
 
     public override void OnStopServer()
     {
-        // Unsubscribe to avoid callbacks after this object is destroyed
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.Unsubscribe<OpenGateEvent>(OnOpenGateEvent);
-            EventManager.Instance.Unsubscribe<CloseGateEvent>(OnCloseGateEvent);
-        }
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
         base.OnStopServer();
     }
 
@@ -129,11 +123,11 @@ public class GateController : NetworkBehaviour
 
         if (isOpen)
         {
-            EventManager.Instance.Publish(new OpenedGateEvent(gateId));
+            GameMessages.Publish(new OpenedGateEvent(gateId));
         }
         else
         {
-            EventManager.Instance.Publish(new ClosedGateEvent(gateId));
+            GameMessages.Publish(new ClosedGateEvent(gateId));
         }
 
         if (moveCoroutine != null)

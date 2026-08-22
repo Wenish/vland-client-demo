@@ -2,6 +2,7 @@ using System.Collections;
 using Game.Scripts.Controllers;
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,6 +31,7 @@ public class PlayerInput : NetworkBehaviour
     private Camera _cameraMain;
 
     private ControllerCamera _controllerCamera;
+    private DisposableBag serverSubscriptions;
 
     // When aiming, account for projectile visual spawning 1 unit above the floor
     // so the forward direction from that height aligns with the cursor on screen.
@@ -44,16 +46,14 @@ public class PlayerInput : NetworkBehaviour
         {
             var unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionToClient.connectionId);
             SetMyUnit(unit);
-            EventManager.Instance.Subscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+            GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
         }
     }
 
     void OnDestroy()
     {
-        if (isServer)
-        {
-            EventManager.Instance.Unsubscribe<PlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-        }
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
     }
 
     [Server]
@@ -74,7 +74,7 @@ public class PlayerInput : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            GameEventPublish.ToBoth(new MyPlayerUnitSpawnedEvent(_myUnitController));
+            GameMessages.Publish(new MyPlayerUnitSpawnedEvent(_myUnitController));
         }
     }
 
@@ -126,14 +126,14 @@ public class PlayerInput : NetworkBehaviour
     public void CmdWorldPing(Vector3 position)
     {
         RpcWorldPing(position);
-        EventManager.Instance.Publish(new WorldPingEvent(position));
+        GameMessages.Publish(new WorldPingEvent(position));
     }
 
     [ClientRpc]
     void RpcWorldPing(Vector3 position)
     {
         if (isServer) return;
-        EventManager.Instance.Publish(new WorldPingEvent(position));
+        GameMessages.Publish(new WorldPingEvent(position));
     }
 
     private Coroutine _delaySendSetFire1InputCoroutine;
@@ -338,7 +338,7 @@ public class PlayerInput : NetworkBehaviour
         var unitController = myUnit.GetComponent<UnitController>();
         _myUnitController = unitController;
         SetCameraTargetToPlayerUnit();
-        GameEventPublish.ToBoth(new MyPlayerUnitSpawnedEvent(unitController));
+        GameMessages.Publish(new MyPlayerUnitSpawnedEvent(unitController));
     }
 
 

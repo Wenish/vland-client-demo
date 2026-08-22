@@ -16,8 +16,8 @@
 │                               │                                  │
 │                               ▼                                  │
 │                      ┌─────────────────┐                         │
-│                      │  EventManager   │                         │
-│                      │   (Singleton)   │                         │
+│                      │  MessagePipe    │                         │
+│                      │ (in-process bus)│                         │
 │                      └────────┬────────┘                         │
 │                               │                                  │
 │                               │ Publishes Events:                │
@@ -105,7 +105,7 @@ Combat Occurs
      ↓
 UnitController.TakeDamage()
      ↓
-EventManager.Publish(UnitDamagedEvent)
+GameMessages.Publish(UnitDamagedEvent)
      ↓
 DPSTracker.OnUnitDamaged()
      ↓
@@ -125,7 +125,7 @@ Display: Render UI rows
 ```
 Player Spawns
      ↓
-EventManager.Publish(MyPlayerUnitSpawnedEvent)
+GameMessages.Publish(MyPlayerUnitSpawnedEvent)
      ↓
 DPSTracker.OnMyPlayerUnitSpawned()
      ↓
@@ -170,7 +170,7 @@ Enable: Team filtering active
 ## Key Design Patterns
 
 ### 1. Observer Pattern
-- EventManager acts as subject
+- MessagePipe acts as the in-process bus
 - DPSTracker acts as observer
 - Completely decoupled from event sources
 
@@ -228,8 +228,8 @@ Total CPU Impact: < 1% on typical hardware
 
 ### Required Systems (Dependencies)
 
-1. **EventManager** (exists)
-   - Must have Subscribe/Unsubscribe methods
+1. **MessagePipe** (exists)
+   - Must be initialized from GameLifetimeScope
    - Must publish UnitDamagedEvent
    - Must publish MyPlayerUnitSpawnedEvent
 

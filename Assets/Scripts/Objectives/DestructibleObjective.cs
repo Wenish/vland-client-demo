@@ -1,5 +1,6 @@
 using Mirror;
 using MyGame.Events;
+using R3;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -19,6 +20,7 @@ public class DestructibleObjective : NetworkBehaviour
     private uint lastValidHitterNetId;
 
     private UnitController _unit;
+    private DisposableBag serverSubscriptions;
 
     public string ObjectiveId => objectiveId;
     public bool IsDestroyed => isDestroyed;
@@ -50,11 +52,8 @@ public class DestructibleObjective : NetworkBehaviour
             return;
         }
 
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
-            EventManager.Instance.Subscribe<UnitDiedEvent>(OnUnitDiedEvent);
-        }
+        GameMessages.Subscribe<UnitDamagedEvent>(ref serverSubscriptions, OnUnitDamagedEvent);
+        GameMessages.Subscribe<UnitDiedEvent>(ref serverSubscriptions, OnUnitDiedEvent);
 
         isDestroyed = _unit.IsDead;
         OnDestroyedStateChanged(isDestroyed);
@@ -62,11 +61,8 @@ public class DestructibleObjective : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamagedEvent);
-            EventManager.Instance.Unsubscribe<UnitDiedEvent>(OnUnitDiedEvent);
-        }
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
 
         base.OnStopServer();
     }
@@ -90,7 +86,7 @@ public class DestructibleObjective : NetworkBehaviour
         isDestroyed = false;
         OnDestroyedStateChanged(false);
         OnRebuiltServer(this);
-        EventManager.Instance?.Publish(new ObjectiveRebuiltEvent(_unit, objectiveId));
+        GameMessages.Publish(new ObjectiveRebuiltEvent(_unit, objectiveId));
     }
 
     [Server]
@@ -167,7 +163,7 @@ public class DestructibleObjective : NetworkBehaviour
         }
 
         OnDestroyedServer(this, killer, resolvedTeam);
-        EventManager.Instance?.Publish(new ObjectiveDestroyedEvent(_unit, objectiveId, killer, resolvedTeam));
+        GameMessages.Publish(new ObjectiveDestroyedEvent(_unit, objectiveId, killer, resolvedTeam));
     }
 
     private void HookDestroyedChanged(bool oldValue, bool newValue)

@@ -1,26 +1,24 @@
-using MyGame.Events;
-
 namespace MyGame.Events.Ui
 {
     /// <summary>
     /// Fired when the in-game UI needs to be updated.
     /// </summary>
-    public class OpenMultiplayerMenuEvent : GameEvent
+    public class OpenMultiplayerMenuEvent
     {
         public OpenMultiplayerMenuEvent() { }
     }
 
-    public class OpenFormJoinGameEvent : GameEvent
+    public class OpenFormJoinGameEvent
     {
         public OpenFormJoinGameEvent() { }
     }
 
-    public class RequestCloseVendorWindowEvent : GameEvent
+    public class RequestCloseVendorWindowEvent
     {
         public RequestCloseVendorWindowEvent() { }
     }
 
-    public class OpenVendorWindowEvent : GameEvent
+    public class OpenVendorWindowEvent
     {
         public IVendorSession Session { get; }
         public PlayerController Player { get; }
@@ -32,7 +30,7 @@ namespace MyGame.Events.Ui
         }
     }
 
-    public class CloseVendorWindowIfInteractableEvent : GameEvent
+    public class CloseVendorWindowIfInteractableEvent
     {
         public IVendorInteractable Interactable { get; }
 
@@ -42,7 +40,7 @@ namespace MyGame.Events.Ui
         }
     }
 
-    public class VendorWindowVisibilityChangedEvent : GameEvent
+    public class VendorWindowVisibilityChangedEvent
     {
         public bool IsOpen { get; }
 
@@ -52,7 +50,7 @@ namespace MyGame.Events.Ui
         }
     }
 
-    public class SetLoadoutWindowOpenEvent : GameEvent
+    public class SetLoadoutWindowOpenEvent
     {
         public bool IsOpen { get; }
 
@@ -62,7 +60,7 @@ namespace MyGame.Events.Ui
         }
     }
 
-    public class LoadoutChangedEvent : GameEvent
+    public class LoadoutChangedEvent
     {
         public LocalLoadout Loadout { get; }
 
