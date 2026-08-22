@@ -26,7 +26,7 @@ public class DestructibleResetOnCastlePhase : NetworkBehaviour
             _objective = GetComponent<DestructibleObjective>();
         }
 
-        _manager = GameServices.CastleSiege;
+        _manager = GameServices.Get<CastleSiegeManager>();
         if (_manager != null)
         {
             _manager.OnMatchPhaseChanged += OnMatchPhaseChanged;

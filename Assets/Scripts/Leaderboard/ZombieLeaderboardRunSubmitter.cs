@@ -174,7 +174,7 @@ public sealed class ZombieLeaderboardRunSubmitter : MonoBehaviour
         payload = null;
         error = null;
 
-        var gameManager = GameServices.ZombieMatch;
+        var gameManager = GameServices.Get<ZombieGameManager>();
         if (gameManager == null)
         {
             error = "ZombieGameManager not available.";

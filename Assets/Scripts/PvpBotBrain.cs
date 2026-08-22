@@ -2,6 +2,7 @@ using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
 using ShadowInfection.DI;
+using ShadowInfection.Match;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(UnitController))]
@@ -155,17 +156,8 @@ public class PvpBotBrain : MonoBehaviour
     [Server]
     private bool CanActInCurrentMode()
     {
-        if (GameServices.Skirmish != null)
-        {
-            return GameServices.Skirmish.CurrentRoundState == SkirmishGameManager.RoundState.InRound;
-        }
-
-        if (GameServices.CastleSiege != null)
-        {
-            return GameServices.CastleSiege.IsInGame;
-        }
-
-        return true;
+        var activity = GameServices.Get<IMatchActivity>();
+        return activity == null || activity.CanCombatantsAct;
     }
 
     [Server]
@@ -176,13 +168,13 @@ public class PvpBotBrain : MonoBehaviour
             return null;
         }
 
-        if (GameServices.CastleSiege != null && GameServices.CastleSiege.IsInGame)
+        var objectives = GameServices.Get<IPvpObjectives>();
+        if (objectives != null
+            && objectives.TryGetPriorityTarget(_unit, out var priorityTarget)
+            && IsTargetValid(priorityTarget)
+            && HasLineOfSight(_unit, priorityTarget))
         {
-            var enemyLord = GameServices.CastleSiege.ServerGetAliveEnemyLordForTeam(_unit.team, _unit.transform.position);
-            if (IsTargetValid(enemyLord) && HasLineOfSight(_unit, enemyLord))
-            {
-                return enemyLord;
-            }
+            return priorityTarget;
         }
 
         if (GameServices.PlayerUnits == null)

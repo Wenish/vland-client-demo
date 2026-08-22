@@ -78,7 +78,7 @@ public class SkirmishClientStateSync : MonoBehaviour
     {
         if (_manager != null) return;
 
-        _manager = GameServices.Skirmish;
+        _manager = GameServices.Get<SkirmishGameManager>();
         if (_manager == null) return;
 
         _manager.OnRoundChanged += HandleManagerStateChanged;

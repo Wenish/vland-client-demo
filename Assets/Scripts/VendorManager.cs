@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Mirror;
 using ShadowInfection.DI;
+using ShadowInfection.Match;
 using UnityEngine;
 
 public class VendorManager : NetworkBehaviour
@@ -257,8 +258,8 @@ public class VendorManager : NetworkBehaviour
             return;
         }
 
-        var zombieMatch = GameServices.ZombieMatch;
-        var wave = zombieMatch != null ? Mathf.Max(1, zombieMatch.CurrentWave) : 1;
+        var progress = GameServices.Get<IUpgradeProgress>();
+        var wave = progress != null ? Mathf.Max(1, progress.UnlockLevel) : 1;
         if (!upgrade.IsUnlockedAtWave(wave))
         {
             message = "Upgrade is not unlocked yet.";

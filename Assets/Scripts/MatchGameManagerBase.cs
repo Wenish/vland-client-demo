@@ -222,18 +222,35 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
             yield return null;
         }
 
+        _returnToLobbyCoroutine = null;
+        ServerChangeToRoomScene();
+    }
+
+    [Server]
+    public bool ServerTryReturnToLobby()
+    {
+        if (_returnToLobbyCoroutine != null)
+        {
+            StopCoroutine(_returnToLobbyCoroutine);
+            _returnToLobbyCoroutine = null;
+        }
+
+        return ServerChangeToRoomScene();
+    }
+
+    [Server]
+    private bool ServerChangeToRoomScene()
+    {
         ServerSetReturnToLobbyCountdownRemaining(0f);
 
         if (NetworkManager.singleton is NetworkRoomManager roomManager)
         {
             roomManager.ServerChangeScene(roomManager.RoomScene);
-        }
-        else
-        {
-            Debug.LogWarning($"[{nameof(MatchGameManagerBase)}] NetworkManager is not a NetworkRoomManager. Unable to return to room scene.", this);
+            return true;
         }
 
-        _returnToLobbyCoroutine = null;
+        Debug.LogWarning($"[{nameof(MatchGameManagerBase)}] NetworkManager is not a NetworkRoomManager. Unable to return to room scene.", this);
+        return false;
     }
 
     [Server]

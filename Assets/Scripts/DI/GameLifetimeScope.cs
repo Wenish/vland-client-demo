@@ -3,6 +3,7 @@ using Gapa.Audio.Music;
 using Gapa.Audio.VContainer;
 using MessagePipe;
 using ShadowInfection.Audio;
+using ShadowInfection.Match;
 using ShadowInfection.UI.LoadoutWindow;
 using ShadowInfection.UI.Session;
 using ShadowInfection.UI.ZombieMatch;
@@ -291,6 +292,10 @@ namespace ShadowInfection.DI
             var unmatchedSession = new ZombieGameManagerUiSession(null);
             builder.RegisterInstance<IZombieMatchUiSession>(unmatchedSession);
             builder.RegisterInstance<IZombieMatchCommands>(unmatchedSession);
+            builder.RegisterInstance<IMatchCommands>(unmatchedSession);
+            builder.RegisterInstance<IMatchActivity>(AlwaysAllowMatchActivity.Instance);
+            builder.RegisterInstance<IUpgradeProgress>(FixedUpgradeProgress.Default);
+            builder.RegisterInstance<IPvpObjectives>(NoPvpObjectives.Instance);
         }
 
         private void RegisterDatabases(IContainerBuilder builder)
