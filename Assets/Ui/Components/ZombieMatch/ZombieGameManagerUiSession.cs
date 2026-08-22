@@ -41,6 +41,12 @@ namespace ShadowInfection.UI.ZombieMatch
             return true;
         }
 
+        public bool TryLockTeamSwitching() => false;
+
+        public bool TryUnlockTeamSwitching() => false;
+
+        public bool TryChooseLocalTeam(int teamId) => false;
+
         private static ZombieLeaderboardRow[] CopyRows(
             IReadOnlyList<ZombieGameManager.ZombieLeaderboardEntry> entries)
         {
