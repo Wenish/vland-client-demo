@@ -305,6 +305,6 @@ public class MyNetworkRoomManager : NetworkRoomManager
     [Server]
     public void SelectSampleMap()
     {
-        StartGameWithSelectedMap("GameplayTrainingGrounds");
+        StartGameWithSelectedMap(SceneNames.MapTrainingGrounds);
     }
 }

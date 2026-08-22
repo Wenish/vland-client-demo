@@ -142,7 +142,7 @@ public class UiDocumentMainMenu : MonoBehaviour
         Debug.Log("Start Game button clicked");
         // Add logic to start the game
         // For example, load the game scene
-        UnityEngine.SceneManagement.SceneManager.LoadScene("ZombyOfflineScene");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(SceneNames.MultiplayerMenu);
     }
 
     void OnButtonSettings()

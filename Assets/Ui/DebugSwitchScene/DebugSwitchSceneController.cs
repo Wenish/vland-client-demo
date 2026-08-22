@@ -179,37 +179,37 @@ public class DebugSwitchSceneController : MonoBehaviour
     {
         Debug.Log("Zombie Map Button Clicked - Load Zombie Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "ZombyGameScene";
+        networkRoomManager.GameplayScene = SceneNames.MapZombie;
     }
 
     private void SkirmishAMapButtonClicked()
     {
         Debug.Log("Skirmish A Map Button Clicked - Load Skirmish A Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "GameSkirmishAScene";
+        networkRoomManager.GameplayScene = SceneNames.MapSkirmishA;
     }
     private void SkirmishBMapButtonClicked()
     {
         Debug.Log("Skirmish B Map Button Clicked - Load Skirmish B Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "GameSkirmishBScene";
+        networkRoomManager.GameplayScene = SceneNames.MapSkirmishB;
     }
     private void SkirmishCMapButtonClicked()
     {
         Debug.Log("Skirmish C Map Button Clicked - Load Skirmish C Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "GameSkirmishCScene";
+        networkRoomManager.GameplayScene = SceneNames.MapSkirmishC;
     }
     private void SkirmishDMapButtonClicked()
     {
         Debug.Log("Skirmish D Map Button Clicked - Load Skirmish D Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "GameSkirmishDScene";
+        networkRoomManager.GameplayScene = SceneNames.MapSkirmishD;
     }
     private void CastleSiegeAMapButtonClicked()
     {
         Debug.Log("Castle Siege A Map Button Clicked - Load Castle Siege A Map Scene");
         NetworkRoomManager networkRoomManager = NetworkRoomManager.singleton as NetworkRoomManager;
-        networkRoomManager.GameplayScene = "GameCastleSiegeAScene";
+        networkRoomManager.GameplayScene = SceneNames.MapCastleSiege;
     }
 }
