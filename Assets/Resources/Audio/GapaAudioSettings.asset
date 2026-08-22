@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31bf0ef73720744baad6616ec7533ba9, type: 3}
+  m_Name: GapaAudioSettings
+  m_EditorClassIdentifier: Gapa.Audio::Gapa.Audio.GapaAudioSettings
+  mixer: {fileID: 24100000, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+  busMappings:
+  - bus: 0
+    mixerGroup: {fileID: 24300002, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+    volumeParameter: MasterVolume
+  - bus: 1
+    mixerGroup: {fileID: 1732116053779194660, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+    volumeParameter: MusicVolume
+  - bus: 2
+    mixerGroup: {fileID: -1243356892020410414, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+    volumeParameter: AmbientVolume
+  - bus: 3
+    mixerGroup: {fileID: -5574617817705501464, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+    volumeParameter: SfxVolume
+  - bus: 4
+    mixerGroup: {fileID: 7785164559302368182, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+    volumeParameter: UiVolume
+  - bus: 5
+    mixerGroup: {fileID: 4962954397146775596, guid: f8ee2ef34238ee24d9216a9e76c79860, type: 2}
+    volumeParameter: VoiceVolume
+  sfxPool:
+    initialSize: 16
+    maxSize: 64
+    expansionPolicy: 1
+  defaultFadeDuration: 0.5
+  defaultFadeCurve: 3
+  spatialDefaults:
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 50
+    rolloffMode: 1
+  musicDefaults:
+    transitionTiming: 2
+    transitionFadeDuration: 2
+    transitionFadeCurve: 3
+    schedulingLookahead: 0.5
+    intensityFadeDuration: 1.5
+  debugLogging: 0

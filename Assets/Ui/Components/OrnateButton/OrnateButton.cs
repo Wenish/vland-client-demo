@@ -1,4 +1,5 @@
-using UnityEngine;
+using ShadowInfection.Audio;
+using ShadowInfection.DI;
 using UnityEngine.UIElements;
 
 [UxmlElement]
@@ -32,7 +33,7 @@ public partial class OrnateButton : Button
             return;
 
         _hoverPlayed = true;
-        PlaySound("UiButtonHover");
+        PlayUi(SfxPlayer.Ids.UiButtonHover);
     }
 
     private void OnPointerLeave(PointerLeaveEvent evt)
@@ -43,7 +44,7 @@ public partial class OrnateButton : Button
     private void OnClicked(ClickEvent evt)
     {
         ReleaseInteractiveHover();
-        PlaySound("UiButtonClick");
+        PlayUi(SfxPlayer.Ids.UiButtonClick);
     }
 
     private void ReleaseInteractiveHover()
@@ -56,13 +57,9 @@ public partial class OrnateButton : Button
         UiCursorRefresh.PopInteractiveHover();
     }
 
-    private static void PlaySound(string soundName)
+    private static void PlayUi(string soundId)
     {
-        if (SoundManager.Instance == null)
-        {
-            return;
-        }
-
-        SoundManager.Instance.PlaySound(soundName);
+        if (GameLifetimeScope.TryResolve<ISfxPlayer>(out var sfx))
+            sfx.Play(soundId);
     }
 }

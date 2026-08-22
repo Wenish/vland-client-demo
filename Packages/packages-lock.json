@@ -62,6 +62,18 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "com.voxelcore.gapa.audio": {
+      "version": "https://github.com/VoxelCoreLab/gapa-audio.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.audio": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.ugui": "2.5.0"
+      },
+      "hash": "73c28708adc79111c0bff42117246a4897e91c4c"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

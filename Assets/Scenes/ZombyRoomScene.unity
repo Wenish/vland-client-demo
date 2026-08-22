@@ -9885,6 +9885,10 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  gapaAudioRuntime: {fileID: 0}
+  gapaAudioSettings: {fileID: 11400000, guid: d6f8b0e4270b729dd5f4b1a8e0237654, type: 2}
+  gapaMusicTransitionTable: {fileID: 0}
+  gapaDefaultMusicState: {fileID: 0}
 --- !u!1 &1386574153
 GameObject:
   m_ObjectHideFlags: 0

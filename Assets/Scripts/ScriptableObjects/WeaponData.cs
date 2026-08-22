@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gapa.Audio.Sfx;
 using UnityEngine;
 
 public abstract class WeaponData : ScriptableObject
@@ -52,11 +53,7 @@ public abstract class WeaponData : ScriptableObject
     [System.Serializable]
     public class AudioListItem
     {
-        public SoundData soundData;
-
-        [Range(0f, 0.5f)]
-        [Tooltip("Maximum random pitch deviation (±). 0.0 = no variation, 0.5 = noticeable variation")]
-        public float pitchOffset = 0f;
+        public SfxDefinition soundData;
 
     }
 }
