@@ -3,6 +3,7 @@ using Game.Scripts.Controllers;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -44,7 +45,10 @@ public class PlayerInput : NetworkBehaviour
         _plane = new Plane(Vector3.up, 0);
         if (isServer)
         {
-            var unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionToClient.connectionId);
+            var playerUnits = GameServices.PlayerUnits;
+            var unit = playerUnits != null
+                ? playerUnits.GetPlayerUnit(connectionToClient.connectionId)
+                : null;
             SetMyUnit(unit);
             GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
         }

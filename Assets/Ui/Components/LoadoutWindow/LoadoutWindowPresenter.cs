@@ -4,6 +4,7 @@ using System.Threading;
 using MessagePipe;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vland.UI;
@@ -15,6 +16,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private readonly ILoadoutStore store;
         private readonly ILoadoutCatalog catalog;
         private readonly ISubscriber<SetLoadoutWindowOpenEvent> setOpen;
+        private readonly ApplicationSettings settings;
 
         private LoadoutView view;
         private R3.DisposableBag subscriptions;
@@ -27,11 +29,13 @@ namespace ShadowInfection.UI.LoadoutWindow
         public LoadoutWindowPresenter(
             ILoadoutStore store,
             ILoadoutCatalog catalog,
-            ISubscriber<SetLoadoutWindowOpenEvent> setOpen)
+            ISubscriber<SetLoadoutWindowOpenEvent> setOpen,
+            ApplicationSettings settings)
         {
             this.store = store;
             this.catalog = catalog;
             this.setOpen = setOpen;
+            this.settings = settings;
         }
 
         public void Bind(LoadoutView nextView, CancellationToken token)
@@ -387,7 +391,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         {
             var newLocalLoadout = new LocalLoadout
             {
-                UnitName = ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname),
+                UnitName = ApplicationSettings.GetEffectiveNickname(settings != null ? settings.Nickname : null),
                 WeaponId = GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
                 PassiveId = GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
                 Normal1Id = GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,

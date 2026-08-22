@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class BuyWeaponManager : NetworkBehaviour {
 
-    public static BuyWeaponManager Instance { get; private set; }
-
     public WeaponMapping[] weaponMappings;
     private DisposableBag serverSubscriptions;
 
@@ -15,15 +13,6 @@ public class BuyWeaponManager : NetworkBehaviour {
     {
         public int weaponId;
         public WeaponData weaponData;
-    }
-
-    private void Awake() {
-        if (Instance != null && Instance != this) {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
     }
 
     void Start() {

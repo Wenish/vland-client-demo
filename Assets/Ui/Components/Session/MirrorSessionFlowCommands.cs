@@ -1,4 +1,5 @@
 using Mirror;
+using ShadowInfection.DI;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 
@@ -6,19 +7,14 @@ namespace ShadowInfection.UI.Session
 {
     internal sealed class MirrorSessionFlowCommands : ISessionFlowCommands
     {
-        private readonly IZombieMatchCommands zombieCommands;
-
-        public MirrorSessionFlowCommands(IZombieMatchCommands zombieCommands)
-        {
-            this.zombieCommands = zombieCommands;
-        }
-
         public bool TryEndMatch()
         {
             if (!NetworkServer.active)
                 return false;
 
-            if (zombieCommands != null && zombieCommands.TryReturnToLobby())
+            if (GameServices.TryGet<IZombieMatchCommands>(out var zombieCommands)
+                && zombieCommands != null
+                && zombieCommands.TryReturnToLobby())
                 return true;
 
             if (NetworkManager.singleton is NetworkRoomManager roomManager)

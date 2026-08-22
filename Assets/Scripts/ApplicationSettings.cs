@@ -5,7 +5,7 @@ using UnityEngine.Audio;
 
 public class ApplicationSettings : MonoBehaviour
 {
-    public static ApplicationSettings Instance;
+    private static ApplicationSettings current;
 
     public string Nickname { get; set; } = "";
     public bool IsAudioEnabled { get; set; } = true;
@@ -24,18 +24,24 @@ public class ApplicationSettings : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
+        if (current != null && current != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
+        current = this;
         DontDestroyOnLoad(gameObject);
         LoadSettings();
         ApplyAudioSettings();
         ApplyWindowedFullscreenSettings();
         ApplyResolutionSettings();
+    }
+
+    private void OnDestroy()
+    {
+        if (current == this)
+            current = null;
     }
 
     void Start()

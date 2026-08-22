@@ -5,6 +5,7 @@ using System.Linq;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,8 +15,6 @@ public class ZombieGameManager : NetworkBehaviour
     private const int KillPointsReward = 25;
     private const float LeaderboardReconcileIntervalSeconds = 1f;
     private const float ServerOnlyAutoReturnDelaySeconds = 10f;
-
-    public static ZombieGameManager Singleton { get; private set; }
 
     [Header("Config")]
     [SerializeField] private ZombieModeConfig modeConfig;
@@ -87,7 +86,6 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void Awake()
     {
-        Singleton = this;
         RefreshZombieSpawns();
     }
 
@@ -143,11 +141,6 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void OnDestroy()
     {
-        if (Singleton == this)
-        {
-            Singleton = null;
-        }
-
         DisposeServerSubscriptions();
         StopAllCoroutines();
     }
@@ -422,7 +415,14 @@ public class ZombieGameManager : NetworkBehaviour
         Vector3 spawnPosition = GetZombieSpawnPosition();
         Quaternion spawnRotation = Quaternion.identity;
 
-        var zombie = UnitSpawner.Instance.SpawnUnit(unitName, spawnPosition, spawnRotation, true);
+        var units = GameServices.Units;
+        if (units == null)
+        {
+            Debug.LogError("Unit spawner is missing. Cannot spawn zombie.", this);
+            return false;
+        }
+
+        var zombie = units.SpawnUnit(unitName, spawnPosition, spawnRotation, true);
         if (zombie == null)
         {
             Debug.LogError($"Failed to spawn zombie unit '{unitName}'.", this);
@@ -662,15 +662,15 @@ public class ZombieGameManager : NetworkBehaviour
     [Server]
     private int GetActivePlayerCount()
     {
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return 1;
         }
 
         int count = 0;
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            if (PlayerUnitsManager.Instance.playerUnits[i].Unit != null)
+            if (GameServices.PlayerUnits.playerUnits[i].Unit != null)
             {
                 count++;
             }
@@ -862,15 +862,15 @@ public class ZombieGameManager : NetworkBehaviour
     [Server]
     private void ReconcileLeaderboardConnectivity()
     {
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return;
         }
 
         var activeHumanConnectionIds = new HashSet<int>();
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnit = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnit.ConnectionId < 0 || playerUnit.Unit == null)
             {
                 continue;
@@ -968,15 +968,15 @@ public class ZombieGameManager : NetworkBehaviour
     [Server]
     private bool AreAllHumanPlayersDead()
     {
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return false;
         }
 
         bool hasAnyHuman = false;
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnitEntry = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnitEntry = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnitEntry.ConnectionId < 0)
             {
                 continue;
@@ -1083,14 +1083,14 @@ public class ZombieGameManager : NetworkBehaviour
     private bool TryGetConnectionIdForPlayerUnit(UnitController playerUnit, out int connectionId)
     {
         connectionId = default;
-        if (playerUnit == null || PlayerUnitsManager.Instance == null)
+        if (playerUnit == null || GameServices.PlayerUnits == null)
         {
             return false;
         }
 
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnitEntry = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnitEntry = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnitEntry.ConnectionId < 0 || playerUnitEntry.Unit == null)
             {
                 continue;

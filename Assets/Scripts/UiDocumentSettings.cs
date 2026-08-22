@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UIElements;
@@ -7,6 +8,7 @@ public class UiDocumentSettings : MonoBehaviour
 {
     public AudioMixer audioMixer;
     private UIDocument uiDocument;
+    private ApplicationSettings settings;
 
     private int audioDefaultValue = 100;
 
@@ -65,17 +67,21 @@ public class UiDocumentSettings : MonoBehaviour
 
     void OnEnable()
     {
+        settings = GameServices.Settings;
+        if (settings == null)
+            return;
+
         // Initialize callbacks with proper ApplicationSettings methods
-        masterCallback = evt => ApplicationSettings.Instance.SetMasterVolume(evt.newValue);
-        musicCallback = evt => ApplicationSettings.Instance.SetMusicVolume(evt.newValue);
-        sfxCallback = evt => ApplicationSettings.Instance.SetSfxVolume(evt.newValue);
-        uiCallback = evt => ApplicationSettings.Instance.SetUiVolume(evt.newValue);
-        voiceCallback = evt => ApplicationSettings.Instance.SetVoiceVolume(evt.newValue);
-        ambientCallback = evt => ApplicationSettings.Instance.SetAmbientVolume(evt.newValue);
-        audioToggleCallback = evt => ApplicationSettings.Instance.SetAudioEnabled(evt.newValue);
-        windowFullscreenToggleCallback = evt => ApplicationSettings.Instance.SetWindowedFullscreenEnabled(evt.newValue);
-        resolutionDropdownCallback = evt => ApplicationSettings.Instance.SetResolutionIndex(dropdownFieldResolution.index);
-        nicknameFieldCallback = evt => ApplicationSettings.Instance.SetNickname(evt.newValue);
+        masterCallback = evt => settings.SetMasterVolume(evt.newValue);
+        musicCallback = evt => settings.SetMusicVolume(evt.newValue);
+        sfxCallback = evt => settings.SetSfxVolume(evt.newValue);
+        uiCallback = evt => settings.SetUiVolume(evt.newValue);
+        voiceCallback = evt => settings.SetVoiceVolume(evt.newValue);
+        ambientCallback = evt => settings.SetAmbientVolume(evt.newValue);
+        audioToggleCallback = evt => settings.SetAudioEnabled(evt.newValue);
+        windowFullscreenToggleCallback = evt => settings.SetWindowedFullscreenEnabled(evt.newValue);
+        resolutionDropdownCallback = evt => settings.SetResolutionIndex(dropdownFieldResolution.index);
+        nicknameFieldCallback = evt => settings.SetNickname(evt.newValue);
 
         // Load current settings and initialize UI
         LoadAndApplyCurrentSettings();
@@ -128,7 +134,7 @@ public class UiDocumentSettings : MonoBehaviour
     void Start()
     {
         // Ensure ApplicationSettings is ready and apply current settings to UI
-        if (ApplicationSettings.Instance != null)
+        if (settings != null)
         {
             LoadAndApplyCurrentSettings();
         }
@@ -137,39 +143,44 @@ public class UiDocumentSettings : MonoBehaviour
 
     private void LoadAndApplyCurrentSettings()
     {
-        if (ApplicationSettings.Instance == null) return;
+        if (settings == null)
+        {
+            settings = GameServices.Settings;
+            if (settings == null)
+                return;
+        }
 
         // Set toggle value
         if (toggleAudio != null)
-            toggleAudio.SetValueWithoutNotify(ApplicationSettings.Instance.IsAudioEnabled);
+            toggleAudio.SetValueWithoutNotify(settings.IsAudioEnabled);
 
         // Set slider values without triggering callbacks
         if (sliderAudioMaster != null)
-            sliderAudioMaster.SetValueWithoutNotify(ApplicationSettings.Instance.AudioMasterVolume);
+            sliderAudioMaster.SetValueWithoutNotify(settings.AudioMasterVolume);
         if (sliderAudioMusic != null)
-            sliderAudioMusic.SetValueWithoutNotify(ApplicationSettings.Instance.AudioMusicVolume);
+            sliderAudioMusic.SetValueWithoutNotify(settings.AudioMusicVolume);
         if (sliderAudioSfx != null)
-            sliderAudioSfx.SetValueWithoutNotify(ApplicationSettings.Instance.AudioSfxVolume);
+            sliderAudioSfx.SetValueWithoutNotify(settings.AudioSfxVolume);
         if (silderAudioUi != null)
-            silderAudioUi.SetValueWithoutNotify(ApplicationSettings.Instance.AudioUiVolume);
+            silderAudioUi.SetValueWithoutNotify(settings.AudioUiVolume);
         if (sliderAudioVoice != null)
-            sliderAudioVoice.SetValueWithoutNotify(ApplicationSettings.Instance.AudioVoiceVolume);
+            sliderAudioVoice.SetValueWithoutNotify(settings.AudioVoiceVolume);
         if (sliderAudioAmbient != null)
-            sliderAudioAmbient.SetValueWithoutNotify(ApplicationSettings.Instance.AudioAmbientVolume);
+            sliderAudioAmbient.SetValueWithoutNotify(settings.AudioAmbientVolume);
 
         // Set windowed fullscreen toggle
         if (toggleWindowFullscreen != null)
-            toggleWindowFullscreen.SetValueWithoutNotify(ApplicationSettings.Instance.IsWindowedFullscreenEnabled);
+            toggleWindowFullscreen.SetValueWithoutNotify(settings.IsWindowedFullscreenEnabled);
 
         // Set resolution dropdown
         if (dropdownFieldResolution != null)
         {
             dropdownFieldResolution.choices = GetResolutionChoices();
-            dropdownFieldResolution.index = ApplicationSettings.Instance.SelectedResolutionIndex;
+            dropdownFieldResolution.index = settings.SelectedResolutionIndex;
         }
         // Set nickname field
         if (nicknameField != null)
-            nicknameField.SetValueWithoutNotify(ApplicationSettings.Instance.Nickname);
+            nicknameField.SetValueWithoutNotify(settings.Nickname);
 
     }
 
@@ -187,22 +198,27 @@ public class UiDocumentSettings : MonoBehaviour
     {
         Debug.Log("Reset Settings button clicked");
         
-        if (ApplicationSettings.Instance == null) return;
+        if (settings == null)
+        {
+            settings = GameServices.Settings;
+            if (settings == null)
+                return;
+        }
 
         // Reset all audio settings to default values
-        ApplicationSettings.Instance.SetAudioEnabled(true);
-        ApplicationSettings.Instance.SetMasterVolume(audioDefaultValue);
-        ApplicationSettings.Instance.SetMusicVolume(audioDefaultValue);
-        ApplicationSettings.Instance.SetSfxVolume(audioDefaultValue);
-        ApplicationSettings.Instance.SetUiVolume(audioDefaultValue);
-        ApplicationSettings.Instance.SetVoiceVolume(audioDefaultValue);
-        ApplicationSettings.Instance.SetAmbientVolume(audioDefaultValue);
+        settings.SetAudioEnabled(true);
+        settings.SetMasterVolume(audioDefaultValue);
+        settings.SetMusicVolume(audioDefaultValue);
+        settings.SetSfxVolume(audioDefaultValue);
+        settings.SetUiVolume(audioDefaultValue);
+        settings.SetVoiceVolume(audioDefaultValue);
+        settings.SetAmbientVolume(audioDefaultValue);
 
         // Reset windowed fullscreen setting
-        ApplicationSettings.Instance.SetResolutionIndex(ApplicationSettings.Instance.GetDefaultResolutionIndex());
+        settings.SetResolutionIndex(settings.GetDefaultResolutionIndex());
 
         // Somehow reseting window fullscreeen with reesolution before bugs out
-        // ApplicationSettings.Instance.SetWindowedFullscreenEnabled(true);
+        // settings.SetWindowedFullscreenEnabled(true);
 
         // Update UI elements to reflect the reset values
         LoadAndApplyCurrentSettings();

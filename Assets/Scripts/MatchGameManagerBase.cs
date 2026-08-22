@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public abstract class MatchGameManagerBase : NetworkBehaviour
@@ -337,14 +338,14 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     [Server]
     protected virtual void OnServerPlayerTeamAssigned(int connectionId, int teamId)
     {
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return;
         }
 
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnit = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
             {
                 continue;

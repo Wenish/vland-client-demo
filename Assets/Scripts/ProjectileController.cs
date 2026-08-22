@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 using System;
 using System.Collections;
+using ShadowInfection.DI;
 using UnityEngine.VFX;
 
 public class ProjectileController : NetworkBehaviour
@@ -49,8 +50,8 @@ public class ProjectileController : NetworkBehaviour
 
     private void SetProjectileData(string projectileName)
     {
-        var database = DatabaseManager.Instance.projectileDatabase;
-        projectileData = database.GetProjectileByName(projectileName);
+        var database = GameServices.Databases?.Projectiles;
+        projectileData = database != null ? database.GetProjectileByName(projectileName) : null;
 
         if (projectileData == null)
         {
@@ -360,7 +361,7 @@ public class ProjectileController : NetworkBehaviour
         ProjectileData data = projectileData;
         if (data == null)
         {
-            var db = DatabaseManager.Instance != null ? DatabaseManager.Instance.projectileDatabase : null;
+            var db = GameServices.Databases?.Projectiles;
             if (db != null && !string.IsNullOrEmpty(projectileName))
             {
                 data = db.GetProjectileByName(projectileName);

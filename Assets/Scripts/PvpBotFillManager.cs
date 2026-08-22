@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using System.Linq;
+using ShadowInfection.DI;
 
 [DisallowMultipleComponent]
 public class PvpBotFillManager : NetworkBehaviour
@@ -43,7 +44,7 @@ public class PvpBotFillManager : NetworkBehaviour
             return;
         }
 
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return;
         }
@@ -60,8 +61,8 @@ public class PvpBotFillManager : NetworkBehaviour
     [Server]
     private void ReconcileBotPopulation()
     {
-        int humanPlayers = PlayerUnitsManager.Instance.GetHumanPlayerCount();
-        int currentBots = PlayerUnitsManager.Instance.GetBotPlayerCount();
+        int humanPlayers = GameServices.PlayerUnits.GetHumanPlayerCount();
+        int currentBots = GameServices.PlayerUnits.GetBotPlayerCount();
         int targetBots = Mathf.Clamp(desiredTotalPlayers - humanPlayers, 0, maxBots);
 
         if (currentBots < targetBots)
@@ -69,7 +70,7 @@ public class PvpBotFillManager : NetworkBehaviour
             int toSpawn = targetBots - currentBots;
             for (int i = 0; i < toSpawn; i++)
             {
-                var spawnedUnit = PlayerUnitsManager.Instance.SpawnBotPlayerUnit(botUnitName);
+                var spawnedUnit = GameServices.PlayerUnits.SpawnBotPlayerUnit(botUnitName);
                 if (spawnedUnit == null)
                 {
                     continue;
@@ -110,8 +111,9 @@ public class PvpBotFillManager : NetworkBehaviour
             return;
         }
 
-        var skillDb = DatabaseManager.Instance?.skillDatabase;
-        var weaponDb = DatabaseManager.Instance?.weaponDatabase;
+        var databases = GameServices.Databases;
+        var skillDb = databases?.Skills;
+        var weaponDb = databases?.Weapons;
 
         if (skillDb == null || weaponDb == null)
         {
@@ -187,7 +189,7 @@ public class PvpBotFillManager : NetworkBehaviour
             return;
         }
 
-        PlayerUnitsManager.Instance.GetBotConnectionIds(_botConnectionIdsBuffer);
+        GameServices.PlayerUnits.GetBotConnectionIds(_botConnectionIdsBuffer);
         if (_botConnectionIdsBuffer.Count == 0)
         {
             return;
@@ -198,7 +200,7 @@ public class PvpBotFillManager : NetworkBehaviour
         for (int i = 0; i < _botConnectionIdsBuffer.Count && removed < count; i++)
         {
             int connectionId = _botConnectionIdsBuffer[i];
-            var unit = PlayerUnitsManager.Instance.GetPlayerUnit(connectionId);
+            var unit = GameServices.PlayerUnits.GetPlayerUnit(connectionId);
             if (unit == null)
             {
                 continue;
@@ -210,7 +212,7 @@ public class PvpBotFillManager : NetworkBehaviour
                 continue;
             }
 
-            if (PlayerUnitsManager.Instance.DespawnBotPlayerUnit(connectionId))
+            if (GameServices.PlayerUnits.DespawnBotPlayerUnit(connectionId))
             {
                 removed++;
             }
@@ -219,7 +221,7 @@ public class PvpBotFillManager : NetworkBehaviour
         for (int i = 0; i < _botConnectionIdsBuffer.Count && removed < count; i++)
         {
             int connectionId = _botConnectionIdsBuffer[i];
-            if (PlayerUnitsManager.Instance.DespawnBotPlayerUnit(connectionId))
+            if (GameServices.PlayerUnits.DespawnBotPlayerUnit(connectionId))
             {
                 removed++;
             }

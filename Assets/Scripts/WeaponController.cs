@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class WeaponController : NetworkBehaviour
@@ -87,7 +88,10 @@ public class WeaponController : NetworkBehaviour
             return;
         }
 
-        weaponData.PerformAttack(attacker);
+        if (weaponData is WeaponRangedData ranged)
+            ranged.PerformAttack(attacker, GameServices.Projectiles);
+        else
+            weaponData.PerformAttack(attacker);
         attacker.RaiseOnAttackSwingEvent(attackIndex);
         isAttacking = false;
         attackIndex = (attackIndex + 1) % 2;

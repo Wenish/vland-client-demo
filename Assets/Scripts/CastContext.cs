@@ -1,4 +1,5 @@
 using UnityEngine;
+using ShadowInfection.DI;
 
 public class CastContext
 {
@@ -6,6 +7,9 @@ public class CastContext
     public NetworkedSkillInstance skillInstance;
     public Vector3? aimPoint;
     public Quaternion? aimRotation;
+    public IUnitSpawner UnitSpawner { get; }
+    public IProjectileSpawner ProjectileSpawner { get; }
+    public IAreaZoneSpawner AreaZoneSpawner { get; }
 
     /// <summary>
     /// The unit that triggered this cast (e.g. the attacker when reflecting damage).
@@ -59,5 +63,8 @@ public class CastContext
     {
         this.caster = caster;
         this.skillInstance = skillInstance;
+        UnitSpawner = GameServices.Units;
+        ProjectileSpawner = GameServices.Projectiles;
+        AreaZoneSpawner = GameServices.AreaZones;
     }
 }

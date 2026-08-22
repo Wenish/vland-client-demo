@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitUiBuffBar))]
@@ -71,7 +72,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
                 continue;
 
             var isInfiniteBuff = buff.Duration == Mathf.Infinity;
-            Texture2D iconTexture = DatabaseManager.Instance.skillDatabase.GetSkillByName(buff.SkillName)?.iconTexture;
+            Texture2D iconTexture = GameServices.Databases?.Skills?.GetSkillByName(buff.SkillName)?.iconTexture;
 
             _currentBuffs.Add(new UiBuffData
             {
@@ -107,7 +108,7 @@ public class UnitUiBuffBarPresenter : MonoBehaviour
         }
 
         var isInfiniteBuff = buff.Duration == Mathf.Infinity;
-        Texture2D iconTexture = DatabaseManager.Instance.skillDatabase.GetSkillByName(buff.SkillName)?.iconTexture;
+        Texture2D iconTexture = GameServices.Databases?.Skills?.GetSkillByName(buff.SkillName)?.iconTexture;
 
         // Avoid duplicates if we seeded earlier or got multiple add events
         var existing = _currentBuffs.FirstOrDefault(b => b.InstanceId == buff.InstanceId);

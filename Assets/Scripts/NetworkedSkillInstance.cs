@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -48,7 +49,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         skillName = name;
         unit = unitRef;
-        skillDatabase = DatabaseManager.Instance.skillDatabase;
+        skillDatabase = GameServices.Databases?.Skills;
         ResolveSkillData();
 
         EnsureReactiveRunner();
@@ -58,8 +59,11 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         if (skillDatabase == null)
         {
-            skillDatabase = DatabaseManager.Instance.skillDatabase;
+            skillDatabase = GameServices.Databases?.Skills;
         }
+
+        if (skillDatabase == null)
+            return;
 
         skillData = skillDatabase.GetSkillByName(skillName);
     }
@@ -68,8 +72,11 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         if (skillDatabase == null)
         {
-            skillDatabase = DatabaseManager.Instance.skillDatabase;
+            skillDatabase = GameServices.Databases?.Skills;
         }
+
+        if (skillDatabase == null)
+            return;
 
         skillData = skillDatabase.GetSkillByName(newName);
         EnsureReactiveRunner();

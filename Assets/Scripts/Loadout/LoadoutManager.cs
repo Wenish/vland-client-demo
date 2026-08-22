@@ -1,25 +1,32 @@
 using System;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class LoadoutManager : MonoBehaviour
 {
-    public static LoadoutManager Instance { get; private set; }
-
     public event Action<LocalLoadout> OnLoadoutChanged; // fires after save
 
     private const string PlayerPrefsKey = "LocalLoadout_v1";
     private LocalLoadout _current = new LocalLoadout();
+    private static LoadoutManager current;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (current != null && current != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+
+        current = this;
         DontDestroyOnLoad(gameObject);
         LoadFromPrefs();
+    }
+
+    private void OnDestroy()
+    {
+        if (current == this)
+            current = null;
     }
 
     public LocalLoadout Get()
@@ -81,7 +88,7 @@ public class LoadoutManager : MonoBehaviour
         {
             _current = new LocalLoadout
             {
-                UnitName = ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname),
+                UnitName = ApplicationSettings.GetEffectiveNickname(GameServices.Settings?.Nickname),
                 WeaponId = string.Empty,
                 PassiveId = string.Empty,
                 Normal1Id = string.Empty,

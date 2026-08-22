@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class AreaZoneController : NetworkBehaviour
@@ -36,7 +37,7 @@ public class AreaZoneController : NetworkBehaviour
 
     private void SetAreaZoneData(string areaZoneName)
     {
-        areaZoneData = DatabaseManager.Instance.areaZoneDatabase.GetAreaZoneByName(areaZoneName);
+        areaZoneData = GameServices.Databases?.AreaZones?.GetAreaZoneByName(areaZoneName);
         RefreshVisual();
     }
 

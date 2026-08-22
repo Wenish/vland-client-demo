@@ -1,5 +1,6 @@
 using System.Linq;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class PlayerLoadout : NetworkBehaviour
@@ -8,7 +9,7 @@ public class PlayerLoadout : NetworkBehaviour
     private PlayerInput _playerInput;
     private Coroutine _deferredSyncCoroutine;
 
-    private LoadoutManager _loadoutManager = LoadoutManager.Instance;
+    private LoadoutManager _loadoutManager;
 
     void Start()
     {
@@ -22,13 +23,16 @@ public class PlayerLoadout : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         EnsurePlayerInput();
-        _loadoutManager.OnLoadoutChanged += HandleLocalLoadoutChanged;
+        _loadoutManager = GameServices.Loadout;
+        if (_loadoutManager != null)
+            _loadoutManager.OnLoadoutChanged += HandleLocalLoadoutChanged;
         RestartDeferredSync();
     }
 
     public override void OnStopLocalPlayer()
     {
-        _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
+        if (_loadoutManager != null)
+            _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
 
         if (_deferredSyncCoroutine != null)
         {
@@ -93,8 +97,8 @@ public class PlayerLoadout : NetworkBehaviour
             yield break;
         }
 
-        CmdRequestSetName(ApplicationSettings.GetEffectiveNickname(ApplicationSettings.Instance?.Nickname));
-        var loadout = _loadoutManager.Get();
+        CmdRequestSetName(ApplicationSettings.GetEffectiveNickname(GameServices.Settings?.Nickname));
+        var loadout = _loadoutManager != null ? _loadoutManager.Get() : GameServices.Loadout?.Get();
         SendLoadoutToServer(loadout);
         _deferredSyncCoroutine = null;
     }
@@ -155,7 +159,7 @@ public class PlayerLoadout : NetworkBehaviour
         }
 
         // Validate weapon
-        var weaponDb = DatabaseManager.Instance.weaponDatabase;
+        var weaponDb = GameServices.Databases?.Weapons;
         var weaponData = weaponDb != null ? weaponDb.GetWeaponByName(desiredWeaponName) : null;
         if (weaponData == null)
         {
@@ -164,7 +168,7 @@ public class PlayerLoadout : NetworkBehaviour
         }
 
         // Validate skills
-        var skillDb = DatabaseManager.Instance.skillDatabase;
+        var skillDb = GameServices.Databases?.Skills;
         if (skillDb == null)
         {
             TargetAckSetLoadout(connectionToClient, false, "Skill database missing.");
@@ -272,10 +276,10 @@ public class PlayerLoadout : NetworkBehaviour
     [Command]
     private void CmdRequestChooseTeam(int desiredTeamId)
     {
-        MatchGameManagerBase manager = MatchGameManagerBase.ActiveInstance;
+        MatchGameManagerBase manager = GameServices.Match;
         if (manager == null)
         {
-            manager = FindAnyObjectByType<MatchGameManagerBase>();
+            manager = MatchGameManagerBase.ActiveInstance;
         }
 
         if (manager == null)

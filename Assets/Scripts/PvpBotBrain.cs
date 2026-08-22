@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
+using ShadowInfection.DI;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(UnitController))]
@@ -154,14 +155,14 @@ public class PvpBotBrain : MonoBehaviour
     [Server]
     private bool CanActInCurrentMode()
     {
-        if (SkirmishGameManager.Instance != null)
+        if (GameServices.Skirmish != null)
         {
-            return SkirmishGameManager.Instance.CurrentRoundState == SkirmishGameManager.RoundState.InRound;
+            return GameServices.Skirmish.CurrentRoundState == SkirmishGameManager.RoundState.InRound;
         }
 
-        if (CastleSiegeManager.Instance != null)
+        if (GameServices.CastleSiege != null)
         {
-            return CastleSiegeManager.Instance.IsInGame;
+            return GameServices.CastleSiege.IsInGame;
         }
 
         return true;
@@ -175,16 +176,16 @@ public class PvpBotBrain : MonoBehaviour
             return null;
         }
 
-        if (CastleSiegeManager.Instance != null && CastleSiegeManager.Instance.IsInGame)
+        if (GameServices.CastleSiege != null && GameServices.CastleSiege.IsInGame)
         {
-            var enemyLord = CastleSiegeManager.Instance.ServerGetAliveEnemyLordForTeam(_unit.team, _unit.transform.position);
+            var enemyLord = GameServices.CastleSiege.ServerGetAliveEnemyLordForTeam(_unit.team, _unit.transform.position);
             if (IsTargetValid(enemyLord) && HasLineOfSight(_unit, enemyLord))
             {
                 return enemyLord;
             }
         }
 
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return null;
         }
@@ -192,9 +193,9 @@ public class PvpBotBrain : MonoBehaviour
         UnitController bestTarget = null;
         float bestThreatScore = float.MinValue;
 
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnit = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnit.Unit == null)
             {
                 continue;
@@ -554,11 +555,11 @@ public class PvpBotBrain : MonoBehaviour
         float exposureBonus = 0f;
         int enemyVisCount = 0;
 
-        if (PlayerUnitsManager.Instance != null)
+        if (GameServices.PlayerUnits != null)
         {
-            for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+            for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
             {
-                var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+                var playerUnit = GameServices.PlayerUnits.playerUnits[i];
                 if (playerUnit.Unit == null)
                 {
                     continue;

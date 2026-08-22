@@ -1,4 +1,5 @@
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -101,10 +102,10 @@ public class HostAdminOverlayPresenter : MonoBehaviour
             return;
         }
 
-        _manager = MatchGameManagerBase.ActiveInstance;
+        _manager = GameServices.Match;
         if (_manager == null)
         {
-            _manager = FindAnyObjectByType<MatchGameManagerBase>();
+            _manager = MatchGameManagerBase.ActiveInstance;
         }
     }
 

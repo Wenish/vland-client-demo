@@ -34,7 +34,14 @@ public class SkillEffectMechanicAreaZone : SkillEffectMechanic
             return;
         }
 
-        var areaZoneInstance = AreaZoneSpawner.Instance.SpawnAreaZone(areaZoneData, position, rotation);
+        var areaZoneSpawner = castContext.AreaZoneSpawner;
+        if (areaZoneSpawner == null)
+        {
+            Debug.LogWarning("Area zone spawner is missing. Cannot spawn area zone.");
+            return;
+        }
+
+        var areaZoneInstance = areaZoneSpawner.SpawnAreaZone(areaZoneData, position, rotation);
 
         AreaZoneController areaZoneController = areaZoneInstance.GetComponent<AreaZoneController>();
         areaZoneController.caster = castContext.caster;

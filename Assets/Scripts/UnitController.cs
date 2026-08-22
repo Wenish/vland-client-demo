@@ -1,6 +1,7 @@
 using System;
 using Mirror;
 using MyGame.Events;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem; // New Input System
 
@@ -159,7 +160,7 @@ public class UnitController : NetworkBehaviour
 
     private void SetWeaponData(string weaponName)
     {
-        WeaponData weaponData = DatabaseManager.Instance.weaponDatabase.GetWeaponByName(weaponName);
+        WeaponData weaponData = GameServices.Databases?.Weapons?.GetWeaponByName(weaponName);
         if (weaponData == null)
         {
             Debug.LogError($"Weapon {weaponName} not found in database.");
@@ -192,7 +193,7 @@ public class UnitController : NetworkBehaviour
 
     private void SetModelData(string modelName)
     {
-        ModelData modelData = DatabaseManager.Instance.modelDatabase.GetModelByName(modelName);
+        ModelData modelData = GameServices.Databases?.Models?.GetModelByName(modelName);
         if (modelData == null)
         {
             Debug.LogError($"Model {modelName} not found in database.");
@@ -889,7 +890,7 @@ public class UnitController : NetworkBehaviour
     public void RpcOnProjectileHit(UnitController target, string projectileName)
     {
         if (isServer) return;
-        var projectile = DatabaseManager.Instance.projectileDatabase.GetProjectileByName(projectileName);
+        var projectile = GameServices.Databases?.Projectiles?.GetProjectileByName(projectileName);
         OnProjectileHit((target, projectile));
     }
 

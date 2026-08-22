@@ -1,20 +1,12 @@
 using Mirror;
 using UnityEngine;
 
-public class AreaZoneSpawner : MonoBehaviour
+public class AreaZoneSpawner : MonoBehaviour, IAreaZoneSpawner
 {
-    public static AreaZoneSpawner Instance { get; private set; }
     public GameObject areaZonePrefab;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
         areaZonePrefab = NetworkManager.singleton.spawnPrefabs.Find(prefab => prefab.name == "AreaZone");
     }
 

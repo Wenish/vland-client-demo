@@ -1,4 +1,5 @@
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -25,7 +26,7 @@ public class DestructibleResetOnSkirmishRound : NetworkBehaviour
             _objective = GetComponent<DestructibleObjective>();
         }
 
-        _manager = SkirmishGameManager.Instance;
+        _manager = GameServices.Skirmish;
         if (_manager != null)
         {
             _manager.OnRoundStateChanged += OnRoundStateChanged;

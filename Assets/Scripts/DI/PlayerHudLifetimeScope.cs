@@ -46,14 +46,14 @@ namespace ShadowInfection.DI
 
         protected override void Awake()
         {
-            parentReference = ParentReference.Create<GameLifetimeScope>();
-            parentReference.Object = GameLifetimeScope.FindOrCreate();
+            parentReference = ParentReference.Create<GameplayLifetimeScope>();
+            parentReference.Object = LifetimeScopeParents.GameplayOrGame();
             base.Awake();
         }
 
         protected override LifetimeScope FindParent()
         {
-            return GameLifetimeScope.FindOrCreate();
+            return LifetimeScopeParents.GameplayOrGame();
         }
 
         protected override void Configure(IContainerBuilder builder)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.AI;
 #if UNITY_EDITOR
@@ -11,8 +12,6 @@ using UnityEditor;
 
 public class CastleSiegeManager : MatchGameManagerBase
 {
-    public static CastleSiegeManager Instance { get; private set; }
-
     [Header("Config")]
     [SerializeField] private CastleSiegeMapConfig mapConfig;
 
@@ -92,14 +91,6 @@ public class CastleSiegeManager : MatchGameManagerBase
     protected override void Awake()
     {
         base.Awake();
-
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
         ResetMatchWinnerEventState();
     }
 
@@ -200,11 +191,6 @@ public class CastleSiegeManager : MatchGameManagerBase
     protected override void OnDestroy()
     {
         base.OnDestroy();
-
-        if (Instance == this)
-        {
-            Instance = null;
-        }
     }
 
     private void OnDrawGizmos()
@@ -336,12 +322,12 @@ public class CastleSiegeManager : MatchGameManagerBase
             return false;
         }
 
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return false;
         }
 
-        int connectedPlayers = PlayerUnitsManager.Instance.playerUnits.Count(unit => unit.Unit != null);
+        int connectedPlayers = GameServices.PlayerUnits.playerUnits.Count(unit => unit.Unit != null);
         return connectedPlayers >= Mathf.Max(1, minPlayersToStart);
     }
 
@@ -374,14 +360,14 @@ public class CastleSiegeManager : MatchGameManagerBase
     [Server]
     private void SyncPlayersAndTeams()
     {
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return;
         }
 
         var activeConnectionIds = new HashSet<int>();
 
-        foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
         {
             if (playerUnit.Unit == null)
             {
@@ -519,7 +505,7 @@ public class CastleSiegeManager : MatchGameManagerBase
             yield break;
         }
 
-        var playerUnit = PlayerUnitsManager.Instance.playerUnits.FirstOrDefault(unit => unit.ConnectionId == connectionId);
+        var playerUnit = GameServices.PlayerUnits.playerUnits.FirstOrDefault(unit => unit.ConnectionId == connectionId);
         if (playerUnit.Unit == null)
         {
             _respawnCoroutinesByConnection.Remove(connectionId);
@@ -601,7 +587,14 @@ public class CastleSiegeManager : MatchGameManagerBase
                 resolvedPosition = spawnPosition;
             }
 
-            var lordObject = UnitSpawner.Instance.Spawn(teamConfig.LordUnit, resolvedPosition, teamConfig.LordSpawn.Rotation, true);
+            var units = GameServices.Units;
+            if (units == null)
+            {
+                Debug.LogError("[CastleSiegeManager] Unit spawner is missing. Cannot spawn lord.", this);
+                continue;
+            }
+
+            var lordObject = units.Spawn(teamConfig.LordUnit, resolvedPosition, teamConfig.LordSpawn.Rotation, true);
             if (lordObject == null)
             {
                 Debug.LogError($"[CastleSiegeManager] Failed to spawn lord for team {teamId}.", this);
@@ -648,9 +641,9 @@ public class CastleSiegeManager : MatchGameManagerBase
             _teamEliminatedFlags[teamId] = 1;
         }
 
-        if (PlayerUnitsManager.Instance != null)
+        if (GameServices.PlayerUnits != null)
         {
-            foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+            foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
             {
                 if (playerUnit.Unit == null) continue;
                 if (!ConnectionTeamAssignments.TryGetValue(playerUnit.ConnectionId, out int assignedTeam)) continue;
@@ -717,12 +710,12 @@ public class CastleSiegeManager : MatchGameManagerBase
     [Server]
     private void RespawnAllActivePlayersToTeamSpawns()
     {
-        if (PlayerUnitsManager.Instance == null)
+        if (GameServices.PlayerUnits == null)
         {
             return;
         }
 
-        foreach (var playerUnit in PlayerUnitsManager.Instance.playerUnits)
+        foreach (var playerUnit in GameServices.PlayerUnits.playerUnits)
         {
             if (playerUnit.Unit == null)
             {
@@ -755,14 +748,14 @@ public class CastleSiegeManager : MatchGameManagerBase
     {
         base.OnServerPlayerTeamAssigned(connectionId, teamId);
 
-        if (PlayerUnitsManager.Instance == null || !_teamConfigByTeamId.ContainsKey(teamId))
+        if (GameServices.PlayerUnits == null || !_teamConfigByTeamId.ContainsKey(teamId))
         {
             return;
         }
 
-        for (int i = 0; i < PlayerUnitsManager.Instance.playerUnits.Count; i++)
+        for (int i = 0; i < GameServices.PlayerUnits.playerUnits.Count; i++)
         {
-            var playerUnit = PlayerUnitsManager.Instance.playerUnits[i];
+            var playerUnit = GameServices.PlayerUnits.playerUnits[i];
             if (playerUnit.ConnectionId != connectionId || playerUnit.Unit == null)
             {
                 continue;

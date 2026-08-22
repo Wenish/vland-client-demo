@@ -7,9 +7,15 @@ namespace ShadowInfection.UI.ZombieMatch
 {
     internal sealed class ZombieGameManagerUiSession : IZombieMatchUiSession, IZombieMatchCommands
     {
+        private readonly ZombieGameManager manager;
+
+        public ZombieGameManagerUiSession(ZombieGameManager manager)
+        {
+            this.manager = manager;
+        }
+
         public bool TryGetSnapshot(out ZombieMatchUiSnapshot snapshot)
         {
-            var manager = ZombieGameManager.Singleton;
             if (manager == null)
             {
                 snapshot = default;
@@ -28,11 +34,7 @@ namespace ShadowInfection.UI.ZombieMatch
 
         public bool TryReturnToLobby()
         {
-            if (!NetworkServer.active)
-                return false;
-
-            var manager = ZombieGameManager.Singleton;
-            if (manager == null)
+            if (!NetworkServer.active || manager == null)
                 return false;
 
             manager.ServerReturnToLobby();
