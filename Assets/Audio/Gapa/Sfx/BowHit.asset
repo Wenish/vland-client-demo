@@ -16,11 +16,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1cfa475f92b324802bd9809a0c4fb9fd, type: 3}
   selectionMode: 0
   volume: 0.476
-  randomizeVolume: 0
-  volumeRange: {x: 0.9, y: 1}
-  pitch: 1.0
+  randomizeVolume: 1
+  volumeRange: {x: 0.4, y: 0.46}
+  pitch: 1
   randomizePitch: 1
-  pitchRange: {x: 0.95, y: 1.05}
+  pitchRange: {x: 0.95, y: 1.1}
   bus: 3
   spatial: 1
   overrideSpatialDefaults: 0
