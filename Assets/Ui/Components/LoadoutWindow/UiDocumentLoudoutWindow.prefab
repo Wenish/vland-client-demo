@@ -68,7 +68,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8511d4afa518c419795da64abde34002, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LoadoutWindowController
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.LoadoutWindow.LoadoutWindowController
   uiDocument: {fileID: 3595009560953716745}
   loadoutPanelUxml: {fileID: 9197481963319205126, guid: 69492b808ebfd4b73b1a7e13e07affbf, type: 3}
   loadoutWindowUss: {fileID: 7433441132597879392, guid: fd95136e139f74611ac3c86a490dd7f5, type: 3}

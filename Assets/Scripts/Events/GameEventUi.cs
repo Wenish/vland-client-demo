@@ -20,6 +20,28 @@ namespace MyGame.Events.Ui
         public RequestCloseVendorWindowEvent() { }
     }
 
+    public class OpenVendorWindowEvent : GameEvent
+    {
+        public IVendorSession Session { get; }
+        public PlayerController Player { get; }
+
+        public OpenVendorWindowEvent(IVendorSession session, PlayerController player)
+        {
+            Session = session;
+            Player = player;
+        }
+    }
+
+    public class CloseVendorWindowIfInteractableEvent : GameEvent
+    {
+        public IVendorInteractable Interactable { get; }
+
+        public CloseVendorWindowIfInteractableEvent(IVendorInteractable interactable)
+        {
+            Interactable = interactable;
+        }
+    }
+
     public class VendorWindowVisibilityChangedEvent : GameEvent
     {
         public bool IsOpen { get; }
@@ -37,6 +59,16 @@ namespace MyGame.Events.Ui
         public SetLoadoutWindowOpenEvent(bool isOpen)
         {
             IsOpen = isOpen;
+        }
+    }
+
+    public class LoadoutChangedEvent : GameEvent
+    {
+        public LocalLoadout Loadout { get; }
+
+        public LoadoutChangedEvent(LocalLoadout loadout)
+        {
+            Loadout = loadout;
         }
     }
 }

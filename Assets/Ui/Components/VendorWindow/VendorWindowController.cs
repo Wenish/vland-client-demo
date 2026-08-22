@@ -10,16 +10,12 @@ namespace ShadowInfection.UI.VendorWindow
     {
         private const int VendorSortingOrder = 70;
 
-        public static VendorWindowController Instance { get; private set; }
-
         public UIDocument uiDocument;
         public StyleSheet vendorWindowUss;
         [SerializeField] private Texture2D tradeCursorTexture;
 
         private VendorView view;
         private VendorWindowPresenter presenter;
-
-        public bool IsOpen => presenter != null && presenter.IsOpen;
 
         [Inject]
         internal void Construct(VendorWindowPresenter injectedPresenter)
@@ -38,7 +34,6 @@ namespace ShadowInfection.UI.VendorWindow
             }
 
             uiDocument.sortingOrder = VendorSortingOrder;
-            Instance = this;
         }
 
         private void Start()
@@ -71,41 +66,8 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void OnDestroy()
         {
-            if (Instance == this)
-                Instance = null;
-
             presenter?.Unbind();
             view?.Dispose();
-        }
-
-        public void Open(IVendorSession session, PlayerController player)
-        {
-            presenter?.Open(session, player);
-        }
-
-        public void Open(VendorDefinition catalog)
-        {
-            presenter?.Open(catalog);
-        }
-
-        public void Open(InteractionZone zone, PlayerController player)
-        {
-            presenter?.Open(zone, player);
-        }
-
-        public void Close()
-        {
-            presenter?.Close();
-        }
-
-        public void CloseIfInteractable(IVendorInteractable interactable)
-        {
-            presenter?.CloseIfInteractable(interactable);
-        }
-
-        public void CloseIfZone(InteractionZone zone)
-        {
-            presenter?.CloseIfInteractable(zone);
         }
 
 #if UNITY_EDITOR
