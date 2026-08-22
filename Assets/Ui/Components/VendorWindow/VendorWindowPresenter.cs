@@ -3,6 +3,7 @@ using System.Threading;
 using MessagePipe;
 using MyGame.Events;
 using R3;
+using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vland.UI;
@@ -14,6 +15,7 @@ namespace ShadowInfection.UI.VendorWindow
         private const string PrefPosX = "VendorWindow_PosX";
         private const string PrefPosY = "VendorWindow_PosY";
 
+        private readonly IZombieMatchUiSession zombieMatchSession;
         private readonly ISubscriber<PlayerGoldChangedEvent> goldChanged;
         private readonly ISubscriber<VendorTransactResultEvent> transactResults;
         private readonly ISubscriber<VendorSnapshotEvent> snapshots;
@@ -30,17 +32,20 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly Dictionary<string, int> buyStocks = new();
         private readonly List<VendorRowVm> pageRows = new();
         private StatSystem boundStats;
+        private int cachedWave = 1;
 
         private VendorDefinition Catalog => session != null ? session.Catalog : null;
 
         public bool IsOpen => view != null && view.IsOpen;
 
         public VendorWindowPresenter(
+            IZombieMatchUiSession zombieMatchSession,
             ISubscriber<PlayerGoldChangedEvent> goldChanged,
             ISubscriber<VendorTransactResultEvent> transactResults,
             ISubscriber<VendorSnapshotEvent> snapshots,
             ISubscriber<WaveStartedEvent> waveStarted)
         {
+            this.zombieMatchSession = zombieMatchSession;
             this.goldChanged = goldChanged;
             this.transactResults = transactResults;
             this.snapshots = snapshots;
@@ -61,6 +66,9 @@ namespace ShadowInfection.UI.VendorWindow
             view.PageNextClicked += OnPageNext;
             view.RowSelected += OnRowSelected;
             view.RowTransactRequested += OnRowTransactRequested;
+
+            if (zombieMatchSession != null && zombieMatchSession.TryGetSnapshot(out var snapshot))
+                cachedWave = Mathf.Max(1, snapshot.Wave);
 
             subscriptions.Add(goldChanged.Subscribe(OnGoldChanged));
             subscriptions.Add(transactResults.Subscribe(OnVendorTransactResult));
@@ -92,6 +100,7 @@ namespace ShadowInfection.UI.VendorWindow
             UnbindPlayerStats();
             view = null;
             session = null;
+            cachedWave = 1;
             player = null;
         }
 
@@ -314,8 +323,11 @@ namespace ShadowInfection.UI.VendorWindow
             Refresh();
         }
 
-        private void OnWaveStarted(WaveStartedEvent _)
+        private void OnWaveStarted(WaveStartedEvent evt)
         {
+            if (evt != null)
+                cachedWave = Mathf.Max(1, evt.WaveNumber);
+
             if (IsOpen)
                 Refresh();
         }
@@ -360,6 +372,14 @@ namespace ShadowInfection.UI.VendorWindow
             }
 
             view.SetRows(pageRows, selectedId, EmptyMessageFor(tab));
+        }
+
+        private int ResolveCurrentWave()
+        {
+            if (zombieMatchSession != null && zombieMatchSession.TryGetSnapshot(out var snapshot))
+                return Mathf.Max(1, snapshot.Wave);
+
+            return Mathf.Max(1, cachedWave);
         }
 
         private List<VendorRowVm> BuildRows()
@@ -431,9 +451,7 @@ namespace ShadowInfection.UI.VendorWindow
                 return;
 
             var gold = player != null ? player.Gold : 0;
-            var wave = ZombieGameManager.Singleton != null
-                ? Mathf.Max(1, ZombieGameManager.Singleton.CurrentWave)
-                : 1;
+            var wave = ResolveCurrentWave();
             var stats = ResolveStats();
 
             foreach (var upgrade in Catalog.upgradeEntries)

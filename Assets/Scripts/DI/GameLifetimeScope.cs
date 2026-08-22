@@ -3,6 +3,7 @@ using Gapa.Audio.Music;
 using Gapa.Audio.VContainer;
 using MessagePipe;
 using ShadowInfection.Audio;
+using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -254,6 +255,9 @@ namespace ShadowInfection.DI
 
             builder.RegisterInstance(colorTable);
             builder.Register<ITeamColorService, TeamColorService>(Lifetime.Singleton);
+            builder.Register<ZombieGameManagerUiSession>(Lifetime.Singleton)
+                .As<IZombieMatchUiSession>()
+                .As<IZombieMatchCommands>();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Text;
 using Cysharp.Threading.Tasks;
@@ -7,6 +8,7 @@ using MessagePipe;
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 
 namespace ShadowInfection.UI.PlayerHud
@@ -26,11 +28,13 @@ namespace ShadowInfection.UI.PlayerHud
         };
 
         private readonly PlayerHudSettings settings;
+        private readonly IZombieMatchUiSession zombieMatchSession;
         private readonly ISubscriber<PlayerGoldChangedEvent> goldChanged;
         private readonly ISubscriber<WaveStartedEvent> waveStarted;
         private readonly ISubscriber<WaveProgressChangedEvent> waveProgress;
         private readonly ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned;
         private readonly ISubscriber<PlayerHudInfoMessageEvent> infoMessages;
+        private readonly ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged;
         private readonly PlayerHudCastBarDriver castBarDriver;
         private readonly PlayerHudInfoFeedDriver infoFeedDriver;
 
@@ -44,10 +48,13 @@ namespace ShadowInfection.UI.PlayerHud
         private bool matchWidgetsVisible;
         private bool zombieGameInfoVisible;
         private bool localZombieStatsBound;
+        private bool hasZombieMatch;
+        private int lastZombieWave;
+        private float lastZombieKillPercent;
+        private IReadOnlyList<ZombieLeaderboardRow> lastLeaderboardRows = Array.Empty<ZombieLeaderboardRow>();
         private float matchStartTime;
         private int lastElapsedSeconds = -1;
         private int displayedGold;
-        private ZombieGameManager zombieGameManager;
 
         private UnitController playerUnit;
         private WeaponController weaponController;
@@ -68,18 +75,22 @@ namespace ShadowInfection.UI.PlayerHud
 
         public PlayerHudPresenter(
             PlayerHudSettings settings,
+            IZombieMatchUiSession zombieMatchSession,
             ISubscriber<PlayerGoldChangedEvent> goldChanged,
             ISubscriber<WaveStartedEvent> waveStarted,
             ISubscriber<WaveProgressChangedEvent> waveProgress,
             ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned,
-            ISubscriber<PlayerHudInfoMessageEvent> infoMessages)
+            ISubscriber<PlayerHudInfoMessageEvent> infoMessages,
+            ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged)
         {
             this.settings = settings;
+            this.zombieMatchSession = zombieMatchSession;
             this.goldChanged = goldChanged;
             this.waveStarted = waveStarted;
             this.waveProgress = waveProgress;
             this.myUnitSpawned = myUnitSpawned;
             this.infoMessages = infoMessages;
+            this.leaderboardChanged = leaderboardChanged;
             castBarDriver = new PlayerHudCastBarDriver(settings, ResolveSkillIcon);
             infoFeedDriver = new PlayerHudInfoFeedDriver(settings);
         }
@@ -95,6 +106,10 @@ namespace ShadowInfection.UI.PlayerHud
             matchWidgetsVisible = false;
             zombieGameInfoVisible = false;
             localZombieStatsBound = false;
+            hasZombieMatch = false;
+            lastZombieWave = 0;
+            lastZombieKillPercent = 0f;
+            lastLeaderboardRows = Array.Empty<ZombieLeaderboardRow>();
             view.Reset();
             TickMatchWidgetsVisibility();
             TickZombieGameInfo();
@@ -106,6 +121,7 @@ namespace ShadowInfection.UI.PlayerHud
             subscriptions.Add(waveProgress.Subscribe(OnWaveProgressChanged));
             subscriptions.Add(myUnitSpawned.Subscribe(OnMyPlayerUnitSpawned));
             subscriptions.Add(infoMessages.Subscribe(OnInfoMessage));
+            subscriptions.Add(leaderboardChanged.Subscribe(OnZombieLeaderboardChanged));
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, destroyToken)
                     .Subscribe(_ =>
@@ -134,7 +150,7 @@ namespace ShadowInfection.UI.PlayerHud
             UnbindPlayerUnit();
             castBarDriver.Unbind();
             infoFeedDriver.Unbind();
-            UnbindZombieGameManager();
+            ResetZombieGameInfo();
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
             view = null;
@@ -162,9 +178,10 @@ namespace ShadowInfection.UI.PlayerHud
 
         private void TickZombieGameInfo()
         {
-            TryBindZombieGameManager();
+            if (!hasZombieMatch)
+                TryPullZombieSnapshot();
 
-            var visible = matchWidgetsVisible && zombieGameManager != null;
+            var visible = matchWidgetsVisible && hasZombieMatch;
             if (visible != zombieGameInfoVisible)
             {
                 zombieGameInfoVisible = visible;
@@ -178,43 +195,50 @@ namespace ShadowInfection.UI.PlayerHud
                 RefreshLocalScoreAndKills();
         }
 
-        private void TryBindZombieGameManager()
+        private void TryPullZombieSnapshot()
         {
-            if (zombieGameManager != null)
+            if (hasZombieMatch || zombieMatchSession == null)
                 return;
 
-            zombieGameManager = null;
-            var manager = ZombieGameManager.Singleton;
-            if (manager == null)
+            if (!zombieMatchSession.TryGetSnapshot(out var snapshot))
                 return;
 
-            zombieGameManager = manager;
-            zombieGameManager.OnLeaderboardChanged += OnZombieLeaderboardChanged;
+            ApplyZombieSnapshot(snapshot);
+        }
+
+        private void ApplyZombieSnapshot(ZombieMatchUiSnapshot snapshot)
+        {
+            hasZombieMatch = true;
+            lastZombieWave = snapshot.Wave;
+            lastZombieKillPercent = snapshot.KillPercent;
+            lastLeaderboardRows = snapshot.Entries;
             RefreshZombieGameInfo();
         }
 
-        private void UnbindZombieGameManager()
+        private void ResetZombieGameInfo()
         {
-            if (zombieGameManager != null)
-                zombieGameManager.OnLeaderboardChanged -= OnZombieLeaderboardChanged;
-
-            zombieGameManager = null;
+            hasZombieMatch = false;
             zombieGameInfoVisible = false;
             localZombieStatsBound = false;
+            lastZombieWave = 0;
+            lastZombieKillPercent = 0f;
+            lastLeaderboardRows = Array.Empty<ZombieLeaderboardRow>();
             view?.SetZombieGameInfoVisible(false);
         }
 
-        private void OnZombieLeaderboardChanged()
+        private void OnZombieLeaderboardChanged(ZombieLeaderboardChangedEvent evt)
         {
+            hasZombieMatch = true;
+            lastLeaderboardRows = evt != null ? evt.Entries : Array.Empty<ZombieLeaderboardRow>();
             RefreshLocalScoreAndKills();
         }
 
         private void RefreshZombieGameInfo()
         {
-            if (view == null || zombieGameManager == null)
+            if (view == null || !hasZombieMatch)
                 return;
 
-            view.SetRoundProgress(zombieGameManager.CurrentWave, zombieGameManager.CurrentWaveKilledPercent);
+            view.SetRoundProgress(lastZombieWave, lastZombieKillPercent);
             RefreshLocalScoreAndKills();
         }
 
@@ -236,22 +260,18 @@ namespace ShadowInfection.UI.PlayerHud
             view.SetPersonalKills(entry.Kills);
         }
 
-        private bool TryGetLocalLeaderboardEntry(out ZombieGameManager.ZombieLeaderboardEntry entry)
+        private bool TryGetLocalLeaderboardEntry(out ZombieLeaderboardRow entry)
         {
             entry = default;
-            if (zombieGameManager == null || !TryGetLocalConnectionId(out var connectionId))
+            if (lastLeaderboardRows == null || !TryGetLocalConnectionId(out var connectionId))
                 return false;
 
-            var rows = zombieGameManager.LeaderboardEntries;
-            if (rows == null)
-                return false;
-
-            for (var i = 0; i < rows.Count; i++)
+            for (var i = 0; i < lastLeaderboardRows.Count; i++)
             {
-                if (rows[i].ConnectionId != connectionId)
+                if (lastLeaderboardRows[i].ConnectionId != connectionId)
                     continue;
 
-                entry = rows[i];
+                entry = lastLeaderboardRows[i];
                 return true;
             }
 
@@ -430,6 +450,9 @@ namespace ShadowInfection.UI.PlayerHud
             if (view == null)
                 return;
 
+            hasZombieMatch = true;
+            lastZombieWave = waveStartedEvent.WaveNumber;
+            lastZombieKillPercent = 0f;
             view.SetRoundProgress(waveStartedEvent.WaveNumber, 0f);
             view.SetRoundStartedText(waveStartedEvent.WaveNumber);
             PlayBanner().Forget();
@@ -437,6 +460,9 @@ namespace ShadowInfection.UI.PlayerHud
 
         private void OnWaveProgressChanged(WaveProgressChangedEvent waveProgressChangedEvent)
         {
+            hasZombieMatch = true;
+            lastZombieWave = waveProgressChangedEvent.WaveNumber;
+            lastZombieKillPercent = waveProgressChangedEvent.PercentKilled;
             view?.SetRoundProgress(waveProgressChangedEvent.WaveNumber, waveProgressChangedEvent.PercentKilled);
         }
 

@@ -1,5 +1,7 @@
 #nullable enable
 
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyGame.Events
@@ -62,6 +64,45 @@ namespace MyGame.Events
         {
             IsAutoReturnActive = isAutoReturnActive;
             CountdownSeconds = countdownSeconds;
+        }
+    }
+
+    public readonly struct ZombieLeaderboardRow
+    {
+        public int ConnectionId { get; }
+        public string PlayerName { get; }
+        public int Points { get; }
+        public int Kills { get; }
+        public int Deaths { get; }
+        public int GoldGathered { get; }
+        public bool IsConnected { get; }
+
+        public ZombieLeaderboardRow(
+            int connectionId,
+            string playerName,
+            int points,
+            int kills,
+            int deaths,
+            int goldGathered,
+            bool isConnected)
+        {
+            ConnectionId = connectionId;
+            PlayerName = playerName ?? string.Empty;
+            Points = points;
+            Kills = kills;
+            Deaths = deaths;
+            GoldGathered = goldGathered;
+            IsConnected = isConnected;
+        }
+    }
+
+    public class ZombieLeaderboardChangedEvent : GameEvent
+    {
+        public IReadOnlyList<ZombieLeaderboardRow> Entries { get; }
+
+        public ZombieLeaderboardChangedEvent(IReadOnlyList<ZombieLeaderboardRow> entries)
+        {
+            Entries = entries ?? Array.Empty<ZombieLeaderboardRow>();
         }
     }
 
