@@ -5,14 +5,14 @@ namespace MyGame.Events.Ui
     /// <summary>
     /// Fired when the in-game UI needs to be updated.
     /// </summary>
-    public class OpenMultiplayerMenu : GameEvent
+    public class OpenMultiplayerMenuEvent : GameEvent
     {
-        public OpenMultiplayerMenu() { }
+        public OpenMultiplayerMenuEvent() { }
     }
 
-    public class OpenFormJoinGame : GameEvent
+    public class OpenFormJoinGameEvent : GameEvent
     {
-        public OpenFormJoinGame() { }
+        public OpenFormJoinGameEvent() { }
     }
 
     public class RequestCloseVendorWindowEvent : GameEvent

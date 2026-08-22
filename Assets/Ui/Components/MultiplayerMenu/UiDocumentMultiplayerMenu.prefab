@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4951154913962247230}
   - component: {fileID: 6052415762260007298}
   - component: {fileID: 1587233753892405937}
+  - component: {fileID: 5128471930284756103}
   m_Layer: 0
   m_Name: UiDocumentMultiplayerMenu
   m_TagString: Untagged
@@ -67,5 +68,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84b5f81e1ab4f4d268f3688475752aa3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MultiplayerMenuController
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.MultiplayerMenu.MultiplayerMenuController
   MainMenuSceneName: MainMenu
+--- !u!114 &5128471930284756103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4207333232252402479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c4e1d27b3f4906b5d9e0a1c2f3b847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.MultiplayerMenuLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []
