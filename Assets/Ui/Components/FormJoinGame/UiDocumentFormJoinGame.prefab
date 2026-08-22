@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3218116337504353460}
   - component: {fileID: 4902970050114810951}
   - component: {fileID: 7397882316255317598}
+  - component: {fileID: 6239582041395867214}
   m_Layer: 0
   m_Name: UiDocumentFormJoinGame
   m_TagString: Untagged
@@ -67,4 +68,20 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99fea6e3d776a42cd931d2a1cd1da14f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FormJoinGameController
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.FormJoinGame.FormJoinGameController
+--- !u!114 &6239582041395867214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391523645170894344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9d5f2e38c4a5017c6e0f1b2d3a4c958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.FormJoinGameLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []

@@ -1,107 +1,140 @@
 using System;
+using MessagePipe;
 using Mirror;
 using MyGame.Events.Ui;
+using R3;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
-public class FormJoinGameController : MonoBehaviour
+namespace ShadowInfection.UI.FormJoinGame
 {
-    private const string PrefKeyServerAddress = "FormJoinGame_ServerAddress";
-    private const string PrefKeyPort = "FormJoinGame_Port";
-
-    private UIDocument uiDocument;
-    private VisualElement rootVisualElement;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
-    Button buttonCancel;
-    Button buttonJoinGame;
-
-    TextField inputServerAddress;
-    TextField inputPort;
-
-    void Awake()
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(UIDocument))]
+    public sealed class FormJoinGameController : MonoBehaviour
     {
-        uiDocument = GetComponent<UIDocument>();
-        rootVisualElement = uiDocument.rootVisualElement;
-        rootVisualElement.style.display = DisplayStyle.None;
-        UiGameplayInputGuard.Apply(rootVisualElement, blockMovementKeys: false);
+        private const string PrefKeyServerAddress = "FormJoinGame_ServerAddress";
+        private const string PrefKeyPort = "FormJoinGame_Port";
 
-        buttonCancel = rootVisualElement.Q<Button>("buttonCancel");
-        buttonJoinGame = rootVisualElement.Q<Button>("buttonJoinGame");
-        inputServerAddress = rootVisualElement.Q<TextField>("inputServerAddress");
-        inputPort = rootVisualElement.Q<TextField>("inputPort");
+        private UIDocument uiDocument;
+        private VisualElement rootVisualElement;
+        private Button buttonCancel;
+        private Button buttonJoinGame;
+        private TextField inputServerAddress;
+        private TextField inputPort;
+        private ISubscriber<OpenFormJoinGameEvent> openForm;
+        private IPublisher<OpenMultiplayerMenuEvent> openMenu;
+        private R3.DisposableBag subscriptions;
 
-        EventManager.Instance.Subscribe<OpenFormJoinGame>(HandleOpenFormJoinGame);
-        buttonCancel.clicked += CloseOpenFormJoinGame;
-        buttonJoinGame.clicked += JoinGame;
-    }
-
-    void OnDestroy()
-    {
-        EventManager.Instance.Unsubscribe<OpenFormJoinGame>(HandleOpenFormJoinGame);
-    }
-
-    private void HandleOpenFormJoinGame(OpenFormJoinGame game)
-    {
-        // Prefill inputs with last-used values (or sensible defaults) each time the form opens
-        LoadCachedInputs();
-        rootVisualElement.style.display = DisplayStyle.Flex;
-    }
-
-    private void CloseOpenFormJoinGame()
-    {
-        rootVisualElement.style.display = DisplayStyle.None;
-        EventManager.Instance.Publish(new OpenMultiplayerMenu());
-    }
-    
-    private void JoinGame()
-    {
-        string serverAddress = (inputServerAddress?.value ?? string.Empty).Trim();
-        if (string.IsNullOrEmpty(serverAddress))
+        [Inject]
+        internal void Construct(
+            ISubscriber<OpenFormJoinGameEvent> injectedOpenForm,
+            IPublisher<OpenMultiplayerMenuEvent> injectedOpenMenu)
         {
-            // Fallback to previous cached value or default
-            serverAddress = PlayerPrefs.GetString(PrefKeyServerAddress,
-                NetworkManager.singleton != null ? NetworkManager.singleton.networkAddress : "localhost");
+            openForm = injectedOpenForm;
+            openMenu = injectedOpenMenu;
         }
 
-        int port;
-        if (!int.TryParse(inputPort?.value, out port) || port <= 0)
+        private void Awake()
         {
-            // Fallback to previous cached value or Mirror default port
-            port = PlayerPrefs.GetInt(PrefKeyPort, 7777);
+            uiDocument = GetComponent<UIDocument>();
+            if (uiDocument == null || uiDocument.rootVisualElement == null)
+            {
+                UnityEngine.Debug.LogError("FormJoinGameController: UIDocument root is missing.");
+                return;
+            }
+
+            rootVisualElement = uiDocument.rootVisualElement;
+            rootVisualElement.style.display = DisplayStyle.None;
+            UiGameplayInputGuard.Apply(rootVisualElement, blockMovementKeys: false);
+
+            buttonCancel = rootVisualElement.Q<Button>("buttonCancel");
+            buttonJoinGame = rootVisualElement.Q<Button>("buttonJoinGame");
+            inputServerAddress = rootVisualElement.Q<TextField>("inputServerAddress");
+            inputPort = rootVisualElement.Q<TextField>("inputPort");
+
+            if (buttonCancel != null)
+                buttonCancel.clicked += CloseForm;
+            if (buttonJoinGame != null)
+                buttonJoinGame.clicked += JoinGame;
         }
 
-        // Cache the values for next time
-        SaveCachedInputs(serverAddress, port);
-
-        Uri uri = new Uri($"tcp4://{serverAddress}:{port}");
-        NetworkManager.singleton.StartClient(uri);
-    }
-
-    private void LoadCachedInputs()
-    {
-        // Defaults: Mirror's NetworkManager networkAddress if available, else localhost; port defaults to 7777
-        string defaultAddress = NetworkManager.singleton != null ? NetworkManager.singleton.networkAddress : "localhost";
-        int defaultPort = 7777;
-
-        string cachedAddress = PlayerPrefs.GetString(PrefKeyServerAddress, defaultAddress);
-        int cachedPort = PlayerPrefs.GetInt(PrefKeyPort, defaultPort);
-
-        if (inputServerAddress != null)
+        private void Start()
         {
-            inputServerAddress.value = cachedAddress;
+            if (openForm == null || openMenu == null)
+            {
+                UnityEngine.Debug.LogError(
+                    "FormJoinGameController: MessagePipe was not injected. Add GameLifetimeScope and FormJoinGameLifetimeScope.");
+                return;
+            }
+
+            subscriptions.Add(openForm.Subscribe(_ => Show()));
         }
 
-        if (inputPort != null)
+        private void OnDestroy()
         {
-            inputPort.value = cachedPort.ToString();
-        }
-    }
+            subscriptions.Dispose();
 
-    private void SaveCachedInputs(string address, int port)
-    {
-        PlayerPrefs.SetString(PrefKeyServerAddress, address);
-        PlayerPrefs.SetInt(PrefKeyPort, port);
-        PlayerPrefs.Save();
+            if (buttonCancel != null)
+                buttonCancel.clicked -= CloseForm;
+            if (buttonJoinGame != null)
+                buttonJoinGame.clicked -= JoinGame;
+        }
+
+        private void Show()
+        {
+            LoadCachedInputs();
+            if (rootVisualElement != null)
+                rootVisualElement.style.display = DisplayStyle.Flex;
+        }
+
+        private void CloseForm()
+        {
+            if (rootVisualElement != null)
+                rootVisualElement.style.display = DisplayStyle.None;
+
+            openMenu?.Publish(new OpenMultiplayerMenuEvent());
+        }
+
+        private void JoinGame()
+        {
+            var serverAddress = (inputServerAddress?.value ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(serverAddress))
+            {
+                serverAddress = PlayerPrefs.GetString(
+                    PrefKeyServerAddress,
+                    NetworkManager.singleton != null ? NetworkManager.singleton.networkAddress : "localhost");
+            }
+
+            if (!int.TryParse(inputPort?.value, out var port) || port <= 0)
+                port = PlayerPrefs.GetInt(PrefKeyPort, 7777);
+
+            SaveCachedInputs(serverAddress, port);
+
+            var uri = new Uri($"tcp4://{serverAddress}:{port}");
+            NetworkManager.singleton.StartClient(uri);
+        }
+
+        private void LoadCachedInputs()
+        {
+            var defaultAddress = NetworkManager.singleton != null
+                ? NetworkManager.singleton.networkAddress
+                : "localhost";
+            var cachedAddress = PlayerPrefs.GetString(PrefKeyServerAddress, defaultAddress);
+            var cachedPort = PlayerPrefs.GetInt(PrefKeyPort, 7777);
+
+            if (inputServerAddress != null)
+                inputServerAddress.value = cachedAddress;
+
+            if (inputPort != null)
+                inputPort.value = cachedPort.ToString();
+        }
+
+        private void SaveCachedInputs(string address, int port)
+        {
+            PlayerPrefs.SetString(PrefKeyServerAddress, address);
+            PlayerPrefs.SetInt(PrefKeyPort, port);
+            PlayerPrefs.Save();
+        }
     }
 }
