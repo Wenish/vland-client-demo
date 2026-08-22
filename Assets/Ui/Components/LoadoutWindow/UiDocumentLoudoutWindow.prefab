@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6713888471920108061}
   - component: {fileID: 3595009560953716745}
   - component: {fileID: 4466996998842812466}
+  - component: {fileID: 4466996998842812467}
   m_Layer: 0
   m_Name: UiDocumentLoudoutWindow
   m_TagString: Untagged
@@ -72,3 +73,19 @@ MonoBehaviour:
   loadoutPanelUxml: {fileID: 9197481963319205126, guid: 69492b808ebfd4b73b1a7e13e07affbf, type: 3}
   loadoutWindowUss: {fileID: 7433441132597879392, guid: fd95136e139f74611ac3c86a490dd7f5, type: 3}
   loadoutPanelUss: {fileID: 7433441132597879392, guid: 944f6fbfff0544f328370fe0becc3d5e, type: 3}
+--- !u!114 &4466996998842812467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6500852558582956569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4a7c2d5b8f0a36b1c6d7e8f9a0b162, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.LoadoutWindowLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []

@@ -1,4 +1,6 @@
+using MessagePipe;
 using MyGame.Events;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class CameraShake : MonoBehaviour
@@ -18,6 +20,7 @@ public class CameraShake : MonoBehaviour
     float returnElapsed;
     float seed;
     Phase phase;
+    private R3.DisposableBag subscriptions;
 
     enum Phase
     {
@@ -34,8 +37,10 @@ public class CameraShake : MonoBehaviour
         }
 
         CaptureRestRotation();
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-        EventManager.Instance.Subscribe<UnitDamagedEvent>(OnUnitDamaged);
+        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
+            subscriptions.Add(spawned.Subscribe(OnPlayerUnitSpawned));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitDamagedEvent> damaged))
+            subscriptions.Add(damaged.Subscribe(OnUnitDamaged));
     }
 
     void OnDisable()
@@ -46,8 +51,7 @@ public class CameraShake : MonoBehaviour
 
     void OnDestroy()
     {
-        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
-        EventManager.Instance.Unsubscribe<UnitDamagedEvent>(OnUnitDamaged);
+        subscriptions.Dispose();
     }
 
     private void OnPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)

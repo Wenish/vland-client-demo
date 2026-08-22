@@ -1,160 +1,63 @@
-using Mirror;
-using ShadowInfection.UI.VendorWindow;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
-public class InGameMenuController : MonoBehaviour
+namespace ShadowInfection.UI.InGameMenu
 {
-    private const int MenuSortingOrder = 100;
-
-    private UIDocument uiDocument;
-    private VisualElement inGameMenuRoot;
-    public string LobbySceneName = SceneNames.Lobby;
-
-    private Button buttonExitGame;
-    private Button buttonReturnToGame;
-    private Button buttonLeaveServer;
-    private Button buttonStopServer;
-    private Button buttonEndMatch;
-    private void Awake()
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(UIDocument))]
+    public sealed class InGameMenuController : MonoBehaviour
     {
-        uiDocument = GetComponent<UIDocument>();
-        uiDocument.sortingOrder = MenuSortingOrder;
+        private const int MenuSortingOrder = 100;
 
-        var rootElement = uiDocument.rootVisualElement;
-        inGameMenuRoot = rootElement.Q<VisualElement>("game-menu");
-        inGameMenuRoot.pickingMode = PickingMode.Position;
-        UiGameplayInputGuard.Apply(inGameMenuRoot);
+        private UIDocument uiDocument;
+        private InGameMenuView view;
+        private InGameMenuPresenter presenter;
 
-        buttonExitGame = inGameMenuRoot.Q<Button>("buttonExitGame");
-        buttonReturnToGame = inGameMenuRoot.Q<Button>("buttonReturnToGame");
-
-        buttonEndMatch = inGameMenuRoot.Q<Button>("buttonEndMatch");
-        buttonStopServer = inGameMenuRoot.Q<Button>("buttonStopServer");
-
-        buttonLeaveServer = inGameMenuRoot.Q<Button>("buttonLeaveServer");
-
-        var isServer = NetworkServer.active;
-
-        ShowButton(buttonStopServer, isServer);
-
-        var isInLobby = SceneManager.GetActiveScene().name == LobbySceneName;
-
-        ShowButton(buttonEndMatch, isServer && !isInLobby);
-
-        var isOnlyClient = NetworkClient.isConnected && !NetworkServer.active;
-        ShowButton(buttonLeaveServer, isOnlyClient);
-        
-        UiPointerState.RegisterBlockingElement(inGameMenuRoot);
-        UiCursorRefresh.ScheduleForRoot(inGameMenuRoot, MenuSortingOrder);
-
-        buttonExitGame.clicked += ExitGame;
-        buttonReturnToGame.clicked += CloseMenu;
-        buttonLeaveServer.clicked += LeaveServer;
-        buttonStopServer.clicked += StopServer;
-        buttonEndMatch.clicked += EndMatch;
-
-    }
-
-    void OnDestroy()
-    {
-        UiPointerState.UnregisterBlockingElement(inGameMenuRoot);
-    }
-
-    private void Update()
-    {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        [Inject]
+        internal void Construct(InGameMenuPresenter injectedPresenter)
         {
-            if (VendorWindowController.Instance != null && VendorWindowController.Instance.IsOpen)
+            presenter = injectedPresenter;
+        }
+
+        private void Awake()
+        {
+            uiDocument = GetComponent<UIDocument>();
+            if (uiDocument != null)
+                uiDocument.sortingOrder = MenuSortingOrder;
+        }
+
+        private void Start()
+        {
+            if (uiDocument == null || uiDocument.rootVisualElement == null)
             {
-                VendorWindowController.Instance.Close();
+                UnityEngine.Debug.LogError("InGameMenuController: UIDocument root is missing.");
                 return;
             }
 
-            if (IsMenuOpen())
+            if (presenter == null)
             {
-                CloseMenu();
+                UnityEngine.Debug.LogError(
+                    "InGameMenuController: Presenter was not injected. Add GameLifetimeScope and InGameMenuLifetimeScope.");
+                return;
             }
-            else
+
+            view = new InGameMenuView(uiDocument.rootVisualElement);
+            if (view.Root != null)
             {
-                OpenMenu();
+                UiPointerState.RegisterBlockingElement(view.Root);
+                UiCursorRefresh.ScheduleForRoot(view.Root, MenuSortingOrder);
             }
-        }
-    }
 
-    public void OpenMenu()
-    {
-        VendorWindowController.Instance?.Close();
-        inGameMenuRoot.style.display = DisplayStyle.Flex;
-    }
-
-    public void CloseMenu()
-    {
-        inGameMenuRoot.style.display = DisplayStyle.None;
-    }
-
-    public void ShowButton(Button button, bool show)
-    {
-        if (button != null)
-        {
-            button.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
-        }
-    }
-
-    public bool IsMenuOpen()
-    {
-        return inGameMenuRoot.style.display == DisplayStyle.Flex;
-    }
-
-    public void ExitGame()
-    {
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-    }
-
-    public void LeaveServer()
-    {
-        if (NetworkClient.isConnected)
-        {
-            NetworkManager.singleton.StopClient();
-        }
-        CloseMenu();
-    }
-
-    public void StopServer()
-    {
-        if (NetworkServer.active)
-        {
-            NetworkManager.singleton.StopHost();
-        }
-        CloseMenu();
-    }
-
-    public void EndMatch()
-    {
-        // Ensure menu is closed and input unblocked before switching scenes
-        CloseMenu();
-
-        // In zombie mode, use the manager flow so run-end side effects stay centralized.
-        if (NetworkServer.active && ZombieGameManager.Singleton != null)
-        {
-            ZombieGameManager.Singleton.ServerReturnToLobby();
-            return;
+            presenter.Bind(view, destroyCancellationToken);
         }
 
-        // Use NetworkRoomManager to properly return to lobby scene
-        if (NetworkManager.singleton is NetworkRoomManager roomManager)
+        private void OnDestroy()
         {
-            // ServerChangeScene to the offline scene (lobby) will properly reset the room
-            roomManager.ServerChangeScene(roomManager.RoomScene);
-        }
-        else
-        {
-            NetworkManager.singleton.ServerChangeScene(LobbySceneName);
+            if (view != null && view.Root != null)
+                UiPointerState.UnregisterBlockingElement(view.Root);
+
+            presenter?.Unbind();
         }
     }
 }

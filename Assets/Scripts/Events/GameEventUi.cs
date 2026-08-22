@@ -1,3 +1,5 @@
+using MyGame.Events;
+
 namespace MyGame.Events.Ui
 {
     /// <summary>
@@ -11,5 +13,30 @@ namespace MyGame.Events.Ui
     public class OpenFormJoinGame : GameEvent
     {
         public OpenFormJoinGame() { }
+    }
+
+    public class RequestCloseVendorWindowEvent : GameEvent
+    {
+        public RequestCloseVendorWindowEvent() { }
+    }
+
+    public class VendorWindowVisibilityChangedEvent : GameEvent
+    {
+        public bool IsOpen { get; }
+
+        public VendorWindowVisibilityChangedEvent(bool isOpen)
+        {
+            IsOpen = isOpen;
+        }
+    }
+
+    public class SetLoadoutWindowOpenEvent : GameEvent
+    {
+        public bool IsOpen { get; }
+
+        public SetLoadoutWindowOpenEvent(bool isOpen)
+        {
+            IsOpen = isOpen;
+        }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using MessagePipe;
 using MyGame.Events;
+using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
@@ -20,6 +21,9 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly ISubscriber<VendorTransactResultEvent> transactResults;
         private readonly ISubscriber<VendorSnapshotEvent> snapshots;
         private readonly ISubscriber<WaveStartedEvent> waveStarted;
+        private readonly ISubscriber<RequestCloseVendorWindowEvent> closeRequested;
+        private readonly IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged;
+        private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
 
         private VendorView view;
         private R3.DisposableBag subscriptions;
@@ -43,13 +47,19 @@ namespace ShadowInfection.UI.VendorWindow
             ISubscriber<PlayerGoldChangedEvent> goldChanged,
             ISubscriber<VendorTransactResultEvent> transactResults,
             ISubscriber<VendorSnapshotEvent> snapshots,
-            ISubscriber<WaveStartedEvent> waveStarted)
+            ISubscriber<WaveStartedEvent> waveStarted,
+            ISubscriber<RequestCloseVendorWindowEvent> closeRequested,
+            IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged,
+            IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen)
         {
             this.zombieMatchSession = zombieMatchSession;
             this.goldChanged = goldChanged;
             this.transactResults = transactResults;
             this.snapshots = snapshots;
             this.waveStarted = waveStarted;
+            this.closeRequested = closeRequested;
+            this.visibilityChanged = visibilityChanged;
+            this.loadoutOpen = loadoutOpen;
         }
 
         public void Bind(VendorView nextView, CancellationToken token)
@@ -74,6 +84,7 @@ namespace ShadowInfection.UI.VendorWindow
             subscriptions.Add(transactResults.Subscribe(OnVendorTransactResult));
             subscriptions.Add(snapshots.Subscribe(OnVendorSnapshot));
             subscriptions.Add(waveStarted.Subscribe(OnWaveStarted));
+            subscriptions.Add(closeRequested.Subscribe(_ => Close()));
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, token)
                     .Subscribe(_ => TickInput()));
@@ -81,7 +92,8 @@ namespace ShadowInfection.UI.VendorWindow
 
         public void Unbind()
         {
-            if (IsOpen)
+            var wasOpen = IsOpen;
+            if (wasOpen)
                 PersistPosition();
 
             if (view != null)
@@ -102,6 +114,9 @@ namespace ShadowInfection.UI.VendorWindow
             session = null;
             cachedWave = 1;
             player = null;
+
+            if (wasOpen)
+                PublishVisibility(false);
         }
 
         public void Open(VendorDefinition nextCatalog)
@@ -125,7 +140,7 @@ namespace ShadowInfection.UI.VendorWindow
             if (view == null || nextSession == null || nextSession.Catalog == null)
                 return;
 
-            LoadoutWindowController.Instance?.SetOpen(false);
+            loadoutOpen.Publish(new SetLoadoutWindowOpenEvent(false));
 
             session = nextSession;
             player = nextPlayer != null ? nextPlayer : ResolveLocalPlayer();
@@ -138,6 +153,7 @@ namespace ShadowInfection.UI.VendorWindow
             var catalog = nextSession.Catalog;
             view.SetVendor(catalog.DisplayName, catalog.subtitle, catalog.portrait);
             view.SetOpen(true);
+            PublishVisibility(true);
             RestorePosition();
             BindPlayerStats();
             Refresh();
@@ -161,6 +177,7 @@ namespace ShadowInfection.UI.VendorWindow
             session = null;
             selectedId = null;
             view.SetOpen(false);
+            PublishVisibility(false);
         }
 
         public void CloseIfInteractable(IVendorInteractable interactable)
@@ -201,14 +218,13 @@ namespace ShadowInfection.UI.VendorWindow
             if (!IsOpen || Keyboard.current == null)
                 return;
 
-            if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                Close();
-                return;
-            }
-
             if (Keyboard.current.tabKey.wasPressedThisFrame)
                 SetTab(NextVisibleTab());
+        }
+
+        private void PublishVisibility(bool isOpen)
+        {
+            visibilityChanged.Publish(new VendorWindowVisibilityChangedEvent(isOpen));
         }
 
         private void SetTab(VendorTab nextTab)

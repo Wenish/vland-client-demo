@@ -1,5 +1,7 @@
 using System.Collections;
+using MessagePipe;
 using MyGame.Events;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -11,15 +13,17 @@ public class DeathEffectController : MonoBehaviour
     public float fadeDuration = 0.5f;
 
     private Coroutine _fadeCoroutine;
+    private R3.DisposableBag subscriptions;
 
     void Start()
     {
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
+            subscriptions.Add(spawned.Subscribe(OnPlayerUnitSpawned));
     }
 
     void OnDestroy()
     {
-        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnPlayerUnitSpawned);
+        subscriptions.Dispose();
     }
 
     private void OnPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)

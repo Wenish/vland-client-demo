@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MessagePipe;
+using MyGame.Events.Ui;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using VContainer;
 using Vland.UI;
 
 [DefaultExecutionOrder(100)]
 public class LoadoutWindowController : MonoBehaviour
 {
     private const int LoadoutSortingOrder = 60;
-
-    public static LoadoutWindowController Instance { get; private set; }
 
     public UIDocument uiDocument;
     public VisualTreeAsset loadoutPanelUxml;
@@ -23,9 +25,17 @@ public class LoadoutWindowController : MonoBehaviour
     private SkillTag? _tagFilter;
     private readonly Dictionary<LoadoutSlot, LoadoutItem> _selected = new();
     private bool _applyPending;
+    private ISubscriber<SetLoadoutWindowOpenEvent> setOpen;
+    private R3.DisposableBag subscriptions;
 
     private DatabaseManager _db => DatabaseManager.Instance;
     private LoadoutManager _loadoutManager => LoadoutManager.Instance;
+
+    [Inject]
+    internal void Construct(ISubscriber<SetLoadoutWindowOpenEvent> injectedSetOpen)
+    {
+        setOpen = injectedSetOpen;
+    }
 
     private void Awake()
     {
@@ -68,12 +78,30 @@ public class LoadoutWindowController : MonoBehaviour
         ClearIncompatibleSkillSelections();
         RefreshList();
         ApplyCurrentLoadout();
-        Instance = this;
     }
 
     public void SetOpen(bool open)
     {
         _view?.SetOpen(open);
+    }
+
+    private void OnEnable()
+    {
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+        if (setOpen != null)
+            subscriptions.Add(setOpen.Subscribe(OnSetOpen));
+    }
+
+    private void OnDisable()
+    {
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+    }
+
+    private void OnSetOpen(SetLoadoutWindowOpenEvent evt)
+    {
+        SetOpen(evt != null && evt.IsOpen);
     }
 
     private void Update()
@@ -88,8 +116,7 @@ public class LoadoutWindowController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (Instance == this)
-            Instance = null;
+        subscriptions.Dispose();
         _view?.Dispose();
     }
 

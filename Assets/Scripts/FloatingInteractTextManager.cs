@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using MessagePipe;
 using MyGame.Events;
+using ShadowInfection.DI;
 using TMPro;
 using UnityEngine;
 
@@ -15,19 +17,24 @@ public class FloatingInteractTextManager : MonoBehaviour
 
     // Store references to spawned text per interaction zone
     private Dictionary<Transform, GameObject> activeInteractTexts = new Dictionary<Transform, GameObject>();
+    private R3.DisposableBag subscriptions;
 
     void OnEnable()
     {
-        EventManager.Instance.Subscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
-        EventManager.Instance.Subscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
-        EventManager.Instance.Subscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitEnteredInteractionZone> entered))
+            subscriptions.Add(entered.Subscribe(OnUnitEnteredInteractionZone));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<UnitExitedInteractionZone> exited))
+            subscriptions.Add(exited.Subscribe(OnUnitExitedInteractionZone));
+        if (GameLifetimeScope.TryResolve(out ISubscriber<MyPlayerUnitSpawnedEvent> spawned))
+            subscriptions.Add(spawned.Subscribe(OnMyPlayerUnitSpawned));
     }
 
     void OnDisable()
     {
-        EventManager.Instance.Unsubscribe<UnitEnteredInteractionZone>(OnUnitEnteredInteractionZone);
-        EventManager.Instance.Unsubscribe<UnitExitedInteractionZone>(OnUnitExitedInteractionZone);
-        EventManager.Instance.Unsubscribe<MyPlayerUnitSpawnedEvent>(OnMyPlayerUnitSpawned);
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
     }
 
     private void OnUnitEnteredInteractionZone(UnitEnteredInteractionZone zone)
