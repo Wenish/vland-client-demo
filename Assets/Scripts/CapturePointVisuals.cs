@@ -1,3 +1,5 @@
+using ShadowInfection;
+using ShadowInfection.DI;
 using UnityEngine;
 
 public class CapturePointVisuals : MonoBehaviour
@@ -7,7 +9,7 @@ public class CapturePointVisuals : MonoBehaviour
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int LegacyColorId = Shader.PropertyToID("_Color");
 
-    private TeamColorManager teamColorManager;
+    private ITeamColorService teamColorService;
     private MaterialPropertyBlock materialPropertyBlock;
     private int activeColorPropertyId = BaseColorId;
 
@@ -54,23 +56,19 @@ public class CapturePointVisuals : MonoBehaviour
             return;
         }
 
-        if (teamColorManager == null)
+        if (teamColorService == null)
         {
-            teamColorManager = TeamColorManager.Instance;
+            GameLifetimeScope.TryResolve(out teamColorService);
         }
 
         Color color;
-        if (teamId < 0)
+        if (teamId < 0 || teamColorService == null)
         {
             color = neutralColor;
-        }
-        else if (teamColorManager != null)
-        {
-            color = teamColorManager.GetColorForTeam(teamId);
         }
         else
         {
-            color = neutralColor;
+            color = teamColorService.GetColorForTeam(teamId);
         }
 
         color.a = Mathf.Clamp01(colorOpacity);
@@ -93,7 +91,7 @@ public class CapturePointVisuals : MonoBehaviour
 
     private void Awake()
     {
-        teamColorManager = TeamColorManager.Instance;
+        GameLifetimeScope.TryResolve(out teamColorService);
         materialPropertyBlock = new MaterialPropertyBlock();
 
         if (meshRenderer == null)
@@ -110,9 +108,9 @@ public class CapturePointVisuals : MonoBehaviour
         {
             Debug.LogError("CapturePoint reference is missing on CapturePointVisuals.", this);
         }
-        if (teamColorManager == null)
+        if (teamColorService == null)
         {
-            Debug.LogError("TeamColorManager instance not found in the scene.", this);
+            Debug.LogError("ITeamColorService is not registered.", this);
         }
         if (meshRenderer == null)
         {

@@ -1,4 +1,6 @@
 using MyGame.Events;
+using ShadowInfection;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -85,7 +87,10 @@ public class UnitHighlighter : MonoBehaviour
         var outlineColor = outlineColorDefault;
         if (hoverUnitControler != null)
         {
-            outlineColor = TeamColorManager.Instance.GetColorForTeam(hoverUnitControler.team);
+            if (GameLifetimeScope.TryResolve<ITeamColorService>(out var teamColors))
+            {
+                outlineColor = teamColors.GetColorForTeam(hoverUnitControler.team);
+            }
         }
         outlineColor.a = 0.5f; // Set alpha to 50%
 

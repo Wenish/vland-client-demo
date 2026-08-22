@@ -1,3 +1,5 @@
+using ShadowInfection;
+using ShadowInfection.DI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -205,8 +207,12 @@ public class UnitUiController : MonoBehaviour
     }
     public void SetFloorCircleColorFromTeam(int teamId)
     {
-        Color color = TeamColorManager.Instance.GetColorForTeam(teamId);
-        SetFloorCircleColor(color);
+        if (!GameLifetimeScope.TryResolve<ITeamColorService>(out var teamColors))
+        {
+            return;
+        }
+
+        SetFloorCircleColor(teamColors.GetColorForTeam(teamId));
     }
 
     public void SetNameTag(string name)

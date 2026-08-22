@@ -33,6 +33,10 @@ namespace ShadowInfection.DI
         [SerializeField]
         private SceneMusicTable sceneMusicTable;
 
+        [Header("Team Colors")]
+        [SerializeField]
+        private TeamColorTable teamColorTable;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap()
         {
@@ -147,6 +151,18 @@ namespace ShadowInfection.DI
                 builder.RegisterInstance(musicTable);
                 builder.RegisterEntryPoint<SceneMusicController>();
             }
+
+            var colorTable = teamColorTable != null
+                ? teamColorTable
+                : Resources.Load<TeamColorTable>("TeamColors/TeamColorTable");
+            if (colorTable == null)
+            {
+                UnityEngine.Debug.LogError("TeamColorTable is missing; team colors will use generated hues only.");
+                colorTable = ScriptableObject.CreateInstance<TeamColorTable>();
+            }
+
+            builder.RegisterInstance(colorTable);
+            builder.Register<ITeamColorService, TeamColorService>(Lifetime.Singleton);
         }
     }
 }

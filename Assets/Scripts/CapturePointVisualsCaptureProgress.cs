@@ -1,3 +1,5 @@
+using ShadowInfection;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -12,11 +14,11 @@ public class CapturePointVisualsCaptureProgress : MonoBehaviour
     private static readonly int ProgressId = Shader.PropertyToID("CaptureProgress");
     private static readonly int TeamColorId = Shader.PropertyToID("TeamColor");
 
-    private TeamColorManager teamColorManager;
+    private ITeamColorService teamColorService;
 
     private void Awake()
     {
-        teamColorManager = TeamColorManager.Instance;
+        GameLifetimeScope.TryResolve(out teamColorService);
     }
 
     private void OnEnable()
@@ -63,14 +65,19 @@ public class CapturePointVisualsCaptureProgress : MonoBehaviour
             return;
         }
 
-        if (teamColorManager == null)
+        if (teamColorService == null)
         {
-            teamColorManager = TeamColorManager.Instance;
+            GameLifetimeScope.TryResolve(out teamColorService);
         }
 
         captureProgressEffect.SetFloat(ProgressId, progress);
 
-        Color teamColor = teamColorManager.GetColorForTeam(teamId);
+        if (teamColorService == null)
+        {
+            return;
+        }
+
+        Color teamColor = teamColorService.GetColorForTeam(teamId);
         teamColor.a = 1f; // Ensure full opacity for the effect
         captureProgressEffect.SetVector4(TeamColorId, teamColor);
     }
