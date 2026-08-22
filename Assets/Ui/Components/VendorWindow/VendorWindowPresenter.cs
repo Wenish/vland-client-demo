@@ -258,8 +258,8 @@ namespace ShadowInfection.UI.VendorWindow
                 return;
 
             selectedId = id;
-            if (SoundManager.Instance != null)
-                SoundManager.Instance.PlaySound("UiButtonClick");
+            if (ShadowInfection.DI.GameLifetimeScope.TryResolve<ShadowInfection.Audio.ISfxPlayer>(out var sfx))
+                sfx.Play(ShadowInfection.Audio.SfxPlayer.Ids.UiButtonClick);
             player.CmdVendorTransact(session.VendorId, (byte)model.Tab, model.Id);
             RefreshVisibleRows(rows);
         }

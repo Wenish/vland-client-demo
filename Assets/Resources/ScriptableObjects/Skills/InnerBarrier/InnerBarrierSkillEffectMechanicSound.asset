@@ -15,4 +15,3 @@ MonoBehaviour:
   countsAsCasted: 0
   soundData: {fileID: 11400000, guid: 8ecb60e8ed6a744749ed0f1429b7237b, type: 2}
   attachToTarget: 1
-  pitchOffset: 0.05

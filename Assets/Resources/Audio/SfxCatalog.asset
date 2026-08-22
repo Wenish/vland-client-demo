@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c3d4e5f60718293a4b5c6d7e8f901a, type: 3}
+  m_Name: SfxCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Audio.SfxCatalog
+  entries:
+  - id: BlessedBarrier
+    definition: {fileID: 11400000, guid: f50c9e9b41c9e40c3b10485394f9cdf8, type: 2}
+  - id: BowHit
+    definition: {fileID: 11400000, guid: d0138a3ce4b824265b25e7a29f3aa45e, type: 2}
+  - id: BowLaunch
+    definition: {fileID: 11400000, guid: 7c7a463f13305f04e883f3c800a60875, type: 2}
+  - id: BowOnAttackStart
+    definition: {fileID: 11400000, guid: 82adb1cb5e7014543be6f2601b87feda, type: 2}
+  - id: BreathOfRenewal
+    definition: {fileID: 11400000, guid: 83d140444d5dc46999122ecee9658bdd, type: 2}
+  - id: ConeOfCold
+    definition: {fileID: 11400000, guid: a3fa7e90c44187043860b3a1aed003ad, type: 2}
+  - id: DaggerHit
+    definition: {fileID: 11400000, guid: 7fc5e54dfd4b445ab979dc0c1baadc9b, type: 2}
+  - id: DaggerSwing
+    definition: {fileID: 11400000, guid: 230c26e547a400a41a58accebdd1f4de, type: 2}
+  - id: Evade
+    definition: {fileID: 11400000, guid: 05ced53fe2cf94f42bce7f20dc740687, type: 2}
+  - id: HealParty
+    definition: {fileID: 11400000, guid: 0f84a2ea1b1c24e9f8d83aea6529ed79, type: 2}
+  - id: HealingLeaf
+    definition: {fileID: 11400000, guid: f1975844698ac4d27bb4d22c68141d5a, type: 2}
+  - id: InnerBarrier
+    definition: {fileID: 11400000, guid: 8ecb60e8ed6a744749ed0f1429b7237b, type: 2}
+  - id: PistolLaunch
+    definition: {fileID: 11400000, guid: 7398be1571955447e90529d1c44ef7f8, type: 2}
+  - id: Resurrection
+    definition: {fileID: 11400000, guid: 7735f8d1ab66049679a767eee4c3f73c, type: 2}
+  - id: RuneOfHealing
+    definition: {fileID: 11400000, guid: 82674555ae6a442089780bda8375da16, type: 2}
+  - id: ShadowForm
+    definition: {fileID: 11400000, guid: 452854ba0a04f493d91e9a7d1d2361bb, type: 2}
+  - id: ShadowStep
+    definition: {fileID: 11400000, guid: ba862167e7661412887a5f534817afac, type: 2}
+  - id: Swiftness
+    definition: {fileID: 11400000, guid: 3629e7fd55dd640bcb15c6be4b022f6c, type: 2}
+  - id: UiButtonClick
+    definition: {fileID: 11400000, guid: 9de2c94b678501a449af5639d3e3042b, type: 2}
+  - id: UiButtonHover
+    definition: {fileID: 11400000, guid: 65267556fe8d23a489425598f419a7a8, type: 2}

@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab341832755d45b58c23782acb7f91d, type: 3}
+  m_Name: TrainingGroundsMusicState
+  m_EditorClassIdentifier: Gapa.Audio::Gapa.Audio.Music.MusicState
+  displayName: TrainingGrounds
+  cue: {fileID: 11400000, guid: fa6c09efa44c4b61bf44af6b5649f18a, type: 2}

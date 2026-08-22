@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f6c22f6caef4d28b78a7f123f3fa87, type: 3}
+  m_Name: MainMenuMusicCue
+  m_EditorClassIdentifier: Gapa.Audio::Gapa.Audio.Music.MusicCue
+  bpm: 120
+  beatsPerBar: 4
+  barsPerPhrase: 4
+  bus: 1
+  layers:
+  - layerId: MainMenu
+    clip: {fileID: 8300000, guid: c4340b38bc17bfc4196ba89a3159d409, type: 3}
+    baseVolume: 1
+    minIntensity: 0

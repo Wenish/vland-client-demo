@@ -436,18 +436,16 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [ClientRpc(includeOwner = true)]
-    public void Rpc_PlaySound(string soundName, Vector3 position, float pitchOffset, bool attachToTarget, uint targetNetId)
+    public void Rpc_PlaySound(string soundId, Vector3 position, bool attachToTarget, uint targetNetId)
     {
-        if (string.IsNullOrEmpty(soundName)) return;
+        if (string.IsNullOrEmpty(soundId)) return;
+        if (!ShadowInfection.DI.GameLifetimeScope.TryResolve<ShadowInfection.Audio.ISfxPlayer>(out var sfx))
+            return;
 
-        Transform parent = null;
-        if (attachToTarget && targetNetId != 0)
-        {
-            if (TryGetNetworkIdentity(targetNetId, out var identity))
-                parent = identity.transform;
-        }
-
-        SoundManager.Instance.PlaySound(soundName, position, parent, pitchOffset);
+        if (attachToTarget && targetNetId != 0 && TryGetNetworkIdentity(targetNetId, out var identity))
+            sfx.PlayAttached(soundId, identity.transform);
+        else
+            sfx.Play(soundId, position);
     }
 
     [ClientRpc(includeOwner = true)]

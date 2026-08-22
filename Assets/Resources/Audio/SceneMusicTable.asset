@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f60718293a4b5c6d7e8f90, type: 3}
+  m_Name: SceneMusicTable
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Audio.SceneMusicTable
+  entries:
+  - sceneName: MainMenu
+    musicState: {fileID: 11400000, guid: 4695148f876345109b4079c43f120afc, type: 2}
+  - sceneName: ZombyOfflineScene
+    musicState: {fileID: 11400000, guid: 4695148f876345109b4079c43f120afc, type: 2}
+  - sceneName: ZombyRoomScene
+    musicState: {fileID: 11400000, guid: 1ac691b41d63478e88e334f4c03b94cd, type: 2}
+  - sceneName: GameplayTrainingGrounds
+    musicState: {fileID: 11400000, guid: 1ac691b41d63478e88e334f4c03b94cd, type: 2}
+  - sceneName: ZombyGameScene
+    musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
+  - sceneName: GameSkirmishAScene
+    musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
+  - sceneName: GameSkirmishBScene
+    musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
+  - sceneName: GameSkirmishCScene
+    musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
+  - sceneName: GameSkirmishDScene
+    musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
+  - sceneName: GameCastleSiegeAScene
+    musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
+  fallbackState: {fileID: 11400000, guid: 4695148f876345109b4079c43f120afc, type: 2}
