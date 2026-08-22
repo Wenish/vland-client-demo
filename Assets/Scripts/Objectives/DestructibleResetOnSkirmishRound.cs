@@ -1,5 +1,6 @@
 using Mirror;
-using ShadowInfection.DI;
+using MyGame.Events;
+using R3;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -10,7 +11,7 @@ public class DestructibleResetOnSkirmishRound : NetworkBehaviour
     private SkirmishGameManager.RoundState rebuildOnState = SkirmishGameManager.RoundState.PreRoundCountdown;
 
     private DestructibleObjective _objective;
-    private SkirmishGameManager _manager;
+    private DisposableBag subscriptions;
 
     private void Awake()
     {
@@ -22,35 +23,23 @@ public class DestructibleResetOnSkirmishRound : NetworkBehaviour
         base.OnStartServer();
 
         if (_objective == null)
-        {
             _objective = GetComponent<DestructibleObjective>();
-        }
 
-        _manager = GameServices.Get<SkirmishGameManager>();
-        if (_manager != null)
-        {
-            _manager.OnRoundStateChanged += OnRoundStateChanged;
-        }
+        GameMessages.Subscribe<SkirmishRoundStateChangedEvent>(ref subscriptions, OnRoundStateChanged);
     }
 
     public override void OnStopServer()
     {
-        if (_manager != null)
-        {
-            _manager.OnRoundStateChanged -= OnRoundStateChanged;
-            _manager = null;
-        }
-
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
         base.OnStopServer();
     }
 
     [Server]
-    private void OnRoundStateChanged(SkirmishGameManager.RoundState state)
+    private void OnRoundStateChanged(SkirmishRoundStateChangedEvent evt)
     {
-        if (state != rebuildOnState)
-        {
+        if (evt == null || evt.State != rebuildOnState)
             return;
-        }
 
         _objective?.ServerRebuildNow();
     }

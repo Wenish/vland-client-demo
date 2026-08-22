@@ -1,6 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Mirror;
 using MyGame.Events;
 using ShadowInfection.DI;
@@ -38,14 +39,8 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     [Header("Team Switching")]
     [SerializeField] private bool requireBalancedManualTeamSwitching = false;
 
-    public event Action<MatchLifecycleState> OnLifecycleStateChanged = delegate { };
-    public event Action<bool> OnTeamSelectionLockChanged = delegate { };
-    public event Action<(int connectionId, int teamId)> OnPlayerTeamAssigned = delegate { };
-    public event Action<int> OnLifecycleMatchEnded = delegate { };
-    public event Action<float> OnReturnToLobbyCountdownChanged = delegate { };
-
     protected readonly Dictionary<int, int> ConnectionTeamAssignments = new Dictionary<int, int>();
-    private Coroutine _returnToLobbyCoroutine;
+    private CancellationTokenSource _returnToLobbyCts;
 
     public abstract int TeamCount { get; }
 
@@ -61,6 +56,8 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
     protected virtual void OnDestroy()
     {
+        CancelReturnToLobby();
+
         if (ActiveInstance == this)
         {
             ActiveInstance = null;
@@ -70,13 +67,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     public override void OnStopServer()
     {
         base.OnStopServer();
-
-        if (_returnToLobbyCoroutine != null)
-        {
-            StopCoroutine(_returnToLobbyCoroutine);
-            _returnToLobbyCoroutine = null;
-        }
-
+        CancelReturnToLobby();
         ServerSetReturnToLobbyCountdownRemaining(0f);
     }
 
@@ -200,9 +191,10 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
         ServerSetTeamSelectionLocked(true);
         ServerSetLifecycleState(MatchLifecycleState.MatchEnded);
 
-        if (autoReturnToLobbyOnMatchEnd && _returnToLobbyCoroutine == null)
+        if (autoReturnToLobbyOnMatchEnd && _returnToLobbyCts == null)
         {
-            _returnToLobbyCoroutine = StartCoroutine(ServerReturnToLobbyAfterDelay());
+            _returnToLobbyCts = new CancellationTokenSource();
+            ServerReturnToLobbyAfterDelayAsync(_returnToLobbyCts.Token).Forget();
         }
 
         if (winnerTeamId >= 0)
@@ -212,30 +204,44 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
     }
 
     [Server]
-    private IEnumerator ServerReturnToLobbyAfterDelay()
+    private async UniTaskVoid ServerReturnToLobbyAfterDelayAsync(CancellationToken ct)
     {
-        float delay = Mathf.Max(0f, returnToLobbyDelaySeconds);
-
-        float endTime = Time.time + delay;
-        while (isServer && Time.time < endTime)
+        try
         {
-            ServerSetReturnToLobbyCountdownRemaining(Mathf.Max(0f, endTime - Time.time));
-            yield return null;
-        }
+            float delay = Mathf.Max(0f, returnToLobbyDelaySeconds);
+            float endTime = Time.time + delay;
 
-        _returnToLobbyCoroutine = null;
-        ServerChangeToRoomScene();
+            while (isServer && Time.time < endTime)
+            {
+                ServerSetReturnToLobbyCountdownRemaining(Mathf.Max(0f, endTime - Time.time));
+                await UniTask.Yield(PlayerLoopTiming.Update, ct);
+            }
+
+            if (isServer)
+                ServerChangeToRoomScene();
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        finally
+        {
+            if (_returnToLobbyCts != null)
+            {
+                _returnToLobbyCts.Dispose();
+                _returnToLobbyCts = null;
+            }
+        }
+    }
+
+    private void CancelReturnToLobby()
+    {
+        _returnToLobbyCts?.Cancel();
     }
 
     [Server]
     public bool ServerTryReturnToLobby()
     {
-        if (_returnToLobbyCoroutine != null)
-        {
-            StopCoroutine(_returnToLobbyCoroutine);
-            _returnToLobbyCoroutine = null;
-        }
-
+        CancelReturnToLobby();
         return ServerChangeToRoomScene();
     }
 
@@ -299,12 +305,6 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
         ConnectionTeamAssignments[connectionId] = requestedTeamId;
         OnServerPlayerTeamAssigned(connectionId, requestedTeamId);
-
-        if (isServerOnly)
-        {
-            OnPlayerTeamAssigned((connectionId, requestedTeamId));
-        }
-
         GameMessages.Publish(new MatchPlayerTeamAssignedEvent(connectionId, requestedTeamId));
         return true;
     }
@@ -410,25 +410,21 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
     private void RaiseLifecycleStateChanged(MatchLifecycleState state)
     {
-        OnLifecycleStateChanged(state);
         GameMessages.Publish(new MatchLifecycleStateChangedEvent(state));
     }
 
     private void RaiseTeamSelectionLockChanged(bool isLocked)
     {
-        OnTeamSelectionLockChanged(isLocked);
         GameMessages.Publish(new MatchTeamSelectionLockChangedEvent(isLocked));
     }
 
     private void RaiseLifecycleMatchEnded(int winnerTeamId)
     {
-        OnLifecycleMatchEnded(winnerTeamId);
         GameMessages.Publish(new MatchEndedEvent(winnerTeamId));
     }
 
     private void RaiseReturnToLobbyCountdownChanged(float remainingSeconds)
     {
-        OnReturnToLobbyCountdownChanged(remainingSeconds);
         GameMessages.Publish(new ReturnToLobbyCountdownEvent(remainingSeconds));
     }
 }

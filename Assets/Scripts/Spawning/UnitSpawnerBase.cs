@@ -41,14 +41,46 @@ public abstract class UnitSpawnerBase : NetworkBehaviour
     {
         base.OnStartServer();
         Initialize();
+        RegisterWithSpawnManager();
+    }
+
+    public override void OnStopServer()
+    {
+        UnregisterFromSpawnManager();
+        base.OnStopServer();
     }
 
     protected virtual void OnDestroy()
     {
+        UnregisterFromSpawnManager();
         if (isServer)
         {
             CleanupSpawnedUnits();
         }
+    }
+
+    private void RegisterWithSpawnManager()
+    {
+        var spawnManager = GameServices.Get<SpawnManager>();
+        if (spawnManager == null)
+            return;
+
+        if (this is MobSpawner mobSpawner)
+            spawnManager.RegisterMobSpawner(mobSpawner);
+        else if (this is BossSpawner bossSpawner)
+            spawnManager.RegisterBossSpawner(bossSpawner);
+    }
+
+    private void UnregisterFromSpawnManager()
+    {
+        if (!isServer)
+            return;
+
+        var spawnManager = GameServices.Get<SpawnManager>();
+        if (spawnManager == null || string.IsNullOrEmpty(spawnerId))
+            return;
+
+        spawnManager.UnregisterSpawner(spawnerId);
     }
 
     #endregion

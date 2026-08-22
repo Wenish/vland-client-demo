@@ -340,17 +340,6 @@ namespace MyGame.Events
         }
     }
 
-    public class BuyWeaponEvent
-    {
-        public int WeaponId { get; }
-        public PlayerController Buyer { get; }
-        public BuyWeaponEvent(int weaponId, PlayerController buyer)
-        {
-            WeaponId = weaponId;
-            Buyer = buyer;
-        }
-    }
-
     public class BuyUpgradeEvent
     {
         public InteractionZone Zone { get; }
@@ -514,6 +503,116 @@ namespace MyGame.Events
         {
             ConnectionId = connectionId;
             TeamId = teamId;
+        }
+    }
+
+    public class CastleSiegePhaseChangedEvent
+    {
+        public CastleSiegeManager.MatchPhase Phase { get; }
+
+        public CastleSiegePhaseChangedEvent(CastleSiegeManager.MatchPhase phase)
+        {
+            Phase = phase;
+        }
+    }
+
+    public class CastleSiegePlayerJoinedEvent
+    {
+    }
+
+    public class CastleSiegePlayerLeftEvent
+    {
+    }
+
+    public class CastleSiegeUnitDiedEvent
+    {
+        public UnitController Unit { get; }
+
+        public CastleSiegeUnitDiedEvent(UnitController unit)
+        {
+            Unit = unit;
+        }
+    }
+
+    public class CastleSiegeLordSpawnedEvent
+    {
+        public int TeamId { get; }
+
+        public CastleSiegeLordSpawnedEvent(int teamId)
+        {
+            TeamId = teamId;
+        }
+    }
+
+    public class CastleSiegeTeamEliminatedEvent
+    {
+        public int TeamId { get; }
+
+        public CastleSiegeTeamEliminatedEvent(int teamId)
+        {
+            TeamId = teamId;
+        }
+    }
+
+    public class CastleSiegeMatchWinnerEvent
+    {
+        public int WinnerTeamId { get; }
+
+        public CastleSiegeMatchWinnerEvent(int winnerTeamId)
+        {
+            WinnerTeamId = winnerTeamId;
+        }
+    }
+
+    public class SkirmishRoundChangedEvent
+    {
+        public int Round { get; }
+
+        public SkirmishRoundChangedEvent(int round)
+        {
+            Round = round;
+        }
+    }
+
+    public class SkirmishRoundStateChangedEvent
+    {
+        public SkirmishGameManager.RoundState State { get; }
+
+        public SkirmishRoundStateChangedEvent(SkirmishGameManager.RoundState state)
+        {
+            State = state;
+        }
+    }
+
+    public class SkirmishCountdownChangedEvent
+    {
+        public float RemainingSeconds { get; }
+
+        public SkirmishCountdownChangedEvent(float remainingSeconds)
+        {
+            RemainingSeconds = remainingSeconds;
+        }
+    }
+
+    public class SkirmishRoundEndedEvent
+    {
+        public int WinnerTeam { get; }
+        public bool IsDraw { get; }
+
+        public SkirmishRoundEndedEvent(int winnerTeam, bool isDraw)
+        {
+            WinnerTeam = winnerTeam;
+            IsDraw = isDraw;
+        }
+    }
+
+    public class SkirmishMatchEndedEvent
+    {
+        public int WinnerTeamId { get; }
+
+        public SkirmishMatchEndedEvent(int winnerTeamId)
+        {
+            WinnerTeamId = winnerTeamId;
         }
     }
 }

@@ -1,6 +1,7 @@
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.Units;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -290,8 +291,7 @@ namespace NPCBehaviour
             if (!_isInitialized || !healingGeneratesThreat) return;
 
             // Find nearby enemies and add threat
-            var enemies = FindObjectsByType<UnitController>();
-            foreach (var enemy in enemies)
+            foreach (var enemy in UnitRegistryAccess.GetUnits())
             {
                 if (enemy == null || enemy == _unit || enemy.IsDead) continue;
                 if (enemy.team == _unit.team) continue;

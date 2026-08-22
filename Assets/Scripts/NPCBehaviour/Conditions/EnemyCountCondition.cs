@@ -1,5 +1,6 @@
 using System.Linq;
 using NaughtyAttributes;
+using ShadowInfection.Units;
 using UnityEngine;
 
 namespace NPCBehaviour
@@ -29,8 +30,7 @@ namespace NPCBehaviour
 
         public override bool Evaluate(BehaviourContext context)
         {
-            var allUnits = Object.FindObjectsByType<UnitController>();
-            int count = allUnits
+            int count = UnitRegistryAccess.GetUnits()
                 .Count(u => u != null && 
                            u != context.Unit && 
                            u.team != context.Team && 

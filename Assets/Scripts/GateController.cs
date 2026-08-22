@@ -1,6 +1,7 @@
 using Mirror;
 using MyGame.Events;
 using R3;
+using ShadowInfection.World;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -30,6 +31,16 @@ public class GateController : NetworkBehaviour
     private Vector3 openPosition;
     private Coroutine moveCoroutine;
     private DisposableBag serverSubscriptions;
+
+    private void OnEnable()
+    {
+        GateRegistry.RegisterOrDefer(this);
+    }
+
+    private void OnDisable()
+    {
+        GateRegistry.UnregisterOrDefer(this);
+    }
 
     private void Start()
     {

@@ -6,6 +6,7 @@ using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.Interactions;
 using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
@@ -346,34 +347,15 @@ public class PlayerController : NetworkBehaviour
     {
         if (_interactionZone == null) return;
 
+        // Vendor UI opens client-side; server trade goes through VendorManager cmds.
         if (_interactionZone.InteractionType == InteractionType.OpenVendor)
             return;
 
-        if (_interactionZone.InteractionType == InteractionType.BuyUpgrade)
-        {
-            GameMessages.Publish(new BuyUpgradeEvent(_interactionZone, this));
+        var registry = GameServices.Get<IInteractionHandlerRegistry>();
+        if (registry == null || !registry.TryGet(_interactionZone.InteractionType, out var handler))
             return;
-        }
 
-        var canAffordInteraction = SpendGold(_interactionZone.GoldCost);
-
-        if (!canAffordInteraction)
-        {
-            Debug.Log("Not enough gold");
-            return;
-        }
-
-        switch (_interactionZone.InteractionType)
-        {
-            case InteractionType.OpenGate:
-                Debug.Log("Open Gate");
-                GameMessages.Publish(new OpenGateEvent(_interactionZone.InteractionId));
-                break;
-            case InteractionType.BuyWeapon:
-                Debug.Log("Buy Weapon");
-                GameMessages.Publish(new BuyWeaponEvent(_interactionZone.InteractionId, this));
-                break;
-        }
+        handler.Handle(_interactionZone, this);
     }
 
     [Command]

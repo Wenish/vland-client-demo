@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MyGame.Events;
+using ShadowInfection.Interactions;
 using UnityEngine;
 
 public class InteractionZone : MonoBehaviour, IVendorInteractable
@@ -40,6 +41,11 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
     private Dictionary<UnitController, System.Action> reviveListeners = new Dictionary<UnitController, System.Action>();
     private CatalogVendorSession previewSession;
     private readonly Dictionary<uint, CatalogVendorSession> sessionsByPlayer = new Dictionary<uint, CatalogVendorSession>();
+
+    private void OnEnable()
+    {
+        InteractionZoneRegistry.RegisterOrDefer(this);
+    }
 
     public IVendorSession GetVendorSession()
     {
@@ -143,8 +149,10 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
         }
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
+        InteractionZoneRegistry.UnregisterOrDefer(this);
+
         foreach (var unit in new List<UnitController>(unitsInZone))
         {
             RemoveUnitFromZone(unit);
@@ -216,8 +224,6 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
         {
             case InteractionType.OpenGate:
                 return "Press F to open the gate";
-            case InteractionType.BuyWeapon:
-                return "Press F to buy a weapon";
             case InteractionType.BuyUpgrade:
                 if (TryGetComponent<UpgradeStationZone>(out var upgradeStationZone) && upgradeStationZone.HasMultipleOffers)
                 {
@@ -254,8 +260,6 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
 
         switch (InteractionType)
         {
-            case InteractionType.BuyWeapon:
-                return $"Weapon #{InteractionId}";
             case InteractionType.BuyUpgrade:
                 return "Configured upgrade";
             default:
@@ -266,10 +270,9 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
 
 public enum InteractionType : byte
 {
-    OpenGate,
-    BuyWeapon,
-    BuyUpgrade,
-    OpenVendor
+    OpenGate = 0,
+    BuyUpgrade = 2,
+    OpenVendor = 3
 }
 
 [CreateAssetMenu(fileName = "InteractionZoneDefinition", menuName = "Game/Interaction/Zone Definition")]

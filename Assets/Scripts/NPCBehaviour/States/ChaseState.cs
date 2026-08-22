@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NaughtyAttributes;
+using ShadowInfection.Units;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -106,8 +107,7 @@ namespace NPCBehaviour
             }
 
             // Fallback to standard targeting
-            var allUnits = FindObjectsByType<UnitController>();
-            var enemies = allUnits
+            var enemies = UnitRegistryAccess.GetUnits()
                 .Where(u => u != null && u != context.Unit && u.team != context.Team && !u.IsDead)
                 .Where(u => Vector3.Distance(context.Position, u.transform.position) <= detectionRange)
                 .ToList();

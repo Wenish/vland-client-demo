@@ -1,60 +1,37 @@
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
+using MyGame.Events;
+using R3;
+using ShadowInfection.DI;
+using ShadowInfection.World;
 using UnityEngine;
 
 [RequireComponent(typeof(SkirmishGameManager))]
 public class SkirmishGatesManager : MonoBehaviour
 {
-    SkirmishGameManager gameManager;
-    List<GateController> gateControllers = new List<GateController>();
-    
-
-    private void Awake()
-    {
-        gameManager = FindAnyObjectByType<SkirmishGameManager>();
-
-        if (gameManager == null)
-        {
-            Debug.LogError("SkirmishGameManager not found in scene.");
-        }
-
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
-        
-        Debug.Log($"[SkirmishGatesManager] Found {gateControllers.Count} gates in the scene.");
-    }
+    private DisposableBag subscriptions;
 
     private void OnEnable()
     {
         if (!NetworkServer.active)
-        {
             return;
-        }
 
-        if (gameManager != null)
-        {
-            gameManager.OnRoundStateChanged += OnRoundStateChanged;
-        }
+        GameMessages.Subscribe<SkirmishRoundStateChangedEvent>(ref subscriptions, OnRoundStateChanged);
     }
 
     private void OnDisable()
     {
-        if (gameManager != null)
-        {
-            gameManager.OnRoundStateChanged -= OnRoundStateChanged;
-        }
+        subscriptions.Dispose();
+        subscriptions = new DisposableBag();
     }
 
-    private void OnRoundStateChanged(SkirmishGameManager.RoundState newState)
+    private void OnRoundStateChanged(SkirmishRoundStateChangedEvent evt)
     {
-        if (!NetworkServer.active)
-        {
+        if (!NetworkServer.active || evt == null)
             return;
-        }
-        
-        gateControllers = new List<GateController>(FindObjectsByType<GateController>());
-        Debug.Log($"[SkirmishGatesManager] Round state changed to {newState}. Found {gateControllers.Count} gates in the scene.");
 
-        switch (newState)
+        switch (evt.State)
         {
             case SkirmishGameManager.RoundState.WaitingToStart:
                 CloseAllGates();
@@ -68,19 +45,27 @@ public class SkirmishGatesManager : MonoBehaviour
         }
     }
 
+    private static IEnumerable<GateController> GetGates()
+    {
+        var registry = GameServices.Get<IGateRegistry>();
+        return registry != null ? registry.Gates : Enumerable.Empty<GateController>();
+    }
+
     private void CloseAllGates()
     {
-        foreach (var gate in gateControllers)
+        foreach (var gate in GetGates())
         {
-            gate.CloseGate();
+            if (gate != null)
+                gate.CloseGate();
         }
     }
 
     private void OpenAllGates()
     {
-        foreach (var gate in gateControllers)
+        foreach (var gate in GetGates())
         {
-            gate.OpenGate();
+            if (gate != null)
+                gate.OpenGate();
         }
     }
 }
