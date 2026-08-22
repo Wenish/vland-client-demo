@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1866456391793118151}
   - component: {fileID: 5873445421507333604}
-  - component: {fileID: 6539138841486971010}
   - component: {fileID: 2582750914757314102}
+  - component: {fileID: 8708718503575437402}
   m_Layer: 0
   m_Name: UIDocumentSkirmish
   m_TagString: Untagged
@@ -57,20 +57,6 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &6539138841486971010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5171083869987696100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 031bad2a7919b414f9a3d480c80a1871, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkirmishClientStateSync
-  pollIntervalSeconds: 0.2
-  onlyWhenClientActive: 1
 --- !u!114 &2582750914757314102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +68,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44780e861e3bf8047ad050ebbe3bd784, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkirmishHudPresenter
-  stateSync: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.SkirmishHud.SkirmishHudController
   hideWhenClientInactive: 1
+--- !u!114 &8708718503575437402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5171083869987696100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3d80f1a7c93e2d8b0f5c4a1e9a7d02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.SkirmishHudLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []

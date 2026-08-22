@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2575448680834449992}
   - component: {fileID: 39232231524554256}
   - component: {fileID: 8832683269749936954}
+  - component: {fileID: 8708718503575437403}
   m_Layer: 0
   m_Name: UIDocumentHostAdmin
   m_TagString: Untagged
@@ -67,5 +68,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b50794c7f8bae745b8bf8fcb9894a2d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HostAdminOverlayPresenter
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.HostAdmin.HostAdminOverlayController
   hideWhenNotHost: 1
+--- !u!114 &8708718503575437403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4632451120189843423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a2c79e0b6b82d1c7a9e4b3f0d8c6e91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.HostAdminLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []

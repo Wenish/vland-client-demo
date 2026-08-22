@@ -279,11 +279,6 @@ public class PlayerLoadout : NetworkBehaviour
         MatchGameManagerBase manager = GameServices.Match;
         if (manager == null)
         {
-            manager = MatchGameManagerBase.ActiveInstance;
-        }
-
-        if (manager == null)
-        {
             TargetAckTeamSelection(connectionToClient, false, "No active match manager in scene.", desiredTeamId);
             return;
         }

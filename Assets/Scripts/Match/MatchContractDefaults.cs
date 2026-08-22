@@ -39,4 +39,49 @@ namespace ShadowInfection.Match
             return false;
         }
     }
+
+    public sealed class UnmatchedMatchUiSession : IMatchUiSession
+    {
+        public static readonly UnmatchedMatchUiSession Instance = new UnmatchedMatchUiSession();
+
+        private UnmatchedMatchUiSession()
+        {
+        }
+
+        public bool TryGetSnapshot(out MatchUiSnapshot snapshot)
+        {
+            snapshot = default;
+            return false;
+        }
+    }
+
+    public sealed class UnmatchedCastleSiegeUiSession : ICastleSiegeUiSession
+    {
+        public static readonly UnmatchedCastleSiegeUiSession Instance = new UnmatchedCastleSiegeUiSession();
+
+        private UnmatchedCastleSiegeUiSession()
+        {
+        }
+
+        public bool TryGetSnapshot(out CastleSiegeUiSnapshot snapshot)
+        {
+            snapshot = default;
+            return false;
+        }
+    }
+
+    public sealed class UnmatchedSkirmishUiSession : ISkirmishUiSession
+    {
+        public static readonly UnmatchedSkirmishUiSession Instance = new UnmatchedSkirmishUiSession();
+
+        private UnmatchedSkirmishUiSession()
+        {
+        }
+
+        public bool TryGetSnapshot(out SkirmishUiSnapshot snapshot)
+        {
+            snapshot = default;
+            return false;
+        }
+    }
 }

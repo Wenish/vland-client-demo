@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5104144382701503318}
   - component: {fileID: 3145729352651351082}
-  - component: {fileID: 3836634869946327015}
   - component: {fileID: 2966524111497600208}
+  - component: {fileID: 8708718503575437401}
   m_Layer: 0
   m_Name: UIDocumentCastleSiege
   m_TagString: Untagged
@@ -57,20 +57,6 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &3836634869946327015
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8561578382842612223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4a6256a26c71ca48a35b92ea7791263, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CastleSiegeClientStateSync
-  pollIntervalSeconds: 0.2
-  onlyWhenClientActive: 1
 --- !u!114 &2966524111497600208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +68,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b410a91ed1700048b9f7800da5e5e77, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CastleSiegeHudPresenter
-  stateSync: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.CastleSiegeHud.CastleSiegeHudController
   hideWhenClientInactive: 1
+--- !u!114 &8708718503575437401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8561578382842612223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e91a2b8d04f3e9a1c6d5e2f8b0a13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.DI.CastleSiegeHudLifetimeScope
+  parentReference:
+    TypeName: ShadowInfection.DI.GameLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []

@@ -18,5 +18,28 @@ namespace ShadowInfection.Match
 
             return manager.ServerTryReturnToLobby();
         }
+
+        public bool TryLockTeamSwitching()
+        {
+            if (!NetworkServer.active || manager == null)
+                return false;
+
+            manager.ServerLockTeamSwitching();
+            return true;
+        }
+
+        public bool TryUnlockTeamSwitching()
+        {
+            if (!NetworkServer.active || manager == null)
+                return false;
+
+            manager.ServerUnlockTeamSwitching();
+            return true;
+        }
+
+        public bool TryChooseLocalTeam(int teamId)
+        {
+            return LocalMatchPlayer.TryChooseLocalTeam(teamId);
+        }
     }
 }

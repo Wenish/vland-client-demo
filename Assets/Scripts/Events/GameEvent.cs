@@ -464,4 +464,56 @@ namespace MyGame.Events
             ObjectiveId = objectiveId;
         }
     }
+
+    public class MatchLifecycleStateChangedEvent
+    {
+        public MatchGameManagerBase.MatchLifecycleState State { get; }
+
+        public MatchLifecycleStateChangedEvent(MatchGameManagerBase.MatchLifecycleState state)
+        {
+            State = state;
+        }
+    }
+
+    public class MatchTeamSelectionLockChangedEvent
+    {
+        public bool IsLocked { get; }
+
+        public MatchTeamSelectionLockChangedEvent(bool isLocked)
+        {
+            IsLocked = isLocked;
+        }
+    }
+
+    public class MatchEndedEvent
+    {
+        public int WinnerTeamId { get; }
+
+        public MatchEndedEvent(int winnerTeamId)
+        {
+            WinnerTeamId = winnerTeamId;
+        }
+    }
+
+    public class ReturnToLobbyCountdownEvent
+    {
+        public float RemainingSeconds { get; }
+
+        public ReturnToLobbyCountdownEvent(float remainingSeconds)
+        {
+            RemainingSeconds = remainingSeconds;
+        }
+    }
+
+    public class MatchPlayerTeamAssignedEvent
+    {
+        public int ConnectionId { get; }
+        public int TeamId { get; }
+
+        public MatchPlayerTeamAssignedEvent(int connectionId, int teamId)
+        {
+            ConnectionId = connectionId;
+            TeamId = teamId;
+        }
+    }
 }

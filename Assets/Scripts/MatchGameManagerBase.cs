@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using MyGame.Events;
 using ShadowInfection.DI;
 using UnityEngine;
 
@@ -91,7 +92,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
         if (isServerOnly)
         {
-            OnLifecycleStateChanged(state);
+            RaiseLifecycleStateChanged(state);
         }
     }
 
@@ -107,7 +108,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
         if (isServerOnly)
         {
-            OnTeamSelectionLockChanged(isLocked);
+            RaiseTeamSelectionLockChanged(isLocked);
         }
     }
 
@@ -165,7 +166,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
         if (isServerOnly)
         {
-            OnReturnToLobbyCountdownChanged(value);
+            RaiseReturnToLobbyCountdownChanged(value);
         }
     }
 
@@ -206,7 +207,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
         if (winnerTeamId >= 0)
         {
-            OnLifecycleMatchEnded(winnerTeamId);
+            RaiseLifecycleMatchEnded(winnerTeamId);
         }
     }
 
@@ -304,6 +305,7 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
             OnPlayerTeamAssigned((connectionId, requestedTeamId));
         }
 
+        GameMessages.Publish(new MatchPlayerTeamAssignedEvent(connectionId, requestedTeamId));
         return true;
     }
 
@@ -380,12 +382,12 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
     private void HookOnLifecycleStateChanged(MatchLifecycleState oldValue, MatchLifecycleState newValue)
     {
-        OnLifecycleStateChanged(newValue);
+        RaiseLifecycleStateChanged(newValue);
     }
 
     private void HookOnTeamSelectionLockedChanged(bool oldValue, bool newValue)
     {
-        OnTeamSelectionLockChanged(newValue);
+        RaiseTeamSelectionLockChanged(newValue);
     }
 
     private void HookOnLifecycleWinnerTeamChanged(int oldValue, int newValue)
@@ -397,12 +399,36 @@ public abstract class MatchGameManagerBase : NetworkBehaviour
 
         if (LifecycleState == MatchLifecycleState.MatchEnded)
         {
-            OnLifecycleMatchEnded(newValue);
+            RaiseLifecycleMatchEnded(newValue);
         }
     }
 
     private void HookOnReturnToLobbyCountdownChanged(float oldValue, float newValue)
     {
-        OnReturnToLobbyCountdownChanged(newValue);
+        RaiseReturnToLobbyCountdownChanged(newValue);
+    }
+
+    private void RaiseLifecycleStateChanged(MatchLifecycleState state)
+    {
+        OnLifecycleStateChanged(state);
+        GameMessages.Publish(new MatchLifecycleStateChangedEvent(state));
+    }
+
+    private void RaiseTeamSelectionLockChanged(bool isLocked)
+    {
+        OnTeamSelectionLockChanged(isLocked);
+        GameMessages.Publish(new MatchTeamSelectionLockChangedEvent(isLocked));
+    }
+
+    private void RaiseLifecycleMatchEnded(int winnerTeamId)
+    {
+        OnLifecycleMatchEnded(winnerTeamId);
+        GameMessages.Publish(new MatchEndedEvent(winnerTeamId));
+    }
+
+    private void RaiseReturnToLobbyCountdownChanged(float remainingSeconds)
+    {
+        OnReturnToLobbyCountdownChanged(remainingSeconds);
+        GameMessages.Publish(new ReturnToLobbyCountdownEvent(remainingSeconds));
     }
 }

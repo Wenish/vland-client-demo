@@ -296,6 +296,9 @@ namespace ShadowInfection.DI
             builder.RegisterInstance<IMatchActivity>(AlwaysAllowMatchActivity.Instance);
             builder.RegisterInstance<IUpgradeProgress>(FixedUpgradeProgress.Default);
             builder.RegisterInstance<IPvpObjectives>(NoPvpObjectives.Instance);
+            builder.RegisterInstance<IMatchUiSession>(UnmatchedMatchUiSession.Instance);
+            builder.RegisterInstance<ICastleSiegeUiSession>(UnmatchedCastleSiegeUiSession.Instance);
+            builder.RegisterInstance<ISkirmishUiSession>(UnmatchedSkirmishUiSession.Instance);
         }
 
         private void RegisterDatabases(IContainerBuilder builder)

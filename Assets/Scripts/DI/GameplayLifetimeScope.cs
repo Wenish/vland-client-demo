@@ -227,6 +227,7 @@ namespace ShadowInfection.DI
                 builder.RegisterInstance<IZombieMatchUiSession>(session);
                 builder.RegisterInstance<IZombieMatchCommands>(session);
                 builder.RegisterInstance<IMatchCommands>(session);
+                RegisterUnmatchedPvpSessions(builder);
                 return;
             }
 
@@ -235,6 +236,9 @@ namespace ShadowInfection.DI
                 builder.RegisterInstance<IMatchActivity>(new CastleSiegeMatchActivity(castle));
                 builder.RegisterInstance<IPvpObjectives>(new CastleSiegePvpObjectives(castle));
                 builder.RegisterInstance<IMatchCommands>(new MatchGameManagerCommands(castle));
+                builder.RegisterInstance<IMatchUiSession>(new MatchGameManagerUiSession(castle));
+                builder.RegisterInstance<ICastleSiegeUiSession>(new CastleSiegeUiSession(castle));
+                builder.RegisterInstance<ISkirmishUiSession>(UnmatchedSkirmishUiSession.Instance);
                 RegisterUnmatchedZombieSession(builder);
                 return;
             }
@@ -243,11 +247,22 @@ namespace ShadowInfection.DI
             {
                 builder.RegisterInstance<IMatchActivity>(new SkirmishMatchActivity(skirmish));
                 builder.RegisterInstance<IMatchCommands>(new MatchGameManagerCommands(skirmish));
+                builder.RegisterInstance<IMatchUiSession>(new MatchGameManagerUiSession(skirmish));
+                builder.RegisterInstance<ICastleSiegeUiSession>(UnmatchedCastleSiegeUiSession.Instance);
+                builder.RegisterInstance<ISkirmishUiSession>(new SkirmishUiSession(skirmish));
                 RegisterUnmatchedZombieSession(builder);
                 return;
             }
 
             RegisterUnmatchedZombieSession(builder);
+            RegisterUnmatchedPvpSessions(builder);
+        }
+
+        private static void RegisterUnmatchedPvpSessions(IContainerBuilder builder)
+        {
+            builder.RegisterInstance<IMatchUiSession>(UnmatchedMatchUiSession.Instance);
+            builder.RegisterInstance<ICastleSiegeUiSession>(UnmatchedCastleSiegeUiSession.Instance);
+            builder.RegisterInstance<ISkirmishUiSession>(UnmatchedSkirmishUiSession.Instance);
         }
 
         private static void RegisterUnmatchedZombieSession(IContainerBuilder builder)
