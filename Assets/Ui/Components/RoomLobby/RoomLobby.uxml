@@ -6,12 +6,64 @@
             <ui:Label name="title" text="Room" class="room-lobby__title" />
             <ui:Label name="subtitle" text="Waiting for players…" class="room-lobby__subtitle" />
             <ui:Label text="Players" class="room-lobby__section-title" />
-            <ui:ScrollView name="playerListScroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="room-lobby__scroll">
+            <ui:ScrollView name="playerListScroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" class="room-lobby__scroll">
                 <ui:VisualElement name="playerListContent" class="room-lobby__rows" />
             </ui:ScrollView>
+
             <ui:VisualElement name="footer" class="room-lobby__footer">
                 <ui:Label name="localStatus" text="Not Ready" class="room-lobby__status" />
                 <OrnateButton name="readyButton" text="READY" class="si-button si-button--compact room-lobby__ready-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <OrnateButton name="changeCharacterButton" text="Characters" class="si-button si-button--compact room-lobby__change-character-button" />
+
+        <ui:VisualElement name="characterSelectOverlay" picking-mode="Position" class="room-lobby__character-overlay" style="display: none;">
+            <ui:VisualElement name="characterSelectPanel" picking-mode="Position" class="room-lobby__character-panel">
+                <ui:Label text="Select Character" class="room-lobby__title" />
+                <ui:Label name="characterOverlaySubtitle" text="Choose who you will play as." class="room-lobby__subtitle" />
+
+                <ui:ScrollView name="characterListScroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" class="room-lobby__scroll room-lobby__character-scroll">
+                    <ui:VisualElement name="characterListContent" class="room-lobby__character-rows" />
+                </ui:ScrollView>
+
+                <ui:VisualElement name="characterSelectFooter" class="room-lobby__character-overlay-footer">
+                    <OrnateButton name="openCreateCharacterButton" text="Create New" class="si-button si-button--compact room-lobby__create-open-button" />
+                    <OrnateButton name="closeCharacterOverlayButton" text="Back" class="si-button si-button--compact room-lobby__character-back-button" style="display: none;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="characterCreateOverlay" picking-mode="Position" class="room-lobby__character-overlay" style="display: none;">
+            <ui:VisualElement name="characterCreatePanel" picking-mode="Position" class="room-lobby__character-panel room-lobby__character-panel--create">
+                <ui:Label text="Create Character" class="room-lobby__title" />
+                <ui:Label text="Pick a name and appearance." class="room-lobby__subtitle" />
+
+                <ui:Label text="Name" class="room-lobby__section-title" />
+                <ui:TextField name="characterNameField" max-length="30" class="room-lobby__name-field" />
+
+                <ui:Label text="Gender" class="room-lobby__section-title" />
+                <ui:VisualElement class="room-lobby__gender-row">
+                    <ui:Button name="genderMaleButton" text="Male" class="room-lobby__gender-button room-lobby__gender-button--active" />
+                    <ui:Button name="genderFemaleButton" text="Female" class="room-lobby__gender-button" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="characterCreateFooter" class="room-lobby__character-overlay-footer">
+                    <OrnateButton name="backFromCreateButton" text="Back" class="si-button si-button--compact room-lobby__character-back-button" />
+                    <OrnateButton name="createCharacterButton" text="Create" class="si-button si-button--compact room-lobby__create-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="characterDeleteConfirmOverlay" picking-mode="Position" class="room-lobby__character-overlay room-lobby__character-overlay--confirm" style="display: none;">
+            <ui:VisualElement name="characterDeleteConfirmPanel" picking-mode="Position" class="room-lobby__character-panel room-lobby__character-panel--confirm">
+                <ui:Label text="Delete Character" class="room-lobby__title" />
+                <ui:Label name="characterDeleteConfirmMessage" text="Delete this character permanently?" class="room-lobby__subtitle room-lobby__confirm-message" />
+                <ui:Label text="This cannot be undone." class="room-lobby__confirm-warning" />
+                <ui:VisualElement class="room-lobby__character-overlay-footer room-lobby__confirm-footer">
+                    <OrnateButton name="cancelDeleteCharacterButton" text="Cancel" class="si-button si-button--compact room-lobby__character-back-button" />
+                    <OrnateButton name="confirmDeleteCharacterButton" text="Delete" class="si-button si-button--compact room-lobby__delete-confirm-button" />
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

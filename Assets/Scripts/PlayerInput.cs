@@ -49,7 +49,8 @@ public class PlayerInput : NetworkBehaviour
             var unit = playerUnits != null
                 ? playerUnits.GetPlayerUnit(connectionToClient.connectionId)
                 : null;
-            SetMyUnit(unit);
+            if (unit != null)
+                SetMyUnit(unit);
             GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
         }
     }
@@ -74,9 +75,9 @@ public class PlayerInput : NetworkBehaviour
     public void SetMyUnit(GameObject unit)
     {
         myUnit = unit;
-        _myUnitController = unit.GetComponent<UnitController>();
+        _myUnitController = unit != null ? unit.GetComponent<UnitController>() : null;
 
-        if (isLocalPlayer)
+        if (isLocalPlayer && _myUnitController != null)
         {
             GameMessages.Publish(new MyPlayerUnitSpawnedEvent(_myUnitController));
         }
@@ -101,6 +102,12 @@ public class PlayerInput : NetworkBehaviour
         if (!isThisInputActive) return;
         if (isLocalPlayer && myUnit != null)
         {
+            if (UiModalInputBlock.IsBlocked)
+            {
+                ClearLocalMovementInput();
+                return;
+            }
+
             SetMouseWorldPosition();
             InputWorldPing();
             InputAxis();
@@ -114,6 +121,16 @@ public class PlayerInput : NetworkBehaviour
         {
             ControlMyUnit();
         }
+    }
+
+    [Client]
+    private void ClearLocalMovementInput()
+    {
+        if (!Mathf.Approximately(HorizontalInput, 0f) || !Mathf.Approximately(VerticalInput, 0f))
+            CmdSetInput(0f, 0f);
+
+        if (IsPressingFire1)
+            CmdSetFire1(false);
     }
 
     [Client]

@@ -100,6 +100,7 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly Label labelStatCritChance;
         private readonly VisualElement infoFeed;
         private readonly List<Label> infoLabels = new();
+        private readonly VisualElement characterHudRoot;
 
         public event Action LoadoutButtonClicked;
 
@@ -119,6 +120,7 @@ namespace ShadowInfection.UI.PlayerHud
             roundBox = root.Q<VisualElement>("roundBox");
             goldContainer = root.Q<VisualElement>("goldContainer");
             roundCompletionFill = root.Q<VisualElement>("roundCompletionFill");
+            characterHudRoot = root.Q<VisualElement>("characterHudRoot");
             playerVitalsContainer = root.Q<VisualElement>("playerVitalsContainer");
             playerHealthContainer = root.Q<VisualElement>("playerHealthContainer");
             playerHealthFill = root.Q<VisualElement>("playerHealthFill");
@@ -159,6 +161,16 @@ namespace ShadowInfection.UI.PlayerHud
             }
 
             Reset();
+            SetCharacterHudVisible(false);
+        }
+
+        public void SetCharacterHudVisible(bool visible)
+        {
+            if (characterHudRoot != null)
+                characterHudRoot.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+
+            if (!visible)
+                HideCastBar();
         }
 
         public void SetLoadoutButtonVisible(bool visible)
@@ -188,6 +200,7 @@ namespace ShadowInfection.UI.PlayerHud
             SetMatchWidgetsVisible(false);
             HidePlayerVitals();
             HidePlayerStats();
+            SetCharacterHudVisible(false);
             SetAbilitySlot(PlayerHudAbilitySlot.Passive, AbilitySlotVm.Empty);
             SetAbilitySlot(PlayerHudAbilitySlot.BaseAttack, AbilitySlotVm.Empty);
             SetAbilitySlot(PlayerHudAbilitySlot.Normal1, AbilitySlotVm.Empty);

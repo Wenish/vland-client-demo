@@ -54,8 +54,11 @@ namespace Game.Scripts.Controllers
             }
 
             UpdateSpectatorMode();
-            OnScroll();
-            MousePositionChange();
+            if (!UiModalInputBlock.IsBlocked)
+            {
+                OnScroll();
+                MousePositionChange();
+            }
         }
 
         /// <summary>
@@ -124,7 +127,8 @@ namespace Game.Scripts.Controllers
 
         private void HandleSpectatorInput()
         {
-            if (UiPointerState.IsPointerOverBlockingElement) return;
+            if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
+                return;
             if (Mouse.current == null) return;
 
             // Right click = next, Left click = previous
@@ -216,8 +220,8 @@ namespace Game.Scripts.Controllers
 
         void OnScroll()
         {
-            var isPointerOverUi = UiPointerState.IsPointerOverBlockingElement;
-            if (isPointerOverUi) return;
+            if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
+                return;
             float oldZoom = Zoom;
             float scroll = GetScrollDelta();
             Zoom += -scroll * 100 * Time.deltaTime;
@@ -249,8 +253,8 @@ namespace Game.Scripts.Controllers
             }
             else
             {
-                var isPointerOverUi = UiPointerState.IsPointerOverBlockingElement;
-                if (isPointerOverUi) return;
+                if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
+                    return;
                 Vector3 pos = transform.position;
                 Vector2 mousePos = GetMousePosition();
                 if (mousePos.y >= Screen.height - BorderThickness)

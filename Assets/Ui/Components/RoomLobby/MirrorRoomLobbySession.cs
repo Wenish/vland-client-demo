@@ -1,28 +1,16 @@
 using System;
 using System.Collections.Generic;
 using Mirror;
+using ShadowInfection.DI;
 using UnityEngine;
 
 namespace ShadowInfection.UI.RoomLobby
 {
     internal sealed class MirrorRoomLobbySession : IRoomLobbySession
     {
-        private static readonly string[] DisplayNameCandidates =
-        {
-            "displayName",
-            "DisplayName",
-            "playerName",
-            "PlayerName",
-            "username",
-            "Username",
-            "nickName",
-            "NickName",
-            "characterName",
-            "CharacterName",
-        };
-
         private readonly Dictionary<uint, string> nameCache = new Dictionary<uint, string>(16);
         private readonly List<PlayerRowVm> players = new List<PlayerRowVm>(16);
+        private readonly List<CharacterRowVm> characters = new List<CharacterRowVm>(8);
 
         public bool TryGetState(out RoomLobbyState state)
         {
@@ -33,19 +21,34 @@ namespace ShadowInfection.UI.RoomLobby
                 return false;
             }
 
+            BuildCharacterRows();
+
             if (!Utils.IsSceneActive(roomManager.RoomScene))
             {
                 state = new RoomLobbyState(
                     isInRoomScene: false,
                     canToggleReady: false,
                     localIsReady: false,
+                    hasSelectedCharacter: false,
+                    canEditCharacter: false,
                     readyCount: 0,
-                    players: Array.Empty<PlayerRowVm>());
+                    players: Array.Empty<PlayerRowVm>(),
+                    characters: characters.ToArray(),
+                    canCreateCharacter: GameServices.Characters?.CanCreateCharacter() ?? false);
                 return true;
             }
 
-            var local = FindLocalRoomPlayer(roomManager);
-            var canToggleReady = NetworkClient.active && local != null && local.isLocalPlayer;
+            var local = FindLocalRoomPlayer(roomManager) as MyNetworkRoomPlayer;
+            var hasSelected = local != null && local.HasSelectedCharacter;
+            var localReady = local != null && local.readyToBegin;
+            var canToggleReady = NetworkClient.active
+                && local != null
+                && local.isLocalPlayer
+                && (localReady || hasSelected);
+            var canEditCharacter = NetworkClient.active
+                && local != null
+                && local.isLocalPlayer
+                && !localReady;
 
             players.Clear();
             var readyCount = 0;
@@ -73,9 +76,13 @@ namespace ShadowInfection.UI.RoomLobby
             state = new RoomLobbyState(
                 isInRoomScene: true,
                 canToggleReady: canToggleReady,
-                localIsReady: local != null && local.readyToBegin,
+                localIsReady: localReady,
+                hasSelectedCharacter: hasSelected,
+                canEditCharacter: canEditCharacter,
                 readyCount: readyCount,
-                players: players.ToArray());
+                players: players.ToArray(),
+                characters: characters.ToArray(),
+                canCreateCharacter: GameServices.Characters?.CanCreateCharacter() ?? false);
             return true;
         }
 
@@ -85,11 +92,108 @@ namespace ShadowInfection.UI.RoomLobby
             if (roomManager == null || !NetworkClient.active)
                 return;
 
-            var local = FindLocalRoomPlayer(roomManager);
+            var local = FindLocalRoomPlayer(roomManager) as MyNetworkRoomPlayer;
             if (local == null || !local.isLocalPlayer)
                 return;
 
+            if (!local.readyToBegin && !local.HasSelectedCharacter)
+                return;
+
             local.CmdChangeReadyState(!local.readyToBegin);
+        }
+
+        public bool SelectCharacter(string characterId)
+        {
+            var roomManager = NetworkManager.singleton as NetworkRoomManager;
+            if (roomManager == null || !NetworkClient.active)
+                return false;
+
+            var local = FindLocalRoomPlayer(roomManager) as MyNetworkRoomPlayer;
+            if (local == null || !local.isLocalPlayer || local.readyToBegin)
+                return false;
+
+            var charactersManager = GameServices.Characters;
+            if (charactersManager == null || !charactersManager.SelectActive(characterId))
+                return false;
+
+            local.RequestSelectCharacter(charactersManager.GetActive());
+            return true;
+        }
+
+        public bool CreateCharacter(string name, CharacterGender gender)
+        {
+            var roomManager = NetworkManager.singleton as NetworkRoomManager;
+            if (roomManager == null || !NetworkClient.active)
+                return false;
+
+            var local = FindLocalRoomPlayer(roomManager) as MyNetworkRoomPlayer;
+            if (local == null || !local.isLocalPlayer || local.readyToBegin)
+                return false;
+
+            var charactersManager = GameServices.Characters;
+            if (charactersManager == null)
+                return false;
+
+            var created = charactersManager.CreateCharacter(name, gender);
+            if (created == null)
+                return false;
+
+            local.RequestSelectCharacter(created);
+            return true;
+        }
+
+        public bool DeleteCharacter(string characterId)
+        {
+            var roomManager = NetworkManager.singleton as NetworkRoomManager;
+            if (roomManager == null || !NetworkClient.active)
+                return false;
+
+            var local = FindLocalRoomPlayer(roomManager) as MyNetworkRoomPlayer;
+            if (local == null || !local.isLocalPlayer || local.readyToBegin)
+                return false;
+
+            var charactersManager = GameServices.Characters;
+            if (charactersManager == null)
+                return false;
+
+            bool wasLobbySelected = local.HasSelectedCharacter
+                && local.selectedCharacterId == characterId;
+
+            if (!charactersManager.DeleteCharacter(characterId))
+                return false;
+
+            if (wasLobbySelected)
+                local.RequestClearCharacterSelection();
+
+            return true;
+        }
+
+        private void BuildCharacterRows()
+        {
+            characters.Clear();
+            var manager = GameServices.Characters;
+            if (manager == null)
+                return;
+
+            var roomManager = NetworkManager.singleton as NetworkRoomManager;
+            var local = roomManager != null ? FindLocalRoomPlayer(roomManager) as MyNetworkRoomPlayer : null;
+            // Only highlight the character confirmed for this lobby session (synced),
+            // not merely the last locally active save slot.
+            var selectedId = local != null && local.HasSelectedCharacter
+                ? local.selectedCharacterId
+                : null;
+
+            foreach (var character in manager.Characters)
+            {
+                if (character == null)
+                    continue;
+
+                characters.Add(new CharacterRowVm(
+                    character.Id,
+                    character.Name,
+                    character.Gender == CharacterGender.Female ? "Female" : "Male",
+                    character.Id == selectedId));
+            }
         }
 
         private static NetworkRoomPlayer FindLocalRoomPlayer(NetworkRoomManager roomManager)
@@ -112,52 +216,16 @@ namespace ShadowInfection.UI.RoomLobby
         private string ResolveDisplayName(NetworkRoomPlayer player)
         {
             var netId = player.netId;
+            if (player is MyNetworkRoomPlayer named && !string.IsNullOrWhiteSpace(named.characterName))
+            {
+                nameCache[netId] = named.characterName;
+                return named.characterName;
+            }
+
             if (nameCache.TryGetValue(netId, out var cached) && !string.IsNullOrWhiteSpace(cached))
                 return cached;
 
-            var displayName = TryResolveDisplayName(player);
-            if (!string.IsNullOrWhiteSpace(displayName))
-            {
-                nameCache[netId] = displayName;
-                return displayName;
-            }
-
             return $"Player {player.index + 1}";
-        }
-
-        private static string TryResolveDisplayName(NetworkRoomPlayer player)
-        {
-            if (player is MyNetworkRoomPlayer named && !string.IsNullOrWhiteSpace(named.nickName))
-                return named.nickName;
-
-            var components = player.GetComponents<Component>();
-            foreach (var component in components)
-            {
-                if (component == null)
-                    continue;
-
-                var type = component.GetType();
-                foreach (var candidate in DisplayNameCandidates)
-                {
-                    var field = type.GetField(candidate);
-                    if (field != null && field.FieldType == typeof(string))
-                    {
-                        var value = field.GetValue(component) as string;
-                        if (!string.IsNullOrWhiteSpace(value))
-                            return value;
-                    }
-
-                    var prop = type.GetProperty(candidate);
-                    if (prop != null && prop.PropertyType == typeof(string) && prop.CanRead)
-                    {
-                        var value = prop.GetValue(component, null) as string;
-                        if (!string.IsNullOrWhiteSpace(value))
-                            return value;
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }

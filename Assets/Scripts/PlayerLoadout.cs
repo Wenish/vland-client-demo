@@ -97,24 +97,48 @@ public class PlayerLoadout : NetworkBehaviour
             yield break;
         }
 
-        CmdRequestSetName(ApplicationSettings.GetEffectiveNickname(GameServices.Settings?.Nickname));
+        CmdRequestSetName(GetLocalCharacterDisplayName());
         var loadout = _loadoutManager != null ? _loadoutManager.Get() : GameServices.Loadout?.Get();
         SendLoadoutToServer(loadout);
         _deferredSyncCoroutine = null;
+    }
+
+    private static string GetLocalCharacterDisplayName()
+    {
+        var active = GameServices.Characters?.GetActive();
+        if (active != null && !string.IsNullOrWhiteSpace(active.Name))
+            return ApplicationSettings.SanitizeNickname(active.Name);
+
+        var loadoutName = GameServices.Loadout?.Get()?.UnitName;
+        return ApplicationSettings.SanitizeNickname(loadoutName);
     }
 
     private void SendLoadoutToServer(LocalLoadout newLoadout)
     {
         if (newLoadout == null) return;
 
-        var unitName = ApplicationSettings.GetEffectiveNickname(newLoadout.UnitName);
+        var characterName = GetLocalCharacterDisplayName();
+        if (string.IsNullOrWhiteSpace(characterName))
+            characterName = ApplicationSettings.SanitizeNickname(newLoadout.UnitName);
+
+        if (string.IsNullOrWhiteSpace(characterName)
+            || characterName.Length < ApplicationSettings.MinNicknameLength)
+        {
+            Debug.LogWarning("Cannot sync loadout without a valid character name.");
+            return;
+        }
+
+        var modelName = GameServices.Characters != null
+            ? GameServices.Characters.GetActiveModelName()
+            : CharacterManager.MaleModelName;
 
         CmdRequestSetLoadout(
-            unitName,
+            characterName,
             newLoadout.WeaponId,
             newLoadout.GetNormals(),
             newLoadout.UltimateId,
-            newLoadout.GetPassives()
+            newLoadout.GetPassives(),
+            modelName
         );
     }
 
@@ -124,41 +148,37 @@ public class PlayerLoadout : NetworkBehaviour
         var unitController = _playerInput.myUnit?.GetComponent<UnitController>();
         if (unitController == null) return;
 
-        // Basic anti-spam: allow 2 req/s per connection (optional: store timestamp per-conn externally)
-        // This minimal implementation skips detailed rate limiting for brevity.
-
-        // Validate name
         string sanitized = ApplicationSettings.SanitizeNickname(desiredName);
         if (sanitized.Length < ApplicationSettings.MinNicknameLength || sanitized.Length > ApplicationSettings.MaxNicknameLength)
         {
-            Debug.LogWarning("Name must be 3-30 chars.");
+            Debug.LogWarning("Character name must be 3-30 chars.");
             return;
         }
 
-        // Apply to unit (server authoritative)
         unitController.SetUnitName(sanitized);
-        Debug.Log($"Set player name to {sanitized}");
+        Debug.Log($"Set character name to {sanitized}");
     }
 
 
     [Command]
-    public void CmdRequestSetLoadout(string desiredUnitName, string desiredWeaponName, string[] desiredNormalSkills, string desiredUltimateSkill, string[] desiredPassiveSkills)
+    public void CmdRequestSetLoadout(
+        string desiredUnitName,
+        string desiredWeaponName,
+        string[] desiredNormalSkills,
+        string desiredUltimateSkill,
+        string[] desiredPassiveSkills,
+        string desiredModelName)
     {
         var unitController = _playerInput.myUnit?.GetComponent<UnitController>();
         if (unitController == null) return;
 
-        // Basic anti-spam: allow 2 req/s per connection (optional: store timestamp per-conn externally)
-        // This minimal implementation skips detailed rate limiting for brevity.
-
-        // Validate name
-        string sanitized = ApplicationSettings.GetEffectiveNickname(desiredUnitName);
-        if (sanitized.Length < 3 || sanitized.Length > 20)
+        string sanitized = ApplicationSettings.SanitizeNickname(desiredUnitName);
+        if (sanitized.Length < ApplicationSettings.MinNicknameLength || sanitized.Length > ApplicationSettings.MaxNicknameLength)
         {
-            TargetAckSetLoadout(connectionToClient, false, "Name must be 3-20 chars.");
+            TargetAckSetLoadout(connectionToClient, false, "Character name must be 3-30 chars.");
             return;
         }
 
-        // Validate weapon
         var weaponDb = GameServices.Databases?.Weapons;
         var weaponData = weaponDb != null ? weaponDb.GetWeaponByName(desiredWeaponName) : null;
         if (weaponData == null)
@@ -167,7 +187,6 @@ public class PlayerLoadout : NetworkBehaviour
             return;
         }
 
-        // Validate skills
         var skillDb = GameServices.Databases?.Skills;
         if (skillDb == null)
         {
@@ -177,7 +196,6 @@ public class PlayerLoadout : NetworkBehaviour
 
         desiredNormalSkills = desiredNormalSkills ?? System.Array.Empty<string>();
         desiredPassiveSkills = desiredPassiveSkills ?? System.Array.Empty<string>();
-        // enforce uniqueness on normal skills and cap at 3
         var normalUnique = desiredNormalSkills.Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().Take(3).ToArray();
         foreach (var name in normalUnique)
         {
@@ -194,7 +212,6 @@ public class PlayerLoadout : NetworkBehaviour
                 return;
             }
         }
-        // passives (optional cap e.g. 2)
         var passiveUnique = desiredPassiveSkills.Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().Take(2).ToArray();
         foreach (var name in passiveUnique)
         {
@@ -227,7 +244,13 @@ public class PlayerLoadout : NetworkBehaviour
             }
         }
 
-        // Apply to unit (server authoritative)
+        if (!string.IsNullOrWhiteSpace(desiredModelName))
+        {
+            var modelDb = GameServices.Databases?.Models;
+            if (modelDb != null && modelDb.GetModelByName(desiredModelName) != null)
+                unitController.EquipModel(desiredModelName);
+        }
+
         unitController.unitName = sanitized;
         unitController.EquipWeapon(weaponData.weaponName);
         var skills = unitController.unitMediator.Skills;

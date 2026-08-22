@@ -60,7 +60,7 @@ namespace ShadowInfection.UI.PlayerHud
             UiCursorRefresh.ScheduleForRoot(root);
             view = new PlayerHudView(root);
             view.LoadoutButtonClicked += OnLoadoutButtonClicked;
-            view.SetLoadoutButtonVisible(true);
+            view.SetCharacterHudVisible(false);
             presenter.Bind(view, castSuccessColor, destroyCancellationToken);
             presenter.SetEnabled(isActiveAndEnabled);
         }

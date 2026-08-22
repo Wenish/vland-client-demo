@@ -32,6 +32,7 @@ namespace ShadowInfection.DI
         public static IGameDatabases Databases => Get<IGameDatabases>();
         public static ApplicationSettings Settings => Get<ApplicationSettings>();
         public static LoadoutManager Loadout => Get<LoadoutManager>();
+        public static CharacterManager Characters => Get<CharacterManager>();
         public static PlayerUnitsManager PlayerUnits => Get<PlayerUnitsManager>();
         public static IUnitSpawner Units => Get<IUnitSpawner>();
         public static IProjectileSpawner Projectiles => Get<IProjectileSpawner>();

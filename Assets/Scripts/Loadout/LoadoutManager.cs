@@ -9,6 +9,7 @@ public class LoadoutManager : MonoBehaviour
     private const string PlayerPrefsKey = "LocalLoadout_v1";
     private LocalLoadout _current = new LocalLoadout();
     private static LoadoutManager current;
+    private bool _suppressCharacterWrite;
 
     private void Awake()
     {
@@ -20,7 +21,15 @@ public class LoadoutManager : MonoBehaviour
 
         current = this;
         DontDestroyOnLoad(gameObject);
-        LoadFromPrefs();
+        LoadInitial();
+    }
+
+    private void Start()
+    {
+        // CharacterManager may register after Awake; re-sync once.
+        var characters = GameServices.Characters;
+        if (characters != null && characters.HasActiveCharacter)
+            ApplyFromCharacter(characters.GetActive().ToLoadout(), notify: false);
     }
 
     private void OnDestroy()
@@ -38,6 +47,19 @@ public class LoadoutManager : MonoBehaviour
     {
         _current = loadout ?? new LocalLoadout();
         SaveAndNotify();
+    }
+
+    /// <summary>
+    /// Replace in-memory loadout from the active character without writing back through CharacterManager first.
+    /// </summary>
+    public void ApplyFromCharacter(LocalLoadout loadout, bool notify)
+    {
+        _suppressCharacterWrite = true;
+        _current = CloneLoadout(loadout);
+        _suppressCharacterWrite = false;
+
+        if (notify)
+            OnLoadoutChanged?.Invoke(_current);
     }
 
     public void SetSlotWeapon(string weaponId)
@@ -78,17 +100,46 @@ public class LoadoutManager : MonoBehaviour
 
     private void SaveAndNotify()
     {
-        SaveToPrefs();
+        Persist();
         OnLoadoutChanged?.Invoke(_current);
     }
 
-    private void LoadFromPrefs()
+    private void Persist()
+    {
+        if (_suppressCharacterWrite)
+            return;
+
+        var characters = GameServices.Characters;
+        if (characters != null && characters.HasActiveCharacter)
+        {
+            characters.UpdateActiveLoadout(_current);
+            return;
+        }
+
+        SaveLegacyPrefs();
+    }
+
+    private void LoadInitial()
+    {
+        var characters = GetComponent<CharacterManager>()
+            ?? FindAnyObjectByType<CharacterManager>(FindObjectsInactive.Include);
+
+        if (characters != null && characters.HasActiveCharacter)
+        {
+            _current = CloneLoadout(characters.GetActive().ToLoadout());
+            return;
+        }
+
+        LoadLegacyPrefs();
+    }
+
+    private void LoadLegacyPrefs()
     {
         if (!PlayerPrefs.HasKey(PlayerPrefsKey))
         {
             _current = new LocalLoadout
             {
-                UnitName = ApplicationSettings.GetEffectiveNickname(GameServices.Settings?.Nickname),
+                UnitName = string.Empty,
                 WeaponId = string.Empty,
                 PassiveId = string.Empty,
                 Normal1Id = string.Empty,
@@ -104,7 +155,7 @@ public class LoadoutManager : MonoBehaviour
             var json = PlayerPrefs.GetString(PlayerPrefsKey, "{}");
             _current = JsonUtility.FromJson<LocalLoadout>(json);
             if (_current == null) _current = new LocalLoadout();
-            _current.UnitName = ApplicationSettings.GetEffectiveNickname(_current.UnitName);
+            _current.UnitName = ApplicationSettings.SanitizeNickname(_current.UnitName);
 
             Debug.Log($"[LoadoutManager] Loaded prefs: {json}");
         }
@@ -115,7 +166,7 @@ public class LoadoutManager : MonoBehaviour
         }
     }
 
-    private void SaveToPrefs()
+    private void SaveLegacyPrefs()
     {
         try
         {
@@ -127,5 +178,22 @@ public class LoadoutManager : MonoBehaviour
         {
             Debug.LogWarning($"[LoadoutManager] Failed to save prefs: {e.Message}");
         }
+    }
+
+    private static LocalLoadout CloneLoadout(LocalLoadout source)
+    {
+        if (source == null)
+            return new LocalLoadout();
+
+        return new LocalLoadout
+        {
+            UnitName = source.UnitName ?? string.Empty,
+            WeaponId = source.WeaponId ?? string.Empty,
+            PassiveId = source.PassiveId ?? string.Empty,
+            Normal1Id = source.Normal1Id ?? string.Empty,
+            Normal2Id = source.Normal2Id ?? string.Empty,
+            Normal3Id = source.Normal3Id ?? string.Empty,
+            UltimateId = source.UltimateId ?? string.Empty
+        };
     }
 }
