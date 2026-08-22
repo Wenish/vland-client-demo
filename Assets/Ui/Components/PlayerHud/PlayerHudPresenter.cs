@@ -618,7 +618,7 @@ namespace ShadowInfection.UI.PlayerHud
 
         private static PlayerController FindLocalPlayer()
         {
-            var players = UnityEngine.Object.FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+            var players = UnityEngine.Object.FindObjectsByType<PlayerController>();
             for (var i = 0; i < players.Length; i++)
             {
                 if (players[i] != null && players[i].isLocalPlayer)

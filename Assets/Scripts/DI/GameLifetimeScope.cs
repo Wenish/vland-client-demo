@@ -44,7 +44,7 @@ namespace ShadowInfection.DI
             if (instance != null)
                 return instance;
 
-            var existing = FindObjectsByType<GameLifetimeScope>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var existing = FindObjectsByType<GameLifetimeScope>(FindObjectsInactive.Exclude);
             for (var i = 0; i < existing.Length; i++)
             {
                 var candidate = existing[i];

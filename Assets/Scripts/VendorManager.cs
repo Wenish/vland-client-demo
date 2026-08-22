@@ -53,7 +53,7 @@ public class VendorManager : NetworkBehaviour
 
         InteractionZone best = null;
         var bestSqr = float.MaxValue;
-        var zones = FindObjectsByType<InteractionZone>(FindObjectsSortMode.None);
+        var zones = FindObjectsByType<InteractionZone>();
         foreach (var zone in zones)
         {
             if (zone == null || zone.InteractionType != InteractionType.OpenVendor || zone.VendorCatalog == null)
