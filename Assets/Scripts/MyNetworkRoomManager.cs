@@ -43,6 +43,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomStopServer()
     {
         base.OnRoomStopServer();
+        ServerCharacterSelections.Clear();
         if (upnpSuccess)
         {
             Debug.Log("Schliesse UPnP Port...");
@@ -79,6 +80,8 @@ public class MyNetworkRoomManager : NetworkRoomManager
     public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
     {
         base.OnRoomServerDisconnect(conn);
+        if (conn != null)
+            ServerCharacterSelections.Remove(conn.connectionId);
         OnPlayerExitRoom?.Invoke(conn);
     }
 

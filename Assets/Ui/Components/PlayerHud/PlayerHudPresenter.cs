@@ -7,6 +7,7 @@ using LitMotion;
 using MessagePipe;
 using Mirror;
 using MyGame.Events;
+using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
 using ShadowInfection.UI.ZombieMatch;
@@ -37,6 +38,7 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned;
         private readonly ISubscriber<PlayerHudInfoMessageEvent> infoMessages;
         private readonly ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged;
+        private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
         private readonly PlayerHudCastBarDriver castBarDriver;
         private readonly PlayerHudInfoFeedDriver infoFeedDriver;
 
@@ -84,7 +86,8 @@ namespace ShadowInfection.UI.PlayerHud
             ISubscriber<WaveProgressChangedEvent> waveProgress,
             ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned,
             ISubscriber<PlayerHudInfoMessageEvent> infoMessages,
-            ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged)
+            ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged,
+            IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen)
         {
             this.settings = settings;
             this.zombieMatchSession = zombieMatchSession;
@@ -95,6 +98,7 @@ namespace ShadowInfection.UI.PlayerHud
             this.myUnitSpawned = myUnitSpawned;
             this.infoMessages = infoMessages;
             this.leaderboardChanged = leaderboardChanged;
+            this.loadoutOpen = loadoutOpen;
             castBarDriver = new PlayerHudCastBarDriver(settings, ResolveSkillIcon);
             infoFeedDriver = new PlayerHudInfoFeedDriver(settings);
         }
@@ -167,11 +171,21 @@ namespace ShadowInfection.UI.PlayerHud
 
         private void TickMatchWidgetsVisibility()
         {
-            var visible = !IsInRoomLobby();
-            if (visible == matchWidgetsVisible)
-                return;
+            var inMatch = !IsInRoomLobby();
+            if (inMatch != matchWidgetsVisible)
+            {
+                SetMatchWidgetsVisible(inMatch);
+                if (inMatch)
+                    loadoutOpen?.Publish(new SetLoadoutWindowOpenEvent(false));
+            }
 
-            SetMatchWidgetsVisible(visible);
+            RefreshLoadoutButtonVisibility();
+        }
+
+        private void RefreshLoadoutButtonVisibility()
+        {
+            // Loadout editing is lobby-only; hide during matches (zombie, etc.).
+            view?.SetLoadoutButtonVisible(IsInRoomLobby() && playerUnit != null);
         }
 
         private void SetMatchWidgetsVisible(bool visible)
@@ -524,6 +538,8 @@ namespace ShadowInfection.UI.PlayerHud
             OnWeaponChange(playerUnit);
 
             view.ShowPlayerVitals();
+            view.SetCharacterHudVisible(true);
+            RefreshLoadoutButtonVisibility();
             RefreshVitals();
 
             statSystem = playerUnit.unitMediator != null ? playerUnit.unitMediator.Stats : null;
@@ -577,6 +593,9 @@ namespace ShadowInfection.UI.PlayerHud
             view.SetAbilitySlot(PlayerHudAbilitySlot.Ultimate, AbilitySlotVm.Empty);
             view.HidePlayerVitals();
             view.HidePlayerStats();
+            view.SetCharacterHudVisible(false);
+            RefreshLoadoutButtonVisibility();
+            loadoutOpen?.Publish(new SetLoadoutWindowOpenEvent(false));
         }
 
         private void RefreshVitals()

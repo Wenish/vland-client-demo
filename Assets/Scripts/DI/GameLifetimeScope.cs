@@ -279,6 +279,7 @@ namespace ShadowInfection.DI
             builder.Register<ITeamColorService, TeamColorService>(Lifetime.Singleton);
 
             RegisterDatabases(builder);
+            RegisterCharacterManager(builder);
             RegisterLoadoutManager(builder);
             RegisterApplicationSettings(builder);
 
@@ -336,6 +337,17 @@ namespace ShadowInfection.DI
                 UnityEngine.Debug.LogError($"Missing {typeof(T).Name} at Resources/{resourcePath}.");
 
             return loaded;
+        }
+
+        private void RegisterCharacterManager(IContainerBuilder builder)
+        {
+            var characters = GetComponent<CharacterManager>();
+            if (characters == null)
+                characters = FindAnyObjectByType<CharacterManager>(FindObjectsInactive.Include);
+            if (characters == null)
+                characters = gameObject.AddComponent<CharacterManager>();
+
+            builder.RegisterComponent(characters);
         }
 
         private void RegisterLoadoutManager(IContainerBuilder builder)

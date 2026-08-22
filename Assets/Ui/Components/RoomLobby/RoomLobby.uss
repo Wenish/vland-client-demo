@@ -81,7 +81,89 @@
     padding-top: 8px;
     padding-bottom: 8px;
     padding-left: 8px;
-    padding-right: 8px;
+    padding-right: 4px;
+}
+
+.room-lobby__scroll > .unity-scroll-view__content-viewport {
+    margin-right: 4px;
+}
+
+.room-lobby__scroll .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.room-lobby__scroll .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
+    display: none;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.room-lobby__scroll .unity-scroller--vertical {
+    width: 10px;
+    min-width: 10px;
+    margin-left: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.room-lobby__scroll .unity-base-slider--vertical {
+    width: 10px;
+    min-width: 10px;
+}
+
+.room-lobby__scroll .unity-scroller--vertical > .unity-scroller__slider {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.room-lobby__scroll .unity-scroller--vertical,
+.room-lobby__scroll .unity-base-slider--vertical,
+.room-lobby__scroll .unity-base-slider__tracker,
+.room-lobby__scroll .unity-base-slider__drag-container {
+    cursor: var(--cursor-ui);
+}
+
+.room-lobby__scroll .unity-base-slider--vertical .unity-base-slider__tracker {
+    background-color: rgb(1, 11, 31);
+    width: 6px;
+    min-width: 6px;
+    left: 2px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(101, 80, 54);
+    border-right-color: rgb(101, 80, 54);
+    border-top-color: rgb(101, 80, 54);
+    border-bottom-color: rgb(101, 80, 54);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.room-lobby__scroll .unity-base-slider__dragger {
+    background-color: rgb(202, 159, 108);
+    width: 6px;
+    min-width: 6px;
+    left: 2px;
+    border-width: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    cursor: var(--cursor-hover);
+}
+
+.room-lobby__scroll .unity-base-slider__dragger-border {
+    border-width: 0;
+    background-color: transparent;
+}
+
+.room-lobby__scroll .unity-scroller--vertical:hover .unity-base-slider__dragger,
+.room-lobby__scroll .unity-base-slider__dragger:hover {
+    background-color: rgb(253, 199, 135);
 }
 
 .room-lobby__rows {
@@ -91,10 +173,18 @@
     padding-bottom: 0;
 }
 
+.room-lobby__character-rows {
+    flex-direction: column;
+    width: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 .room-lobby__footer {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
+    flex-wrap: wrap;
     width: 100%;
 }
 
@@ -103,8 +193,19 @@
     font-size: 14px;
     color: rgb(204, 208, 214);
     flex-shrink: 1;
-    margin-right: 12px;
+    margin-right: auto;
     padding: 0;
+}
+
+.room-lobby__change-character-button {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    min-width: 140px;
+    flex-shrink: 0;
 }
 
 .room-lobby__ready-button {
@@ -226,4 +327,291 @@
     padding-left: 8px;
     padding-right: 8px;
     margin: 0;
+}
+
+.room-lobby__character-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 180px;
+    margin-bottom: 18px;
+}
+
+.room-lobby__name-field {
+    margin-bottom: 16px;
+    min-height: 40px;
+    color: rgb(255, 244, 231);
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    cursor: var(--cursor-hover);
+}
+
+.room-lobby__name-field > .unity-base-field__label {
+    display: none;
+    width: 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.room-lobby__name-field > #unity-text-input,
+.room-lobby__name-field > .unity-base-text-field__input,
+.room-lobby__name-field > .unity-base-field__input {
+    flex-grow: 1;
+    min-height: 36px;
+    background-color: rgba(0, 4, 10, 0.7);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(202, 159, 108);
+    border-right-color: rgb(202, 159, 108);
+    border-top-color: rgb(202, 159, 108);
+    border-bottom-color: rgb(202, 159, 108);
+    color: rgb(255, 244, 231);
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    --unity-cursor-color: rgb(255, 244, 231);
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 15px;
+    cursor: var(--cursor-hover);
+}
+
+.room-lobby__name-field > #unity-text-input:hover,
+.room-lobby__name-field > .unity-base-text-field__input:hover,
+.room-lobby__name-field > .unity-base-field__input:hover {
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.room-lobby__name-field:focus > #unity-text-input,
+.room-lobby__name-field:focus > .unity-base-text-field__input,
+.room-lobby__name-field:focus > .unity-base-field__input {
+    border-left-color: rgb(255, 244, 231);
+    border-right-color: rgb(255, 244, 231);
+    border-top-color: rgb(255, 244, 231);
+    border-bottom-color: rgb(255, 244, 231);
+}
+
+.room-lobby__gender-row {
+    flex-direction: row;
+    align-items: stretch;
+    margin-bottom: 22px;
+}
+
+.room-lobby__gender-button {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    flex-grow: 1;
+    margin-right: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgba(255, 244, 231, 0.05);
+    color: rgb(204, 208, 214);
+    border-width: 1px;
+    border-color: rgba(202, 159, 108, 0.35);
+}
+
+.room-lobby__gender-button:last-child {
+    margin-right: 0;
+}
+
+.room-lobby__gender-button--active {
+    background-color: rgba(202, 159, 108, 0.28);
+    color: rgb(254, 221, 183);
+    border-color: rgb(202, 159, 108);
+}
+
+.room-lobby__create-button {
+    min-width: 120px;
+}
+
+.room-lobby__create-open-button {
+    margin-right: auto;
+}
+
+.room-lobby__character-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    margin-bottom: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 14px;
+    padding-right: 12px;
+    background-color: rgba(255, 244, 231, 0.04);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.28);
+    border-right-color: rgba(202, 159, 108, 0.28);
+    border-top-color: rgba(202, 159, 108, 0.28);
+    border-bottom-color: rgba(202, 159, 108, 0.28);
+}
+
+.room-lobby__character-card--selected {
+    background-color: rgba(202, 159, 108, 0.14);
+    border-left-color: rgb(202, 159, 108);
+    border-right-color: rgba(202, 159, 108, 0.55);
+    border-top-color: rgba(202, 159, 108, 0.55);
+    border-bottom-color: rgba(202, 159, 108, 0.55);
+}
+
+.room-lobby__character-card--last {
+    margin-bottom: 0;
+}
+
+.room-lobby__character-card-main {
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+    margin-right: 12px;
+}
+
+.room-lobby__character-card-name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 18px;
+    color: rgb(254, 221, 183);
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-lobby__character-card-meta {
+    flex-direction: row;
+    align-items: center;
+}
+
+.room-lobby__character-badge {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 11px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background-color: rgba(116, 212, 255, 0.12);
+    color: rgb(180, 220, 240);
+    margin-right: 6px;
+}
+
+.room-lobby__character-badge--female {
+    background-color: rgba(214, 165, 108, 0.16);
+    color: rgb(254, 221, 183);
+}
+
+.room-lobby__character-badge--active {
+    background-color: rgba(0, 166, 62, 0.18);
+    color: rgb(153, 219, 178);
+}
+
+.room-lobby__character-select {
+    min-width: 96px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.room-lobby__character-actions {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.room-lobby__character-delete {
+    min-width: 72px;
+    margin-right: 8px;
+    margin-left: 0;
+    flex-shrink: 0;
+    color: rgb(255, 180, 180);
+}
+
+.room-lobby__character-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 4, 10, 0.86);
+    cursor: var(--cursor-ui);
+}
+
+.room-lobby__character-overlay--confirm {
+    background-color: rgba(0, 4, 10, 0.92);
+}
+
+.room-lobby__character-panel {
+    flex-direction: column;
+    align-items: stretch;
+    width: 520px;
+    max-width: 92%;
+    max-height: 88%;
+    padding-top: 24px;
+    padding-right: 24px;
+    padding-bottom: 20px;
+    padding-left: 24px;
+    background-color: rgba(2, 19, 52, 0.97);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(202, 159, 108);
+    border-right-color: rgb(202, 159, 108);
+    border-top-color: rgb(202, 159, 108);
+    border-bottom-color: rgb(202, 159, 108);
+    cursor: var(--cursor-ui);
+}
+
+.room-lobby__character-panel--create {
+    width: 420px;
+}
+
+.room-lobby__character-panel--confirm {
+    width: 440px;
+}
+
+.room-lobby__confirm-message {
+    margin-bottom: 8px;
+    color: rgb(255, 244, 231);
+    font-size: 15px;
+}
+
+.room-lobby__confirm-warning {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(255, 160, 140);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.room-lobby__confirm-footer {
+    justify-content: flex-end;
+}
+
+.room-lobby__delete-confirm-button {
+    margin-left: 8px;
+    color: rgb(255, 180, 180);
+}
+
+.room-lobby__character-overlay-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.room-lobby__character-back-button {
+    margin-left: 8px;
 }

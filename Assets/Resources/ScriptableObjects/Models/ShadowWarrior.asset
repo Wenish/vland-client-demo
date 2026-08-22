@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f72d2ead941946040ae7ca8954210991, type: 3}
-  m_Name: Ninja
+  m_Name: ShadowWarrior
   m_EditorClassIdentifier: 
-  modelName: ninja
-  prefab: {fileID: 7864191341164438517, guid: 77e9b286b9e83f742818912e7ac6c447, type: 3}
+  modelName: shadowWarrior
+  prefab: {fileID: 7239584528087667514, guid: f215cdb812633413396334faa2f243b9, type: 3}
   defaultAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
   weaponAnimationOverrides:
   - weaponType: 3

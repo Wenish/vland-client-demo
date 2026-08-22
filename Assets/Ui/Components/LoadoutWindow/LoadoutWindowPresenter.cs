@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MessagePipe;
+using Mirror;
 using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
@@ -103,7 +104,11 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         private void OnSetOpen(SetLoadoutWindowOpenEvent evt)
         {
-            view?.SetOpen(evt != null && evt.IsOpen);
+            var wantOpen = evt != null && evt.IsOpen;
+            if (wantOpen && !IsInRoomLobby())
+                wantOpen = false;
+
+            view?.SetOpen(wantOpen);
         }
 
         private void TickToggle()
@@ -111,7 +116,23 @@ namespace ShadowInfection.UI.LoadoutWindow
             if (view == null || Keyboard.current == null || !Keyboard.current.iKey.wasPressedThisFrame)
                 return;
 
+            // Character select/create (and other modals) are not gameplay — don't open loadout.
+            // Loadout is lobby-only; never open during a match.
+            if (UiModalInputBlock.IsBlocked || !IsInRoomLobby())
+            {
+                if (view.IsOpen)
+                    view.SetOpen(false);
+                return;
+            }
+
             view.SetOpen(!view.IsOpen);
+        }
+
+        private static bool IsInRoomLobby()
+        {
+            return NetworkManager.singleton is NetworkRoomManager room
+                && !string.IsNullOrWhiteSpace(room.RoomScene)
+                && Utils.IsSceneActive(room.RoomScene);
         }
 
         private void HandleSlotClicked(LoadoutSlot slot)
@@ -389,9 +410,13 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         private void ApplyCurrentLoadout()
         {
+            var characterName = GameServices.Characters?.GetActive()?.Name;
+            if (string.IsNullOrWhiteSpace(characterName))
+                characterName = store.Get()?.UnitName;
+
             var newLocalLoadout = new LocalLoadout
             {
-                UnitName = ApplicationSettings.GetEffectiveNickname(settings != null ? settings.Nickname : null),
+                UnitName = ApplicationSettings.SanitizeNickname(characterName),
                 WeaponId = GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
                 PassiveId = GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
                 Normal1Id = GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,

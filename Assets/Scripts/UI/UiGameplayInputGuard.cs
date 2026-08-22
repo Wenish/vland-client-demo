@@ -23,6 +23,10 @@ public static class UiGameplayInputGuard
 
         root.RegisterCallback<NavigationMoveEvent>(evt =>
         {
+            // Don't steal focus/caret from text fields.
+            if (IsTextInputFocused(root))
+                return;
+
             evt.StopImmediatePropagation();
             BlurFocusedDescendant(root);
         }, TrickleDown.TrickleDown);
@@ -33,6 +37,10 @@ public static class UiGameplayInputGuard
         root.RegisterCallback<KeyDownEvent>(evt =>
         {
             if (!IsGameplayNavigationKey(evt.keyCode))
+                return;
+
+            // Let TextField / editable fields receive WASD and arrows.
+            if (IsTextInputFocused(root))
                 return;
 
             evt.StopImmediatePropagation();
@@ -46,6 +54,24 @@ public static class UiGameplayInputGuard
             return;
 
         root.Query<Button>().ForEach(button => button.focusable = false);
+    }
+
+    private static bool IsTextInputFocused(VisualElement root)
+    {
+        var panel = root.panel;
+        if (panel?.focusController?.focusedElement is not VisualElement focused)
+            return false;
+
+        if (root != focused && focused.FindCommonAncestor(root) != root)
+            return false;
+
+        for (var current = focused; current != null; current = current.parent)
+        {
+            if (current is TextField || current is TextElement)
+                return true;
+        }
+
+        return false;
     }
 
     private static bool IsGameplayNavigationKey(KeyCode keyCode)

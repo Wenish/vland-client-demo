@@ -2,132 +2,128 @@ using UnityEngine;
 using Mirror;
 using ShadowInfection.DI;
 
-/*
-	Documentation: https://mirror-networking.gitbook.io/docs/components/network-room-player
-	API Reference: https://mirror-networking.com/docs/api/Mirror.NetworkRoomPlayer.html
-*/
-
 /// <summary>
-/// This component works in conjunction with the NetworkRoomManager to make up the multiplayer room system.
-/// The RoomPrefab object of the NetworkRoomManager must have this component on it.
-/// This component holds basic room player data required for the room to function.
-/// Game specific data for room players can be put in other components on the RoomPrefab or in scripts derived from NetworkRoomPlayer.
+/// Room player with character selection for the lobby.
 /// </summary>
 public class MyNetworkRoomPlayer : NetworkRoomPlayer
 {
-    /// <summary>
-    /// The player's display name, synced to all clients.
-    /// </summary>
     [SyncVar]
     public string nickName = "";
 
-    #region Start & Stop Callbacks
+    [SyncVar]
+    public string selectedCharacterId = "";
 
-    /// <summary>
-    /// This is invoked for NetworkBehaviour objects when they become active on the server.
-    /// <para>This could be triggered by NetworkServer.Listen() for objects in the scene, or by NetworkServer.Spawn() for objects that are dynamically created.</para>
-    /// <para>This will be called for objects on a "host" as well as for object on a dedicated server.</para>
-    /// </summary>
-    public override void OnStartServer() { }
+    [SyncVar]
+    public string characterName = "";
 
-    /// <summary>
-    /// Invoked on the server when the object is unspawned
-    /// <para>Useful for saving object data in persistent storage</para>
-    /// </summary>
-    public override void OnStopServer() { }
+    [SyncVar]
+    public CharacterGender characterGender;
 
-    /// <summary>
-    /// Called on every NetworkBehaviour when it is activated on a client.
-    /// <para>Objects on the host have this function called, as there is a local client on the host. The values of SyncVars on object are guaranteed to be initialized correctly with the latest state from the server when this function is called on the client.</para>
-    /// </summary>
-    public override void OnStartClient() { }
+    [SyncVar]
+    public string modelName = "";
 
-    /// <summary>
-    /// This is invoked on clients when the server has caused this object to be destroyed.
-    /// <para>This can be used as a hook to invoke effects or do client specific cleanup.</para>
-    /// </summary>
-    public override void OnStopClient() { }
+    public bool HasSelectedCharacter => !string.IsNullOrEmpty(selectedCharacterId);
 
-    /// <summary>
-    /// Called when the local player object has been set up.
-    /// <para>This happens after OnStartClient(), as it is triggered by an ownership message from the server. This is an appropriate place to activate components or functionality that should only be active for the local player, such as cameras and input.</para>
-    /// </summary>
     public override void OnStartLocalPlayer()
     {
-        // Send nickname to server so it syncs to all clients
-        string localNickname = GameServices.Settings?.Nickname;
-        if (!string.IsNullOrWhiteSpace(localNickname))
-        {
-            CmdSetNickName(localNickname);
-        }
+        // Character name is set via CmdSelectCharacter; account nickname is unused for display.
     }
 
     [Command]
     private void CmdSetNickName(string newNickName)
     {
-        // Sanitize and validate on server
         string sanitized = (newNickName ?? "").Trim();
         if (sanitized.Length > 30)
             sanitized = sanitized.Substring(0, 30);
-        
+
         nickName = sanitized;
     }
 
-    /// <summary>
-    /// This is invoked on behaviours that have authority, based on context and <see cref="NetworkIdentity.hasAuthority">NetworkIdentity.hasAuthority</see>.
-    /// <para>This is called after <see cref="OnStartServer">OnStartServer</see> and before <see cref="OnStartClient">OnStartClient.</see></para>
-    /// <para>When <see cref="NetworkIdentity.AssignClientAuthority"/> is called on the server, this will be called on the client that owns the object. When an object is spawned with <see cref="NetworkServer.Spawn">NetworkServer.Spawn</see> with a NetworkConnectionToClient parameter included, this will be called on the client that owns the object.</para>
-    /// </summary>
-    public override void OnStartAuthority() { }
+    public void RequestSelectCharacter(CharacterSaveData character)
+    {
+        if (!isLocalPlayer || character == null)
+            return;
 
-    /// <summary>
-    /// This is invoked on behaviours when authority is removed.
-    /// <para>When NetworkIdentity.RemoveClientAuthority is called on the server, this will be called on the client that owns the object.</para>
-    /// </summary>
-    public override void OnStopAuthority() { }
+        if (readyToBegin)
+        {
+            Debug.LogWarning("Cannot switch character while Ready.");
+            return;
+        }
 
-    #endregion
+        CmdSelectCharacter(
+            character.Id,
+            character.Name,
+            character.Gender,
+            CharacterManager.GetModelName(character.Gender));
+    }
 
-    #region Room Client Callbacks
+    public void RequestClearCharacterSelection()
+    {
+        if (!isLocalPlayer || readyToBegin)
+            return;
 
-    /// <summary>
-    /// This is a hook that is invoked on all player objects when entering the room.
-    /// <para>Note: isLocalPlayer is not guaranteed to be set until OnStartLocalPlayer is called.</para>
-    /// </summary>
-    public override void OnClientEnterRoom() { }
+        CmdClearCharacterSelection();
+    }
 
-    /// <summary>
-    /// This is a hook that is invoked on all player objects when exiting the room.
-    /// </summary>
-    public override void OnClientExitRoom() { }
+    [Command]
+    private void CmdSelectCharacter(string id, string name, CharacterGender gender, string model)
+    {
+        if (readyToBegin)
+            return;
 
-    #endregion
+        string sanitizedId = (id ?? "").Trim();
+        if (string.IsNullOrEmpty(sanitizedId))
+            return;
 
-    #region SyncVar Hooks
+        string sanitizedName = ApplicationSettings.SanitizeNickname(name);
+        if (sanitizedName.Length < ApplicationSettings.MinNicknameLength)
+            return;
 
-    /// <summary>
-    /// This is a hook that is invoked on clients when the index changes.
-    /// </summary>
-    /// <param name="oldIndex">The old index value</param>
-    /// <param name="newIndex">The new index value</param>
-    public override void IndexChanged(int oldIndex, int newIndex) { }
+        string sanitizedModel = string.IsNullOrWhiteSpace(model)
+            ? CharacterManager.GetModelName(gender)
+            : model.Trim();
 
-    /// <summary>
-    /// This is a hook that is invoked on clients when a RoomPlayer switches between ready or not ready.
-    /// <para>This function is called when the a client player calls SendReadyToBeginMessage() or SendNotReadyToBeginMessage().</para>
-    /// </summary>
-    /// <param name="oldReadyState">The old readyState value</param>
-    /// <param name="newReadyState">The new readyState value</param>
-    public override void ReadyStateChanged(bool oldReadyState, bool newReadyState) { }
+        selectedCharacterId = sanitizedId;
+        characterName = sanitizedName;
+        characterGender = gender;
+        modelName = sanitizedModel;
+        nickName = sanitizedName;
 
-    #endregion
+        ServerCharacterSelections.Set(connectionToClient.connectionId, new ServerCharacterSelections.Selection
+        {
+            CharacterId = sanitizedId,
+            CharacterName = sanitizedName,
+            Gender = gender,
+            ModelName = sanitizedModel
+        });
 
-    #region Optional UI
+        var units = GameServices.PlayerUnits;
+        if (units != null)
+            units.SpawnOrRefreshPlayerUnit(connectionToClient, sanitizedModel, sanitizedName);
+    }
+
+    [Command]
+    private void CmdClearCharacterSelection()
+    {
+        if (readyToBegin)
+            return;
+
+        selectedCharacterId = string.Empty;
+        characterName = string.Empty;
+        modelName = string.Empty;
+        nickName = string.Empty;
+
+        if (connectionToClient != null)
+        {
+            ServerCharacterSelections.Remove(connectionToClient.connectionId);
+            var units = GameServices.PlayerUnits;
+            if (units != null)
+                units.DespawnPlayerUnit(connectionToClient);
+        }
+    }
 
     public override void OnGUI()
     {
         base.OnGUI();
     }
-
-    #endregion
 }

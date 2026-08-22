@@ -39,7 +39,8 @@ public class PlayerUnitsManager : NetworkBehaviour
     {
         foreach (var conn in NetworkServer.connections.Values)
         {
-            SpawnPlayerUnit(conn);
+            if (ServerCharacterSelections.TryGet(conn.connectionId, out var selection))
+                SpawnOrRefreshPlayerUnit(conn, selection.ModelName, selection.CharacterName);
         }
     }
 
@@ -64,8 +65,10 @@ public class PlayerUnitsManager : NetworkBehaviour
 
     private void HandlePlayerEnterRoom(NetworkConnectionToClient conn)
     {
-        SpawnPlayerUnit(conn);
+        // Humans must select a character in lobby before spawning.
+        // Bots use SpawnBotPlayerUnit explicitly.
     }
+
     private void HandlePlayerExitRoom(NetworkConnectionToClient conn)
     {
         DespawnPlayerUnit(conn);
@@ -74,18 +77,43 @@ public class PlayerUnitsManager : NetworkBehaviour
     public void SpawnPlayerUnit(NetworkConnectionToClient conn)
     {
         if (!isServer || conn == null)
-        {
             return;
+
+        if (!ServerCharacterSelections.TryGet(conn.connectionId, out var selection))
+            return;
+
+        SpawnOrRefreshPlayerUnit(conn, selection.ModelName, selection.CharacterName);
+    }
+
+    [Server]
+    public GameObject SpawnOrRefreshPlayerUnit(NetworkConnectionToClient conn, string modelName, string characterName)
+    {
+        if (!isServer || conn == null)
+            return null;
+
+        var existing = GetPlayerUnit(conn.connectionId);
+        if (existing != null)
+        {
+            var unitController = existing.GetComponent<UnitController>();
+            if (unitController != null)
+            {
+                if (!string.IsNullOrWhiteSpace(modelName))
+                    unitController.EquipModel(modelName);
+                if (!string.IsNullOrWhiteSpace(characterName))
+                    unitController.SetUnitName(characterName);
+            }
+
+            return existing;
         }
 
-        SpawnPlayerUnitInternal(conn.connectionId, "Player");
+        return SpawnPlayerUnitInternal(conn.connectionId, "Player", modelName, characterName);
     }
 
     [Server]
     public GameObject SpawnBotPlayerUnit(string unitName = "Player")
     {
         int botConnectionId = AllocateBotConnectionId();
-        return SpawnPlayerUnitInternal(botConnectionId, string.IsNullOrWhiteSpace(unitName) ? "Player" : unitName);
+        return SpawnPlayerUnitInternal(botConnectionId, string.IsNullOrWhiteSpace(unitName) ? "Player" : unitName, null, null);
     }
 
     [Server]
@@ -212,7 +240,7 @@ public class PlayerUnitsManager : NetworkBehaviour
     }
 
     [Server]
-    private GameObject SpawnPlayerUnitInternal(int connectionId, string unitName)
+    private GameObject SpawnPlayerUnitInternal(int connectionId, string unitName, string modelName, string characterName)
     {
         for (int i = 0; i < playerUnits.Count; i++)
         {
@@ -240,6 +268,15 @@ public class PlayerUnitsManager : NetworkBehaviour
             {
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
+            }
+
+            var unitController = unit.GetComponent<UnitController>();
+            if (unitController != null)
+            {
+                if (!string.IsNullOrWhiteSpace(modelName))
+                    unitController.EquipModel(modelName);
+                if (!string.IsNullOrWhiteSpace(characterName))
+                    unitController.SetUnitName(characterName);
             }
         }
 
