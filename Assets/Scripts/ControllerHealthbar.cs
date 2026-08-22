@@ -1,4 +1,6 @@
 using System.Collections;
+using ShadowInfection;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,9 +32,7 @@ public class ControllerHealthbar : MonoBehaviour
 
     void Start()
     {
-        Color teamColor = TeamColorManager.Instance.GetColorForTeam(unitController.team);
-        sliderFill.color = teamColor;
-
+        ApplyTeamColor();
         TryApplyMyPlayerColor();
     }
 
@@ -83,9 +83,22 @@ public class ControllerHealthbar : MonoBehaviour
 
     public void HandleOnTeamChanged(UnitController obj)
     {
-        Color teamColor = TeamColorManager.Instance.GetColorForTeam(unitController.team);
-        sliderFill.color = teamColor;
-
+        ApplyTeamColor();
         TryApplyMyPlayerColor();
+    }
+
+    private void ApplyTeamColor()
+    {
+        if (sliderFill == null || unitController == null)
+        {
+            return;
+        }
+
+        if (!GameLifetimeScope.TryResolve<ITeamColorService>(out var teamColors))
+        {
+            return;
+        }
+
+        sliderFill.color = teamColors.GetColorForTeam(unitController.team);
     }
 }
