@@ -120,7 +120,7 @@ public class ZombieGameManager : NetworkBehaviour
         zombieLeaderboardEntries.OnSet += HandleLeaderboardListChanged;
         zombieLeaderboardEntries.OnRemove += HandleLeaderboardListChanged;
         zombieLeaderboardEntries.OnClear += HandleLeaderboardListCleared;
-        OnLeaderboardChanged();
+        RaiseLeaderboardChanged();
     }
 
     public override void OnStopServer()
@@ -210,8 +210,8 @@ public class ZombieGameManager : NetworkBehaviour
         queuedSpawnCount = 0;
         runStartedAtServerTime = Time.time;
 
-        EventManager.Instance.Publish(new ZombieGameOverEvent(false));
-        EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(false, 0f));
+        GameEventPublish.ToBoth(new ZombieGameOverEvent(false));
+        GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(false, 0f));
 
         waveLoopCoroutine = StartCoroutine(ServerWaveLoop());
     }
@@ -395,19 +395,19 @@ public class ZombieGameManager : NetworkBehaviour
     private void HookOnIsGameOverChanged(bool oldValue, bool newValue)
     {
         OnGameOverStateChanged(newValue);
-        EventManager.Instance.Publish(new ZombieGameOverEvent(newValue));
+        GameEventPublish.ToBoth(new ZombieGameOverEvent(newValue));
     }
 
     private void HookOnAutoReturnToLobbyEnabledChanged(bool oldValue, bool newValue)
     {
         OnAutoReturnToLobbyEnabledChanged(newValue);
-        EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(newValue, returnToLobbyCountdownSeconds));
+        GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(newValue, returnToLobbyCountdownSeconds));
     }
 
     private void HookOnReturnToLobbyCountdownChanged(float oldValue, float newValue)
     {
         OnReturnToLobbyCountdownChanged(newValue);
-        EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
+        GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
     }
 
     private void RefreshZombieSpawns()
@@ -830,17 +830,46 @@ public class ZombieGameManager : NetworkBehaviour
 
     private void HandleLeaderboardListChanged(int _)
     {
-        OnLeaderboardChanged();
+        RaiseLeaderboardChanged();
     }
 
     private void HandleLeaderboardListChanged(int _, ZombieLeaderboardEntry __)
     {
-        OnLeaderboardChanged();
+        RaiseLeaderboardChanged();
     }
 
     private void HandleLeaderboardListCleared()
     {
+        RaiseLeaderboardChanged();
+    }
+
+    private void RaiseLeaderboardChanged()
+    {
         OnLeaderboardChanged();
+        GameEventPublish.ToBoth(new ZombieLeaderboardChangedEvent(CopyLeaderboardRows()));
+    }
+
+    private ZombieLeaderboardRow[] CopyLeaderboardRows()
+    {
+        var count = zombieLeaderboardEntries.Count;
+        if (count == 0)
+            return Array.Empty<ZombieLeaderboardRow>();
+
+        var rows = new ZombieLeaderboardRow[count];
+        for (var i = 0; i < count; i++)
+        {
+            var entry = zombieLeaderboardEntries[i];
+            rows[i] = new ZombieLeaderboardRow(
+                entry.ConnectionId,
+                entry.PlayerName,
+                entry.Points,
+                entry.Kills,
+                entry.Deaths,
+                entry.GoldGathered,
+                entry.IsConnected);
+        }
+
+        return rows;
     }
 
     [Server]
@@ -1007,7 +1036,7 @@ public class ZombieGameManager : NetworkBehaviour
         StopZombieMode();
 
         OnGameOverStateChanged(true);
-        EventManager.Instance.Publish(new ZombieGameOverEvent(true));
+        GameEventPublish.ToBoth(new ZombieGameOverEvent(true));
         EventManager.Instance.Publish(new ZombieRunEndedEvent(ZombieRunEndReason.AllPlayersDead));
 
         if (isServerOnly && autoReturnToLobbyCoroutine == null)
@@ -1029,7 +1058,7 @@ public class ZombieGameManager : NetworkBehaviour
         if (isServerOnly)
         {
             OnAutoReturnToLobbyEnabledChanged(value);
-            EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(value, returnToLobbyCountdownSeconds));
+            GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(value, returnToLobbyCountdownSeconds));
         }
     }
 
@@ -1046,7 +1075,7 @@ public class ZombieGameManager : NetworkBehaviour
         if (isServerOnly)
         {
             OnReturnToLobbyCountdownChanged(value);
-            EventManager.Instance.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, value));
+            GameEventPublish.ToBoth(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, value));
         }
     }
 
