@@ -15,12 +15,12 @@ MonoBehaviour:
   clips:
   - {fileID: 8300000, guid: 131cd5c18906146138f23ac52d1ff3ce, type: 3}
   selectionMode: 0
-  volume: 1.0
-  randomizeVolume: 0
+  volume: 1
+  randomizeVolume: 1
   volumeRange: {x: 0.9, y: 1}
-  pitch: 1.0
+  pitch: 1
   randomizePitch: 1
-  pitchRange: {x: 0.95, y: 1.05}
+  pitchRange: {x: 0.95, y: 1.1}
   bus: 3
   spatial: 1
   overrideSpatialDefaults: 0
