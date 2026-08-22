@@ -11,7 +11,7 @@ public class InGameMenuController : MonoBehaviour
 
     private UIDocument uiDocument;
     private VisualElement inGameMenuRoot;
-    public string LobbySceneName = "LobbyScene";
+    public string LobbySceneName = SceneNames.Lobby;
 
     private Button buttonExitGame;
     private Button buttonReturnToGame;

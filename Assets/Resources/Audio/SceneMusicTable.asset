@@ -15,22 +15,22 @@ MonoBehaviour:
   entries:
   - sceneName: MainMenu
     musicState: {fileID: 11400000, guid: 4695148f876345109b4079c43f120afc, type: 2}
-  - sceneName: ZombyOfflineScene
+  - sceneName: MultiplayerMenu
     musicState: {fileID: 11400000, guid: 4695148f876345109b4079c43f120afc, type: 2}
-  - sceneName: ZombyRoomScene
+  - sceneName: Lobby
     musicState: {fileID: 11400000, guid: 1ac691b41d63478e88e334f4c03b94cd, type: 2}
-  - sceneName: GameplayTrainingGrounds
+  - sceneName: MapTrainingGrounds
     musicState: {fileID: 11400000, guid: 1ac691b41d63478e88e334f4c03b94cd, type: 2}
-  - sceneName: ZombyGameScene
+  - sceneName: MapZombie
     musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
-  - sceneName: GameSkirmishAScene
+  - sceneName: MapSkirmishA
     musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
-  - sceneName: GameSkirmishBScene
+  - sceneName: MapSkirmishB
     musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
-  - sceneName: GameSkirmishCScene
+  - sceneName: MapSkirmishC
     musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
-  - sceneName: GameSkirmishDScene
+  - sceneName: MapSkirmishD
     musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
-  - sceneName: GameCastleSiegeAScene
+  - sceneName: MapCastleSiege
     musicState: {fileID: 11400000, guid: d75f3f7c712c466390ea8d7ba14b111e, type: 2}
   fallbackState: {fileID: 11400000, guid: 4695148f876345109b4079c43f120afc, type: 2}

@@ -10,7 +10,7 @@ public class MultiplayerMenuController : MonoBehaviour
     private UIDocument uiDocument;
     private VisualElement rootVisualElement;
 
-    public string MainMenuSceneName = "MainMenu";
+    public string MainMenuSceneName = SceneNames.MainMenu;
 
     private Button buttonHostGame;
     private Button buttonJoinGame;

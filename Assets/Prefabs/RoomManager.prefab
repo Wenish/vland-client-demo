@@ -53,8 +53,8 @@ MonoBehaviour:
   headlessStartMode: 0
   editorAutoStart: 0
   sendRate: 60
-  offlineScene: Assets/Scenes/ZombyOfflineScene.unity
-  onlineScene: Assets/Scenes/ZombyRoomScene.unity
+  offlineScene: Assets/Scenes/MultiplayerMenu.unity
+  onlineScene: Assets/Scenes/Lobby.unity
   offlineSceneLoadDelay: 0
   transport: {fileID: 5195021544194600854}
   networkAddress: localhost
@@ -90,8 +90,8 @@ MonoBehaviour:
   showRoomGUI: 0
   minPlayers: 1
   roomPlayerPrefab: {fileID: 4527370824861600523, guid: 0bef46d7497fa2443a6b6b498434a557, type: 3}
-  RoomScene: Assets/Scenes/ZombyRoomScene.unity
-  GameplayScene: Assets/Scenes/ZombyGameScene.unity
+  RoomScene: Assets/Scenes/Lobby.unity
+  GameplayScene: Assets/Scenes/MapZombie.unity
   _allPlayersReady: 0
   clientIndex: 0
 --- !u!114 &4329643760273422507
