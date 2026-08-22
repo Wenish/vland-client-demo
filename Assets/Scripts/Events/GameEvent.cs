@@ -378,8 +378,8 @@ namespace MyGame.Events
             PlayerController buyer,
             string[] upgradeIds,
             int[] purchaseCounts,
-            string[] buyIds = null,
-            int[] buyStocks = null,
+            string[]? buyIds = null,
+            int[]? buyStocks = null,
             int vendorGold = -1)
         {
             Buyer = buyer;

@@ -109,7 +109,7 @@ namespace Gapa.Audio.VContainer
         {
             var runtime = options.Runtime;
             if (runtime == null)
-                runtime = UnityEngine.Object.FindFirstObjectByType<GapaAudioRuntime>(FindObjectsInactive.Include);
+                runtime = UnityEngine.Object.FindAnyObjectByType<GapaAudioRuntime>(FindObjectsInactive.Include);
 
             var settings = options.Settings;
             if (settings == null && (runtime == null || runtime.Settings == null))
