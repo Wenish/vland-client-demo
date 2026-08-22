@@ -1,3 +1,4 @@
+using ShadowInfection.UI.LoadoutWindow;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -29,6 +30,7 @@ namespace ShadowInfection.DI
                 return;
             }
 
+            builder.Register<LoadoutWindowPresenter>(Lifetime.Scoped);
             builder.RegisterComponent(controller);
         }
     }

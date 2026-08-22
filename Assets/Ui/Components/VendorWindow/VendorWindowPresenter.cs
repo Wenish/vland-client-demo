@@ -22,6 +22,8 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly ISubscriber<VendorSnapshotEvent> snapshots;
         private readonly ISubscriber<WaveStartedEvent> waveStarted;
         private readonly ISubscriber<RequestCloseVendorWindowEvent> closeRequested;
+        private readonly ISubscriber<OpenVendorWindowEvent> openRequested;
+        private readonly ISubscriber<CloseVendorWindowIfInteractableEvent> closeIfInteractable;
         private readonly IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged;
         private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
 
@@ -49,6 +51,8 @@ namespace ShadowInfection.UI.VendorWindow
             ISubscriber<VendorSnapshotEvent> snapshots,
             ISubscriber<WaveStartedEvent> waveStarted,
             ISubscriber<RequestCloseVendorWindowEvent> closeRequested,
+            ISubscriber<OpenVendorWindowEvent> openRequested,
+            ISubscriber<CloseVendorWindowIfInteractableEvent> closeIfInteractable,
             IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged,
             IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen)
         {
@@ -58,6 +62,8 @@ namespace ShadowInfection.UI.VendorWindow
             this.snapshots = snapshots;
             this.waveStarted = waveStarted;
             this.closeRequested = closeRequested;
+            this.openRequested = openRequested;
+            this.closeIfInteractable = closeIfInteractable;
             this.visibilityChanged = visibilityChanged;
             this.loadoutOpen = loadoutOpen;
         }
@@ -85,6 +91,8 @@ namespace ShadowInfection.UI.VendorWindow
             subscriptions.Add(snapshots.Subscribe(OnVendorSnapshot));
             subscriptions.Add(waveStarted.Subscribe(OnWaveStarted));
             subscriptions.Add(closeRequested.Subscribe(_ => Close()));
+            subscriptions.Add(openRequested.Subscribe(OnOpenRequested));
+            subscriptions.Add(closeIfInteractable.Subscribe(OnCloseIfInteractable));
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, token)
                     .Subscribe(_ => TickInput()));
@@ -117,6 +125,22 @@ namespace ShadowInfection.UI.VendorWindow
 
             if (wasOpen)
                 PublishVisibility(false);
+        }
+
+        private void OnOpenRequested(OpenVendorWindowEvent evt)
+        {
+            if (evt == null)
+                return;
+
+            Open(evt.Session, evt.Player);
+        }
+
+        private void OnCloseIfInteractable(CloseVendorWindowIfInteractableEvent evt)
+        {
+            if (evt == null)
+                return;
+
+            CloseIfInteractable(evt.Interactable);
         }
 
         public void Open(VendorDefinition nextCatalog)

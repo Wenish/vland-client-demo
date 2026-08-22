@@ -3,7 +3,7 @@ using UnityEngine;
 using Mirror;
 using Game.Scripts.Controllers;
 using MyGame.Events;
-using ShadowInfection.UI.VendorWindow;
+using MyGame.Events.Ui;
 using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
@@ -209,7 +209,7 @@ public class PlayerController : NetworkBehaviour
             return;
 
         if (isLocalPlayer)
-            VendorWindowController.Instance?.CloseIfInteractable(unitExitedInteractionZone.Zone);
+            GameEventPublish.ToMessagePipe(new CloseVendorWindowIfInteractableEvent(unitExitedInteractionZone.Zone));
         if (isServer && ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
             EndVendorTrade();
         if (ReferenceEquals(ActiveVendor, unitExitedInteractionZone.Zone))
@@ -229,8 +229,7 @@ public class PlayerController : NetworkBehaviour
             return true;
         }
 
-        CmdBeginVendorTrade(session.VendorId);
-        VendorWindowController.Instance?.Open(session, this);
+        GameEventPublish.ToMessagePipe(new OpenVendorWindowEvent(session, this));
         return true;
     }
 
