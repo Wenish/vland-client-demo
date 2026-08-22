@@ -13,6 +13,8 @@ namespace ShadowInfection.DI
     public sealed class GameLifetimeScope : LifetimeScope
     {
         private static GameLifetimeScope instance;
+        private static bool isQuitting;
+        private static bool isCreating;
 
         [Header("Gapa Audio")]
         [SerializeField]
@@ -37,10 +39,60 @@ namespace ShadowInfection.DI
         [SerializeField]
         private TeamColorTable teamColorTable;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            instance = null;
+            isQuitting = false;
+            isCreating = false;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap()
         {
+            Application.quitting -= HandleQuitting;
+            Application.quitting += HandleQuitting;
+            isQuitting = false;
             FindOrCreate();
+        }
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void RegisterPlayModeGuard()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+
+        private static void OnPlayModeStateChanged(UnityEditor.PlayModeStateChange state)
+        {
+            if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                isQuitting = true;
+            else if (state == UnityEditor.PlayModeStateChange.EnteredEditMode)
+            {
+                instance = null;
+                isQuitting = false;
+                isCreating = false;
+            }
+        }
+#endif
+
+        private static void HandleQuitting()
+        {
+            isQuitting = true;
+        }
+
+        private static bool CanCreateRuntimeInstance()
+        {
+            if (isQuitting || isCreating)
+                return false;
+            if (!Application.isPlaying)
+                return false;
+#if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                return false;
+#endif
+            return true;
         }
 
         public static GameLifetimeScope FindOrCreate()
@@ -48,30 +100,68 @@ namespace ShadowInfection.DI
             if (instance != null)
                 return instance;
 
-            var existing = FindObjectsByType<GameLifetimeScope>(FindObjectsInactive.Exclude);
+            var existing = FindObjectsByType<GameLifetimeScope>(FindObjectsInactive.Include);
+            GameLifetimeScope fallback = null;
             for (var i = 0; i < existing.Length; i++)
             {
                 var candidate = existing[i];
-                if (candidate != null && candidate.Container != null)
+                if (candidate == null)
+                    continue;
+
+                if (candidate.Container != null)
                 {
                     instance = candidate;
                     return instance;
                 }
+
+                if (fallback == null)
+                    fallback = candidate;
             }
 
-            var go = new GameObject(nameof(GameLifetimeScope));
-            DontDestroyOnLoad(go);
-            return go.AddComponent<GameLifetimeScope>();
+            if (fallback != null)
+            {
+                instance = fallback;
+                return instance;
+            }
+
+            if (!CanCreateRuntimeInstance())
+                return null;
+
+            isCreating = true;
+            GameObject go = null;
+            try
+            {
+                go = new GameObject(nameof(GameLifetimeScope));
+                DontDestroyOnLoad(go);
+                return go.AddComponent<GameLifetimeScope>();
+            }
+            catch
+            {
+                if (go != null)
+                {
+                    if (Application.isPlaying)
+                        Destroy(go);
+                    else
+                        DestroyImmediate(go);
+                }
+
+                return null;
+            }
+            finally
+            {
+                isCreating = false;
+            }
         }
 
         /// <summary>
         /// Resolves a service from the live game scope. Used by UI Toolkit elements, Mirror RPCs,
         /// and other types that cannot take constructor / [Inject] dependencies cleanly.
+        /// Does not create a scope: hover/click audio must not boot DI in edit mode or during shutdown.
         /// </summary>
         public static bool TryResolve<T>(out T service)
         {
             service = default;
-            var scope = instance != null ? instance : FindOrCreate();
+            var scope = instance;
             if (scope == null || scope.Container == null)
                 return false;
 
@@ -104,7 +194,8 @@ namespace ShadowInfection.DI
             }
 
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            if (Application.isPlaying)
+                DontDestroyOnLoad(gameObject);
             base.Awake();
         }
 
