@@ -126,7 +126,11 @@ namespace ShadowInfection.UI.RoomLobby
                 // Keep create/delete confirm open if the user navigated there; otherwise force select.
                 characterOverlayForced = true;
                 if (!createOverlayOpen && !deleteConfirmOpen)
+                {
+                    if (!selectOverlayOpen)
+                        cachedCharacterHash = 0;
                     selectOverlayOpen = true;
+                }
             }
             else if (state.LocalIsReady || !state.CanEditCharacter)
             {

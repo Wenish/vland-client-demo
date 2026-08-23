@@ -330,9 +330,9 @@
 }
 
 .room-lobby__character-scroll {
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-height: 180px;
+    width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
     margin-bottom: 18px;
 }
 
