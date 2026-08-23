@@ -11,9 +11,9 @@ namespace ShadowInfection.UI.RoomLobby
         private const float ScrollHeightFudge = 2f;
         private const float ChangeCharacterButtonGap = 12f;
         // Title + subtitle + footer + panel padding/margins inside the 88% panel.
-        private const float CharacterPanelChromeReserve = 200f;
-        private const float CharacterScrollHeightPad = 4f;
-        private const float CharacterCardFallbackHeight = 72f;
+        private const float CharacterPanelChromeReserve = 170f;
+        private const float CharacterScrollHeightPad = 8f;
+        private const float CharacterCardFallbackHeight = 92f;
 
         private readonly VisualElement root;
         private readonly VisualElement roomLobbyPanel;
@@ -493,33 +493,42 @@ namespace ShadowInfection.UI.RoomLobby
 
         private float MeasureCharacterListContentHeight()
         {
-            var container = characterListScroll?.contentContainer;
-            if (container != null && container.layout.height > 1f)
-                return container.layout.height;
-
-            if (characterListContent.layout.height > 1f)
-                return characterListContent.layout.height;
-
+            // Always prefer summing cards. After we assign ScrollView.height, contentContainer
+            // layout often matches the viewport — using that locks the list permanently short.
             float sum = 0f;
+            var counted = 0;
             foreach (var child in characterListContent.Children())
             {
                 if (child == null || child.resolvedStyle.display == DisplayStyle.None)
                     continue;
 
                 float childHeight = child.layout.height;
-                if (childHeight > 1f)
-                {
-                    sum += childHeight
-                        + child.resolvedStyle.marginTop
-                        + child.resolvedStyle.marginBottom;
-                }
-                else
-                {
-                    sum += CharacterCardFallbackHeight;
-                }
+                if (childHeight <= 1f)
+                    childHeight = child.resolvedStyle.minHeight.value > 0f
+                        ? child.resolvedStyle.minHeight.value
+                        : 0f;
+                if (childHeight <= 1f)
+                    childHeight = CharacterCardFallbackHeight;
+
+                sum += childHeight
+                    + child.resolvedStyle.marginTop
+                    + child.resolvedStyle.marginBottom;
+                counted++;
             }
 
-            return sum;
+            if (counted > 0)
+            {
+                var scrollStyle = characterListScroll.resolvedStyle;
+                sum += scrollStyle.paddingTop + scrollStyle.paddingBottom
+                    + scrollStyle.borderTopWidth + scrollStyle.borderBottomWidth;
+                return sum;
+            }
+
+            var container = characterListScroll?.contentContainer;
+            if (container != null && container.layout.height > 1f)
+                return container.layout.height;
+
+            return characterListContent.layout.height;
         }
 
         private static void UpdateScrollHeightFromContent(ScrollView scroll, VisualElement content, float maxHeight)
