@@ -42,15 +42,19 @@ namespace Game.Scripts.Controllers
 
         void Update()
         {
-            // Change Camera Type
-            if (Keyboard.current != null && Keyboard.current.zKey.wasPressedThisFrame)
+            // Camera lock (Z / QWERTZ Y). Only while controlling a character — never in
+            // character select/create or other modal UI.
+            if (Keyboard.current != null
+                && Keyboard.current.zKey.wasPressedThisFrame
+                && !UiModalInputBlock.IsBlocked
+                && IsControllingCharacter())
             {
                 IsFocusingPlayer = !IsFocusingPlayer;
             }
 
             if (IsFocusingPlayer)
             {
-                // Lookg for target to focusing
+                // Looking for target to focusing
             }
 
             UpdateSpectatorMode();
@@ -59,6 +63,15 @@ namespace Game.Scripts.Controllers
                 OnScroll();
                 MousePositionChange();
             }
+        }
+
+        private bool IsControllingCharacter()
+        {
+            if (IsSpectating || CameraTarget == null)
+                return false;
+
+            var unit = CameraTarget.GetComponent<UnitController>();
+            return unit != null && !unit.IsDead;
         }
 
         /// <summary>
