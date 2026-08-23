@@ -104,7 +104,7 @@ public class PlayerInput : NetworkBehaviour
         {
             if (UiModalInputBlock.IsBlocked)
             {
-                ClearLocalMovementInput();
+                // Inputs already cancelled when the modal opened; keep reading blocked.
                 return;
             }
 
@@ -123,14 +123,48 @@ public class PlayerInput : NetworkBehaviour
         }
     }
 
-    [Client]
-    private void ClearLocalMovementInput()
+    /// <summary>
+    /// Stops movement/fire on the server and interrupts casts/attacks.
+    /// Call when opening character select or other gameplay-blocking UI.
+    /// </summary>
+    public static void CancelLocalGameplayInput()
     {
-        if (!Mathf.Approximately(HorizontalInput, 0f) || !Mathf.Approximately(VerticalInput, 0f))
-            CmdSetInput(0f, 0f);
+        if (NetworkClient.localPlayer == null)
+            return;
 
-        if (IsPressingFire1)
-            CmdSetFire1(false);
+        var input = NetworkClient.localPlayer.GetComponent<PlayerInput>();
+        input?.CancelGameplayInputForUi();
+    }
+
+    [Client]
+    public void CancelGameplayInputForUi()
+    {
+        if (!isLocalPlayer)
+            return;
+
+        if (_delaySendSetFire1InputCoroutine != null)
+        {
+            StopCoroutine(_delaySendSetFire1InputCoroutine);
+            _delaySendSetFire1InputCoroutine = null;
+        }
+
+        CmdCancelGameplayInput();
+    }
+
+    [Command]
+    private void CmdCancelGameplayInput()
+    {
+        HorizontalInput = 0f;
+        VerticalInput = 0f;
+        IsPressingFire1 = false;
+
+        if (_myUnitController == null)
+            return;
+
+        _myUnitController.horizontalInput = 0f;
+        _myUnitController.verticalInput = 0f;
+        _myUnitController.ReceiveFire1Input(false);
+        _myUnitController.InterruptAction();
     }
 
     [Client]
