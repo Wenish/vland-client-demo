@@ -20,4 +20,5 @@ MonoBehaviour:
   maxChannelDuration: 5
   moveSpeedPercent: 0.5
   turnSpeedPercent: 1
+  updateAimDuringCast: 1
   triggerEffect: {fileID: 11400000, guid: 9d0f3d6b94ece1e44a9ec8f0e40abac7, type: 2}

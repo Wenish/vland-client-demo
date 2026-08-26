@@ -125,12 +125,20 @@ public class SkillSystem : NetworkBehaviour
     }
 
     /// <summary>
-    /// Yaw the unit should face during an active cast with a fixed aim (not updateAimDuringCast).
+    /// Yaw the unit should face during an active cast with a fixed aim and locked turn speed.
+    /// Skills that keep turn speed (e.g. Blazing Shot, Dragon's Flame) still follow the mouse.
     /// </summary>
     [Server]
     public bool TryGetLockedCastFacingYaw(out float yaw)
     {
         yaw = 0f;
+
+        // Respect cast/channel turnSpeedPercent: only pin facing when turning is effectively disabled.
+        float turnSpeed = unit != null && unit.unitMediator != null
+            ? unit.unitMediator.Stats.GetStat(StatType.TurnSpeed)
+            : 1f;
+        if (turnSpeed > 0.05f)
+            return false;
 
         if (TryGetLockedCastFacingYaw(normalSkills, out yaw)
             || TryGetLockedCastFacingYaw(ultimateSkills, out yaw)

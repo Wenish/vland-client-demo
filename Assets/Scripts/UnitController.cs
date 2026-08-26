@@ -693,7 +693,7 @@ public class UnitController : NetworkBehaviour
     private float baseTurnSpeed = 20f;
 
     /// <summary>
-    /// While a skill cast has a fixed aim (indicator LockOnConfirm), keep facing that aim
+    /// While a skill cast has a fixed aim and turn speed is locked, keep facing that aim
     /// instead of the live mouse — otherwise the unit drifts off the indicator mid-cast.
     /// </summary>
     [Server]

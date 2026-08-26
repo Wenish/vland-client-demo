@@ -32,6 +32,11 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     [Range(0f, 1f)]
     public float turnSpeedPercent = 0f;
 
+    [Tooltip(
+        "If true, the caster can keep moving the aim point during this channel. "
+            + "Effects that use CastContext.aimPoint / aimRotation resolve toward the live aim.")]
+    public bool updateAimDuringCast = false;
+
     [Header("Ticking (optional)")]
     [Tooltip("Number of evenly spaced ticks to execute within channelDuration. 0 disables ticking.")]
     [MinValue(0)]
@@ -60,6 +65,9 @@ public class SkillEffectMechanicChannelData : SkillEffectData
         caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Channeling, NetworkTime.time, channelDuration, ctx.skillInstance.skillName);
 
         ctx.SnapCasterFacingToAim();
+
+        bool previousUpdatesAim = ctx.updatesAimDuringCast;
+        ctx.updatesAimDuringCast = updateAimDuringCast;
 
         StatModifier moveSpeedModifier = new StatModifier() {
             Type = StatType.MovementSpeed,
@@ -150,6 +158,7 @@ public class SkillEffectMechanicChannelData : SkillEffectData
         // Remove the move speed modifier
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
         caster.unitMediator.Stats.RemoveModifier(turnSpeedModifier);
+        ctx.updatesAimDuringCast = previousUpdatesAim;
         // Hand back the same targets so the chain continues
         if (ctx.IsCancelled) yield break;
 

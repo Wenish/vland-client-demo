@@ -53,6 +53,9 @@ public class SkillEffectMechanicCast : SkillEffectData
         // while skill mechanics still resolve toward the cast aim.
         ctx.SnapCasterFacingToAim();
 
+        bool previousUpdatesAim = ctx.updatesAimDuringCast;
+        ctx.updatesAimDuringCast = updateAimDuringCast;
+
         StatModifier moveSpeedModifier = new StatModifier()
         {
             Type = StatType.MovementSpeed,
@@ -96,6 +99,7 @@ public class SkillEffectMechanicCast : SkillEffectData
         // Remove the move speed modifier
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
         caster.unitMediator.Stats.RemoveModifier(turnSpeedModifier);
+        ctx.updatesAimDuringCast = previousUpdatesAim;
         // Hand back the same targets so the chain continues
         if (ctx.IsCancelled) yield break;
 

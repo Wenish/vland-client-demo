@@ -13,18 +13,12 @@ MonoBehaviour:
   m_Name: DragonsFlameSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
-  - rid: 9100000000000000007
   - rid: 3978539981753286730
   - rid: 3978539981753286731
   - rid: 9134735132365160545
   references:
     version: 2
     RefIds:
-    - rid: 9100000000000000007
-      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
-      data:
-        effect: {fileID: 11400000, guid: 6ee7ce754c724fbbba06f6bc64cf9155, type: 2}
-        children: []
     - rid: 3978539981753286730
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

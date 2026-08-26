@@ -367,7 +367,7 @@ public class PlayerInput : NetworkBehaviour
         _myUnitController.horizontalInput = HorizontalInput;
         _myUnitController.verticalInput = VerticalInput;
 
-        // Prefer fixed cast aim over live mouse so facing stays with LockOnConfirm indicators.
+        // Prefer fixed cast aim over live mouse when turn speed is locked during cast.
         if (_myUnitController.unitMediator?.Skills != null
             && _myUnitController.unitMediator.Skills.TryGetLockedCastFacingYaw(out float castYaw))
         {
@@ -624,14 +624,14 @@ public class PlayerInput : NetworkBehaviour
         if (actionState == null)
             return false;
 
-        if (actionState.childState.type == UnitActionState.ActionType.Casting
+        if (IsAimUpdatableAction(actionState.childState.type)
             && !string.IsNullOrEmpty(actionState.childState.name))
         {
             skillName = actionState.childState.name;
             return true;
         }
 
-        if (actionState.state.type == UnitActionState.ActionType.Casting
+        if (IsAimUpdatableAction(actionState.state.type)
             && !string.IsNullOrEmpty(actionState.state.name))
         {
             skillName = actionState.state.name;
@@ -639,6 +639,12 @@ public class PlayerInput : NetworkBehaviour
         }
 
         return false;
+    }
+
+    static bool IsAimUpdatableAction(UnitActionState.ActionType type)
+    {
+        return type == UnitActionState.ActionType.Casting
+            || type == UnitActionState.ActionType.Channeling;
     }
 
     [Command]
