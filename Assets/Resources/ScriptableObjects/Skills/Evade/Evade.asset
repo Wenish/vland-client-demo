@@ -16,7 +16,7 @@ MonoBehaviour:
   skillType: 0
   tags: 16
   description: Dashes a short distance in the direction you're moving.
-  cooldown: 1
+  cooldown: 7
   castCost: 0
   canActivateWhileBusy: 1
   castRange: 0
