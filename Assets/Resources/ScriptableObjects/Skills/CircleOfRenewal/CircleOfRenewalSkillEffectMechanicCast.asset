@@ -17,4 +17,4 @@ MonoBehaviour:
   castDuration: 0.5
   moveSpeedPercent: 1
   turnSpeedPercent: 1
-  updateAimDuringCast: 1
+  updateAimDuringCast: 0

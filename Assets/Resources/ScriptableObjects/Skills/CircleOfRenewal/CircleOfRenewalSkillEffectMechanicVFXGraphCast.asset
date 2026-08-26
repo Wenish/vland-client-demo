@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CircleOfRenewalSkillEffectMechanicVFXGraphCast
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicVFXGraph
   countsAsCasted: 0
-  enabled: 0
+  enabled: 1
   vfxPrefab: {fileID: 2224408289549157292, guid: f94ed8795b66441d08739ee1bd3ef598, type: 3}
   duration: 0.5
   lifetime: 1
