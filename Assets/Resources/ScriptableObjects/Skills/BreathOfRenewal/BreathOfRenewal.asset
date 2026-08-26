@@ -19,6 +19,12 @@ MonoBehaviour:
   cooldown: 3
   castCost: 0
   canActivateWhileBusy: 0
+  castRange: 15
+  aimPreviewIndicator: {fileID: 11400000, guid: ced4d64db6b294ed3b5e47482a91fe97, type: 2}
+  hasRequiredWeapon: 0
+  requiredWeapon: 0
+  npcOnly: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: 1bcef00e3701d4f5ba801ce7a0b06d9e, type: 2}
+  reactiveTriggers: []
   iconTexture: {fileID: 2800000, guid: 77d4e61e0ef154755a2c1d58910cdc6a, type: 3}
