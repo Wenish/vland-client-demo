@@ -49,11 +49,12 @@ public class SkillEffectMechanicAreaZone : SkillEffectMechanic
         // Subscribe to events BEFORE initializing the zone so the first tick at t=0 is observed
         areaZoneController.OnTick += (zone) =>
         {
-            if (onTickEffect != null && zone.caster is MonoBehaviour mb)
-            {
-                var unitsInZone = GetTargetsInAreaZone(castContext, zone);
-                mb.StartCoroutine(onTickEffect.ExecuteCoroutine(castContext, unitsInZone));
-            }
+            if (onTickEffect == null) return;
+            // Caster (and castContext.caster) may already be destroyed while the zone still ticks.
+            if (castContext.caster == null) return;
+
+            var unitsInZone = GetTargetsInAreaZone(castContext, zone);
+            zone.StartCoroutine(onTickEffect.ExecuteCoroutine(castContext, unitsInZone));
         };
 
         areaZoneController.OnAreaZoneDestoryed += (zone) =>
