@@ -30,6 +30,8 @@ public class SkillEffectMechanicDelayData : SkillEffectData
     {
         var caster = castContext.caster;
 
+        castContext.SnapCasterFacingToAim();
+
         var moveSpeedModifier = new StatModifier
         {
             Type = StatType.MovementSpeed,

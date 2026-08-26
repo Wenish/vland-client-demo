@@ -397,6 +397,7 @@ public class UnitController : NetworkBehaviour
         if (isServer)
         {
             MovePlayer();
+            ApplyLockedCastFacing();
             RotatePlayer();
         }
     }
@@ -691,6 +692,22 @@ public class UnitController : NetworkBehaviour
     [SerializeField]
     private float baseTurnSpeed = 20f;
 
+    /// <summary>
+    /// While a skill cast has a fixed aim (indicator LockOnConfirm), keep facing that aim
+    /// instead of the live mouse — otherwise the unit drifts off the indicator mid-cast.
+    /// </summary>
+    [Server]
+    private void ApplyLockedCastFacing()
+    {
+        if (IsDead || unitMediator?.Skills == null)
+            return;
+
+        if (!unitMediator.Skills.TryGetLockedCastFacingYaw(out float yaw))
+            return;
+
+        angle = yaw;
+    }
+
     [Server]
     private void RotatePlayer()
     {
@@ -703,6 +720,42 @@ public class UnitController : NetworkBehaviour
         float targetY = angle;
         float lerpedAngle = Mathf.LerpAngle(currentY, targetY, Time.deltaTime * baseTurnSpeed * turnSpeed);
         transform.rotation = Quaternion.AngleAxis(lerpedAngle, Vector3.up);
+    }
+
+    /// <summary>
+    /// Instantly faces <paramref name="aimPoint"/> using the same yaw path as <see cref="RotatePlayer"/>.
+    /// </summary>
+    [Server]
+    public void SnapFacingToAimPoint(Vector3 aimPoint)
+    {
+        if (IsDead) return;
+
+        angle = SkillAimUtil.GetFacingAngleYaw(transform.position, aimPoint);
+        ApplyFacingYawImmediate(angle);
+    }
+
+    /// <summary>
+    /// Instantly applies a horizontal aim rotation using the same yaw path as <see cref="RotatePlayer"/>.
+    /// </summary>
+    [Server]
+    public void SnapFacingToAimRotation(Quaternion aimRotation)
+    {
+        if (IsDead) return;
+
+        angle = SkillAimUtil.GetFacingAngleYaw(aimRotation);
+        ApplyFacingYawImmediate(angle);
+    }
+
+    [Server]
+    private void ApplyFacingYawImmediate(float yaw)
+    {
+        Quaternion rot = Quaternion.AngleAxis(yaw, Vector3.up);
+        transform.rotation = rot;
+
+        // Jump NetworkTransform interpolation so clients (and host visuals) match immediately.
+        var networkTransform = GetComponent<NetworkTransformReliable>();
+        if (networkTransform != null)
+            networkTransform.ServerTeleport(transform.position, rot);
     }
 
     [Server]

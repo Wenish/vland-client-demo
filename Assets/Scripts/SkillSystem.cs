@@ -124,6 +124,57 @@ public class SkillSystem : NetworkBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Yaw the unit should face during an active cast with a fixed aim (not updateAimDuringCast).
+    /// </summary>
+    [Server]
+    public bool TryGetLockedCastFacingYaw(out float yaw)
+    {
+        yaw = 0f;
+
+        if (TryGetLockedCastFacingYaw(normalSkills, out yaw)
+            || TryGetLockedCastFacingYaw(ultimateSkills, out yaw)
+            || TryGetLockedCastFacingYaw(passiveSkills, out yaw))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    [Server]
+    private bool TryGetLockedCastFacingYaw(SyncList<NetworkedSkillInstance> list, out float yaw)
+    {
+        yaw = 0f;
+        if (list == null || unit == null)
+            return false;
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            var skill = list[i];
+            if (skill == null)
+                continue;
+
+            if (!skill.TryGetRunningCastAim(out Vector3 aimPoint, out Quaternion aimRotation, out bool updatesAim))
+                continue;
+
+            // Live-aim casts and recast windows still follow the mouse.
+            if (updatesAim || skill.IsRecastWindowOpen)
+                continue;
+
+            yaw = SkillAimUtil.GetFacingAngleYaw(unit.transform.position, aimPoint);
+            // Prefer rotation when aim point is essentially on the caster.
+            Vector3 flat = aimPoint - unit.transform.position;
+            flat.y = 0f;
+            if (flat.sqrMagnitude < 0.0001f)
+                yaw = SkillAimUtil.GetFacingAngleYaw(aimRotation);
+
+            return true;
+        }
+
+        return false;
+    }
+
     private static bool TryFindSkillByName(
         SyncList<NetworkedSkillInstance> list,
         string skillName,

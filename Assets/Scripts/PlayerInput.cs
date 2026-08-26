@@ -313,8 +313,7 @@ public class PlayerInput : NetworkBehaviour
         Vector3 aimPoint = _skillAimWorldPosition;
 
         // Compute yaw using the same orientation as before (unit - aim) to preserve model-facing convention
-        Vector3 pos = myUnit.transform.position - aimPoint;
-        var angle = -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90;
+        var angle = SkillAimUtil.GetFacingAngleYaw(myUnit.transform.position, aimPoint);
         CmdSetAngle(angle);
     }
 
@@ -367,7 +366,17 @@ public class PlayerInput : NetworkBehaviour
         if (_myUnitController == null) return;
         _myUnitController.horizontalInput = HorizontalInput;
         _myUnitController.verticalInput = VerticalInput;
-        _myUnitController.angle = Angle;
+
+        // Prefer fixed cast aim over live mouse so facing stays with LockOnConfirm indicators.
+        if (_myUnitController.unitMediator?.Skills != null
+            && _myUnitController.unitMediator.Skills.TryGetLockedCastFacingYaw(out float castYaw))
+        {
+            _myUnitController.angle = castYaw;
+        }
+        else
+        {
+            _myUnitController.angle = Angle;
+        }
 
         if (IsPressingFire1)
         {
@@ -848,6 +857,17 @@ public class PlayerInput : NetworkBehaviour
 
         var skills = _myUnitController.unitMediator.Skills;
         var skill = skills.GetSkill(slot, index);
+
+        // Keep PlayerInput yaw in sync with the (clamped) skill aim so ControlMyUnit does not
+        // overwrite the snap with a stale Angle after turn speed is locked.
+        if (aimPoint.HasValue)
+        {
+            Vector3 aim = aimPoint.Value;
+            if (skill?.skillData != null)
+                aim = SkillAimUtil.ClampAimPoint(_myUnitController, aim, skill.skillData);
+            Angle = SkillAimUtil.GetFacingAngleYaw(_myUnitController.transform.position, aim);
+        }
+
         var result = skills.CastSkill(slot, index, aimPoint);
         if (result == SkillCastResult.OnCooldown
             && PlayerActionFeedback.ShouldShowSkillCooldown(_myUnitController, slot, index))

@@ -59,6 +59,8 @@ public class SkillEffectMechanicChannelData : SkillEffectData
         var caster = ctx.caster;
         caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Channeling, NetworkTime.time, channelDuration, ctx.skillInstance.skillName);
 
+        ctx.SnapCasterFacingToAim();
+
         StatModifier moveSpeedModifier = new StatModifier() {
             Type = StatType.MovementSpeed,
             ModifierType = ModifierType.Percent,

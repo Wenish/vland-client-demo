@@ -49,6 +49,10 @@ public class SkillEffectMechanicCast : SkillEffectData
         else
             caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Casting, NetworkTime.time, castDuration, ctx.skillInstance.skillName);
 
+        // Snap before turn lock so a fast mouse swing cannot freeze the unit mid-turn
+        // while skill mechanics still resolve toward the cast aim.
+        ctx.SnapCasterFacingToAim();
+
         StatModifier moveSpeedModifier = new StatModifier()
         {
             Type = StatType.MovementSpeed,

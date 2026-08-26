@@ -202,12 +202,21 @@ public class NetworkedSkillInstance : NetworkBehaviour
             clampedAim = SkillAimUtil.ClampAimPoint(unit, clampedAim.Value, skillData);
         }
 
+        Quaternion? aimRotation = clampedAim.HasValue
+            ? SkillAimUtil.GetAimRotation(unit, clampedAim.Value)
+            : null;
+
+        // Finish facing before cast/channel can lock turn speed mid-lerp, and so
+        // LockOnConfirm indicators match unit facing even when turnSpeed stays at 100%.
+        if (clampedAim.HasValue)
+            unit.SnapFacingToAimPoint(clampedAim.Value);
+        else if (aimRotation.HasValue)
+            unit.SnapFacingToAimRotation(aimRotation.Value);
+
         _runningCastContext = new CastContext(unit, this)
         {
             aimPoint = clampedAim,
-            aimRotation = clampedAim.HasValue
-                ? SkillAimUtil.GetAimRotation(unit, clampedAim.Value)
-                : null
+            aimRotation = aimRotation
         };
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
         return SkillCastResult.Started;
@@ -383,6 +392,49 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Vector3 clamped = SkillAimUtil.ClampAimPoint(unit, aimPoint, skillData);
         _runningCastContext.aimPoint = clamped;
         _runningCastContext.aimRotation = SkillAimUtil.GetAimRotation(unit, clamped);
+
+        // Keep facing on the live aim without NetworkTransform teleports (those fire every frame).
+        unit.angle = SkillAimUtil.GetFacingAngleYaw(unit.transform.position, clamped);
+        float turnSpeed = unit.unitMediator != null
+            ? unit.unitMediator.Stats.GetStat(StatType.TurnSpeed)
+            : 1f;
+        if (turnSpeed <= 0.05f)
+            unit.SnapFacingToAimPoint(clamped);
+    }
+
+    /// <summary>
+    /// Active cast aim used to keep unit facing aligned with LockOnConfirm indicators.
+    /// </summary>
+    [Server]
+    public bool TryGetRunningCastAim(out Vector3 aimPoint, out Quaternion aimRotation, out bool updatesAimDuringCast)
+    {
+        aimPoint = default;
+        aimRotation = default;
+        updatesAimDuringCast = false;
+
+        if (_runningCastContext == null || _runningCastContext.IsCancelled)
+            return false;
+
+        updatesAimDuringCast = skillData != null && SkillEffectChainUtil.UpdatesAimDuringCast(skillData);
+
+        if (_runningCastContext.aimPoint.HasValue)
+        {
+            aimPoint = _runningCastContext.aimPoint.Value;
+            aimRotation = _runningCastContext.aimRotation
+                ?? SkillAimUtil.GetAimRotation(unit, aimPoint);
+            return true;
+        }
+
+        if (_runningCastContext.aimRotation.HasValue)
+        {
+            aimRotation = _runningCastContext.aimRotation.Value;
+            aimPoint = unit != null
+                ? unit.transform.position + (aimRotation * Vector3.forward)
+                : aimRotation * Vector3.forward;
+            return true;
+        }
+
+        return false;
     }
 
     [Server]

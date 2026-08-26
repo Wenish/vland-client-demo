@@ -146,6 +146,27 @@ public static class SkillAimUtil
     }
 
     /// <summary>
+    /// Yaw used by <see cref="PlayerInput"/> / <see cref="UnitController.angle"/> so snap + lerp share one convention.
+    /// </summary>
+    public static float GetFacingAngleYaw(Vector3 casterPosition, Vector3 aimPoint)
+    {
+        Vector3 pos = casterPosition - aimPoint;
+        return -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90f;
+    }
+
+    public static float GetFacingAngleYaw(Quaternion aimRotation)
+    {
+        Vector3 forward = aimRotation * Vector3.forward;
+        forward.y = 0f;
+        if (forward.sqrMagnitude < 0.0001f)
+            return 0f;
+
+        // Match GetFacingAngleYaw(position, aimPoint): pos = -forward.
+        Vector3 pos = -forward.normalized;
+        return -(Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg) - 90f;
+    }
+
+    /// <summary>
     /// Combat forward for linear/cone targeting — same horizontal aim rules as indicators.
     /// </summary>
     public static Vector3 ResolveCombatDirection(CastContext castContext)

@@ -43,6 +43,24 @@ public class CastContext
         return true;
     }
 
+    /// <summary>
+    /// Instantly faces the caster toward the cast aim (used before turn-speed locks).
+    /// </summary>
+    public void SnapCasterFacingToAim()
+    {
+        if (caster == null)
+            return;
+
+        if (aimPoint.HasValue)
+        {
+            caster.SnapFacingToAimPoint(aimPoint.Value);
+            return;
+        }
+
+        if (aimRotation.HasValue)
+            caster.SnapFacingToAimRotation(aimRotation.Value);
+    }
+
     private bool _castCounted = false;
     // Call when an effect marked as "counts as casted" executes. Only counts once per cast.
     public void MarkCastCounted()
