@@ -9,7 +9,7 @@ namespace ShadowInfection.Skills.Indicators
     public sealed class SkillIndicatorService : ISkillIndicatorService, IStartable, ITickable, System.IDisposable
     {
         private const int PreviewSessionId = -1;
-        private const float PendingCastPreviewTimeoutSeconds = 0.75f;
+        private const float PendingCastPreviewTimeoutSeconds = 0.05f;
 
         private readonly Dictionary<int, SkillIndicatorSessionView> _sessions = new();
         private DisposableBag _subscriptions;

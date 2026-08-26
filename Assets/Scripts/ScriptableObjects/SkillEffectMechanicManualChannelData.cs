@@ -39,6 +39,11 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
     [Range(0f, 1f)]
     public float turnSpeedPercent = 0f;
 
+    [Tooltip(
+        "If true, the caster can keep moving the aim point during this channel. "
+            + "Effects that use CastContext.aimPoint / aimRotation resolve toward the live aim.")]
+    public bool updateAimDuringCast = false;
+
     [Header("Trigger Effect")]
     [Tooltip("The effect chain to execute each time the player triggers.")]
     public SkillEffectChainData triggerEffect;
@@ -61,6 +66,9 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
 
         // Apply move/turn speed modifiers
         ctx.SnapCasterFacingToAim();
+
+        bool previousUpdatesAim = ctx.updatesAimDuringCast;
+        ctx.updatesAimDuringCast = updateAimDuringCast;
 
         var moveSpeedModifier = new StatModifier
         {
@@ -160,6 +168,7 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
         // Remove modifiers
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
         caster.unitMediator.Stats.RemoveModifier(turnSpeedModifier);
+        ctx.updatesAimDuringCast = previousUpdatesAim;
 
         if (ctx.IsCancelled) yield break;
 

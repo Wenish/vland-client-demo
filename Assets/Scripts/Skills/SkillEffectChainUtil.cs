@@ -50,6 +50,13 @@ public static class SkillEffectChainUtil
         if (effect is SkillEffectMechanicCast cast && cast.updateAimDuringCast)
             return true;
 
+        if (effect is SkillEffectMechanicChannelData channel && channel.updateAimDuringCast)
+            return true;
+
+        if (effect is SkillEffectMechanicManualChannelData manualChannel
+            && manualChannel.updateAimDuringCast)
+            return true;
+
         if (effect is SkillEffectMechanicRecastWindowData recast)
         {
             if (AnyEffect(recast.onRecast, IsUpdateAimCastOrNestedRecast))

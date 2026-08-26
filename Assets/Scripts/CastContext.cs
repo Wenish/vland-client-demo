@@ -7,6 +7,11 @@ public class CastContext
     public NetworkedSkillInstance skillInstance;
     public Vector3? aimPoint;
     public Quaternion? aimRotation;
+
+    /// <summary>
+    /// Set by the active Cast/Channel mechanic: live mouse aim updates CastContext while true.
+    /// </summary>
+    public bool updatesAimDuringCast;
     public IUnitSpawner UnitSpawner { get; }
     public IProjectileSpawner ProjectileSpawner { get; }
     public IAreaZoneSpawner AreaZoneSpawner { get; }

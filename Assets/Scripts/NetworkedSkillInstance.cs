@@ -386,7 +386,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         if (skillData == null || unit == null)
             return;
 
-        if (!SkillEffectChainUtil.UpdatesAimDuringCast(skillData))
+        if (!_runningCastContext.updatesAimDuringCast)
             return;
 
         Vector3 clamped = SkillAimUtil.ClampAimPoint(unit, aimPoint, skillData);
@@ -415,7 +415,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         if (_runningCastContext == null || _runningCastContext.IsCancelled)
             return false;
 
-        updatesAimDuringCast = skillData != null && SkillEffectChainUtil.UpdatesAimDuringCast(skillData);
+        updatesAimDuringCast = _runningCastContext.updatesAimDuringCast;
 
         if (_runningCastContext.aimPoint.HasValue)
         {
