@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: PurgeOfLightSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000001
   - rid: 3978540009712779338
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000001
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 35bba923a2284eada99b7916aeffc041, type: 2}
+        children: []
     - rid: 3978540009712779338
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

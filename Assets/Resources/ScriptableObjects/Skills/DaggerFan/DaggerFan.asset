@@ -22,6 +22,8 @@ MonoBehaviour:
   cooldown: 12
   castCost: 0
   canActivateWhileBusy: 0
+  castRange: 0
+  aimPreviewIndicator: {fileID: 11400000, guid: c9cfecff58fe4f6e8f1a09b0fe1f5943, type: 2}
   hasRequiredWeapon: 1
   requiredWeapon: 2
   npcOnly: 0

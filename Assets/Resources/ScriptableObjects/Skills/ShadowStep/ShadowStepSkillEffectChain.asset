@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: ShadowStepSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000015
   - rid: 2610058305526562895
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000015
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: d6d801ad1870491ab3cb4ba0ca33ddd9, type: 2}
+        children: []
     - rid: 2610058305526562895
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

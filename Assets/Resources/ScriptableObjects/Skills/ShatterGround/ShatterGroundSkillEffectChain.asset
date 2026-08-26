@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: ShatterGroundSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000003
   - rid: 4140562915600629843
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000003
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 241b360f08ed45bc826b039b363f8eb4, type: 2}
+        children: []
     - rid: 4140562915600629843
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

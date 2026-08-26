@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: DaggerFan_CastRoot
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000006
   - rid: 5742855950404943985
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000006
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 8f3318db6839461a8eef0778187125a8, type: 2}
+        children: []
     - rid: 5742855950404943985
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

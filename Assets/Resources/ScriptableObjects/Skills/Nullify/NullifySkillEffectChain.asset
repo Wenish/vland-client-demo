@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: NullifySkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000012
   - rid: 4372648510355931254
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000012
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 043d58d33123490eaa53ce4112bf5fe4, type: 2}
+        children: []
     - rid: 4372648510355931254
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
