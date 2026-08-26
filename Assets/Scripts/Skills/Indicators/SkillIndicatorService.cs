@@ -15,6 +15,7 @@ namespace ShadowInfection.Skills.Indicators
         private UnitController _localUnit;
         private Vector3 _latestAimPoint;
         private bool _hasAimPoint;
+        private UnitController _latestFollowTarget;
 
         public void Start()
         {
@@ -52,6 +53,8 @@ namespace ShadowInfection.Skills.Indicators
                     && _hasAimPoint)
                 {
                     session.SetAimPoint(_latestAimPoint);
+                    if (_latestFollowTarget != null)
+                        session.SetFollowTarget(_latestFollowTarget);
                 }
 
                 session.Tick();
@@ -67,25 +70,37 @@ namespace ShadowInfection.Skills.Indicators
             UnitController caster,
             SkillIndicatorDisplayParams display,
             Vector3 aimPoint,
-            SkillIndicatorData visualSource)
+            SkillIndicatorData visualSource,
+            UnitController followTarget = null,
+            NetworkedSkillInstance skillInstance = null)
         {
             EndPreview();
             _localUnit = caster;
             _latestAimPoint = aimPoint;
+            _latestFollowTarget = followTarget;
             _hasAimPoint = true;
             if (visualSource != null)
                 SkillIndicatorVisualCatalog.Register(visualSource);
-            CreateOrReplaceSession(PreviewSessionId, caster, display, aimPoint, visualSource);
+            CreateOrReplaceSession(
+                PreviewSessionId,
+                caster,
+                display,
+                aimPoint,
+                visualSource,
+                followTarget,
+                skillInstance);
         }
 
-        public void UpdateAim(Vector3 aimPoint)
+        public void UpdateAim(Vector3 aimPoint, UnitController followTarget = null)
         {
             _latestAimPoint = aimPoint;
+            _latestFollowTarget = followTarget;
             _hasAimPoint = true;
 
             if (_sessions.TryGetValue(PreviewSessionId, out var preview) && preview != null)
             {
                 preview.SetAimPoint(aimPoint);
+                preview.SetFollowTarget(followTarget);
                 preview.Tick();
             }
         }
@@ -99,7 +114,9 @@ namespace ShadowInfection.Skills.Indicators
             int sessionId,
             UnitController caster,
             SkillIndicatorDisplayParams display,
-            Vector3 aimPoint)
+            Vector3 aimPoint,
+            UnitController followTarget = null,
+            NetworkedSkillInstance skillInstance = null)
         {
             if (sessionId == PreviewSessionId)
                 return;
@@ -107,8 +124,16 @@ namespace ShadowInfection.Skills.Indicators
             EndPreview();
             _localUnit = caster;
             _latestAimPoint = aimPoint;
+            _latestFollowTarget = followTarget;
             _hasAimPoint = true;
-            CreateOrReplaceSession(sessionId, caster, display, aimPoint, null);
+            CreateOrReplaceSession(
+                sessionId,
+                caster,
+                display,
+                aimPoint,
+                null,
+                followTarget,
+                skillInstance);
         }
 
         public void EndSession(int sessionId)
@@ -143,12 +168,18 @@ namespace ShadowInfection.Skills.Indicators
                 return;
 
             var visual = evt.Skill != null ? evt.Skill.aimPreviewIndicator : null;
-            BeginPreview(evt.Caster, evt.Display, evt.AimPoint, visual);
+            BeginPreview(
+                evt.Caster,
+                evt.Display,
+                evt.AimPoint,
+                visual,
+                evt.FollowTarget,
+                evt.SkillInstance);
         }
 
         private void OnAimPreviewUpdated(SkillAimPreviewUpdatedEvent evt)
         {
-            UpdateAim(evt.AimPoint);
+            UpdateAim(evt.AimPoint, evt.FollowTarget);
         }
 
         private void OnAimPreviewEnded(SkillAimPreviewEndedEvent evt)
@@ -161,11 +192,16 @@ namespace ShadowInfection.Skills.Indicators
             if (evt?.Caster == null)
                 return;
 
-            // Owner-only TargetRpc already filtered; still ignore if not local unit when known.
             if (_localUnit != null && evt.Caster != _localUnit)
                 return;
 
-            BeginSession(evt.SessionId, evt.Caster, evt.Display, evt.AimPoint);
+            BeginSession(
+                evt.SessionId,
+                evt.Caster,
+                evt.Display,
+                evt.AimPoint,
+                evt.FollowTarget,
+                evt.SkillInstance);
         }
 
         private void OnIndicatorHide(SkillIndicatorHideEvent evt)
@@ -178,11 +214,19 @@ namespace ShadowInfection.Skills.Indicators
             UnitController caster,
             SkillIndicatorDisplayParams display,
             Vector3 aimPoint,
-            SkillIndicatorData visualSource)
+            SkillIndicatorData visualSource,
+            UnitController followTarget,
+            NetworkedSkillInstance skillInstance)
         {
             EndSession(sessionId);
 
-            var view = SkillIndicatorSessionView.Create(caster, display, aimPoint, visualSource);
+            var view = SkillIndicatorSessionView.Create(
+                caster,
+                display,
+                aimPoint,
+                visualSource,
+                followTarget,
+                skillInstance);
             _sessions[sessionId] = view;
             view.Tick();
         }

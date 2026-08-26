@@ -53,7 +53,17 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
         var display = indicator.ToDisplayParams(castRange, forPreview: false);
         Vector3 aim = ctx.aimPoint ?? ctx.caster.transform.position;
 
-        int sessionId = ctx.skillInstance.ServerShowSkillIndicator(display, aim);
+        UnitController followTarget = null;
+        if (indicator.snapToTarget != null)
+        {
+            followTarget = SkillIndicatorTargetSnap.Resolve(
+                indicator,
+                ctx.caster,
+                ctx.skillInstance,
+                aim);
+        }
+
+        int sessionId = ctx.skillInstance.ServerShowSkillIndicator(display, aim, followTarget);
 
         try
         {

@@ -263,7 +263,10 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [Server]
-    public int ServerShowSkillIndicator(SkillIndicatorDisplayParams display, Vector3 aimPoint)
+    public int ServerShowSkillIndicator(
+        SkillIndicatorDisplayParams display,
+        Vector3 aimPoint,
+        UnitController followTarget = null)
     {
         int sessionId = _nextIndicatorSessionId++;
         if (_nextIndicatorSessionId <= 0)
@@ -274,7 +277,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         var conn = GetOwnerConnection();
         if (conn != null)
         {
-            TargetShowSkillIndicator(conn, sessionId, display, aimPoint);
+            uint followNetId = followTarget != null ? followTarget.netId : 0u;
+            TargetShowSkillIndicator(conn, sessionId, display, aimPoint, followNetId);
         }
 
         return sessionId;
@@ -337,9 +341,19 @@ public class NetworkedSkillInstance : NetworkBehaviour
         NetworkConnectionToClient conn,
         int sessionId,
         SkillIndicatorDisplayParams display,
-        Vector3 aimPoint)
+        Vector3 aimPoint,
+        uint followTargetNetId)
     {
-        GameMessages.Publish(new SkillIndicatorShowEvent(sessionId, unit, display, aimPoint));
+        UnitController followTarget = null;
+        if (followTargetNetId != 0
+            && NetworkClient.spawned.TryGetValue(followTargetNetId, out var identity)
+            && identity != null)
+        {
+            followTarget = identity.GetComponent<UnitController>();
+        }
+
+        GameMessages.Publish(
+            new SkillIndicatorShowEvent(sessionId, unit, display, aimPoint, followTarget, this));
     }
 
     [TargetRpc]

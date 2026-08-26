@@ -497,7 +497,19 @@ public class PlayerInput : NetworkBehaviour
 
         Vector3 aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, data);
         var display = data.aimPreviewIndicator.ToDisplayParams(data.castRange, forPreview: true);
-        GameMessages.Publish(new SkillAimPreviewStartedEvent(_myUnitController, data, display, aim));
+        var followTarget = SkillIndicatorTargetSnap.Resolve(
+            data.aimPreviewIndicator,
+            _myUnitController,
+            instance,
+            aim);
+        GameMessages.Publish(
+            new SkillAimPreviewStartedEvent(
+                _myUnitController,
+                data,
+                display,
+                aim,
+                followTarget,
+                instance));
     }
 
     [Client]
@@ -511,10 +523,23 @@ public class PlayerInput : NetworkBehaviour
             _mouseWorldPosition,
             _aimPreviewSkill);
 
+        NetworkedSkillInstance instance = null;
+        var skills = _myUnitController.unitMediator != null
+            ? _myUnitController.unitMediator.Skills
+            : null;
+        if (skills != null)
+            instance = skills.GetSkill(_aimPreviewSlot, _aimPreviewIndex);
+
+        var followTarget = SkillIndicatorTargetSnap.Resolve(
+            _aimPreviewSkill.aimPreviewIndicator,
+            _myUnitController,
+            instance,
+            aim);
+
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
-            service.UpdateAim(aim);
+            service.UpdateAim(aim, followTarget);
         else
-            GameMessages.Publish(new SkillAimPreviewUpdatedEvent(aim));
+            GameMessages.Publish(new SkillAimPreviewUpdatedEvent(aim, followTarget));
     }
 
     [Client]
@@ -549,8 +574,21 @@ public class PlayerInput : NetworkBehaviour
 
         Vector3 aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, data);
 
+        UnitController followTarget = null;
+        var indicator = data.aimPreviewIndicator;
+        // Prefer aim preview indicator; fall back to catalog by any Show Indicator asset name is unnecessary —
+        // snap config lives on the shared SkillIndicatorData used for preview/cast.
+        if (indicator != null && indicator.snapToTarget != null)
+        {
+            followTarget = SkillIndicatorTargetSnap.Resolve(
+                indicator,
+                _myUnitController,
+                instance,
+                aim);
+        }
+
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
-            service.UpdateAim(aim);
+            service.UpdateAim(aim, followTarget);
 
         CmdUpdateCastAim(skillName, aim);
     }

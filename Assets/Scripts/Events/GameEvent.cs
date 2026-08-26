@@ -622,27 +622,35 @@ namespace MyGame.Events
         public SkillData Skill { get; }
         public SkillIndicatorDisplayParams Display { get; }
         public Vector3 AimPoint { get; }
+        public UnitController FollowTarget { get; }
+        public NetworkedSkillInstance SkillInstance { get; }
 
         public SkillAimPreviewStartedEvent(
             UnitController caster,
             SkillData skill,
             SkillIndicatorDisplayParams display,
-            Vector3 aimPoint)
+            Vector3 aimPoint,
+            UnitController followTarget = null,
+            NetworkedSkillInstance skillInstance = null)
         {
             Caster = caster;
             Skill = skill;
             Display = display;
             AimPoint = aimPoint;
+            FollowTarget = followTarget;
+            SkillInstance = skillInstance;
         }
     }
 
     public class SkillAimPreviewUpdatedEvent
     {
         public Vector3 AimPoint { get; }
+        public UnitController FollowTarget { get; }
 
-        public SkillAimPreviewUpdatedEvent(Vector3 aimPoint)
+        public SkillAimPreviewUpdatedEvent(Vector3 aimPoint, UnitController followTarget = null)
         {
             AimPoint = aimPoint;
+            FollowTarget = followTarget;
         }
     }
 
@@ -662,17 +670,23 @@ namespace MyGame.Events
         public UnitController Caster { get; }
         public SkillIndicatorDisplayParams Display { get; }
         public Vector3 AimPoint { get; }
+        public UnitController FollowTarget { get; }
+        public NetworkedSkillInstance SkillInstance { get; }
 
         public SkillIndicatorShowEvent(
             int sessionId,
             UnitController caster,
             SkillIndicatorDisplayParams display,
-            Vector3 aimPoint)
+            Vector3 aimPoint,
+            UnitController followTarget = null,
+            NetworkedSkillInstance skillInstance = null)
         {
             SessionId = sessionId;
             Caster = caster;
             Display = display;
             AimPoint = aimPoint;
+            FollowTarget = followTarget;
+            SkillInstance = skillInstance;
         }
     }
 

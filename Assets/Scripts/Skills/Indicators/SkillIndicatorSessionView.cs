@@ -12,6 +12,9 @@ namespace ShadowInfection.Skills.Indicators
         private static Shader _runtimeShader;
 
         private readonly UnitController _caster;
+        private readonly NetworkedSkillInstance _skillInstance;
+        private readonly SkillIndicatorData _visualSource;
+        private readonly SkillEffectTarget _snapToTarget;
         private readonly Transform _root;
         private readonly Transform _rangeRing;
         private readonly Transform _circle;
@@ -21,6 +24,7 @@ namespace ShadowInfection.Skills.Indicators
 
         public SkillIndicatorDisplayParams Display { get; private set; }
         private Vector3 _aimPoint;
+        private UnitController _followTarget;
 
         private const string DefaultRangeTextureResource =
             "SkillIndicators/rangeskillindicator";
@@ -31,24 +35,48 @@ namespace ShadowInfection.Skills.Indicators
             UnitController caster,
             SkillIndicatorDisplayParams display,
             Vector3 aimPoint,
-            SkillIndicatorData visualSource = null)
+            SkillIndicatorData visualSource = null,
+            UnitController followTarget = null,
+            NetworkedSkillInstance skillInstance = null)
         {
-            return new SkillIndicatorSessionView(caster, display, aimPoint, visualSource);
+            return new SkillIndicatorSessionView(
+                caster,
+                display,
+                aimPoint,
+                visualSource,
+                followTarget,
+                skillInstance);
         }
 
         private SkillIndicatorSessionView(
             UnitController caster,
             SkillIndicatorDisplayParams display,
             Vector3 aimPoint,
-            SkillIndicatorData visualSource)
+            SkillIndicatorData visualSource,
+            UnitController followTarget,
+            NetworkedSkillInstance skillInstance)
         {
             _caster = caster;
             Display = display;
             _aimPoint = aimPoint;
+            _skillInstance = skillInstance;
 
             visualSource ??= SkillIndicatorVisualCatalog.Get(display.indicatorAssetName);
             if (visualSource != null)
                 SkillIndicatorVisualCatalog.Register(visualSource);
+
+            _visualSource = visualSource;
+            _snapToTarget = visualSource != null ? visualSource.snapToTarget : null;
+            _followTarget = followTarget;
+
+            if (_followTarget == null && _snapToTarget != null)
+            {
+                _followTarget = SkillIndicatorTargetSnap.Resolve(
+                    _visualSource,
+                    _caster,
+                    _skillInstance,
+                    _aimPoint);
+            }
 
             var rootGo = new GameObject("SkillIndicatorSession");
             _root = rootGo.transform;
@@ -92,22 +120,41 @@ namespace ShadowInfection.Skills.Indicators
         {
             _aimPoint = aimPoint;
 
-            // Live follow clamps to current cast range. Locked aim keeps the confirmed world point.
             if (Display.aimFollowMode == SkillIndicatorData.AimFollowMode.FollowWhileActive
                 && Display.castRange > 0f
-                && _caster != null)
+                && _caster != null
+                && _snapToTarget == null)
             {
                 _aimPoint = SkillAimUtil.ClampAimPoint(
                     _caster.transform.position,
                     _aimPoint,
                     Display.castRange);
             }
+
+            if (Display.aimFollowMode == SkillIndicatorData.AimFollowMode.FollowWhileActive
+                && _snapToTarget != null
+                && _visualSource != null)
+            {
+                _followTarget = SkillIndicatorTargetSnap.Resolve(
+                    _visualSource,
+                    _caster,
+                    _skillInstance,
+                    _aimPoint);
+            }
+        }
+
+        public void SetFollowTarget(UnitController target)
+        {
+            _followTarget = target;
         }
 
         public void Tick()
         {
             if (_root == null || _caster == null)
                 return;
+
+            if (_followTarget != null && (_followTarget.Equals(null) || _followTarget.IsDead))
+                _followTarget = null;
 
             Vector3 casterPos = _caster.transform.position;
             casterPos.y += 0.05f;
@@ -116,10 +163,13 @@ namespace ShadowInfection.Skills.Indicators
             aim.y = casterPos.y;
 
             if (Display.aimFollowMode == SkillIndicatorData.AimFollowMode.FollowWhileActive
-                && Display.castRange > 0f)
+                && Display.castRange > 0f
+                && _snapToTarget == null)
             {
                 aim = SkillAimUtil.ClampAimPoint(casterPos, aim, Display.castRange);
             }
+
+            Vector3 placementPos = ResolvePlacementPosition(casterPos, aim);
 
             if (_rangeRing != null && _rangeRing.gameObject.activeSelf)
             {
@@ -131,18 +181,15 @@ namespace ShadowInfection.Skills.Indicators
 
             if (_circle != null && _circle.gameObject.activeSelf)
             {
-                Vector3 circlePos = Display.placement == SkillIndicatorData.IndicatorPlacement.Self
-                    ? casterPos
-                    : aim;
-                _circle.position = circlePos;
+                _circle.position = placementPos;
                 _circle.rotation = Quaternion.identity;
-                float radius = Mathf.Max(0.05f, Display.effectRadius);
+                float radius = Mathf.Max(0.05f, Display.effectRadius > 0f ? Display.effectRadius : 0.75f);
                 _circle.localScale = new Vector3(radius, 1f, radius);
             }
 
             if (_directional != null && _directional.gameObject.activeSelf)
             {
-                Vector3 flatAim = aim;
+                Vector3 flatAim = placementPos;
                 flatAim.y = casterPos.y;
                 Vector3 dir = flatAim - casterPos;
                 dir.y = 0f;
@@ -167,6 +214,21 @@ namespace ShadowInfection.Skills.Indicators
                 Object.Destroy(_rangeRingMaterialInstance);
             if (_placementMaterialInstance != null)
                 Object.Destroy(_placementMaterialInstance);
+        }
+
+        private Vector3 ResolvePlacementPosition(Vector3 casterPos, Vector3 aim)
+        {
+            if (_followTarget != null)
+            {
+                Vector3 pos = _followTarget.transform.position;
+                pos.y = casterPos.y;
+                return pos;
+            }
+
+            if (Display.placement == SkillIndicatorData.IndicatorPlacement.Self)
+                return casterPos;
+
+            return aim;
         }
 
         private Transform CreateMeshChild(string name, Mesh mesh, bool active, Material material)
@@ -219,7 +281,6 @@ namespace ShadowInfection.Skills.Indicators
             if (_defaultRangeTexture == null)
                 _defaultRangeTexture = Resources.Load<Texture2D>(DefaultRangeTextureResource);
 
-            // Fallback if the dedicated range texture is missing.
             return _defaultRangeTexture != null ? _defaultRangeTexture : GetDefaultPlacementTexture();
         }
 

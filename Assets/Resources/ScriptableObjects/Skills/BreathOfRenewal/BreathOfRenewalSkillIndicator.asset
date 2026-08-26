@@ -16,12 +16,13 @@ MonoBehaviour:
   placement: 1
   aimFollowMode: 0
   showRangeRing: 1
-  showRangeRingDuringCast: 1
+  showRangeRingDuringCast: 0
+  snapToTarget: {fileID: 11400000, guid: d971c98650f3e4186a9483f79512e0f6, type: 2}
   sizeSource: {fileID: 0}
-  overrideRadius: 0
+  overrideRadius: 1
   overrideRange: 0
   overrideWidth: 0
   rangeRingTexture: {fileID: 0}
   rangeRingMaterial: {fileID: 0}
-  placementTexture: {fileID: 0}
+  placementTexture: {fileID: 2800000, guid: 013b2ccfef35af742870241d1f8c90b2, type: 3}
   placementMaterial: {fileID: 0}

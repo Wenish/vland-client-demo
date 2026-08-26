@@ -42,6 +42,13 @@ public class SkillIndicatorData : ScriptableObject
     [ShowIf(nameof(showRangeRing))]
     public bool showRangeRingDuringCast = false;
 
+    [BoxGroup("Shape")]
+    [Tooltip(
+        "Optional targeting effect used to snap the placement indicator onto a unit "
+            + "(e.g. SkillEffectTargetSmart). Preview snaps live; cast locks/follows that unit.")]
+    [Expandable]
+    public SkillEffectTarget snapToTarget;
+
     [BoxGroup("Size")]
     [Tooltip("Optional Circle/Linear target to inherit radius or range/width from.")]
     [Expandable]
@@ -128,6 +135,7 @@ public class SkillIndicatorData : ScriptableObject
             effectRange = ResolveRange(),
             effectWidth = ResolveWidth(),
             indicatorAssetName = name ?? string.Empty,
+            snapToTarget = snapToTarget != null,
         };
     }
 }
@@ -148,4 +156,5 @@ public struct SkillIndicatorDisplayParams
     public float effectRange;
     public float effectWidth;
     public string indicatorAssetName;
+    public bool snapToTarget;
 }
