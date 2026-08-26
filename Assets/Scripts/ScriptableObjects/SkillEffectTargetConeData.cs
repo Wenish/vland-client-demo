@@ -17,7 +17,7 @@ public class SkillEffectTargetCone : SkillEffectTarget
         List<UnitController> collected = new List<UnitController>();
 
         Vector3 casterPosition = castContext.caster.transform.position;
-        Vector3 forward = castContext.caster.transform.forward;
+        Vector3 forward = SkillAimUtil.ResolveCombatDirection(castContext);
 
         // Get all colliders in range
         Collider[] hits = Physics.OverlapSphere(casterPosition, range, unitLayer);

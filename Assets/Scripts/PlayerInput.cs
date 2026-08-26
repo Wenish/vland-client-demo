@@ -26,11 +26,9 @@ public class PlayerInput : NetworkBehaviour
     [SerializeField]
     private UnitController _myUnitController;
     [SerializeField]
-    private Vector3 _mouseWorldPosition;
-    private Plane _plane;
-    [SerializeField]
     private Camera _cameraMain;
 
+    private Plane _plane;
     private ControllerCamera _controllerCamera;
     private DisposableBag serverSubscriptions;
 
@@ -38,12 +36,24 @@ public class PlayerInput : NetworkBehaviour
     private SkillSlotType _aimPreviewSlot;
     private int _aimPreviewIndex;
     private SkillData _aimPreviewSkill;
+    private SkillIndicatorData _aimPreviewIndicator;
 
     // When aiming, account for projectile visual spawning 1 unit above the floor
     // so the forward direction from that height aligns with the cursor on screen.
     [SerializeField]
-    [Tooltip("Vertical offset (in world units) used for the aim plane when computing yaw. Match projectile spawn height.")]
+    [Tooltip("Vertical offset (in world units) used for the skill/facing aim plane. Match projectile spawn height.")]
     private float aimPlaneHeightOffset = 1f;
+
+    /// <summary>
+    /// Ground-plane cursor hit (y≈0). Used for world pings and similar floor markers.
+    /// </summary>
+    private Vector3 _mouseWorldPosition;
+
+    /// <summary>
+    /// Cursor hit on the elevated aim plane (unit.y + aimPlaneHeightOffset).
+    /// Skills, indicators, and facing must share this so E/W aim matches under a perspective camera.
+    /// </summary>
+    private Vector3 _skillAimWorldPosition;
 
     void Start()
     {
@@ -257,7 +267,6 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void SetMouseWorldPosition()
     {
-        float distance;
         if (_cameraMain == null) return;
 
         Vector2 pointerPos = Vector2.zero;
@@ -269,10 +278,28 @@ public class PlayerInput : NetworkBehaviour
         {
             pointerPos = Touchscreen.current.primaryTouch.position.ReadValue();
         }
+
         Ray ray = _cameraMain.ScreenPointToRay(pointerPos);
-        if (_plane.Raycast(ray, out distance))
+
+        // Ground plane — world pings / floor markers.
+        if (_plane.Raycast(ray, out float groundDistance))
         {
-            _mouseWorldPosition = ray.GetPoint(distance);
+            _mouseWorldPosition = ray.GetPoint(groundDistance);
+        }
+
+        // Elevated aim plane — same plane CalculateAngle uses for facing.
+        float planeY = myUnit != null
+            ? myUnit.transform.position.y + aimPlaneHeightOffset
+            : aimPlaneHeightOffset;
+        var aimPlane = new Plane(Vector3.up, new Vector3(0f, planeY, 0f));
+        if (aimPlane.Raycast(ray, out float aimDistance))
+        {
+            _skillAimWorldPosition = ray.GetPoint(aimDistance);
+        }
+        else
+        {
+            _skillAimWorldPosition = _mouseWorldPosition;
+            _skillAimWorldPosition.y = planeY;
         }
     }
 
@@ -280,29 +307,10 @@ public class PlayerInput : NetworkBehaviour
     void CalculateAngle()
     {
         if (!myUnit) return;
-        // Cast the cursor ray against a plane at the projectile's spawn height
         if (_cameraMain == null) return;
 
-        // Build a plane parallel to the ground, passing through (unit.y + offset)
-        float planeY = myUnit.transform.position.y + aimPlaneHeightOffset;
-        Plane aimPlane = new Plane(Vector3.up, new Vector3(0f, planeY, 0f));
-
-        Vector2 pointerPos = Vector2.zero;
-        if (Mouse.current != null)
-        {
-            pointerPos = Mouse.current.position.ReadValue();
-        }
-        else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
-        {
-            pointerPos = Touchscreen.current.primaryTouch.position.ReadValue();
-        }
-
-        Ray ray = _cameraMain.ScreenPointToRay(pointerPos);
-        Vector3 aimPoint = _mouseWorldPosition; // fallback to ground-plane point if ray misses
-        if (aimPlane.Raycast(ray, out float t))
-        {
-            aimPoint = ray.GetPoint(t);
-        }
+        // Reuse elevated-plane cursor so facing matches skill aim / indicators.
+        Vector3 aimPoint = _skillAimWorldPosition;
 
         // Compute yaw using the same orientation as before (unit - aim) to preserve model-facing convention
         Vector3 pos = myUnit.transform.position - aimPoint;
@@ -486,7 +494,8 @@ public class PlayerInput : NetworkBehaviour
         }
 
         var data = instance.skillData;
-        if (data == null || data.aimPreviewIndicator == null)
+        var indicator = SkillAimPreviewUtil.Resolve(instance);
+        if (data == null || indicator == null)
         {
             // No preview configured — cast immediately like a normal press.
             TryUseSkill(slot, index);
@@ -500,11 +509,13 @@ public class PlayerInput : NetworkBehaviour
         _aimPreviewSlot = slot;
         _aimPreviewIndex = index;
         _aimPreviewSkill = data;
+        _aimPreviewIndicator = indicator;
+        SkillIndicatorVisualCatalog.Register(indicator);
 
-        Vector3 aim = ResolveIndicatorAim(_myUnitController, data, data.aimPreviewIndicator);
-        var display = data.aimPreviewIndicator.ToDisplayParams(data.castRange, forPreview: true);
+        Vector3 aim = ResolveIndicatorAim(_myUnitController, data, indicator);
+        var display = indicator.ToDisplayParams(data.castRange, forPreview: true);
         var followTarget = SkillIndicatorTargetSnap.Resolve(
-            data.aimPreviewIndicator,
+            indicator,
             _myUnitController,
             instance,
             aim);
@@ -521,13 +532,13 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void UpdateAimPreview()
     {
-        if (!_isAimPreviewActive || _aimPreviewSkill == null || _myUnitController == null)
+        if (!_isAimPreviewActive || _aimPreviewSkill == null || _aimPreviewIndicator == null || _myUnitController == null)
             return;
 
         Vector3 aim = ResolveIndicatorAim(
             _myUnitController,
             _aimPreviewSkill,
-            _aimPreviewSkill.aimPreviewIndicator);
+            _aimPreviewIndicator);
 
         NetworkedSkillInstance instance = null;
         var skills = _myUnitController.unitMediator != null
@@ -537,7 +548,7 @@ public class PlayerInput : NetworkBehaviour
             instance = skills.GetSkill(_aimPreviewSlot, _aimPreviewIndex);
 
         var followTarget = SkillIndicatorTargetSnap.Resolve(
-            _aimPreviewSkill.aimPreviewIndicator,
+            _aimPreviewIndicator,
             _myUnitController,
             instance,
             aim);
@@ -578,10 +589,10 @@ public class PlayerInput : NetworkBehaviour
         if (data == null || !SkillEffectChainUtil.UpdatesAimDuringCast(data))
             return;
 
-        Vector3 aim = ResolveIndicatorAim(_myUnitController, data, data.aimPreviewIndicator);
+        var indicator = SkillAimPreviewUtil.Resolve(instance);
+        Vector3 aim = ResolveIndicatorAim(_myUnitController, data, indicator);
 
         UnitController followTarget = null;
-        var indicator = data.aimPreviewIndicator;
         if (indicator != null && indicator.snapToTarget != null)
         {
             followTarget = SkillIndicatorTargetSnap.Resolve(
@@ -647,9 +658,31 @@ public class PlayerInput : NetworkBehaviour
         var slot = _aimPreviewSlot;
         var index = _aimPreviewIndex;
         var skill = _aimPreviewSkill;
-        Vector3 aim = _mouseWorldPosition;
+        var indicator = _aimPreviewIndicator;
+        Vector3 aim = _skillAimWorldPosition;
+        UnitController followTarget = null;
         if (skill != null && _myUnitController != null)
-            aim = ResolveIndicatorAim(_myUnitController, skill, skill.aimPreviewIndicator);
+        {
+            aim = ResolveIndicatorAim(_myUnitController, skill, indicator);
+            NetworkedSkillInstance instance = null;
+            var skills = _myUnitController.unitMediator != null
+                ? _myUnitController.unitMediator.Skills
+                : null;
+            if (skills != null)
+                instance = skills.GetSkill(slot, index);
+            if (indicator != null)
+            {
+                followTarget = SkillIndicatorTargetSnap.Resolve(
+                    indicator,
+                    _myUnitController,
+                    instance,
+                    aim);
+            }
+        }
+
+        // Seed confirm aim before ending preview so LockOnConfirm cast locks to it.
+        if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
+            service.UpdateAim(aim, followTarget);
 
         GameMessages.Publish(new SkillAimPreviewEndedEvent(confirmedCast: true));
         ClearAimPreviewState();
@@ -673,6 +706,7 @@ public class PlayerInput : NetworkBehaviour
     {
         _isAimPreviewActive = false;
         _aimPreviewSkill = null;
+        _aimPreviewIndicator = null;
         _aimPreviewIndex = -1;
     }
 
@@ -682,8 +716,52 @@ public class PlayerInput : NetworkBehaviour
         if (_isAimPreviewActive)
             CancelAimPreview();
 
+        Vector3 aim = SeedLocalAimForSkill(slot, index);
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
-        CmdUseSkill(slot, index, _mouseWorldPosition);
+        CmdUseSkill(slot, index, aim);
+    }
+
+    /// <summary>
+    /// Push the local resolve aim into the indicator service before the server Show RPC,
+    /// so LockOnConfirm sessions lock to the same direction the player cast with.
+    /// </summary>
+    [Client]
+    Vector3 SeedLocalAimForSkill(SkillSlotType slot, int index)
+    {
+        Vector3 aim = _skillAimWorldPosition;
+        if (_myUnitController == null || _myUnitController.unitMediator == null)
+            return aim;
+
+        var skills = _myUnitController.unitMediator.Skills;
+        if (skills == null)
+            return aim;
+
+        var instance = skills.GetSkill(slot, index);
+        if (instance == null)
+            return aim;
+
+        if (instance.skillData == null)
+            instance.ResolveSkillData();
+
+        var data = instance.skillData;
+        var indicator = SkillAimPreviewUtil.Resolve(instance);
+        if (data != null && indicator != null)
+            aim = ResolveIndicatorAim(_myUnitController, data, indicator);
+
+        UnitController followTarget = null;
+        if (indicator != null)
+        {
+            followTarget = SkillIndicatorTargetSnap.Resolve(
+                indicator,
+                _myUnitController,
+                instance,
+                aim);
+        }
+
+        if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
+            service.UpdateAim(aim, followTarget);
+
+        return aim;
     }
 
     [Client]
@@ -739,11 +817,12 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     Vector3 ResolveIndicatorAim(UnitController caster, SkillData skill, SkillIndicatorData indicator)
     {
-        Vector3 mouseAim = SkillAimUtil.ClampAimPoint(caster, _mouseWorldPosition, skill);
+        Vector3 mouseAim = SkillAimUtil.ClampAimPoint(caster, _skillAimWorldPosition, skill);
         if (indicator == null)
             return mouseAim;
 
-        if (indicator.shape != SkillIndicatorData.IndicatorShape.Directional
+        if ((indicator.shape != SkillIndicatorData.IndicatorShape.Directional
+                && indicator.shape != SkillIndicatorData.IndicatorShape.Cone)
             || indicator.directionSource == SkillIndicatorData.DirectionSource.TowardAimPoint)
         {
             return mouseAim;

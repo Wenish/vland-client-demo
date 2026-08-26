@@ -42,8 +42,22 @@ public static class SkillEffectChainUtil
         if (skillData == null)
             return false;
 
-        return AnyEffect(
-            skillData.castTrigger,
-            effect => effect is SkillEffectMechanicCast cast && cast.updateAimDuringCast);
+        return AnyEffect(skillData.castTrigger, IsUpdateAimCastOrNestedRecast);
+    }
+
+    private static bool IsUpdateAimCastOrNestedRecast(SkillEffectData effect)
+    {
+        if (effect is SkillEffectMechanicCast cast && cast.updateAimDuringCast)
+            return true;
+
+        if (effect is SkillEffectMechanicRecastWindowData recast)
+        {
+            if (AnyEffect(recast.onRecast, IsUpdateAimCastOrNestedRecast))
+                return true;
+            if (AnyEffect(recast.onExpire, IsUpdateAimCastOrNestedRecast))
+                return true;
+        }
+
+        return false;
     }
 }

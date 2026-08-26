@@ -9,6 +9,7 @@ public class SkillIndicatorData : ScriptableObject
         None = 0,
         Circle = 1,
         Directional = 2,
+        Cone = 3,
     }
 
     public enum IndicatorPlacement : byte
@@ -46,8 +47,8 @@ public class SkillIndicatorData : ScriptableObject
     public AimFollowMode aimFollowMode = AimFollowMode.LockOnConfirm;
 
     [BoxGroup("Shape")]
-    [Tooltip("How directional indicators choose their arrow direction.")]
-    [ShowIf(nameof(shape), IndicatorShape.Directional)]
+    [Tooltip("How directional / cone indicators choose their facing direction.")]
+    [ShowIf(nameof(UsesDirectionSource))]
     public DirectionSource directionSource = DirectionSource.TowardAimPoint;
 
     [BoxGroup("Shape")]
@@ -67,7 +68,7 @@ public class SkillIndicatorData : ScriptableObject
     public SkillEffectTarget snapToTarget;
 
     [BoxGroup("Size")]
-    [Tooltip("Optional Circle/Linear target to inherit radius or range/width from.")]
+    [Tooltip("Optional Circle/Linear/Cone target to inherit radius, range/width, or range/angle from.")]
     [Expandable]
     public SkillEffectTarget sizeSource;
 
@@ -77,14 +78,22 @@ public class SkillIndicatorData : ScriptableObject
     public float overrideRadius;
 
     [BoxGroup("Size")]
-    [Tooltip("If > 0, overrides directional length (and ignores linked Linear range).")]
+    [Tooltip("If > 0, overrides directional/cone length (and ignores linked Linear/Cone range).")]
     [MinValue(0f)]
     public float overrideRange;
 
     [BoxGroup("Size")]
     [Tooltip("If > 0, overrides directional width (and ignores linked Linear width).")]
     [MinValue(0f)]
+    [ShowIf(nameof(shape), IndicatorShape.Directional)]
     public float overrideWidth;
+
+    [BoxGroup("Size")]
+    [Tooltip("If > 0, overrides cone angle in degrees (and ignores linked Cone angle).")]
+    [MinValue(0f)]
+    [MaxValue(360f)]
+    [ShowIf(nameof(shape), IndicatorShape.Cone)]
+    public float overrideAngle;
 
     [BoxGroup("Visuals")]
     [Tooltip("Texture for the cast-range ring around the caster. Falls back to Resources/SkillIndicators/rangeskillindicator when null.")]
@@ -96,7 +105,7 @@ public class SkillIndicatorData : ScriptableObject
     public Material rangeRingMaterial;
 
     [BoxGroup("Visuals")]
-    [Tooltip("Texture for the skill placement shape (circle / directional). Falls back to Resources/SkillIndicators/aoeskillindicator_nobackground when null.")]
+    [Tooltip("Texture for the skill placement shape (circle / directional / cone). Cone uses a full-disk texture; mesh angle clips it so one texture works for any cone angle. Falls back by shape when null.")]
     [ShowAssetPreview(64)]
     public Texture2D placementTexture;
 
@@ -123,6 +132,9 @@ public class SkillIndicatorData : ScriptableObject
         if (sizeSource is SkillEffectTargetLinear linear)
             return linear.range;
 
+        if (sizeSource is SkillEffectTargetCone cone)
+            return cone.range;
+
         return 0f;
     }
 
@@ -135,6 +147,17 @@ public class SkillIndicatorData : ScriptableObject
             return linear.width;
 
         return 1f;
+    }
+
+    public float ResolveAngle()
+    {
+        if (overrideAngle > 0f)
+            return Mathf.Clamp(overrideAngle, 0f, 360f);
+
+        if (sizeSource is SkillEffectTargetCone cone)
+            return Mathf.Clamp(cone.angle, 0f, 360f);
+
+        return 90f;
     }
 
     public SkillIndicatorDisplayParams ToDisplayParams(float castRange, bool forPreview = false)
@@ -152,9 +175,15 @@ public class SkillIndicatorData : ScriptableObject
             effectRadius = ResolveRadius(),
             effectRange = ResolveRange(),
             effectWidth = ResolveWidth(),
+            effectAngle = ResolveAngle(),
             indicatorAssetName = name ?? string.Empty,
             snapToTarget = snapToTarget != null,
         };
+    }
+
+    private bool UsesDirectionSource()
+    {
+        return shape == IndicatorShape.Directional || shape == IndicatorShape.Cone;
     }
 }
 
@@ -174,6 +203,7 @@ public struct SkillIndicatorDisplayParams
     public float effectRadius;
     public float effectRange;
     public float effectWidth;
+    public float effectAngle;
     public string indicatorAssetName;
     public bool snapToTarget;
 }

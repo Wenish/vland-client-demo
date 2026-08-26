@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 727e68a9cc3eeaf4abbf80395ebd78ad, type: 3}
+  m_Name: EchoCleaveSkillEffectMechanicShowIndicator_Phase2
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicShowIndicator
+  countsAsCasted: 0
+  enabled: 1
+  indicator: {fileID: 11400000, guid: 0a29d536f4a14717af86279d7fcf6396, type: 2}
+  lifetimeMode: 1
+  durationSeconds: 0.3

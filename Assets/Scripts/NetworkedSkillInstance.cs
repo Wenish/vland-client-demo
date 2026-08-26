@@ -206,7 +206,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         {
             aimPoint = clampedAim,
             aimRotation = clampedAim.HasValue
-                ? Quaternion.LookRotation(clampedAim.Value - unit.transform.position)
+                ? SkillAimUtil.GetAimRotation(unit, clampedAim.Value)
                 : null
         };
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
@@ -268,6 +268,9 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Vector3 aimPoint,
         UnitController followTarget = null)
     {
+        // One active cast indicator at a time — prevents Phase 1 flashing when Phase 2 shows.
+        ServerHideAllSkillIndicators();
+
         int sessionId = _nextIndicatorSessionId++;
         if (_nextIndicatorSessionId <= 0)
             _nextIndicatorSessionId = 1;
@@ -298,9 +301,6 @@ public class NetworkedSkillInstance : NetworkBehaviour
     [Server]
     public void ServerHideAllSkillIndicators()
     {
-        if (_activeIndicatorSessions.Count == 0)
-            return;
-
         _activeIndicatorSessions.Clear();
 
         var conn = GetOwnerConnection();
@@ -382,11 +382,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         Vector3 clamped = SkillAimUtil.ClampAimPoint(unit, aimPoint, skillData);
         _runningCastContext.aimPoint = clamped;
-
-        Vector3 flat = clamped - unit.transform.position;
-        flat.y = 0f;
-        if (flat.sqrMagnitude > 0.0001f)
-            _runningCastContext.aimRotation = Quaternion.LookRotation(flat.normalized, Vector3.up);
+        _runningCastContext.aimRotation = SkillAimUtil.GetAimRotation(unit, clamped);
     }
 
     [Server]

@@ -32,7 +32,15 @@ public static class SkillIndicatorDefaultsMenu
             overrideRange: 8f,
             overrideWidth: 1.5f);
 
-        Selection.objects = new Object[] { selfCircle, groundCircle, directional };
+        var cone = CreateIndicator(
+            "DefaultConeIndicator",
+            SkillIndicatorData.IndicatorShape.Cone,
+            SkillIndicatorData.IndicatorPlacement.FromCasterTowardAim,
+            showRangeRing: false,
+            overrideRange: 5f,
+            overrideAngle: 90f);
+
+        Selection.objects = new Object[] { selfCircle, groundCircle, directional, cone };
         Debug.Log(
             "[SkillIndicators] Created default indicators in " + Folder
             + ". Assign aimPreviewIndicator on SkillData and add Show Indicator mechanics to cast chains.");
@@ -45,7 +53,8 @@ public static class SkillIndicatorDefaultsMenu
         bool showRangeRing,
         float overrideRadius = 0f,
         float overrideRange = 0f,
-        float overrideWidth = 0f)
+        float overrideWidth = 0f,
+        float overrideAngle = 0f)
     {
         string path = $"{Folder}/{assetName}.asset";
         var existing = AssetDatabase.LoadAssetAtPath<SkillIndicatorData>(path);
@@ -60,11 +69,14 @@ public static class SkillIndicatorDefaultsMenu
         asset.overrideRadius = overrideRadius;
         asset.overrideRange = overrideRange;
         asset.overrideWidth = overrideWidth;
+        asset.overrideAngle = overrideAngle;
 
         var rangeTex = AssetDatabase.LoadAssetAtPath<Texture2D>(
             "Assets/Resources/SkillIndicators/rangeskillindicator.png");
-        var placementTex = AssetDatabase.LoadAssetAtPath<Texture2D>(
-            "Assets/Resources/SkillIndicators/aoeskillindicator_nobackground.png");
+        string placementPath = shape == SkillIndicatorData.IndicatorShape.Cone
+            ? "Assets/Resources/SkillIndicators/coneskillindicator.png"
+            : "Assets/Resources/SkillIndicators/aoeskillindicator_nobackground.png";
+        var placementTex = AssetDatabase.LoadAssetAtPath<Texture2D>(placementPath);
         if (rangeTex != null)
             asset.rangeRingTexture = rangeTex;
         if (placementTex != null)

@@ -12,7 +12,8 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
     public enum IndicatorLifetimeMode : byte
     {
         /// <summary>
-        /// Show immediately and complete. Hidden when the cast ends or is cancelled.
+        /// Show immediately and complete. Hidden when the skill cast coroutine ends,
+        /// is cancelled, a RecastWindow opens, or another indicator replaces it.
         /// </summary>
         UntilCastEnds = 0,
 
@@ -54,7 +55,8 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
         Vector3 mouseAim = ctx.aimPoint ?? ctx.caster.transform.position;
         Vector3 aim = mouseAim;
 
-        if (indicator.shape == SkillIndicatorData.IndicatorShape.Directional
+        if ((indicator.shape == SkillIndicatorData.IndicatorShape.Directional
+                || indicator.shape == SkillIndicatorData.IndicatorShape.Cone)
             && indicator.directionSource != SkillIndicatorData.DirectionSource.TowardAimPoint)
         {
             float length = indicator.ResolveRange();
@@ -95,14 +97,12 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
                     yield return null;
                 }
             }
-            // UntilCastEnds: complete immediately; hide on cast end or CancelCast.
+            // UntilCastEnds: complete immediately. Lifetime is owned by skill end / recast / replace.
         }
         finally
         {
             if (lifetimeMode == IndicatorLifetimeMode.ForSeconds && sessionId > 0)
-            {
                 ctx.skillInstance.ServerHideSkillIndicator(sessionId);
-            }
         }
 
         if (ctx.IsCancelled)

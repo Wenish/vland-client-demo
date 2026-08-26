@@ -9,6 +9,7 @@ namespace ShadowInfection.Skills.Indicators
     {
         private static Texture2D _defaultRangeTexture;
         private static Texture2D _defaultPlacementTexture;
+        private static Texture2D _defaultConeTexture;
         private static Shader _runtimeShader;
 
         private readonly UnitController _caster;
@@ -19,17 +20,23 @@ namespace ShadowInfection.Skills.Indicators
         private readonly Transform _rangeRing;
         private readonly Transform _circle;
         private readonly Transform _directional;
+        private readonly Transform _cone;
+        private readonly MeshFilter _coneFilter;
         private readonly Material _rangeRingMaterialInstance;
         private readonly Material _placementMaterialInstance;
+        private float _builtConeAngle = -1f;
 
         public SkillIndicatorDisplayParams Display { get; private set; }
         private Vector3 _aimPoint;
         private UnitController _followTarget;
+        private Vector3? _lockedDirection;
 
         private const string DefaultRangeTextureResource =
             "SkillIndicators/rangeskillindicator";
         private const string DefaultPlacementTextureResource =
             "SkillIndicators/aoeskillindicator_nobackground";
+        private const string DefaultConeTextureResource =
+            "SkillIndicators/coneskillindicator";
 
         public static SkillIndicatorSessionView Create(
             UnitController caster,
@@ -86,7 +93,7 @@ namespace ShadowInfection.Skills.Indicators
                 : GetDefaultRangeTexture();
             Texture2D placementTex = visualSource != null && visualSource.placementTexture != null
                 ? visualSource.placementTexture
-                : GetDefaultPlacementTexture();
+                : GetDefaultPlacementTexture(display.shape);
 
             _rangeRingMaterialInstance = CreateMaterialInstance(
                 visualSource != null ? visualSource.rangeRingMaterial : null,
@@ -112,6 +119,26 @@ namespace ShadowInfection.Skills.Indicators
                 MeshFactory.BuildRectangle(1f, 1f),
                 display.shape == SkillIndicatorData.IndicatorShape.Directional,
                 _placementMaterialInstance);
+
+            float coneAngle = Mathf.Clamp(display.effectAngle > 0f ? display.effectAngle : 90f, 1f, 360f);
+            _cone = CreateMeshChild(
+                "Cone",
+                MeshFactory.BuildCone(1f, coneAngle),
+                display.shape == SkillIndicatorData.IndicatorShape.Cone,
+                _placementMaterialInstance);
+            _coneFilter = _cone != null ? _cone.GetComponent<MeshFilter>() : null;
+            _builtConeAngle = coneAngle;
+
+            if (display.aimFollowMode == SkillIndicatorData.AimFollowMode.LockOnConfirm
+                && (display.shape == SkillIndicatorData.IndicatorShape.Directional
+                    || display.shape == SkillIndicatorData.IndicatorShape.Cone)
+                && _caster != null)
+            {
+                Vector3 casterPos = _caster.transform.position;
+                casterPos.y += 0.05f;
+                Vector3 placement = ResolvePlacementPosition(casterPos, _aimPoint);
+                _lockedDirection = ResolveFacingDirection(casterPos, placement);
+            }
 
             Tick();
         }
@@ -148,9 +175,15 @@ namespace ShadowInfection.Skills.Indicators
             _followTarget = target;
         }
 
+        public void SetVisible(bool visible)
+        {
+            if (_root != null)
+                _root.gameObject.SetActive(visible);
+        }
+
         public void Tick()
         {
-            if (_root == null || _caster == null)
+            if (_root == null || _caster == null || !_root.gameObject.activeSelf)
                 return;
 
             if (_followTarget != null && (_followTarget.Equals(null) || _followTarget.IsDead))
@@ -189,24 +222,41 @@ namespace ShadowInfection.Skills.Indicators
 
             if (_directional != null && _directional.gameObject.activeSelf)
             {
-                Vector3 flatAim = placementPos;
-                flatAim.y = casterPos.y;
-                Vector3 dir = flatAim - casterPos;
-                dir.y = 0f;
-                if (dir.sqrMagnitude < 0.0001f)
-                    dir = _caster.transform.forward;
-
-                dir.Normalize();
+                Vector3 dir = ResolveActiveDirection(casterPos, placementPos);
                 float length = Mathf.Max(0.01f, Display.effectRange > 0f ? Display.effectRange : 1f);
                 float width = Mathf.Max(0.01f, Display.effectWidth > 0f ? Display.effectWidth : 1f);
                 _directional.position = casterPos + dir * (length * 0.5f);
                 _directional.rotation = Quaternion.LookRotation(dir, Vector3.up);
                 _directional.localScale = new Vector3(width, 1f, length);
             }
+
+            if (_cone != null && _cone.gameObject.activeSelf)
+            {
+                EnsureConeMesh(Display.effectAngle);
+                Vector3 dir = ResolveActiveDirection(casterPos, placementPos);
+                float range = Mathf.Max(0.05f, Display.effectRange > 0f ? Display.effectRange : 1f);
+                _cone.position = casterPos;
+                _cone.rotation = Quaternion.LookRotation(dir, Vector3.up);
+                _cone.localScale = new Vector3(range, 1f, range);
+            }
+        }
+
+        private Vector3 ResolveActiveDirection(Vector3 casterPos, Vector3 placementPos)
+        {
+            if (Display.aimFollowMode == SkillIndicatorData.AimFollowMode.LockOnConfirm
+                && _lockedDirection.HasValue)
+            {
+                return _lockedDirection.Value;
+            }
+
+            return ResolveFacingDirection(casterPos, placementPos);
         }
 
         public void Dispose()
         {
+            if (_coneFilter != null && _coneFilter.sharedMesh != null)
+                Object.Destroy(_coneFilter.sharedMesh);
+
             if (_root != null)
                 Object.Destroy(_root.gameObject);
 
@@ -229,6 +279,32 @@ namespace ShadowInfection.Skills.Indicators
                 return casterPos;
 
             return aim;
+        }
+
+        private Vector3 ResolveFacingDirection(Vector3 casterPos, Vector3 placementPos)
+        {
+            Vector3 flatAim = placementPos;
+            flatAim.y = casterPos.y;
+            Vector3 dir = flatAim - casterPos;
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f)
+                dir = _caster.transform.forward;
+
+            return dir.normalized;
+        }
+
+        private void EnsureConeMesh(float angleDegrees)
+        {
+            float angle = Mathf.Clamp(angleDegrees > 0f ? angleDegrees : 90f, 1f, 360f);
+            if (_coneFilter == null || Mathf.Abs(angle - _builtConeAngle) < 0.01f)
+                return;
+
+            Mesh old = _coneFilter.sharedMesh;
+            _coneFilter.sharedMesh = MeshFactory.BuildCone(1f, angle);
+            _builtConeAngle = angle;
+
+            if (old != null)
+                Object.Destroy(old);
         }
 
         private Transform CreateMeshChild(string name, Mesh mesh, bool active, Material material)
@@ -281,11 +357,22 @@ namespace ShadowInfection.Skills.Indicators
             if (_defaultRangeTexture == null)
                 _defaultRangeTexture = Resources.Load<Texture2D>(DefaultRangeTextureResource);
 
-            return _defaultRangeTexture != null ? _defaultRangeTexture : GetDefaultPlacementTexture();
+            return _defaultRangeTexture != null
+                ? _defaultRangeTexture
+                : GetDefaultPlacementTexture(SkillIndicatorData.IndicatorShape.Circle);
         }
 
-        private static Texture2D GetDefaultPlacementTexture()
+        private static Texture2D GetDefaultPlacementTexture(SkillIndicatorData.IndicatorShape shape)
         {
+            if (shape == SkillIndicatorData.IndicatorShape.Cone)
+            {
+                if (_defaultConeTexture == null)
+                    _defaultConeTexture = Resources.Load<Texture2D>(DefaultConeTextureResource);
+
+                if (_defaultConeTexture != null)
+                    return _defaultConeTexture;
+            }
+
             if (_defaultPlacementTexture == null)
                 _defaultPlacementTexture = Resources.Load<Texture2D>(DefaultPlacementTextureResource);
 

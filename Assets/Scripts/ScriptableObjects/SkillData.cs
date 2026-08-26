@@ -33,7 +33,9 @@ public class SkillData : ScriptableObject
     public float castRange;
 
     [BoxGroup("Aim")]
-    [Tooltip("Optional indicator shown locally while holding Shift+skill before confirm. Reuse the same asset as the first Show Indicator effect when possible.")]
+    [Tooltip(
+        "Optional indicator shown locally while holding Shift+skill before confirm (initial cast). "
+            + "For recast windows, set aimPreviewIndicator on the Recast Window mechanic or add a Show Indicator on the onRecast chain.")]
     [Expandable]
     public SkillIndicatorData aimPreviewIndicator;
 

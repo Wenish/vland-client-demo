@@ -107,10 +107,67 @@ public static class SkillAimUtil
 
     public static Vector3 GetAimPointDirection(UnitController caster, Vector3 mouseAimPoint)
     {
-        Vector3 dir = mouseAimPoint - caster.transform.position;
+        if (caster == null)
+            return Vector3.forward;
+
+        return GetAimPointDirection(caster.transform.position, mouseAimPoint, GetFacingDirection(caster));
+    }
+
+    public static Vector3 GetAimPointDirection(Vector3 casterPosition, Vector3 mouseAimPoint, Vector3 fallbackDirection)
+    {
+        Vector3 dir = mouseAimPoint - casterPosition;
         dir.y = 0f;
         if (dir.sqrMagnitude < 0.0001f)
-            return GetFacingDirection(caster);
+        {
+            fallbackDirection.y = 0f;
+            if (fallbackDirection.sqrMagnitude < 0.0001f)
+                return Vector3.forward;
+            return fallbackDirection.normalized;
+        }
+
         return dir.normalized;
+    }
+
+    /// <summary>
+    /// Horizontal aim rotation used by cast context + combat targeting (matches indicator math).
+    /// </summary>
+    public static Quaternion GetAimRotation(Vector3 casterPosition, Vector3 aimPoint, Vector3 fallbackForward)
+    {
+        Vector3 dir = GetAimPointDirection(casterPosition, aimPoint, fallbackForward);
+        return Quaternion.LookRotation(dir, Vector3.up);
+    }
+
+    public static Quaternion GetAimRotation(UnitController caster, Vector3 aimPoint)
+    {
+        if (caster == null)
+            return Quaternion.identity;
+
+        return GetAimRotation(caster.transform.position, aimPoint, caster.transform.forward);
+    }
+
+    /// <summary>
+    /// Combat forward for linear/cone targeting — same horizontal aim rules as indicators.
+    /// </summary>
+    public static Vector3 ResolveCombatDirection(CastContext castContext)
+    {
+        if (castContext?.caster == null)
+            return Vector3.forward;
+
+        if (castContext.aimPoint.HasValue)
+        {
+            return GetAimPointDirection(
+                castContext.caster,
+                castContext.aimPoint.Value);
+        }
+
+        if (castContext.aimRotation.HasValue)
+        {
+            Vector3 fromRot = castContext.aimRotation.Value * Vector3.forward;
+            fromRot.y = 0f;
+            if (fromRot.sqrMagnitude > 0.0001f)
+                return fromRot.normalized;
+        }
+
+        return GetFacingDirection(castContext.caster);
     }
 }
