@@ -9,6 +9,7 @@ namespace ShadowInfection.Skills.Indicators
     public sealed class SkillIndicatorService : ISkillIndicatorService, IStartable, ITickable, System.IDisposable
     {
         private const int PreviewSessionId = -1;
+        private const float PendingCastPreviewTimeoutSeconds = 0.75f;
 
         private readonly Dictionary<int, SkillIndicatorSessionView> _sessions = new();
         private DisposableBag _subscriptions;
@@ -16,6 +17,12 @@ namespace ShadowInfection.Skills.Indicators
         private Vector3 _latestAimPoint;
         private bool _hasAimPoint;
         private UnitController _latestFollowTarget;
+
+        /// <summary>
+        /// Preview was confirmed and is held until the cast Show arrives (or timeout).
+        /// </summary>
+        private bool _holdingPreviewForCast;
+        private float _holdingPreviewForCastSince;
 
         public void Start()
         {
@@ -41,6 +48,13 @@ namespace ShadowInfection.Skills.Indicators
 
         public void Tick()
         {
+            if (_holdingPreviewForCast
+                && Time.time - _holdingPreviewForCastSince > PendingCastPreviewTimeoutSeconds)
+            {
+                _holdingPreviewForCast = false;
+                EndPreview();
+            }
+
             if (_sessions.Count == 0)
                 return;
 
@@ -50,7 +64,8 @@ namespace ShadowInfection.Skills.Indicators
                     continue;
 
                 if (session.Display.aimFollowMode == SkillIndicatorData.AimFollowMode.FollowWhileActive
-                    && _hasAimPoint)
+                    && _hasAimPoint
+                    && !_holdingPreviewForCast)
                 {
                     session.SetAimPoint(_latestAimPoint);
                     if (_latestFollowTarget != null)
@@ -74,6 +89,7 @@ namespace ShadowInfection.Skills.Indicators
             UnitController followTarget = null,
             NetworkedSkillInstance skillInstance = null)
         {
+            _holdingPreviewForCast = false;
             EndPreview();
             _localUnit = caster;
             _latestAimPoint = aimPoint;
@@ -101,6 +117,10 @@ namespace ShadowInfection.Skills.Indicators
             _latestFollowTarget = followTarget;
             _hasAimPoint = true;
 
+            // While holding confirm→cast, keep the frozen preview; don't track mouse again.
+            if (_holdingPreviewForCast)
+                return;
+
             // Shift+aim preview always tracks the cursor, including LockOnConfirm skills
             // (lock applies after confirm / during the cast session, not while previewing).
             if (_sessions.TryGetValue(PreviewSessionId, out var preview) && preview != null)
@@ -115,6 +135,7 @@ namespace ShadowInfection.Skills.Indicators
 
         public void EndPreview()
         {
+            _holdingPreviewForCast = false;
             EndSession(PreviewSessionId);
         }
 
@@ -129,16 +150,12 @@ namespace ShadowInfection.Skills.Indicators
             if (sessionId == PreviewSessionId)
                 return;
 
-            // Keep cached local aim across replace — LockOnConfirm must lock to the player's
-            // confirm/mouse aim, not a lagged server snapshot (FollowWhileActive can correct later;
-            // LockOnConfirm cannot).
             bool preferLocalAim = _hasAimPoint;
             Vector3 resolvedAim = preferLocalAim ? _latestAimPoint : aimPoint;
             UnitController resolvedFollow = preferLocalAim && _latestFollowTarget != null
                 ? _latestFollowTarget
                 : followTarget;
 
-            EndAllSessions(clearCachedAim: false);
             _localUnit = caster;
 
             if (!preferLocalAim)
@@ -147,6 +164,12 @@ namespace ShadowInfection.Skills.Indicators
                 _latestFollowTarget = followTarget;
                 _hasAimPoint = true;
             }
+
+            // Promote existing preview in place to avoid destroy→create flicker.
+            if (TryPromotePreviewToCast(sessionId, display, resolvedAim, resolvedFollow))
+                return;
+
+            EndAllSessions(clearCachedAim: false);
 
             CreateOrReplaceSession(
                 sessionId,
@@ -157,7 +180,6 @@ namespace ShadowInfection.Skills.Indicators
                 resolvedFollow,
                 skillInstance);
 
-            // No trusted local aim yet: hide FollowWhileActive until PlayerInput pushes UpdateAim.
             if (display.aimFollowMode == SkillIndicatorData.AimFollowMode.FollowWhileActive
                 && !preferLocalAim
                 && _sessions.TryGetValue(sessionId, out var session)
@@ -184,6 +206,8 @@ namespace ShadowInfection.Skills.Indicators
 
         private void EndAllSessions(bool clearCachedAim)
         {
+            _holdingPreviewForCast = false;
+
             if (_sessions.Count > 0)
             {
                 var ids = new List<int>(_sessions.Keys);
@@ -196,6 +220,38 @@ namespace ShadowInfection.Skills.Indicators
                 _hasAimPoint = false;
                 _latestFollowTarget = null;
             }
+        }
+
+        private bool TryPromotePreviewToCast(
+            int sessionId,
+            SkillIndicatorDisplayParams display,
+            Vector3 aimPoint,
+            UnitController followTarget)
+        {
+            if (!_sessions.TryGetValue(PreviewSessionId, out var preview) || preview == null)
+                return false;
+
+            // Different indicator asset/shape (e.g. Echo phase change) — rebuild.
+            if (preview.Display.shape != display.shape
+                || preview.Display.indicatorAssetName != display.indicatorAssetName)
+            {
+                return false;
+            }
+
+            _sessions.Remove(PreviewSessionId);
+            _holdingPreviewForCast = false;
+
+            // Drop any other cast sessions without disposing the promoted preview.
+            if (_sessions.Count > 0)
+            {
+                var ids = new List<int>(_sessions.Keys);
+                for (int i = 0; i < ids.Count; i++)
+                    EndSession(ids[i]);
+            }
+
+            preview.ApplyCastConfirm(display, aimPoint, followTarget);
+            _sessions[sessionId] = preview;
+            return true;
         }
 
         private void ApplyLatestAimToFollowSessions(bool immediateTick)
@@ -255,14 +311,25 @@ namespace ShadowInfection.Skills.Indicators
 
         private void OnAimPreviewEnded(SkillAimPreviewEndedEvent evt)
         {
-            EndPreview();
-            // Cancelled preview: drop cached aim so the next instant cast doesn't reuse it.
-            // Confirmed preview: keep aim so LockOnConfirm cast session can lock to it.
-            if (evt == null || !evt.ConfirmedCast)
+            if (evt != null && evt.ConfirmedCast)
             {
-                _hasAimPoint = false;
-                _latestFollowTarget = null;
+                // Keep preview visible until cast Show promotes/replaces it.
+                _holdingPreviewForCast = true;
+                _holdingPreviewForCastSince = Time.time;
+
+                if (_sessions.TryGetValue(PreviewSessionId, out var preview) && preview != null && _hasAimPoint)
+                {
+                    var lockedDisplay = preview.Display;
+                    lockedDisplay.aimFollowMode = SkillIndicatorData.AimFollowMode.LockOnConfirm;
+                    preview.ApplyCastConfirm(lockedDisplay, _latestAimPoint, _latestFollowTarget);
+                }
+
+                return;
             }
+
+            EndPreview();
+            _hasAimPoint = false;
+            _latestFollowTarget = null;
         }
 
         private void OnIndicatorShow(SkillIndicatorShowEvent evt)

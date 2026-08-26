@@ -31,6 +31,35 @@ namespace ShadowInfection.Skills.Indicators
         private UnitController _followTarget;
         private Vector3? _lockedDirection;
 
+        /// <summary>
+        /// After Shift+confirm, freeze follow and apply cast lock without rebuilding meshes
+        /// (avoids preview→cast flicker).
+        /// </summary>
+        public void ApplyCastConfirm(
+            SkillIndicatorDisplayParams display,
+            Vector3 aimPoint,
+            UnitController followTarget = null)
+        {
+            Display = display;
+            _followTarget = followTarget;
+            _aimPoint = aimPoint;
+            _lockedDirection = null;
+
+            if (display.aimFollowMode == SkillIndicatorData.AimFollowMode.LockOnConfirm
+                && (display.shape == SkillIndicatorData.IndicatorShape.Directional
+                    || display.shape == SkillIndicatorData.IndicatorShape.Cone)
+                && _caster != null)
+            {
+                Vector3 casterPos = _caster.transform.position;
+                casterPos.y += 0.05f;
+                Vector3 placement = ResolvePlacementPosition(casterPos, _aimPoint);
+                _lockedDirection = ResolveFacingDirection(casterPos, placement);
+            }
+
+            SetVisible(true);
+            Tick();
+        }
+
         private const string DefaultRangeTextureResource =
             "SkillIndicators/rangeskillindicator";
         private const string DefaultPlacementTextureResource =
