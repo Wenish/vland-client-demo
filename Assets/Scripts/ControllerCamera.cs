@@ -12,6 +12,7 @@ namespace Game.Scripts.Controllers
         public float SpeedCamera = 3f;
         public float BorderThickness = 10f;
         public bool IsFocusingPlayer = false;
+        public bool IsFixedToTarget = false;
         public Transform CameraTarget;
         public float ScrollSpeed = 20f;
         public float MinCameraDistance = 3f;
@@ -20,6 +21,8 @@ namespace Game.Scripts.Controllers
         public float MouseOffsetInfluenceX = 20f;
 
         public float Zoom = 1f;
+
+        const string PrefsKeyFixedToTarget = "Camera.IsFixedToTarget";
 
         Vector3 mousePositionRelativeToCenterOfScreen = Vector3.zero;
 
@@ -37,6 +40,7 @@ namespace Game.Scripts.Controllers
 
         void Start()
         {
+            IsFixedToTarget = PlayerPrefs.GetInt(PrefsKeyFixedToTarget, 0) == 1;
             RaiseOnZoomChangeEvent();
         }
 
@@ -50,6 +54,18 @@ namespace Game.Scripts.Controllers
                 && IsControllingCharacter())
             {
                 IsFocusingPlayer = !IsFocusingPlayer;
+            }
+
+            // Fixed follow (MMB): keep focus on target but disable mouse look-ahead.
+            if (Mouse.current != null
+                && Mouse.current.middleButton.wasPressedThisFrame
+                && !UiModalInputBlock.IsBlocked
+                && !UiPointerState.IsPointerOverBlockingElement
+                && IsControllingCharacter())
+            {
+                IsFixedToTarget = !IsFixedToTarget;
+                PlayerPrefs.SetInt(PrefsKeyFixedToTarget, IsFixedToTarget ? 1 : 0);
+                PlayerPrefs.Save();
             }
 
             if (IsFocusingPlayer)
@@ -254,8 +270,11 @@ namespace Game.Scripts.Controllers
                 if (target != null)
                 {
                     Vector3 offset = OffsetCamera;
-                    offset.z = offset.z + (mousePositionRelativeToCenterOfScreen.y * MouseOffsetInfluenceZ);
-                    offset.x = offset.x + (mousePositionRelativeToCenterOfScreen.x * MouseOffsetInfluenceX);
+                    if (!IsFixedToTarget)
+                    {
+                        offset.z = offset.z + (mousePositionRelativeToCenterOfScreen.y * MouseOffsetInfluenceZ);
+                        offset.x = offset.x + (mousePositionRelativeToCenterOfScreen.x * MouseOffsetInfluenceX);
+                    }
                     offset = offset * Zoom;
                     var desiredPosition = target.position + offset;
                     var t = Time.deltaTime * SpeedCamera;

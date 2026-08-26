@@ -31,8 +31,7 @@ public class PlayerLoadout : NetworkBehaviour
 
     public override void OnStopLocalPlayer()
     {
-        if (_loadoutManager != null)
-            _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
+        UnsubscribeLoadoutChanged();
 
         if (_deferredSyncCoroutine != null)
         {
@@ -41,9 +40,22 @@ public class PlayerLoadout : NetworkBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        UnsubscribeLoadoutChanged();
+    }
+
+    void UnsubscribeLoadoutChanged()
+    {
+        if (_loadoutManager == null) return;
+        _loadoutManager.OnLoadoutChanged -= HandleLocalLoadoutChanged;
+        _loadoutManager = null;
+    }
+
     public void HandleLocalLoadoutChanged(LocalLoadout newLoadout)
     {
-        if (!isLocalPlayer) return;
+        // Stale handler: LoadoutManager is DontDestroyOnLoad and may outlive this player.
+        if (this == null || !isLocalPlayer) return;
 
         EnsurePlayerInput();
         if (_playerInput == null || _playerInput.myUnit == null)
@@ -57,6 +69,7 @@ public class PlayerLoadout : NetworkBehaviour
 
     private void EnsurePlayerInput()
     {
+        if (this == null) return;
         if (_playerInput != null) return;
 
         _playerInput = GetComponent<PlayerInput>();
