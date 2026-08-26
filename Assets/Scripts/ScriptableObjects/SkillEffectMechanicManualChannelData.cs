@@ -60,6 +60,8 @@ public class SkillEffectMechanicManualChannelData : SkillEffectData
         );
 
         // Apply move/turn speed modifiers
+        ctx.SnapCasterFacingToAim();
+
         var moveSpeedModifier = new StatModifier
         {
             Type = StatType.MovementSpeed,
