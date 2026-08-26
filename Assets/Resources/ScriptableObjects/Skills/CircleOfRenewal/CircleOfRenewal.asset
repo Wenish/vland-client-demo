@@ -17,7 +17,7 @@ MonoBehaviour:
   tags: 2
   description: Creates a healing zone at the target location, restoring 5 Health
     per second to you and all allies within its area.
-  cooldown: 1
+  cooldown: 18
   castCost: 0
   canActivateWhileBusy: 0
   castRange: 10
