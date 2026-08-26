@@ -24,6 +24,18 @@ public class SkillIndicatorData : ScriptableObject
         FollowWhileActive = 1,
     }
 
+    public enum DirectionSource : byte
+    {
+        /// <summary>Point / aim toward mouse world position (default).</summary>
+        TowardAimPoint = 0,
+        /// <summary>Use move input when present; otherwise toward mouse aim (Evade-style with mouse fallback).</summary>
+        MovementThenAimPoint = 1,
+        /// <summary>Use move input when present; otherwise caster facing (matches Dash MovementDirection).</summary>
+        MovementThenFacing = 2,
+        /// <summary>Always use caster facing.</summary>
+        Facing = 3,
+    }
+
     [BoxGroup("Shape")]
     public IndicatorShape shape = IndicatorShape.Circle;
 
@@ -32,6 +44,11 @@ public class SkillIndicatorData : ScriptableObject
 
     [BoxGroup("Shape")]
     public AimFollowMode aimFollowMode = AimFollowMode.LockOnConfirm;
+
+    [BoxGroup("Shape")]
+    [Tooltip("How directional indicators choose their arrow direction.")]
+    [ShowIf(nameof(shape), IndicatorShape.Directional)]
+    public DirectionSource directionSource = DirectionSource.TowardAimPoint;
 
     [BoxGroup("Shape")]
     [Tooltip("Draw a cast-range ring around the caster during Shift+skill aim preview (uses SkillData.castRange).")]
@@ -129,6 +146,7 @@ public class SkillIndicatorData : ScriptableObject
             shape = shape,
             placement = placement,
             aimFollowMode = aimFollowMode,
+            directionSource = directionSource,
             showRangeRing = showRing,
             castRange = Mathf.Max(0f, castRange),
             effectRadius = ResolveRadius(),
@@ -150,6 +168,7 @@ public struct SkillIndicatorDisplayParams
     public SkillIndicatorData.IndicatorShape shape;
     public SkillIndicatorData.IndicatorPlacement placement;
     public SkillIndicatorData.AimFollowMode aimFollowMode;
+    public SkillIndicatorData.DirectionSource directionSource;
     public bool showRangeRing;
     public float castRange;
     public float effectRadius;

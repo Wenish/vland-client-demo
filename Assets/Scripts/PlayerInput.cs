@@ -501,7 +501,7 @@ public class PlayerInput : NetworkBehaviour
         _aimPreviewIndex = index;
         _aimPreviewSkill = data;
 
-        Vector3 aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, data);
+        Vector3 aim = ResolveIndicatorAim(_myUnitController, data, data.aimPreviewIndicator);
         var display = data.aimPreviewIndicator.ToDisplayParams(data.castRange, forPreview: true);
         var followTarget = SkillIndicatorTargetSnap.Resolve(
             data.aimPreviewIndicator,
@@ -524,10 +524,10 @@ public class PlayerInput : NetworkBehaviour
         if (!_isAimPreviewActive || _aimPreviewSkill == null || _myUnitController == null)
             return;
 
-        Vector3 aim = SkillAimUtil.ClampAimPoint(
+        Vector3 aim = ResolveIndicatorAim(
             _myUnitController,
-            _mouseWorldPosition,
-            _aimPreviewSkill);
+            _aimPreviewSkill,
+            _aimPreviewSkill.aimPreviewIndicator);
 
         NetworkedSkillInstance instance = null;
         var skills = _myUnitController.unitMediator != null
@@ -578,12 +578,10 @@ public class PlayerInput : NetworkBehaviour
         if (data == null || !SkillEffectChainUtil.UpdatesAimDuringCast(data))
             return;
 
-        Vector3 aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, data);
+        Vector3 aim = ResolveIndicatorAim(_myUnitController, data, data.aimPreviewIndicator);
 
         UnitController followTarget = null;
         var indicator = data.aimPreviewIndicator;
-        // Prefer aim preview indicator; fall back to catalog by any Show Indicator asset name is unnecessary —
-        // snap config lives on the shared SkillIndicatorData used for preview/cast.
         if (indicator != null && indicator.snapToTarget != null)
         {
             followTarget = SkillIndicatorTargetSnap.Resolve(
@@ -651,7 +649,7 @@ public class PlayerInput : NetworkBehaviour
         var skill = _aimPreviewSkill;
         Vector3 aim = _mouseWorldPosition;
         if (skill != null && _myUnitController != null)
-            aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, skill);
+            aim = ResolveIndicatorAim(_myUnitController, skill, skill.aimPreviewIndicator);
 
         GameMessages.Publish(new SkillAimPreviewEndedEvent(confirmedCast: true));
         ClearAimPreviewState();
@@ -712,6 +710,55 @@ public class PlayerInput : NetworkBehaviour
     {
         if (Keyboard.current == null) return false;
         return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
+    }
+
+    [Client]
+    Vector2 ReadLocalMoveInput()
+    {
+        float horizontal = 0f;
+        float vertical = 0f;
+
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) horizontal -= 1f;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) horizontal += 1f;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) vertical -= 1f;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) vertical += 1f;
+        }
+
+        if (Gamepad.current != null)
+        {
+            Vector2 leftStick = Gamepad.current.leftStick.ReadValue();
+            if (Mathf.Abs(leftStick.x) > Mathf.Abs(horizontal)) horizontal = leftStick.x;
+            if (Mathf.Abs(leftStick.y) > Mathf.Abs(vertical)) vertical = leftStick.y;
+        }
+
+        return new Vector2(horizontal, vertical);
+    }
+
+    [Client]
+    Vector3 ResolveIndicatorAim(UnitController caster, SkillData skill, SkillIndicatorData indicator)
+    {
+        Vector3 mouseAim = SkillAimUtil.ClampAimPoint(caster, _mouseWorldPosition, skill);
+        if (indicator == null)
+            return mouseAim;
+
+        if (indicator.shape != SkillIndicatorData.IndicatorShape.Directional
+            || indicator.directionSource == SkillIndicatorData.DirectionSource.TowardAimPoint)
+        {
+            return mouseAim;
+        }
+
+        float length = indicator.ResolveRange();
+        if (length <= 0f)
+            length = Mathf.Max(1f, skill != null ? skill.castRange : 1f);
+
+        return SkillAimUtil.ResolveIndicatorAimPoint(
+            caster,
+            mouseAim,
+            ReadLocalMoveInput(),
+            indicator.directionSource,
+            length);
     }
 
     [Command]

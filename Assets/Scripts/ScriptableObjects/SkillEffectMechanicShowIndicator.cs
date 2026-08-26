@@ -51,7 +51,24 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
             ? ctx.skillInstance.skillData.castRange
             : 0f;
         var display = indicator.ToDisplayParams(castRange, forPreview: false);
-        Vector3 aim = ctx.aimPoint ?? ctx.caster.transform.position;
+        Vector3 mouseAim = ctx.aimPoint ?? ctx.caster.transform.position;
+        Vector3 aim = mouseAim;
+
+        if (indicator.shape == SkillIndicatorData.IndicatorShape.Directional
+            && indicator.directionSource != SkillIndicatorData.DirectionSource.TowardAimPoint)
+        {
+            float length = indicator.ResolveRange();
+            if (length <= 0f)
+                length = Mathf.Max(1f, castRange);
+
+            var moveInput = new Vector2(ctx.caster.horizontalInput, ctx.caster.verticalInput);
+            aim = SkillAimUtil.ResolveIndicatorAimPoint(
+                ctx.caster,
+                mouseAim,
+                moveInput,
+                indicator.directionSource,
+                length);
+        }
 
         UnitController followTarget = null;
         if (indicator.snapToTarget != null)

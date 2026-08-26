@@ -31,4 +31,86 @@ public static class SkillAimUtil
 
         return ClampAimPoint(caster.transform.position, aimPoint, skillData.castRange);
     }
+
+    /// <summary>
+    /// Builds a world aim point used by indicators so directional shapes match skill direction rules
+    /// (e.g. Evade: movement first, then mouse/facing fallback).
+    /// </summary>
+    public static Vector3 ResolveIndicatorAimPoint(
+        UnitController caster,
+        Vector3 mouseAimPoint,
+        Vector2 moveInput,
+        SkillIndicatorData.DirectionSource directionSource,
+        float directionLength)
+    {
+        if (caster == null)
+            return mouseAimPoint;
+
+        Vector3 casterPos = caster.transform.position;
+        Vector3 dir = ResolveDirection(caster, mouseAimPoint, moveInput, directionSource);
+        float length = directionLength > 0f ? directionLength : 1f;
+
+        Vector3 point = casterPos + dir * length;
+        point.y = mouseAimPoint.y;
+        return point;
+    }
+
+    public static Vector3 ResolveDirection(
+        UnitController caster,
+        Vector3 mouseAimPoint,
+        Vector2 moveInput,
+        SkillIndicatorData.DirectionSource directionSource)
+    {
+        if (caster == null)
+            return Vector3.forward;
+
+        switch (directionSource)
+        {
+            case SkillIndicatorData.DirectionSource.MovementThenAimPoint:
+            {
+                if (TryGetMoveDirection(moveInput, out Vector3 moveDir))
+                    return moveDir;
+                return GetAimPointDirection(caster, mouseAimPoint);
+            }
+            case SkillIndicatorData.DirectionSource.MovementThenFacing:
+            {
+                if (TryGetMoveDirection(moveInput, out Vector3 moveDir))
+                    return moveDir;
+                return GetFacingDirection(caster);
+            }
+            case SkillIndicatorData.DirectionSource.Facing:
+                return GetFacingDirection(caster);
+            case SkillIndicatorData.DirectionSource.TowardAimPoint:
+            default:
+                return GetAimPointDirection(caster, mouseAimPoint);
+        }
+    }
+
+    public static bool TryGetMoveDirection(Vector2 moveInput, out Vector3 moveDir)
+    {
+        moveDir = Vector3.zero;
+        if (moveInput.sqrMagnitude < 0.0001f)
+            return false;
+
+        moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        return true;
+    }
+
+    public static Vector3 GetFacingDirection(UnitController caster)
+    {
+        Vector3 forward = caster.transform.forward;
+        forward.y = 0f;
+        if (forward.sqrMagnitude < 0.0001f)
+            return Vector3.forward;
+        return forward.normalized;
+    }
+
+    public static Vector3 GetAimPointDirection(UnitController caster, Vector3 mouseAimPoint)
+    {
+        Vector3 dir = mouseAimPoint - caster.transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f)
+            return GetFacingDirection(caster);
+        return dir.normalized;
+    }
 }
