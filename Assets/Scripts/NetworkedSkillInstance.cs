@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using MyGame.Events;
 using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -44,6 +45,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
     public readonly List<(UnitMediator target, Buff buff)> appliedBuffs = new();
 
     private readonly List<GameObject> _spawnedVfxInstances = new();
+    private int _nextIndicatorSessionId = 1;
+    private readonly HashSet<int> _activeIndicatorSessions = new();
 
     public void Initialize(string name, UnitController unitRef)
     {
@@ -192,10 +195,19 @@ public class NetworkedSkillInstance : NetworkBehaviour
             StopCoroutine(_runningCastCoroutine);
         }
         _lastCastStartFrame = Time.frameCount;
+
+        Vector3? clampedAim = aimPoint;
+        if (clampedAim.HasValue && skillData != null)
+        {
+            clampedAim = SkillAimUtil.ClampAimPoint(unit, clampedAim.Value, skillData);
+        }
+
         _runningCastContext = new CastContext(unit, this)
         {
-            aimPoint = aimPoint,
-            aimRotation = aimPoint.HasValue ? Quaternion.LookRotation(aimPoint.Value - unit.transform.position) : null
+            aimPoint = clampedAim,
+            aimRotation = clampedAim.HasValue
+                ? Quaternion.LookRotation(clampedAim.Value - unit.transform.position)
+                : null
         };
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
         return SkillCastResult.Started;
@@ -230,6 +242,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         {
             _runningCastCoroutine = null;
             _runningCastContext = null;
+            ServerHideAllSkillIndicators();
         }
     }
 
@@ -246,6 +259,120 @@ public class NetworkedSkillInstance : NetworkBehaviour
             _runningCastCoroutine = null;
         }
         Rpc_CleanupSpawnedVfx();
+        ServerHideAllSkillIndicators();
+    }
+
+    [Server]
+    public int ServerShowSkillIndicator(SkillIndicatorDisplayParams display, Vector3 aimPoint)
+    {
+        int sessionId = _nextIndicatorSessionId++;
+        if (_nextIndicatorSessionId <= 0)
+            _nextIndicatorSessionId = 1;
+
+        _activeIndicatorSessions.Add(sessionId);
+
+        var conn = GetOwnerConnection();
+        if (conn != null)
+        {
+            TargetShowSkillIndicator(conn, sessionId, display, aimPoint);
+        }
+
+        return sessionId;
+    }
+
+    [Server]
+    public void ServerHideSkillIndicator(int sessionId)
+    {
+        if (!_activeIndicatorSessions.Remove(sessionId))
+            return;
+
+        var conn = GetOwnerConnection();
+        if (conn != null)
+            TargetHideSkillIndicator(conn, sessionId);
+    }
+
+    [Server]
+    public void ServerHideAllSkillIndicators()
+    {
+        if (_activeIndicatorSessions.Count == 0)
+            return;
+
+        _activeIndicatorSessions.Clear();
+
+        var conn = GetOwnerConnection();
+        if (conn != null)
+            TargetHideAllSkillIndicators(conn);
+    }
+
+    [Server]
+    private NetworkConnectionToClient GetOwnerConnection()
+    {
+        if (unit == null)
+            return null;
+
+        var playerUnits = GameServices.PlayerUnits;
+        if (playerUnits == null)
+            return null;
+
+        GameObject unitGo = unit.gameObject;
+        for (int i = 0; i < playerUnits.playerUnits.Count; i++)
+        {
+            var entry = playerUnits.playerUnits[i];
+            if (entry.Unit != unitGo)
+                continue;
+
+            if (entry.ConnectionId < 0)
+                return null;
+
+            return NetworkServer.connections.TryGetValue(entry.ConnectionId, out var conn)
+                ? conn
+                : null;
+        }
+
+        return null;
+    }
+
+    [TargetRpc]
+    private void TargetShowSkillIndicator(
+        NetworkConnectionToClient conn,
+        int sessionId,
+        SkillIndicatorDisplayParams display,
+        Vector3 aimPoint)
+    {
+        GameMessages.Publish(new SkillIndicatorShowEvent(sessionId, unit, display, aimPoint));
+    }
+
+    [TargetRpc]
+    private void TargetHideSkillIndicator(NetworkConnectionToClient conn, int sessionId)
+    {
+        GameMessages.Publish(new SkillIndicatorHideEvent(sessionId));
+    }
+
+    [TargetRpc]
+    private void TargetHideAllSkillIndicators(NetworkConnectionToClient conn)
+    {
+        GameMessages.Publish(new SkillIndicatorHideAllEvent());
+    }
+
+    [Server]
+    public void ServerUpdateRunningCastAim(Vector3 aimPoint)
+    {
+        if (_runningCastContext == null || _runningCastContext.IsCancelled)
+            return;
+
+        if (skillData == null || unit == null)
+            return;
+
+        if (!SkillEffectChainUtil.UpdatesAimDuringCast(skillData))
+            return;
+
+        Vector3 clamped = SkillAimUtil.ClampAimPoint(unit, aimPoint, skillData);
+        _runningCastContext.aimPoint = clamped;
+
+        Vector3 flat = clamped - unit.transform.position;
+        flat.y = 0f;
+        if (flat.sqrMagnitude > 0.0001f)
+            _runningCastContext.aimRotation = Quaternion.LookRotation(flat.normalized, Vector3.up);
     }
 
     [Server]

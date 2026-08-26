@@ -615,4 +615,78 @@ namespace MyGame.Events
             WinnerTeamId = winnerTeamId;
         }
     }
+
+    public class SkillAimPreviewStartedEvent
+    {
+        public UnitController Caster { get; }
+        public SkillData Skill { get; }
+        public SkillIndicatorDisplayParams Display { get; }
+        public Vector3 AimPoint { get; }
+
+        public SkillAimPreviewStartedEvent(
+            UnitController caster,
+            SkillData skill,
+            SkillIndicatorDisplayParams display,
+            Vector3 aimPoint)
+        {
+            Caster = caster;
+            Skill = skill;
+            Display = display;
+            AimPoint = aimPoint;
+        }
+    }
+
+    public class SkillAimPreviewUpdatedEvent
+    {
+        public Vector3 AimPoint { get; }
+
+        public SkillAimPreviewUpdatedEvent(Vector3 aimPoint)
+        {
+            AimPoint = aimPoint;
+        }
+    }
+
+    public class SkillAimPreviewEndedEvent
+    {
+        public bool ConfirmedCast { get; }
+
+        public SkillAimPreviewEndedEvent(bool confirmedCast)
+        {
+            ConfirmedCast = confirmedCast;
+        }
+    }
+
+    public class SkillIndicatorShowEvent
+    {
+        public int SessionId { get; }
+        public UnitController Caster { get; }
+        public SkillIndicatorDisplayParams Display { get; }
+        public Vector3 AimPoint { get; }
+
+        public SkillIndicatorShowEvent(
+            int sessionId,
+            UnitController caster,
+            SkillIndicatorDisplayParams display,
+            Vector3 aimPoint)
+        {
+            SessionId = sessionId;
+            Caster = caster;
+            Display = display;
+            AimPoint = aimPoint;
+        }
+    }
+
+    public class SkillIndicatorHideEvent
+    {
+        public int SessionId { get; }
+
+        public SkillIndicatorHideEvent(int sessionId)
+        {
+            SessionId = sessionId;
+        }
+    }
+
+    public class SkillIndicatorHideAllEvent
+    {
+    }
 }

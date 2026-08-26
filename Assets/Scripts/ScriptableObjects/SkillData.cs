@@ -27,6 +27,16 @@ public class SkillData : ScriptableObject
     [BoxGroup("Timing")]
     public bool canActivateWhileBusy;
 
+    [BoxGroup("Aim")]
+    [Tooltip("Max horizontal distance from the caster where the skill may be aimed/placed. 0 = no clamp.")]
+    [MinValue(0f)]
+    public float castRange;
+
+    [BoxGroup("Aim")]
+    [Tooltip("Optional indicator shown locally while holding Shift+skill before confirm. Reuse the same asset as the first Show Indicator effect when possible.")]
+    [Expandable]
+    public SkillIndicatorData aimPreviewIndicator;
+
     [BoxGroup("Restrictions")]
     [Tooltip("If false, this skill can be used with any weapon.")]
     [SerializeField]

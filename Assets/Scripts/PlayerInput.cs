@@ -34,6 +34,11 @@ public class PlayerInput : NetworkBehaviour
     private ControllerCamera _controllerCamera;
     private DisposableBag serverSubscriptions;
 
+    private bool _isAimPreviewActive;
+    private SkillSlotType _aimPreviewSlot;
+    private int _aimPreviewIndex;
+    private SkillData _aimPreviewSkill;
+
     // When aiming, account for projectile visual spawning 1 unit above the floor
     // so the forward direction from that height aligns with the cursor on screen.
     [SerializeField]
@@ -115,6 +120,8 @@ public class PlayerInput : NetworkBehaviour
             CalculateAngle();
             InputUseSkills();
             InputInterrupt();
+            UpdateAimPreview();
+            UpdateAimDuringCast();
         }
 
         if (isServer)
@@ -141,6 +148,9 @@ public class PlayerInput : NetworkBehaviour
     {
         if (!isLocalPlayer)
             return;
+
+        if (_isAimPreviewActive)
+            CancelAimPreview();
 
         if (_delaySendSetFire1InputCoroutine != null)
         {
@@ -407,19 +417,229 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     public void InputUseSkills()
     {
-        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
-            TryUseSkill(SkillSlotType.Normal, 0);
-        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-            TryUseSkill(SkillSlotType.Normal, 1);
-        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
-            TryUseSkill(SkillSlotType.Normal, 2);
-        if (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
-            TryUseSkill(SkillSlotType.Ultimate, 0);
+        if (Keyboard.current == null)
+            return;
+
+        // Cancel aim preview without casting.
+        if (_isAimPreviewActive
+            && (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame))
+        {
+            CancelAimPreview();
+            return;
+        }
+
+        HandleSkillKey(Keyboard.current.qKey, SkillSlotType.Normal, 0);
+        HandleSkillKey(Keyboard.current.eKey, SkillSlotType.Normal, 1);
+        HandleSkillKey(Keyboard.current.cKey, SkillSlotType.Normal, 2);
+        HandleSkillKey(Keyboard.current.xKey, SkillSlotType.Ultimate, 0);
+    }
+
+    [Client]
+    void HandleSkillKey(UnityEngine.InputSystem.Controls.KeyControl key, SkillSlotType slot, int index)
+    {
+        if (key == null)
+            return;
+
+        if (key.wasPressedThisFrame)
+        {
+            if (IsShiftPressed())
+            {
+                TryBeginAimPreview(slot, index);
+            }
+            else if (!_isAimPreviewActive)
+            {
+                TryUseSkill(slot, index);
+            }
+            return;
+        }
+
+        if (_isAimPreviewActive
+            && _aimPreviewSlot == slot
+            && _aimPreviewIndex == index
+            && key.wasReleasedThisFrame)
+        {
+            ConfirmAimPreview();
+        }
+    }
+
+    [Client]
+    void TryBeginAimPreview(SkillSlotType slot, int index)
+    {
+        if (_myUnitController == null || _myUnitController.unitMediator == null)
+            return;
+
+        var skills = _myUnitController.unitMediator.Skills;
+        if (skills == null)
+            return;
+
+        var instance = skills.GetSkill(slot, index);
+        if (instance == null)
+            return;
+
+        if (instance.skillData == null)
+            instance.ResolveSkillData();
+
+        var data = instance.skillData;
+        if (data == null || data.aimPreviewIndicator == null)
+        {
+            // No preview configured — cast immediately like a normal press.
+            TryUseSkill(slot, index);
+            return;
+        }
+
+        if (_isAimPreviewActive)
+            CancelAimPreview();
+
+        _isAimPreviewActive = true;
+        _aimPreviewSlot = slot;
+        _aimPreviewIndex = index;
+        _aimPreviewSkill = data;
+
+        Vector3 aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, data);
+        var display = data.aimPreviewIndicator.ToDisplayParams(data.castRange, forPreview: true);
+        GameMessages.Publish(new SkillAimPreviewStartedEvent(_myUnitController, data, display, aim));
+    }
+
+    [Client]
+    void UpdateAimPreview()
+    {
+        if (!_isAimPreviewActive || _aimPreviewSkill == null || _myUnitController == null)
+            return;
+
+        Vector3 aim = SkillAimUtil.ClampAimPoint(
+            _myUnitController,
+            _mouseWorldPosition,
+            _aimPreviewSkill);
+
+        if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
+            service.UpdateAim(aim);
+        else
+            GameMessages.Publish(new SkillAimPreviewUpdatedEvent(aim));
+    }
+
+    [Client]
+    void UpdateAimDuringCast()
+    {
+        if (_isAimPreviewActive || _myUnitController == null)
+            return;
+
+        var actionState = _myUnitController.unitActionState;
+        if (actionState == null)
+            return;
+
+        if (!TryGetActiveCastSkillName(actionState, out string skillName))
+            return;
+
+        var skills = _myUnitController.unitMediator != null
+            ? _myUnitController.unitMediator.Skills
+            : null;
+        if (skills == null)
+            return;
+
+        var instance = skills.GetSkillByName(skillName);
+        if (instance == null)
+            return;
+
+        if (instance.skillData == null)
+            instance.ResolveSkillData();
+
+        var data = instance.skillData;
+        if (data == null || !SkillEffectChainUtil.UpdatesAimDuringCast(data))
+            return;
+
+        Vector3 aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, data);
+
+        if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
+            service.UpdateAim(aim);
+
+        CmdUpdateCastAim(skillName, aim);
+    }
+
+    [Client]
+    static bool TryGetActiveCastSkillName(UnitActionState actionState, out string skillName)
+    {
+        skillName = null;
+        if (actionState == null)
+            return false;
+
+        if (actionState.childState.type == UnitActionState.ActionType.Casting
+            && !string.IsNullOrEmpty(actionState.childState.name))
+        {
+            skillName = actionState.childState.name;
+            return true;
+        }
+
+        if (actionState.state.type == UnitActionState.ActionType.Casting
+            && !string.IsNullOrEmpty(actionState.state.name))
+        {
+            skillName = actionState.state.name;
+            return true;
+        }
+
+        return false;
+    }
+
+    [Command]
+    void CmdUpdateCastAim(string skillName, Vector3 aimPoint)
+    {
+        if (_myUnitController == null || _myUnitController.unitMediator == null)
+            return;
+
+        var skills = _myUnitController.unitMediator.Skills;
+        if (skills == null)
+            return;
+
+        var instance = skills.GetSkillByName(skillName);
+        if (instance == null)
+            return;
+
+        instance.ServerUpdateRunningCastAim(aimPoint);
+    }
+
+    [Client]
+    void ConfirmAimPreview()
+    {
+        if (!_isAimPreviewActive)
+            return;
+
+        var slot = _aimPreviewSlot;
+        var index = _aimPreviewIndex;
+        var skill = _aimPreviewSkill;
+        Vector3 aim = _mouseWorldPosition;
+        if (skill != null && _myUnitController != null)
+            aim = SkillAimUtil.ClampAimPoint(_myUnitController, _mouseWorldPosition, skill);
+
+        GameMessages.Publish(new SkillAimPreviewEndedEvent(confirmedCast: true));
+        ClearAimPreviewState();
+
+        PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
+        CmdUseSkill(slot, index, aim);
+    }
+
+    [Client]
+    void CancelAimPreview()
+    {
+        if (!_isAimPreviewActive)
+            return;
+
+        GameMessages.Publish(new SkillAimPreviewEndedEvent(confirmedCast: false));
+        ClearAimPreviewState();
+    }
+
+    [Client]
+    void ClearAimPreviewState()
+    {
+        _isAimPreviewActive = false;
+        _aimPreviewSkill = null;
+        _aimPreviewIndex = -1;
     }
 
     [Client]
     void TryUseSkill(SkillSlotType slot, int index)
     {
+        if (_isAimPreviewActive)
+            CancelAimPreview();
+
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
         CmdUseSkill(slot, index, _mouseWorldPosition);
     }
@@ -429,6 +649,8 @@ public class PlayerInput : NetworkBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame)
         {
+            if (_isAimPreviewActive)
+                CancelAimPreview();
             CmdInterruptMyUnit();
         }
     }
@@ -439,6 +661,13 @@ public class PlayerInput : NetworkBehaviour
     {
         if (Keyboard.current == null) return false;
         return Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
+    }
+
+    [Client]
+    private static bool IsShiftPressed()
+    {
+        if (Keyboard.current == null) return false;
+        return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
     }
 
     [Command]
