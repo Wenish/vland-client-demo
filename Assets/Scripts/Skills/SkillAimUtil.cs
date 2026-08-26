@@ -167,6 +167,32 @@ public static class SkillAimUtil
     }
 
     /// <summary>
+    /// Movement-based indicators (Evade-style) encode skill direction, not where the unit should face.
+    /// Skip cast-start facing snap while moving so mouse aim is not briefly overridden.
+    /// </summary>
+    public static bool ShouldSnapFacingToCastAim(
+        UnitController caster,
+        Vector2 moveInput,
+        SkillIndicatorData indicator)
+    {
+        if (indicator == null)
+            return true;
+
+        if (indicator.shape != SkillIndicatorData.IndicatorShape.Directional
+            && indicator.shape != SkillIndicatorData.IndicatorShape.Cone)
+            return true;
+
+        switch (indicator.directionSource)
+        {
+            case SkillIndicatorData.DirectionSource.MovementThenFacing:
+            case SkillIndicatorData.DirectionSource.MovementThenAimPoint:
+                return !TryGetMoveDirection(moveInput, out _);
+            default:
+                return true;
+        }
+    }
+
+    /// <summary>
     /// Combat forward for linear/cone targeting — same horizontal aim rules as indicators.
     /// </summary>
     public static Vector3 ResolveCombatDirection(CastContext castContext)

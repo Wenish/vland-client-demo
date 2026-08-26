@@ -208,10 +208,19 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         // Finish facing before cast/channel can lock turn speed mid-lerp, and so
         // LockOnConfirm indicators match unit facing even when turnSpeed stays at 100%.
-        if (clampedAim.HasValue)
-            unit.SnapFacingToAimPoint(clampedAim.Value);
-        else if (aimRotation.HasValue)
-            unit.SnapFacingToAimRotation(aimRotation.Value);
+        var indicator = SkillAimPreviewUtil.Resolve(this);
+        bool shouldSnapFacing = SkillAimUtil.ShouldSnapFacingToCastAim(
+            unit,
+            new Vector2(unit.horizontalInput, unit.verticalInput),
+            indicator);
+
+        if (shouldSnapFacing)
+        {
+            if (clampedAim.HasValue)
+                unit.SnapFacingToAimPoint(clampedAim.Value);
+            else if (aimRotation.HasValue)
+                unit.SnapFacingToAimRotation(aimRotation.Value);
+        }
 
         _runningCastContext = new CastContext(unit, this)
         {

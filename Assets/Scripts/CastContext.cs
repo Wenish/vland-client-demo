@@ -56,6 +56,13 @@ public class CastContext
         if (caster == null)
             return;
 
+        var indicator = skillInstance != null ? SkillAimPreviewUtil.Resolve(skillInstance) : null;
+        if (!SkillAimUtil.ShouldSnapFacingToCastAim(
+            caster,
+            new Vector2(caster.horizontalInput, caster.verticalInput),
+            indicator))
+            return;
+
         if (aimPoint.HasValue)
         {
             caster.SnapFacingToAimPoint(aimPoint.Value);

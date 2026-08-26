@@ -866,12 +866,19 @@ public class PlayerInput : NetworkBehaviour
 
         // Keep PlayerInput yaw in sync with the (clamped) skill aim so ControlMyUnit does not
         // overwrite the snap with a stale Angle after turn speed is locked.
-        if (aimPoint.HasValue)
+        if (aimPoint.HasValue && skill?.skillData != null)
         {
             Vector3 aim = aimPoint.Value;
-            if (skill?.skillData != null)
-                aim = SkillAimUtil.ClampAimPoint(_myUnitController, aim, skill.skillData);
-            Angle = SkillAimUtil.GetFacingAngleYaw(_myUnitController.transform.position, aim);
+            aim = SkillAimUtil.ClampAimPoint(_myUnitController, aim, skill.skillData);
+
+            var indicator = SkillAimPreviewUtil.Resolve(skill.skillData, skill.IsRecastWindowOpen);
+            if (SkillAimUtil.ShouldSnapFacingToCastAim(
+                _myUnitController,
+                new Vector2(HorizontalInput, VerticalInput),
+                indicator))
+            {
+                Angle = SkillAimUtil.GetFacingAngleYaw(_myUnitController.transform.position, aim);
+            }
         }
 
         var result = skills.CastSkill(slot, index, aimPoint);
