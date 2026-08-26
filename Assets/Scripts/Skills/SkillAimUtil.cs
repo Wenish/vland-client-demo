@@ -191,4 +191,156 @@ public static class SkillAimUtil
 
         return GetFacingDirection(castContext.caster);
     }
+
+    public static bool PlacementUsesAimPoint(SkillIndicatorData.IndicatorPlacement placement)
+    {
+        return placement == SkillIndicatorData.IndicatorPlacement.AtAimPoint;
+    }
+
+    /// <summary>
+    /// Shared circle / ground AoE position for mechanics and indicators.
+    /// Self = caster, AtAimPoint = mouse aim (or snapped unit), snap wins when present.
+    /// </summary>
+    public static Vector3 ResolveCirclePlacement(
+        CastContext castContext,
+        UnitController effectTarget,
+        bool atAimPoint,
+        UnitController snapTarget = null)
+    {
+        Vector3 aim = castContext?.aimPoint ?? effectTarget?.transform.position ?? Vector3.zero;
+        return ResolveCirclePlacement(
+            castContext?.caster,
+            aim,
+            atAimPoint
+                ? SkillIndicatorData.IndicatorPlacement.AtAimPoint
+                : SkillIndicatorData.IndicatorPlacement.Self,
+            snapTarget);
+    }
+
+    /// <summary>
+    /// Indicator-side circle placement (preview + cast overlay).
+    /// </summary>
+    public static Vector3 ResolveCirclePlacement(
+        UnitController caster,
+        Vector3 aimPoint,
+        SkillIndicatorData.IndicatorPlacement placement,
+        UnitController snapTarget = null,
+        float visualYOffset = 0.05f)
+    {
+        float groundY = caster != null
+            ? caster.transform.position.y + visualYOffset
+            : aimPoint.y;
+
+        if (snapTarget != null && !snapTarget.IsDead)
+        {
+            Vector3 pos = snapTarget.transform.position;
+            pos.y = groundY;
+            return pos;
+        }
+
+        if (placement == SkillIndicatorData.IndicatorPlacement.Self)
+        {
+            return caster != null
+                ? caster.transform.position + Vector3.up * visualYOffset
+                : aimPoint;
+        }
+
+        Vector3 aim = aimPoint;
+        aim.y = groundY;
+        return aim;
+    }
+
+    /// <summary>
+    /// Origin for cones/lines — always anchored on the caster (original TargetAreaVFX behavior).
+    /// </summary>
+    public static Vector3 ResolveDirectionalOrigin(CastContext castContext, float yOffset = 0.01f)
+    {
+        if (castContext?.caster == null)
+            return Vector3.zero;
+
+        return castContext.caster.transform.position + Vector3.up * yOffset;
+    }
+
+    public static Vector3 ResolveDirectionalOrigin(UnitController caster, float yOffset = 0.05f)
+    {
+        if (caster == null)
+            return Vector3.zero;
+
+        return caster.transform.position + Vector3.up * yOffset;
+    }
+
+    /// <summary>
+    /// Horizontal facing for cones/lines — cast aim on mechanics, toward aim on indicators.
+    /// </summary>
+    public static Vector3 ResolveDirectionalFacing(
+        CastContext castContext,
+        UnitController caster,
+        Vector3 aimPoint,
+        SkillIndicatorData.DirectionSource directionSource = SkillIndicatorData.DirectionSource.TowardAimPoint,
+        Vector2 moveInput = default)
+    {
+        if (castContext != null)
+            return ResolveCombatDirection(castContext);
+
+        if (caster == null)
+            return Vector3.forward;
+
+        return ResolveDirection(caster, aimPoint, moveInput, directionSource);
+    }
+
+    /// <summary>
+    /// World origin for area VFX meshes.
+    /// </summary>
+    public static Vector3 ResolveAreaVfxOrigin(
+        CastContext castContext,
+        UnitController target,
+        AreaVFXShape shape,
+        bool spawnAtAimPoint = false)
+    {
+        if (shape == AreaVFXShape.Rectangle || shape == AreaVFXShape.Cone)
+            return ResolveDirectionalOrigin(castContext);
+
+        return ResolveCirclePlacement(castContext, target, spawnAtAimPoint);
+    }
+
+    /// <summary>
+    /// Horizontal forward for area VFX — uses cast aim when available.
+    /// </summary>
+    public static Vector3 ResolveAreaVfxDirection(CastContext castContext, UnitController target)
+    {
+        return ResolveDirectionalFacing(castContext, target, target != null ? target.transform.position : Vector3.zero);
+    }
+
+    /// <summary>
+    /// Parent transform for attached area VFX. Directional shapes attach to the caster;
+    /// aim-placed circles stay in world space.
+    /// </summary>
+    public static Transform ResolveAreaVfxAttachTransform(
+        CastContext castContext,
+        UnitController target,
+        AreaVFXShape shape,
+        bool attachToTarget,
+        bool spawnAtAimPoint)
+    {
+        if (!attachToTarget)
+            return null;
+
+        if (shape == AreaVFXShape.Circle
+            && spawnAtAimPoint
+            && castContext?.aimPoint.HasValue == true)
+        {
+            return null;
+        }
+
+        if (castContext?.caster != null
+            && (shape == AreaVFXShape.Rectangle || shape == AreaVFXShape.Cone))
+        {
+            return castContext.caster.transform;
+        }
+
+        if (target != null)
+            return target.transform;
+
+        return castContext?.caster != null ? castContext.caster.transform : null;
+    }
 }

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicAreaZone
   countsAsCasted: 1
   areaZoneData: {fileID: 11400000, guid: c68d34f1faf7e4b4995e25395ee20227, type: 2}
-  spawnAtAimPoint: 0
+  spawnAtAimPoint: 1
   onTickEffect: {fileID: 11400000, guid: e27a98b79ccdbd441b00f1da8bba0fe0, type: 2}
   skillEffectTarget: {fileID: 11400000, guid: 827c084e7bc4a264bb80c9fd1a6495b4, type: 2}
