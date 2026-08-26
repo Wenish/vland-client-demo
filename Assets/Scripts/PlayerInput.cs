@@ -479,6 +479,12 @@ public class PlayerInput : NetworkBehaviour
         if (instance.skillData == null)
             instance.ResolveSkillData();
 
+        if (instance.IsOnCooldown && !instance.IsRecastWindowOpen)
+        {
+            PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
+            return;
+        }
+
         var data = instance.skillData;
         if (data == null || data.aimPreviewIndicator == null)
         {
