@@ -52,8 +52,7 @@ namespace ShadowInfection.Skills.Indicators
             {
                 Vector3 casterPos = _caster.transform.position;
                 casterPos.y += 0.05f;
-                Vector3 placement = ResolvePlacementPosition(casterPos, _aimPoint);
-                _lockedDirection = ResolveFacingDirection(casterPos, placement);
+                _lockedDirection = ResolveActiveDirection(casterPos, _aimPoint);
             }
 
             SetVisible(true);
@@ -165,8 +164,7 @@ namespace ShadowInfection.Skills.Indicators
             {
                 Vector3 casterPos = _caster.transform.position;
                 casterPos.y += 0.05f;
-                Vector3 placement = ResolvePlacementPosition(casterPos, _aimPoint);
-                _lockedDirection = ResolveFacingDirection(casterPos, placement);
+                _lockedDirection = ResolveActiveDirection(casterPos, _aimPoint);
             }
 
             Tick();
@@ -231,7 +229,11 @@ namespace ShadowInfection.Skills.Indicators
                 aim = SkillAimUtil.ClampAimPoint(casterPos, aim, Display.castRange);
             }
 
-            Vector3 placementPos = ResolvePlacementPosition(casterPos, aim);
+            Vector3 placementPos = SkillAimUtil.ResolveCirclePlacement(
+                _caster,
+                aim,
+                Display.placement,
+                _followTarget);
 
             if (_rangeRing != null && _rangeRing.gameObject.activeSelf)
             {
@@ -249,12 +251,14 @@ namespace ShadowInfection.Skills.Indicators
                 _circle.localScale = new Vector3(radius, 1f, radius);
             }
 
+            Vector3 directionalOrigin = SkillAimUtil.ResolveDirectionalOrigin(_caster);
+
             if (_directional != null && _directional.gameObject.activeSelf)
             {
-                Vector3 dir = ResolveActiveDirection(casterPos, placementPos);
+                Vector3 dir = ResolveActiveDirection(casterPos, aim);
                 float length = Mathf.Max(0.01f, Display.effectRange > 0f ? Display.effectRange : 1f);
                 float width = Mathf.Max(0.01f, Display.effectWidth > 0f ? Display.effectWidth : 1f);
-                _directional.position = casterPos + dir * (length * 0.5f);
+                _directional.position = directionalOrigin + dir * (length * 0.5f);
                 _directional.rotation = Quaternion.LookRotation(dir, Vector3.up);
                 _directional.localScale = new Vector3(width, 1f, length);
             }
@@ -262,15 +266,15 @@ namespace ShadowInfection.Skills.Indicators
             if (_cone != null && _cone.gameObject.activeSelf)
             {
                 EnsureConeMesh(Display.effectAngle);
-                Vector3 dir = ResolveActiveDirection(casterPos, placementPos);
+                Vector3 dir = ResolveActiveDirection(casterPos, aim);
                 float range = Mathf.Max(0.05f, Display.effectRange > 0f ? Display.effectRange : 1f);
-                _cone.position = casterPos;
+                _cone.position = directionalOrigin;
                 _cone.rotation = Quaternion.LookRotation(dir, Vector3.up);
                 _cone.localScale = new Vector3(range, 1f, range);
             }
         }
 
-        private Vector3 ResolveActiveDirection(Vector3 casterPos, Vector3 placementPos)
+        private Vector3 ResolveActiveDirection(Vector3 casterPos, Vector3 aimPoint)
         {
             if (Display.aimFollowMode == SkillIndicatorData.AimFollowMode.LockOnConfirm
                 && _lockedDirection.HasValue)
@@ -278,7 +282,19 @@ namespace ShadowInfection.Skills.Indicators
                 return _lockedDirection.Value;
             }
 
-            return ResolveFacingDirection(casterPos, placementPos);
+            CastContext castContext = _skillInstance != null && _caster != null
+                ? new CastContext(_caster, _skillInstance)
+                {
+                    aimPoint = aimPoint,
+                    aimRotation = SkillAimUtil.GetAimRotation(_caster, aimPoint),
+                }
+                : null;
+
+            return SkillAimUtil.ResolveDirectionalFacing(
+                castContext,
+                _caster,
+                aimPoint,
+                Display.directionSource);
         }
 
         public void Dispose()
@@ -293,33 +309,6 @@ namespace ShadowInfection.Skills.Indicators
                 Object.Destroy(_rangeRingMaterialInstance);
             if (_placementMaterialInstance != null)
                 Object.Destroy(_placementMaterialInstance);
-        }
-
-        private Vector3 ResolvePlacementPosition(Vector3 casterPos, Vector3 aim)
-        {
-            if (_followTarget != null)
-            {
-                Vector3 pos = _followTarget.transform.position;
-                pos.y = casterPos.y;
-                return pos;
-            }
-
-            if (Display.placement == SkillIndicatorData.IndicatorPlacement.Self)
-                return casterPos;
-
-            return aim;
-        }
-
-        private Vector3 ResolveFacingDirection(Vector3 casterPos, Vector3 placementPos)
-        {
-            Vector3 flatAim = placementPos;
-            flatAim.y = casterPos.y;
-            Vector3 dir = flatAim - casterPos;
-            dir.y = 0f;
-            if (dir.sqrMagnitude < 0.0001f)
-                dir = _caster.transform.forward;
-
-            return dir.normalized;
         }
 
         private void EnsureConeMesh(float angleDegrees)

@@ -23,6 +23,9 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
 
     public bool attachToTarget = true;
 
+    [Tooltip("Spawn circle VFX at the aim point when available (uses CastContext.aimPoint)")]
+    public bool spawnAtAimPoint = false;
+
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
     public override IEnumerator Execute(CastContext ctx, List<UnitController> targets, Action<List<UnitController>> onComplete)
@@ -32,8 +35,15 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
             // Only the server (or host) should send the RPC out
             if (NetworkServer.active)
             {
-                Vector3 origin = target.transform.position;
-                Vector3 direction = target.transform.forward;
+                Vector3 origin = SkillAimUtil.ResolveAreaVfxOrigin(ctx, target, shape, spawnAtAimPoint);
+                Vector3 direction = SkillAimUtil.ResolveAreaVfxDirection(ctx, target);
+                Transform attachTransform = SkillAimUtil.ResolveAreaVfxAttachTransform(
+                    ctx,
+                    target,
+                    shape,
+                    attachToTarget,
+                    spawnAtAimPoint);
+                bool shouldAttach = attachToTarget && attachTransform != null;
 
                 ctx.skillInstance.Rpc_SpawnAreaVFX(
                     origin,
@@ -42,10 +52,10 @@ public class SkillEffectTargetAreaVFX : SkillEffectData
                     width,
                     material.name,
                     duration,
-                    target.transform,
+                    attachTransform,
                     shape,
                     offset,
-                    attachToTarget
+                    shouldAttach
                 );
             }
         }

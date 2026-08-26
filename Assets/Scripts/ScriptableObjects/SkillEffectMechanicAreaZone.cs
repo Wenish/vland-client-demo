@@ -19,8 +19,13 @@ public class SkillEffectMechanicAreaZone : SkillEffectMechanic
     {
         foreach (var target in targets)
         {
-            var position = spawnAtAimPoint && castContext.aimPoint.HasValue ? castContext.aimPoint.Value : target.transform.position;
-            var rotation = spawnAtAimPoint && castContext.aimRotation.HasValue ? castContext.aimRotation.Value : target.transform.rotation;
+            var position = SkillAimUtil.ResolveCirclePlacement(
+                castContext,
+                target,
+                spawnAtAimPoint);
+            var rotation = spawnAtAimPoint && castContext.aimRotation.HasValue
+                ? castContext.aimRotation.Value
+                : target.transform.rotation;
             SpawnAreaZone(castContext, position, rotation);
         }
         return targets;

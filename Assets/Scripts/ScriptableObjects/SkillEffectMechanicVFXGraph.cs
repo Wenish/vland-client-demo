@@ -25,16 +25,18 @@ public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
         {
             if (Mirror.NetworkServer.active && vfxPrefab != null)
             {
-                Vector3 position = (spawnAtAimPoint && castContext.aimPoint.HasValue)
-                    ? castContext.aimPoint.Value
-                    : target.transform.position;
-                Quaternion rotation = (spawnAtAimPoint && castContext.aimRotation.HasValue)
+                Vector3 position = SkillAimUtil.ResolveCirclePlacement(
+                    castContext,
+                    target,
+                    spawnAtAimPoint);
+                Quaternion rotation = spawnAtAimPoint && castContext.aimRotation.HasValue
                     ? castContext.aimRotation.Value
                     : target.transform.rotation;
                 uint targetNetId = target.netId;
 
                 // If spawning at aim point, avoid parenting so the VFX stays at world position
-                bool shouldAttach = attachToTarget && !(spawnAtAimPoint && castContext.aimPoint.HasValue);
+                bool shouldAttach = attachToTarget
+                    && !(spawnAtAimPoint && castContext.aimPoint.HasValue);
 
                 // Call a networked RPC to spawn the VFX on all clients
                 castContext.skillInstance.Rpc_SpawnVFXGraphPrefab(
