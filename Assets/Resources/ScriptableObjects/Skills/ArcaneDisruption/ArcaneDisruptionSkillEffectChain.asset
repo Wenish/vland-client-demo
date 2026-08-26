@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: ArcaneDisruptionSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000009
   - rid: 4372648493092962417
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000009
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: f88846becee0430593df8856ea9527f8, type: 2}
+        children: []
     - rid: 4372648493092962417
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

@@ -18,6 +18,8 @@ MonoBehaviour:
   description: Revives an allied player with full health.
   cooldown: 120
   castCost: 0
+  castRange: 10
+  aimPreviewIndicator: {fileID: 11400000, guid: 68f70c8c40054e76a7e7613cdfe35698, type: 2}
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: ae4a343c08f2a4f258a40db3e04bd24d, type: 2}
   iconTexture: {fileID: 2800000, guid: 1bf24462019554a8b88e7063bae5f591, type: 3}

@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: HealingLeafSkillEffectChain
   m_EditorClassIdentifier: 
   rootNodes:
+  - rid: 9100000000000000011
   - rid: 913793431489740866
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000011
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: ca40650d677047fabc8857fa6a8a52a1, type: 2}
+        children: []
     - rid: 913793431489740866
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: BlessedBarrierSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000010
   - rid: 2610058357351645484
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000010
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 497886fcb12e4fbcb90a99ac07288fd1, type: 2}
+        children: []
     - rid: 2610058357351645484
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

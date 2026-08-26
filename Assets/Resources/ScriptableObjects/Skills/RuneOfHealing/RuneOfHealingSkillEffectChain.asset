@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: RuneOfHealingSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000014
   - rid: 2610058285472284761
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000014
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 80477c0697fd4da5937e39ba59693508, type: 2}
+        children: []
     - rid: 2610058285472284761
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

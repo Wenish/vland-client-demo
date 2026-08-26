@@ -19,6 +19,8 @@ MonoBehaviour:
   cooldown: 14
   castCost: 0
   canActivateWhileBusy: 0
+  castRange: 0
+  aimPreviewIndicator: {fileID: 11400000, guid: 49555bb2a97945bfb497cd005659178f, type: 2}
   npcOnly: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: 15bd77eec53634a38bbb4f99d22d8a8c, type: 2}

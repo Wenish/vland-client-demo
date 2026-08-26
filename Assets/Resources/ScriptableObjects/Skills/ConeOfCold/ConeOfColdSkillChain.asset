@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ConeOfColdSkillChain
   m_EditorClassIdentifier: 
   rootNodes:
+  - rid: 9100000000000000005
   - rid: 5250463924834271352
   - rid: 892503330751774789
   - rid: 5656048402389270645
@@ -21,6 +22,11 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000005
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: c170f110d05141bea41f14676f92a465, type: 2}
+        children: []
     - rid: 892503330751774789
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

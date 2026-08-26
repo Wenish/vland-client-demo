@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: ResurrecionSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000013
   - rid: 2610058285472284759
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000013
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 9483f0657879431889cd9ce6d6b29ac6, type: 2}
+        children: []
     - rid: 2610058285472284759
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:

@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: BattleShoutSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
+  - rid: 9100000000000000004
   - rid: 2610058591993856085
   references:
     version: 2
     RefIds:
+    - rid: 9100000000000000004
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 2b6a5b5035d34447b815dc855546f067, type: 2}
+        children: []
     - rid: 2610058591993856085
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
