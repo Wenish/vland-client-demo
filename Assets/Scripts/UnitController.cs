@@ -749,13 +749,10 @@ public class UnitController : NetworkBehaviour
     [Server]
     private void ApplyFacingYawImmediate(float yaw)
     {
-        Quaternion rot = Quaternion.AngleAxis(yaw, Vector3.up);
-        transform.rotation = rot;
-
-        // Jump NetworkTransform interpolation so clients (and host visuals) match immediately.
-        var networkTransform = GetComponent<NetworkTransformReliable>();
-        if (networkTransform != null)
-            networkTransform.ServerTeleport(transform.position, rot);
+        transform.rotation = Quaternion.AngleAxis(yaw, Vector3.up);
+        // Do not ServerTeleport here: rotation-only snaps are synced through the normal
+        // NetworkTransform path so clients interpolate smoothly. Teleport resets snapshot
+        // buffers and hard-snaps position + rotation on every observer (host twice).
     }
 
     [Server]
