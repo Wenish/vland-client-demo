@@ -20,4 +20,5 @@ MonoBehaviour:
   cancelOnDeath: 1
   onRecast: {fileID: 11400000, guid: 5f15c19c01d51624e87fc635ee3c5539, type: 2}
   onExpire: {fileID: 0}
+  aimPreviewIndicator: {fileID: 11400000, guid: 0a29d536f4a14717af86279d7fcf6396, type: 2}
   postDelaySeconds: 0

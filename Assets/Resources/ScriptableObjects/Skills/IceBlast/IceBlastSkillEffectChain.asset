@@ -11,10 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4419ac8082e684e89b2b3a9996b66935, type: 3}
   m_Name: IceBlastSkillEffectChain
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
   - rid: 5250464128112001144
   - rid: 5250464128112001147
+  - rid: 9000000000000000001
   references:
     version: 2
     RefIds:
@@ -39,4 +40,9 @@ MonoBehaviour:
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 5c4ffd98e94074aa5a09a5c8ac9682b8, type: 2}
+        children: []
+    - rid: 9000000000000000001
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 209aca4a37534234b40443d70e4ed723, type: 2}
         children: []

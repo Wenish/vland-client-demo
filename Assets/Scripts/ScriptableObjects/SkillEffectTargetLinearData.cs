@@ -13,7 +13,7 @@ public class SkillEffectTargetLinear : SkillEffectTarget
     {
         List<UnitController> collected = new List<UnitController>();
         Vector3 origin = castContext.caster.transform.position + Vector3.up;
-        Vector3 direction = castContext.caster.transform.forward;
+        Vector3 direction = SkillAimUtil.ResolveCombatDirection(castContext);
 
         RaycastHit[] hits = Physics.SphereCastAll(origin, width / 2f, direction, range, unitLayer);
 

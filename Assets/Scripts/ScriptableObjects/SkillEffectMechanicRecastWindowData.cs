@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 /// <summary>
@@ -37,6 +38,13 @@ public class SkillEffectMechanicRecastWindowData : SkillEffectData
     [Tooltip("Optional effect chain to execute when the window expires without a recast.")]
     public SkillEffectChainData onExpire;
 
+    [Header("Aim Preview")]
+    [Tooltip(
+        "Optional Shift+aim indicator while the recast window is open. "
+            + "If null, uses the first Show Indicator in onRecast, then falls back to SkillData.aimPreviewIndicator.")]
+    [Expandable]
+    public SkillIndicatorData aimPreviewIndicator;
+
     [Header("Timing")]
     [Tooltip("Optional delay after branch execution before continuing the parent chain.")]
     [Min(0f)]
@@ -71,6 +79,8 @@ public class SkillEffectMechanicRecastWindowData : SkillEffectData
 
             var recastWindowRemaining = Mathf.Max(0f, windowDuration - elapsed);
             ctx.skillInstance.SetRecastWindow(recastWindowRemaining);
+            // Phase 1 cast indicators must not linger into the recast window / Phase 2.
+            ctx.skillInstance.ServerHideAllSkillIndicators();
 
             // --- Recast window loop ---
             bool recastFired = false;

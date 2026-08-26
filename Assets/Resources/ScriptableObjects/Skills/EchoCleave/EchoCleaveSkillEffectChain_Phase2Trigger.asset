@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
   - rid: 5742855926361358464
+  - rid: 9000000000000000004
   references:
     version: 2
     RefIds:
@@ -39,4 +40,9 @@ MonoBehaviour:
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
         effect: {fileID: 11400000, guid: 0ef4e990828043e4eb5630c1f5c5ab5a, type: 2}
+        children: []
+    - rid: 9000000000000000004
+      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
+      data:
+        effect: {fileID: 11400000, guid: 1a48e9583c0a430c93e1d5cddfe489d7, type: 2}
         children: []

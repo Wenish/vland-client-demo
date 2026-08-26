@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2764aab25012f7e41afe3fbfc98d1638
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - sizeSource: {instanceID: 0}
+  - indicatorMaterial: {instanceID: 0}
+  - indicatorTexture: {fileID: 2800000, guid: cfae246ba2f29354dbf824ade21d2a01, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -225,6 +225,9 @@ namespace ShadowInfection.DI
                 builder.RegisterInstance(match);
 
             RegisterMatchContracts(builder, zombie, castle, skirmish);
+
+            builder.RegisterEntryPoint<ShadowInfection.Skills.Indicators.SkillIndicatorService>()
+                .As<ISkillIndicatorService>();
         }
 
         private static void RegisterMatchContracts(

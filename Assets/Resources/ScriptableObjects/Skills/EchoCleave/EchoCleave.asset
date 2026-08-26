@@ -16,9 +16,11 @@ MonoBehaviour:
   skillType: 0
   tags: 1
   description: Slash to gain Echo stacks, recast to unleash a stronger finisher.
-  cooldown: 8
+  cooldown: 7
   castCost: 0
   canActivateWhileBusy: 0
+  castRange: 0
+  aimPreviewIndicator: {fileID: 11400000, guid: dd52d05841cc4d3b88daf0015ec4e45d, type: 2}
   hasRequiredWeapon: 1
   requiredWeapon: 1
   npcOnly: 0

@@ -109,6 +109,46 @@ public class SkillSystem : NetworkBehaviour
         return list[index];
     }
 
+    public NetworkedSkillInstance GetSkillByName(string skillName)
+    {
+        if (string.IsNullOrEmpty(skillName))
+            return null;
+
+        if (TryFindSkillByName(normalSkills, skillName, out var skill)
+            || TryFindSkillByName(ultimateSkills, skillName, out skill)
+            || TryFindSkillByName(passiveSkills, skillName, out skill))
+        {
+            return skill;
+        }
+
+        return null;
+    }
+
+    private static bool TryFindSkillByName(
+        SyncList<NetworkedSkillInstance> list,
+        string skillName,
+        out NetworkedSkillInstance skill)
+    {
+        skill = null;
+        if (list == null)
+            return false;
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            var candidate = list[i];
+            if (candidate == null)
+                continue;
+
+            if (candidate.skillName == skillName)
+            {
+                skill = candidate;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     [Server]
     public SkillCastResult CastSkill(SkillSlotType slot, int index, Vector3? aimPoint)
     {

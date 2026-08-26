@@ -24,6 +24,11 @@ public class SkillEffectMechanicCast : SkillEffectData
     [Range(0f, 1f)]
     public float turnSpeedPercent = 0f;
 
+    [Tooltip(
+        "If true, the caster can keep moving the aim point during this cast. "
+            + "Effects that use CastContext.aimPoint (e.g. AreaZone spawnAtAimPoint) resolve at the aim when the cast finishes.")]
+    public bool updateAimDuringCast = false;
+
     public override SkillEffectType EffectType => SkillEffectType.Mechanic;
 
     public override IEnumerator Execute(
