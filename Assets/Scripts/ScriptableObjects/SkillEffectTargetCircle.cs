@@ -35,17 +35,20 @@ public class SkillEffectTargetCircle : SkillEffectTarget
             }
 
 #if UNITY_EDITOR
-            SkillEffectTargetConeDebugDrawer drawer = castContext.caster.GetComponent<SkillEffectTargetConeDebugDrawer>();
-            if (drawer == null)
+            if (castContext.caster != null)
             {
-                drawer = castContext.caster.gameObject.AddComponent<SkillEffectTargetConeDebugDrawer>();
-            }
+                SkillEffectTargetConeDebugDrawer drawer = castContext.caster.GetComponent<SkillEffectTargetConeDebugDrawer>();
+                if (drawer == null)
+                {
+                    drawer = castContext.caster.gameObject.AddComponent<SkillEffectTargetConeDebugDrawer>();
+                }
 
-            drawer.origin = target.transform.position;
-            drawer.forward = target.transform.forward;
-            drawer.range = radius;
-            drawer.angle = 360f;
-            drawer.draw = true;
+                drawer.origin = target.transform.position;
+                drawer.forward = target.transform.forward;
+                drawer.range = radius;
+                drawer.angle = 360f;
+                drawer.draw = true;
+            }
 #endif
         }
 

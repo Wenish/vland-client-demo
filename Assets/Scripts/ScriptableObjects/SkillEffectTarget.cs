@@ -54,6 +54,8 @@ public abstract class SkillEffectTarget : SkillEffectData
     {
         if (candidate == null) return false;
         var caster = context.caster;
+        // Destroyed Unity objects compare equal to null; can't resolve relative teams.
+        if (caster == null) return false;
         if (candidate == caster)
         {
             return (teamMask & TargetTeam.Self) != 0;
@@ -88,7 +90,7 @@ public abstract class SkillEffectTarget : SkillEffectData
             // simple Fisher-Yates via OrderBy Guid (fine for small lists)
             seq = seq.OrderBy(_ => UnityEngine.Random.value);
         }
-        else if (sortByDistance)
+        else if (sortByDistance && caster != null)
         {
             Vector3 origin = caster.transform.position;
             seq = seq.OrderBy(u => (u.transform.position - origin).sqrMagnitude);
