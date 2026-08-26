@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillIndicatorData
   shape: 3
   placement: 2
-  aimFollowMode: 0
+  aimFollowMode: 1
   directionSource: 0
   showRangeRing: 0
   showRangeRingDuringCast: 0
