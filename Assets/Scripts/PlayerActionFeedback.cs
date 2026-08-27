@@ -2,7 +2,8 @@ using MyGame.Events;
 
 public enum PlayerActionFailReason : byte
 {
-    OnCooldown = 1
+    OnCooldown = 1,
+    OutOfRange = 2
 }
 
 /// <summary>
@@ -13,8 +14,15 @@ public static class PlayerActionFeedback
 {
     public static void Notify(PlayerActionFailReason reason, string actionName)
     {
-        if (reason == PlayerActionFailReason.OnCooldown)
-            ShowCooldown(actionName);
+        switch (reason)
+        {
+            case PlayerActionFailReason.OnCooldown:
+                ShowCooldown(actionName);
+                break;
+            case PlayerActionFailReason.OutOfRange:
+                ShowTargetOutOfRange(actionName);
+                break;
+        }
     }
 
     public static void Show(
@@ -33,6 +41,12 @@ public static class PlayerActionFeedback
     {
         var name = string.IsNullOrWhiteSpace(actionName) ? "That action" : actionName;
         Show($"{name} is on cooldown", "cooldown:" + name, kind: PlayerHudInfoKind.Error);
+    }
+
+    public static void ShowTargetOutOfRange(string actionName)
+    {
+        var name = string.IsNullOrWhiteSpace(actionName) ? "That ability" : actionName;
+        Show($"{name}: target out of range", "out-of-range:" + name, kind: PlayerHudInfoKind.Error);
     }
 
     public static string ResolveSkillName(NetworkedSkillInstance skill)

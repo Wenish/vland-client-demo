@@ -374,5 +374,6 @@ public enum SkillCastResult
     Started,
     SignaledRunningCast,
     OnCooldown,
-    Rejected
+    Rejected,
+    OutOfRange
 }

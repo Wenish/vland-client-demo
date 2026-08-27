@@ -16,6 +16,7 @@ namespace ShadowInfection.Skills.Indicators
         private readonly NetworkedSkillInstance _skillInstance;
         private readonly SkillIndicatorData _visualSource;
         private readonly SkillEffectTarget _snapToTarget;
+        private readonly bool _isPreviewSession;
         private readonly Transform _root;
         private readonly Transform _rangeRing;
         private readonly Transform _circle;
@@ -72,7 +73,8 @@ namespace ShadowInfection.Skills.Indicators
             Vector3 aimPoint,
             SkillIndicatorData visualSource = null,
             UnitController followTarget = null,
-            NetworkedSkillInstance skillInstance = null)
+            NetworkedSkillInstance skillInstance = null,
+            bool isPreviewSession = false)
         {
             return new SkillIndicatorSessionView(
                 caster,
@@ -80,7 +82,8 @@ namespace ShadowInfection.Skills.Indicators
                 aimPoint,
                 visualSource,
                 followTarget,
-                skillInstance);
+                skillInstance,
+                isPreviewSession);
         }
 
         private SkillIndicatorSessionView(
@@ -89,12 +92,14 @@ namespace ShadowInfection.Skills.Indicators
             Vector3 aimPoint,
             SkillIndicatorData visualSource,
             UnitController followTarget,
-            NetworkedSkillInstance skillInstance)
+            NetworkedSkillInstance skillInstance,
+            bool isPreviewSession)
         {
             _caster = caster;
             Display = display;
             _aimPoint = aimPoint;
             _skillInstance = skillInstance;
+            _isPreviewSession = isPreviewSession;
 
             visualSource ??= SkillIndicatorVisualCatalog.Get(display.indicatorAssetName);
             if (visualSource != null)
@@ -106,11 +111,7 @@ namespace ShadowInfection.Skills.Indicators
 
             if (_followTarget == null && _snapToTarget != null)
             {
-                _followTarget = SkillIndicatorTargetSnap.Resolve(
-                    _visualSource,
-                    _caster,
-                    _skillInstance,
-                    _aimPoint);
+                _followTarget = ResolveSnapTarget(_aimPoint);
             }
 
             var rootGo = new GameObject("SkillIndicatorSession");
@@ -189,12 +190,26 @@ namespace ShadowInfection.Skills.Indicators
                 && _snapToTarget != null
                 && _visualSource != null)
             {
-                _followTarget = SkillIndicatorTargetSnap.Resolve(
+                _followTarget = ResolveSnapTarget(_aimPoint);
+            }
+        }
+
+        private UnitController ResolveSnapTarget(Vector3 aimPoint)
+        {
+            if (_isPreviewSession)
+            {
+                return SkillIndicatorTargetSnap.ResolvePreview(
                     _visualSource,
                     _caster,
                     _skillInstance,
-                    _aimPoint);
+                    aimPoint);
             }
+
+            return SkillIndicatorTargetSnap.Resolve(
+                _visualSource,
+                _caster,
+                _skillInstance,
+                aimPoint);
         }
 
         public void SetFollowTarget(UnitController target)

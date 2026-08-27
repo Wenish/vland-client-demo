@@ -391,7 +391,8 @@ namespace ShadowInfection.Skills.Indicators
                 aimPoint,
                 visualSource,
                 followTarget,
-                skillInstance);
+                skillInstance,
+                isPreviewSession: sessionId == PreviewSessionId);
             _sessions[sessionId] = view;
             view.Tick();
         }
