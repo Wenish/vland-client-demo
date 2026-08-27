@@ -32,7 +32,9 @@ public class SkillEffectMechanicHeal : SkillEffectMechanic
         var validTargets = new List<UnitController>(targets.Count);
         foreach (var target in targets)
         {
-            if (target == null || target.IsDead)
+            // Dead targets are allowed: UnitController.Heal revives when health == 0
+            // (e.g. Resurrection). Alive-only skills never pass dead units via LifeMask.
+            if (target == null)
             {
                 continue;
             }
