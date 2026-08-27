@@ -110,16 +110,18 @@
 
 .vendor-tabs {
     flex-direction: row;
-    align-items: stretch;
-    height: 34px;
+    flex-grow: 0;
     flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-start;
+    height: 34px;
     margin-bottom: 4px;
 }
 
 .vendor-tab {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: auto;
     height: 34px;
     min-height: 34px;
     margin-right: 4px;
@@ -127,8 +129,8 @@
     margin-bottom: 0;
     padding-top: 0;
     padding-bottom: 0;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
     -unity-font-definition: url("project://database/Assets/Fonts/Cinzel/Cinzel-Bold.ttf?fileID=12800000&guid=a2b3c4d5e6f7081920a1b2c3d4e5f602&type=3#Cinzel-Bold");
     font-size: 11px;
     letter-spacing: 0.5px;

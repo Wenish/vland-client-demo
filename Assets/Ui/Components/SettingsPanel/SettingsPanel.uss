@@ -32,9 +32,28 @@
 
 .settings-panel__actions {
     flex-shrink: 0;
-    margin-top: 16px;
+    margin-top: 12px;
     align-items: stretch;
-    width: 320px;
+    width: 220px;
+}
+
+.settings-panel__actions .si-button {
+    min-height: 36px;
+    min-width: 0;
+    width: 100%;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.settings-panel__actions .si-button__icon,
+.settings-panel__actions .si-button .unity-button__image {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
 }
 
 .settings-tabs {
@@ -273,6 +292,23 @@
     cursor: var(--cursor-hover);
 }
 
+.settings-panel .unity-base-field__label,
+.settings-content .unity-base-field__label {
+    color: rgb(255, 244, 231);
+}
+
+.settings-panel .unity-base-field:hover > .unity-base-field__label,
+.settings-content .unity-base-field:hover > .unity-base-field__label {
+    color: rgb(254, 221, 183);
+}
+
+.settings-panel .unity-base-field:focus > .unity-base-field__label,
+.settings-panel .unity-base-field:focus-within > .unity-base-field__label,
+.settings-content .unity-base-field:focus > .unity-base-field__label,
+.settings-content .unity-base-field:focus-within > .unity-base-field__label {
+    color: rgb(254, 221, 183);
+}
+
 .settings-scroll .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
 .settings-scroll .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
     display: none;
@@ -338,7 +374,7 @@
 
 .settings-panel--embedded .settings-panel__actions {
     width: 100%;
-    max-width: 320px;
+    max-width: 220px;
     align-self: center;
 }
 
