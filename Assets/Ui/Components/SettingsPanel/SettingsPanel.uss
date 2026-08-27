@@ -1,0 +1,366 @@
+.page-settings {
+    min-height: 0;
+    overflow: hidden;
+    align-items: center;
+}
+
+.settings-panel {
+    min-height: 0;
+    overflow: hidden;
+    align-items: center;
+    width: 100%;
+    max-width: 724px;
+    align-self: center;
+}
+
+.settings-panel__title {
+    flex-shrink: 0;
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 28px;
+    color: rgb(254, 221, 183);
+    -unity-text-align: upper-center;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.page-settings .settings-panel__title {
+    font-size: 64px;
+    letter-spacing: 4px;
+    color: rgb(255, 244, 231);
+    margin-bottom: 28px;
+}
+
+.settings-panel__actions {
+    flex-shrink: 0;
+    margin-top: 16px;
+    align-items: stretch;
+    width: 320px;
+}
+
+.settings-tabs {
+    flex-direction: row;
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-start;
+    align-self: stretch;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.settings-tab {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: auto;
+    height: 34px;
+    min-height: 34px;
+    margin-right: 4px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 14px;
+    padding-right: 14px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel/Cinzel-Bold.ttf?fileID=12800000&guid=a2b3c4d5e6f7081920a1b2c3d4e5f602&type=3#Cinzel-Bold");
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: rgb(204, 208, 214);
+    background-color: rgba(0, 4, 10, 0.45);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(152, 119, 81);
+    border-right-color: rgb(152, 119, 81);
+    border-top-color: rgb(152, 119, 81);
+    border-bottom-color: rgb(152, 119, 81);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    cursor: var(--cursor-hover);
+}
+
+.settings-tab:hover {
+    color: rgb(255, 244, 231);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+    background-color: rgba(255, 244, 231, 0.08);
+}
+
+.settings-tab--active {
+    color: rgb(254, 221, 183);
+    background-color: rgba(253, 199, 135, 0.12);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.settings-scroll {
+    flex-grow: 0;
+    flex-shrink: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 724px;
+    align-self: center;
+}
+
+.settings-scroll > .unity-scroll-view__content-viewport {
+    overflow: hidden;
+}
+
+.settings-scroll > .unity-scroll-view__content-viewport > .unity-scroll-view__content-container {
+    align-items: stretch;
+    width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.settings-content {
+    width: 100%;
+    max-width: 700px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    color: rgb(255, 244, 231);
+    align-items: stretch;
+    flex-direction: column;
+    padding-top: 12px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+}
+
+.settings-tab-content {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+/* Field styles — same approach as the old PageSettings.uss so they apply via template/host stylesheets */
+.settings-panel .unity-base-field,
+.settings-content .unity-base-field {
+    font-size: 18px;
+    color: rgb(255, 244, 231);
+    background-color: transparent;
+    border-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.settings-panel .unity-toggle .unity-toggle__checkmark,
+.settings-content .unity-toggle .unity-toggle__checkmark {
+    background-color: transparent;
+    border-color: rgb(202, 159, 108);
+    width: 22px;
+    height: 22px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    -unity-background-image-tint-color: rgb(253, 199, 135);
+}
+
+.settings-panel Toggle:hover .unity-toggle__checkmark,
+.settings-content Toggle:hover .unity-toggle__checkmark {
+    border-color: rgb(253, 199, 135);
+}
+
+.settings-panel Toggle:focus .unity-toggle__checkmark,
+.settings-content Toggle:focus .unity-toggle__checkmark {
+    border-color: rgb(255, 244, 231);
+}
+
+.settings-panel .input-slider .unity-base-slider__tracker,
+.settings-content .input-slider .unity-base-slider__tracker {
+    background-color: rgb(1, 11, 31);
+    border-width: 0;
+}
+
+.settings-panel .input-slider .unity-base-slider__fill,
+.settings-content .input-slider .unity-base-slider__fill {
+    background-color: rgb(202, 159, 108);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.settings-panel .input-slider .unity-base-slider__dragger,
+.settings-content .input-slider .unity-base-slider__dragger {
+    background-color: rgb(253, 199, 135);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.settings-panel .input-slider:hover .unity-base-slider__fill,
+.settings-panel .input-slider:focus .unity-base-slider__fill,
+.settings-content .input-slider:hover .unity-base-slider__fill,
+.settings-content .input-slider:focus .unity-base-slider__fill {
+    background-color: rgb(253, 199, 135);
+}
+
+.settings-panel .input-slider:hover .unity-base-slider__dragger,
+.settings-panel .input-slider:focus .unity-base-slider__dragger,
+.settings-content .input-slider:hover .unity-base-slider__dragger,
+.settings-content .input-slider:focus .unity-base-slider__dragger {
+    background-color: rgb(255, 244, 231);
+}
+
+.settings-panel .unity-base-popup-field__input,
+.settings-panel .unity-base-text-field__input,
+.settings-content .unity-base-popup-field__input,
+.settings-content .unity-base-text-field__input {
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+    background-color: rgba(0, 4, 10, 0.7);
+    border-width: 2px;
+    border-color: rgb(202, 159, 108);
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 12px;
+    padding-left: 12px;
+    padding-bottom: 2px;
+}
+
+.settings-panel .unity-base-popup-field:hover .unity-base-popup-field__input,
+.settings-panel .unity-base-text-field__input:hover,
+.settings-content .unity-base-popup-field:hover .unity-base-popup-field__input,
+.settings-content .unity-base-text-field__input:hover {
+    border-color: rgb(253, 199, 135);
+}
+
+.settings-panel .unity-base-popup-field:focus .unity-base-popup-field__input,
+.settings-panel .unity-base-text-field:focus .unity-base-text-field__input,
+.settings-content .unity-base-popup-field:focus .unity-base-popup-field__input,
+.settings-content .unity-base-text-field:focus .unity-base-text-field__input {
+    border-color: rgb(255, 244, 231);
+}
+
+.settings-panel .unity-base-text-field__input--placeholder,
+.settings-content .unity-base-text-field__input--placeholder {
+    color: rgb(154, 161, 174);
+}
+
+.settings-panel .unity-base-popup-field__arrow,
+.settings-content .unity-base-popup-field__arrow {
+    -unity-background-image-tint-color: rgb(253, 199, 135);
+}
+
+.settings-panel .unity-base-field__input,
+.settings-panel .unity-base-field__label,
+.settings-panel .unity-text-element__selectable,
+.settings-panel .unity-base-slider__drag-container,
+.settings-panel .unity-base-slider__fill,
+.settings-panel .unity-base-slider__dragger,
+.settings-panel .unity-base-popup-field__arrow,
+.settings-panel .unity-base-popup-field__text,
+.settings-content .unity-base-field__input,
+.settings-content .unity-base-field__label,
+.settings-content .unity-text-element__selectable,
+.settings-content .unity-base-slider__drag-container,
+.settings-content .unity-base-slider__fill,
+.settings-content .unity-base-slider__dragger,
+.settings-content .unity-base-popup-field__arrow,
+.settings-content .unity-base-popup-field__text {
+    cursor: var(--cursor-hover);
+}
+
+.settings-scroll .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.settings-scroll .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
+    display: none;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.settings-scroll .unity-scroller--vertical {
+    width: 12px;
+    margin-left: 8px;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.settings-scroll .unity-base-slider--vertical {
+    width: 12px;
+    min-width: 12px;
+}
+
+.settings-scroll .unity-scroller--vertical > .unity-scroller__slider {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.settings-scroll .unity-scroller--vertical,
+.settings-scroll .unity-base-slider--vertical,
+.settings-scroll .unity-base-slider__tracker {
+    cursor: var(--cursor-ui);
+}
+
+.settings-scroll .unity-base-slider--vertical .unity-base-slider__tracker {
+    background-color: rgb(1, 11, 31);
+    width: 8px;
+    min-width: 8px;
+    left: 2px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-color: rgb(101, 80, 54);
+}
+
+.settings-scroll .unity-base-slider__dragger {
+    background-color: rgb(202, 159, 108);
+    width: 8px;
+    min-width: 8px;
+    left: 2px;
+    border-width: 0;
+    cursor: var(--cursor-hover);
+}
+
+.settings-scroll .unity-scroller--vertical:hover .unity-base-slider__dragger,
+.settings-scroll .unity-base-slider__dragger:hover {
+    background-color: rgb(253, 199, 135);
+}
+
+/* Overlay host: panel content sits inside the window chrome, so strip duplicate title/back chrome */
+.settings-panel--embedded .settings-panel__title {
+    display: none;
+}
+
+.settings-panel--embedded .settings-panel__actions {
+    width: 100%;
+    max-width: 320px;
+    align-self: center;
+}
+
+.settings-panel--embedded #ButtonBackToMenu {
+    display: none;
+}
+
+.settings-panel--embedded {
+    max-width: 100%;
+    width: 100%;
+}
+
+.settings-panel--embedded .settings-scroll {
+    max-width: 100%;
+}
+
+.settings-panel--embedded .settings-content {
+    max-width: 100%;
+    background-color: transparent;
+    border-width: 0;
+    padding-top: 4px;
+    padding-right: 0;
+    padding-bottom: 4px;
+    padding-left: 0;
+}
