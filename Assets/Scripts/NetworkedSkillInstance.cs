@@ -147,7 +147,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     private int _lastCastStartFrame = -1;
 
     [Server]
-    public SkillCastResult Cast(Vector3? aimPoint)
+    public SkillCastResult Cast(Vector3? aimPoint, bool forceSelfTarget = false)
     {
         if (unit == null || unit.IsDead || unit.IsKnockedUp)
             return SkillCastResult.Rejected;
@@ -205,7 +205,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
                 indicator,
                 aimPoint.Value,
                 this,
-                out _))
+                out _,
+                forceSelfTarget))
             {
                 return SkillCastResult.OutOfRange;
             }
@@ -239,7 +240,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
         _runningCastContext = new CastContext(unit, this)
         {
             aimPoint = clampedAim,
-            aimRotation = aimRotation
+            aimRotation = aimRotation,
+            forceSelfTarget = forceSelfTarget,
         };
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
         return SkillCastResult.Started;
@@ -401,7 +403,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [Server]
-    public void ServerUpdateRunningCastAim(Vector3 aimPoint)
+    public void ServerUpdateRunningCastAim(Vector3 aimPoint, bool forceSelfTarget = false)
     {
         if (_runningCastContext == null || _runningCastContext.IsCancelled)
             return;
@@ -415,6 +417,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         Vector3 clamped = SkillAimUtil.ClampAimPoint(unit, aimPoint, skillData);
         _runningCastContext.aimPoint = clamped;
         _runningCastContext.aimRotation = SkillAimUtil.GetAimRotation(unit, clamped);
+        _runningCastContext.forceSelfTarget = forceSelfTarget;
 
         // Keep facing on the live aim without NetworkTransform teleports (those fire every frame).
         unit.angle = SkillAimUtil.GetFacingAngleYaw(unit.transform.position, clamped);

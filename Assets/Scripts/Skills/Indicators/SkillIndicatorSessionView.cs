@@ -196,20 +196,23 @@ namespace ShadowInfection.Skills.Indicators
 
         private UnitController ResolveSnapTarget(Vector3 aimPoint)
         {
+            bool forceSelfTarget = SkillTargetingInput.IsLeftAltPressedForSelfTarget();
             if (_isPreviewSession)
             {
                 return SkillIndicatorTargetSnap.ResolvePreview(
                     _visualSource,
                     _caster,
                     _skillInstance,
-                    aimPoint);
+                    aimPoint,
+                    forceSelfTarget);
             }
 
             return SkillIndicatorTargetSnap.Resolve(
                 _visualSource,
                 _caster,
                 _skillInstance,
-                aimPoint);
+                aimPoint,
+                forceSelfTarget);
         }
 
         public void SetFollowTarget(UnitController target)

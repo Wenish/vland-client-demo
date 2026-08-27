@@ -40,6 +40,10 @@ public class SkillEffectTargetSmart : SkillEffectTarget
         List<UnitController> targets,
         bool enforceRange)
     {
+        var forcedSelf = TryGetForcedSelfTarget(castContext);
+        if (forcedSelf != null)
+            return forcedSelf;
+
         var caster = castContext.caster;
 
         Vector3 aimPoint = castContext.aimPoint ?? caster.transform.position;
