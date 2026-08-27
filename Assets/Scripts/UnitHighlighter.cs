@@ -63,7 +63,7 @@ public class UnitHighlighter : MonoBehaviour
 
         Ray ray = _mainCamera.ScreenPointToRay(pointerPosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, unitLayerMask))
-            SetHighlight(hit.collider.gameObject);
+            SetHighlight(ResolveHighlightTarget(hit.collider.gameObject));
         else
             SetHighlight(null);
     }
@@ -83,8 +83,9 @@ public class UnitHighlighter : MonoBehaviour
 
         if (previous != null)
         {
-            RemoveHighlight();
-            lastHighlighted = null;
+            RemoveHighlightFrom(previous.gameObject);
+            if (lastHighlighted == previous.gameObject)
+                lastHighlighted = null;
         }
     }
 
@@ -128,12 +129,23 @@ public class UnitHighlighter : MonoBehaviour
         return false;
     }
 
+    static GameObject ResolveHighlightTarget(GameObject hitObject)
+    {
+        if (hitObject == null)
+            return null;
+
+        var controller = hitObject.GetComponentInParent<UnitController>();
+        return controller != null ? controller.gameObject : hitObject;
+    }
+
     void SetHighlight(GameObject unit)
     {
         if (lastHighlighted == unit)
             return;
 
-        RemoveHighlight();
+        if (lastHighlighted != null)
+            RemoveHighlightFrom(lastHighlighted);
+
         if (unit == null)
         {
             lastHighlighted = null;
@@ -146,7 +158,8 @@ public class UnitHighlighter : MonoBehaviour
 
     void ApplyHighlight(GameObject unit)
     {
-        var outline = unit.AddComponent<Outline>();
+        if (!unit.TryGetComponent(out Outline outline))
+            outline = unit.AddComponent<Outline>();
 
         var hoverUnitControler = unit.GetComponent<UnitController>();
         var outlineColor = outlineColorDefault;
@@ -164,19 +177,18 @@ public class UnitHighlighter : MonoBehaviour
         outline.OutlineWidth = outlineWidth;
     }
 
+    static void RemoveHighlightFrom(GameObject unit)
+    {
+        if (unit == null)
+            return;
+
+        if (unit.TryGetComponent(out Outline outline))
+            Destroy(outline);
+    }
+
     void RemoveHighlight()
     {
-        if (lastHighlighted != null)
-        {
-
-            var outline = lastHighlighted.GetComponent<Outline>();
-            if (outline != null)
-            {
-                Destroy(outline); // Remove the outline component
-            }
-
-            return;
-        }
+        RemoveHighlightFrom(lastHighlighted);
     }
 
     private void OnDestroy()
