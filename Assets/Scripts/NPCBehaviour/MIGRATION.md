@@ -412,7 +412,7 @@ If you encounter issues during migration:
 1. Enable Debug Mode on BehaviourExecutor
 2. Check Console for state transition logs
 3. Use BehaviourDebugDisplay component
-4. Review the README.md examples
+4. Review EXAMPLES.md and INTEGRATION.md
 5. Check that all conditions are properly configured
 
 ---

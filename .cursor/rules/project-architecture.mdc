@@ -1,0 +1,91 @@
+---
+description: Project architecture and patterns for new/updated features
+alwaysApply: true
+---
+
+# vland-client-demo — Architecture & Patterns
+
+Read subsystem docs when working in that area (e.g. `Assets/Scripts/Spawning/ARCHITECTURE.md`, `NPCBehaviour/INTEGRATION.md`, `Debug/ARCHITECTURE.md`). Feature specs: `.devtool/features/`.
+
+## Stack (prefer existing; no new libs without ask)
+
+Mirror · VContainer · MessagePipe · UI Toolkit · UniTask · ScriptableObjects · Gapa Audio
+
+## Legacy code
+
+Much of the codebase predates these patterns (root namespace, singletons, direct manager refs). **When you touch a file, refactor toward these patterns locally** — extract interface, wire DI, use contracts — **only if scope stays small and behavior is unchanged**. No drive-by refactors across unrelated files. Note larger opportunities; don't silently rewrite.
+
+## Layers
+
+1. **Data** — ScriptableObjects, `*Database` assets. No gameplay logic.
+2. **Services** — plain C#, interfaces (`IUnitRegistry`, `IMatchActivity`). Registered in DI.
+3. **Network** — Mirror `NetworkBehaviour`. Server authoritative.
+4. **Presentation** — UI Toolkit, VFX/audio triggers. Read-only toward game state.
+5. **Composition** — `*LifetimeScope` in `Assets/Scripts/DI/`.
+
+## Patterns to follow
+
+### DI (VContainer)
+- **Global** services → `GameLifetimeScope` (DontDestroyOnLoad).
+- **Scene** services → `GameplayLifetimeScope` (parent = Game).
+- **UI** wiring → dedicated `*LifetimeScope` per screen/HUD.
+- Scene `MonoBehaviour` already in level → register via `RegisterIfPresent`, expose as interface.
+- `[Inject]` / constructor injection for new code. `GameLifetimeScope.TryResolve<T>` / `GameplayLifetimeScope.TryResolve<T>` only for Mirror RPCs or UI Toolkit callbacks that can't inject.
+
+### Match contracts
+- UI and shared systems depend on **interfaces** in `Match/` (`IMatchCommands`, `IMatchActivity`, `IMatchUiSession`, mode-specific `I*UiSession`).
+- `GameLifetimeScope` registers **null-object defaults** (`Unmatched*Instance`, `AlwaysAllowMatchActivity`).
+- `GameplayLifetimeScope.RegisterMatchContracts` swaps in real implementations per mode (Zombie / CastleSiege / Skirmish).
+- New mode: extend `MatchGameManagerBase`, `EnsureServices()`, add activity + ui session, register in `GameplayLifetimeScope`.
+
+### Events (MessagePipe)
+- Cross-system decoupling → `GameMessages.Publish<T>` / `Subscribe<T>`. Not new static C# events.
+
+### Networking (Mirror)
+- Mutations: `[Server]`. Replicated state: `[SyncVar(hook=…)]`.
+- Clients: predict/visualize only. Never client-authoritative combat, spawns, or match outcome.
+
+### Skills & data
+- New skill behavior → `SkillEffectMechanic` subclass + ScriptableObject asset. Logic in `DoMechanic(CastContext, targets)`.
+- Use `CastContext` spawners (`IUnitSpawner`, etc.), not ad-hoc singleton lookups.
+- Targeting → existing `SkillEffectTarget*` types.
+
+### Registries & handlers
+- Multiple behaviors of one kind → interface + registry (`IInteractionHandler` + `InteractionHandlerRegistry`, `IUnitRegistry`, etc.). No giant switch in one manager.
+
+### UI
+- Read state via `TryGetSnapshot` on session interfaces. Actions via `IMatchCommands` / mode commands.
+- Don't `FindObjectOfType` game managers from UI.
+
+### Namespaces
+- New files: `ShadowInfection.<Area>`. Don't spread legacy root-namespace style (`UnitController`-era).
+
+## New feature checklist
+
+1. Find similar feature; read its folder + nearest subsystem doc.
+2. Pick layer(s). Define interface or SO first.
+3. Server path for authoritative logic.
+4. Register in correct `LifetimeScope`.
+5. MessagePipe only if cross-system.
+6. Minimal diff. Match folder conventions.
+
+## Don't
+
+- New singletons (except established scene singletons like spawners already registered in DI).
+- Direct UI ↔ gameplay coupling.
+- Edit `Assets/ThirdParty/**`.
+- Copy subsystem diagrams into prompts — link the doc instead.
+
+## Folder map (`Assets/Scripts/`)
+
+| Folder | Use |
+|--------|-----|
+| `DI/` | Lifetime scopes, registration |
+| `Match/` | Mode-agnostic contracts |
+| `ScriptableObjects/` | Skills, units, weapons, configs |
+| `Spawning/` | Server spawn pipeline |
+| `NPCBehaviour/` | AI state machine |
+| `Skills/` | Aim, indicators, preview |
+| `Interactions/` | Zones + handlers |
+| `Events/` | Message types, `GameMessages` |
+| `Zombie/`, `CastleSiege/`, `Skirmish/` | Mode-specific logic |

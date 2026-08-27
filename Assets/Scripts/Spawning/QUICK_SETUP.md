@@ -186,7 +186,7 @@ Area: Point or small radius
 
 ## Next Steps
 
-1. Read full [README.md](README.md) for detailed documentation
+1. Read [ARCHITECTURE.md](ARCHITECTURE.md) for system design and data flow
 2. Check [SpawnConfigurationPresets.cs](SpawnConfigurationPresets.cs) for preset examples
 3. Experiment with different spawn configurations
 4. Set up SpawnManager for global control

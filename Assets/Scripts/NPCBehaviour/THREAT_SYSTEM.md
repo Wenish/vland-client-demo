@@ -487,10 +487,6 @@ Tank uses taunt:
 - Increase threat generation multipliers
 - Reduce threat decay rate
 
-## API Reference
-
-See [API_REFERENCE.md](API_REFERENCE.md) for complete class documentation.
-
 ## Examples
 
 See [EXAMPLES.md](EXAMPLES.md) for complete example configurations.
