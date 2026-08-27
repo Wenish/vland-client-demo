@@ -24,6 +24,22 @@ public class SkillEffectTargetSmart : SkillEffectTarget
 
     public override List<UnitController> GetTargets(CastContext castContext, List<UnitController> targets)
     {
+        return GetTargetsInternal(castContext, targets, enforceRange: true);
+    }
+
+    /// <summary>
+    /// Preview snap: same scoring/filters as cast, but allows units beyond <see cref="range"/>.
+    /// </summary>
+    public List<UnitController> GetTargetsForPreview(CastContext castContext, List<UnitController> targets)
+    {
+        return GetTargetsInternal(castContext, targets, enforceRange: false);
+    }
+
+    private List<UnitController> GetTargetsInternal(
+        CastContext castContext,
+        List<UnitController> targets,
+        bool enforceRange)
+    {
         var caster = castContext.caster;
 
         Vector3 aimPoint = castContext.aimPoint ?? caster.transform.position;
@@ -34,7 +50,9 @@ public class SkillEffectTargetSmart : SkillEffectTarget
         foreach (Collider collider in hitColliders)
         {
             UnitController targetController = collider.GetComponentInParent<UnitController>();
-            if (targetController == null || !IsWithinRange(caster, targetController)) continue;
+            if (targetController == null
+                || (enforceRange && !IsWithinRange(caster, targetController)))
+                continue;
             potentialTargets.Add(targetController);
         }
 
@@ -79,7 +97,6 @@ public class SkillEffectTargetSmart : SkillEffectTarget
         }
 
         return new List<UnitController>(0);
-
     }
 
     private bool IsWithinRange(UnitController caster, UnitController target)

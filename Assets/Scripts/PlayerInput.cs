@@ -527,7 +527,7 @@ public class PlayerInput : NetworkBehaviour
 
         Vector3 aim = ResolveIndicatorAim(_myUnitController, data, indicator);
         var display = indicator.ToDisplayParams(data.castRange, forPreview: true);
-        var followTarget = SkillIndicatorTargetSnap.Resolve(
+        var followTarget = SkillIndicatorTargetSnap.ResolvePreview(
             indicator,
             _myUnitController,
             instance,
@@ -560,7 +560,7 @@ public class PlayerInput : NetworkBehaviour
         if (skills != null)
             instance = skills.GetSkill(_aimPreviewSlot, _aimPreviewIndex);
 
-        var followTarget = SkillIndicatorTargetSnap.Resolve(
+        var followTarget = SkillIndicatorTargetSnap.ResolvePreview(
             _aimPreviewIndicator,
             _myUnitController,
             instance,
@@ -680,15 +680,30 @@ public class PlayerInput : NetworkBehaviour
         var indicator = _aimPreviewIndicator;
         Vector3 aim = _skillAimWorldPosition;
         UnitController followTarget = null;
+        NetworkedSkillInstance instance = null;
         if (skill != null && _myUnitController != null)
         {
             aim = ResolveIndicatorAim(_myUnitController, skill, indicator);
-            NetworkedSkillInstance instance = null;
             var skills = _myUnitController.unitMediator != null
                 ? _myUnitController.unitMediator.Skills
                 : null;
             if (skills != null)
                 instance = skills.GetSkill(slot, index);
+
+            if (indicator != null
+                && !SkillIndicatorTargetSnap.TryValidateSnapCast(
+                    _myUnitController,
+                    skill,
+                    indicator,
+                    aim,
+                    instance,
+                    out _))
+            {
+                PlayerActionFeedback.ShowTargetOutOfRange(
+                    PlayerActionFeedback.ResolveSkillName(instance));
+                return;
+            }
+
             if (indicator != null)
             {
                 followTarget = SkillIndicatorTargetSnap.Resolve(
@@ -836,7 +851,9 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     Vector3 ResolveIndicatorAim(UnitController caster, SkillData skill, SkillIndicatorData indicator)
     {
-        Vector3 mouseAim = SkillAimUtil.ClampAimPoint(caster, _skillAimWorldPosition, skill);
+        Vector3 mouseAim = indicator != null && indicator.snapToTarget != null
+            ? _skillAimWorldPosition
+            : SkillAimUtil.ClampAimPoint(caster, _skillAimWorldPosition, skill);
         if (indicator == null)
             return mouseAim;
 
@@ -888,7 +905,21 @@ public class PlayerInput : NetworkBehaviour
         var result = skills.CastSkill(slot, index, aimPoint);
         if (result == SkillCastResult.OnCooldown
             && PlayerActionFeedback.ShouldShowSkillCooldown(_myUnitController, slot, index))
-            NotifyOwnerActionFailed(PlayerActionFailReason.OnCooldown, PlayerActionFeedback.ResolveSkillName(skill));
+        {
+            NotifyOwnerActionFailed(
+                PlayerActionFailReason.OnCooldown,
+                PlayerActionFeedback.ResolveSkillName(skill),
+                default,
+                -1);
+        }
+        else if (result == SkillCastResult.OutOfRange)
+        {
+            NotifyOwnerActionFailed(
+                PlayerActionFailReason.OutOfRange,
+                PlayerActionFeedback.ResolveSkillName(skill),
+                slot,
+                index);
+        }
     }
 
     [Server]
@@ -897,22 +928,37 @@ public class PlayerInput : NetworkBehaviour
         if (!PlayerActionFeedback.ShouldShowAttackCooldown(_myUnitController))
             return;
 
-        NotifyOwnerActionFailed(PlayerActionFailReason.OnCooldown, "Attack");
+        NotifyOwnerActionFailed(PlayerActionFailReason.OnCooldown, "Attack", default, -1);
     }
 
     [Server]
-    void NotifyOwnerActionFailed(PlayerActionFailReason reason, string actionName)
+    void NotifyOwnerActionFailed(
+        PlayerActionFailReason reason,
+        string actionName,
+        SkillSlotType slot,
+        int index)
     {
         if (connectionToClient == null)
             return;
 
-        TargetNotifyActionFailed(reason, actionName);
+        TargetNotifyActionFailed(reason, actionName, slot, index);
     }
 
     [TargetRpc]
-    void TargetNotifyActionFailed(PlayerActionFailReason reason, string actionName)
+    void TargetNotifyActionFailed(
+        PlayerActionFailReason reason,
+        string actionName,
+        SkillSlotType slot,
+        int index)
     {
         PlayerActionFeedback.Notify(reason, actionName);
+
+        if (reason == PlayerActionFailReason.OutOfRange
+            && !_isAimPreviewActive
+            && index >= 0)
+        {
+            TryBeginAimPreview(slot, index);
+        }
     }
 
     [Command]
