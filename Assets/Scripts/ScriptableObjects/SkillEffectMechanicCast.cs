@@ -72,6 +72,15 @@ public class SkillEffectMechanicCast : SkillEffectData
         };
         caster.unitMediator.Stats.ApplyModifier(turnSpeedModifier);
 
+        // Targets that were already dead at cast start (e.g. Resurrection) must remain valid.
+        // Living targets that die mid-cast are still dropped.
+        var allowDead = new HashSet<UnitController>();
+        foreach (var t in targets)
+        {
+            if (t != null && t.IsDead)
+                allowDead.Add(t);
+        }
+
         float elapsed = 0f;
         while (elapsed < castDuration)
         {
@@ -81,7 +90,9 @@ public class SkillEffectMechanicCast : SkillEffectData
             }
 
             // If all selected targets became invalid during cast, finish cast cleanly.
-            targets = targets.Where(t => t != null && !t.IsDead).ToList();
+            targets = targets
+                .Where(t => t != null && (!t.IsDead || allowDead.Contains(t)))
+                .ToList();
             if (targets.Count == 0)
             {
                 break;
