@@ -248,9 +248,9 @@ Everything is:
 ## Next: Read the Full Docs
 
 Once this works, check out:
-- **README.md** - Complete feature guide
-- **EXAMPLES.md** - 7 configuration templates
-- **API_REFERENCE.md** - Full API documentation
+- **INTEGRATION.md** - Architecture and how this fits the game
+- **EXAMPLES.md** - Configuration templates
+- **THREAT_SYSTEM.md** - Threat/aggro setup (optional)
 
 ---
 

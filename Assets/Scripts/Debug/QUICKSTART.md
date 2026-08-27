@@ -79,7 +79,6 @@ Want to tweak settings? Select the `DPSDebugUI` GameObject and adjust:
 
 ## Next Steps
 
-For more details, customization options, and technical information, see:
-**README_DPS_SYSTEM.md** in the same folder.
+For architecture and design principles, see **ARCHITECTURE.md** in the same folder.
 
 Enjoy tracking your DPS! 🎯
