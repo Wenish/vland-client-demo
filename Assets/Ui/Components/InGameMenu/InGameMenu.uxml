@@ -1,5 +1,8 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="SettingsPanel" src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uxml?fileID=9197481963319205126&amp;guid=9e6a1c3d4f5b6273c8d9e0f1a2b3c4d5&amp;type=3#SettingsPanel" />
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
+    <Style src="project://database/Assets/Ui/PageSettings.uss?fileID=7433441132597879392&amp;guid=c0d125950126a4907bf9909cff1baa2d&amp;type=3#PageSettings" />
+    <Style src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uss?fileID=7433441132597879392&amp;guid=8d5f0b2c3e4a5162b7c8d9e0f1a2b3c4&amp;type=3#SettingsPanel" />
     <Style src="project://database/Assets/Ui/Components/InGameMenu/InGameMenu.uss?fileID=7433441132597879392&amp;guid=f39a9501f50e95b4d9e53e4a95b87102&amp;type=3#InGameMenu" />
     <ui:VisualElement name="game-menu" picking-mode="Position" style="flex-grow: 1; align-items: center; justify-content: center; background-color: rgba(0, 4, 10, 0.72); display: none; position: absolute; left: 0; top: 0; right: 0; bottom: 0;">
         <ui:VisualElement name="panel" class="si-panel in-game-menu__panel">
@@ -8,7 +11,17 @@
             <OrnateButton text="LEAVE SERVER" name="buttonLeaveServer" class="si-button si-button--compact" />
             <OrnateButton text="STOP SERVER" name="buttonStopServer" class="si-button si-button--compact" />
             <OrnateButton text="EXIT GAME" name="buttonExitGame" class="si-button si-button--compact" icon-image="project://database/Assets/Art/Ui/Icons/icon-quit.svg?fileID=2800000&amp;guid=e1a1b2c3d4e5f60718293a4b5c6d7ea5&amp;type=3#icon-quit" />
+            <OrnateButton text="SETTINGS" name="buttonSettings" class="si-button si-button--compact" icon-image="project://database/Assets/Art/Ui/Icons/icon-settings.svg?fileID=2800000&amp;guid=e1a1b2c3d4e5f60718293a4b5c6d7ea3&amp;type=3#icon-settings" style="margin-top: 14px;" />
             <OrnateButton text="RETURN TO GAME" name="buttonReturnToGame" class="si-button si-button--compact" style="margin-top: 14px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="settings-overlay" picking-mode="Position" class="in-game-settings-overlay" style="display: none;">
+        <ui:VisualElement name="settings-window" picking-mode="Position" class="si-panel in-game-settings-window">
+            <ui:VisualElement name="settings-window-title-bar" class="in-game-settings-window__title-bar">
+                <ui:Label text="SETTINGS" class="in-game-settings-window__title" />
+                <OrnateButton name="buttonCloseSettings" text="X" class="si-button si-button--compact in-game-settings-window__close" />
+            </ui:VisualElement>
+            <ui:Instance template="SettingsPanel" name="SettingsPanelOverlay" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -49,6 +49,13 @@ namespace ShadowInfection.UI.InGameMenu
                 UiCursorRefresh.ScheduleForRoot(view.Root, MenuSortingOrder);
             }
 
+            var settingsOverlay = uiDocument.rootVisualElement.Q<VisualElement>("settings-overlay");
+            if (settingsOverlay != null)
+            {
+                UiPointerState.RegisterBlockingElement(settingsOverlay);
+                UiCursorRefresh.ScheduleForRoot(settingsOverlay, MenuSortingOrder);
+            }
+
             presenter.Bind(view, destroyCancellationToken);
         }
 
@@ -57,6 +64,14 @@ namespace ShadowInfection.UI.InGameMenu
             if (view != null && view.Root != null)
                 UiPointerState.UnregisterBlockingElement(view.Root);
 
+            if (uiDocument != null && uiDocument.rootVisualElement != null)
+            {
+                var settingsOverlay = uiDocument.rootVisualElement.Q<VisualElement>("settings-overlay");
+                if (settingsOverlay != null)
+                    UiPointerState.UnregisterBlockingElement(settingsOverlay);
+            }
+
+            view?.ReleaseModalInputBlock();
             presenter?.Unbind();
         }
     }

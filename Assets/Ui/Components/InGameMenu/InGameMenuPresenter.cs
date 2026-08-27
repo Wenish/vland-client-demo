@@ -3,7 +3,9 @@ using MessagePipe;
 using Mirror;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection.DI;
 using ShadowInfection.UI.Session;
+using ShadowInfection.UI.SettingsPanel;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +18,7 @@ namespace ShadowInfection.UI.InGameMenu
         private readonly ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility;
 
         private InGameMenuView view;
+        private SettingsPanelBinder settingsBinder;
         private R3.DisposableBag subscriptions;
         private bool vendorIsOpen;
         private bool lastStopServerVisible;
@@ -44,7 +47,16 @@ namespace ShadowInfection.UI.InGameMenu
             view.LeaveServerClicked += OnLeaveServerClicked;
             view.StopServerClicked += OnStopServerClicked;
             view.ExitGameClicked += OnExitGameClicked;
+            view.SettingsClicked += OpenSettings;
+            view.SettingsCloseClicked += CloseSettings;
             view.ReturnToGameClicked += CloseMenu;
+
+            if (view.SettingsPanel != null)
+            {
+                settingsBinder = new SettingsPanelBinder(view.SettingsPanel);
+                settingsBinder.Bind(GameServices.Settings);
+                view.SettingsPanel.BackClicked += CloseSettings;
+            }
 
             RefreshRoleButtons();
             subscriptions.Add(vendorVisibility.Subscribe(OnVendorVisibilityChanged));
@@ -65,9 +77,16 @@ namespace ShadowInfection.UI.InGameMenu
                 view.LeaveServerClicked -= OnLeaveServerClicked;
                 view.StopServerClicked -= OnStopServerClicked;
                 view.ExitGameClicked -= OnExitGameClicked;
+                view.SettingsClicked -= OpenSettings;
+                view.SettingsCloseClicked -= CloseSettings;
                 view.ReturnToGameClicked -= CloseMenu;
+
+                if (view.SettingsPanel != null)
+                    view.SettingsPanel.BackClicked -= CloseSettings;
             }
 
+            settingsBinder?.Unbind();
+            settingsBinder = null;
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
             view = null;
@@ -86,6 +105,12 @@ namespace ShadowInfection.UI.InGameMenu
                 return;
             }
 
+            if (view != null && view.IsSettingsOverlayVisible)
+            {
+                CloseSettings();
+                return;
+            }
+
             if (view != null && view.IsVisible)
                 CloseMenu();
             else
@@ -95,12 +120,26 @@ namespace ShadowInfection.UI.InGameMenu
         private void OpenMenu()
         {
             closeVendor.Publish(new RequestCloseVendorWindowEvent());
+            CloseSettings();
             view?.SetVisible(true);
         }
 
         private void CloseMenu()
         {
+            CloseSettings();
             view?.SetVisible(false);
+        }
+
+        private void OpenSettings()
+        {
+            settingsBinder?.Refresh();
+            view?.SettingsPanel?.SetActiveTab(SettingsTab.General);
+            view?.SetSettingsOverlayVisible(true);
+        }
+
+        private void CloseSettings()
+        {
+            view?.SetSettingsOverlayVisible(false);
         }
 
         private void OnVendorVisibilityChanged(VendorWindowVisibilityChangedEvent evt)
