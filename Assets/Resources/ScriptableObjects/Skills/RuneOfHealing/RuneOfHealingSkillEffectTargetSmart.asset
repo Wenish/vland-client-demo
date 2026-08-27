@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: RuneOfHealingSkillEffectTargetSmart
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectTargetSmart
   countsAsCasted: 0
+  enabled: 1
   teamMask: 3
   lifeMask: 1
   distinct: 1
   maxTargets: 0
   randomizeOrder: 0
   sortByDistance: 1
-  range: 40
+  range: 15
   searchRadius: 2
   unitLayer:
     serializedVersion: 2

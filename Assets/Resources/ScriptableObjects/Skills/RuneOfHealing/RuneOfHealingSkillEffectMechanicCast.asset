@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: RuneOfHealingSkillEffectMechanicCast
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicCast
   countsAsCasted: 0
+  enabled: 1
   castDuration: 0.25
   moveSpeedPercent: 0
   turnSpeedPercent: 1
+  updateAimDuringCast: 1
