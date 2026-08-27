@@ -65,6 +65,26 @@ public abstract class SkillEffectTarget : SkillEffectData
         return (teamMask & TargetTeam.Enemies) != 0;
     }
 
+    protected bool AllowsSelfTarget(CastContext context)
+    {
+        return context?.caster != null && PassesTeamMask(context, context.caster);
+    }
+
+    /// <summary>
+    /// Returns caster when Left Alt force-self is active and this target allows Self.
+    /// </summary>
+    protected List<UnitController> TryGetForcedSelfTarget(CastContext context)
+    {
+        if (!context.forceSelfTarget || !AllowsSelfTarget(context))
+            return null;
+
+        var filtered = ApplyCommonFilters(context, new List<UnitController> { context.caster });
+        if (!filtered.Any())
+            return null;
+
+        return new List<UnitController> { context.caster };
+    }
+
     protected IEnumerable<UnitController> ApplyCommonFilters(CastContext context, IEnumerable<UnitController> raw)
     {
         var caster = context.caster;

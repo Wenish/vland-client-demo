@@ -531,7 +531,8 @@ public class PlayerInput : NetworkBehaviour
             indicator,
             _myUnitController,
             instance,
-            aim);
+            aim,
+            IsLeftAltPressedForSelfTarget());
         GameMessages.Publish(
             new SkillAimPreviewStartedEvent(
                 _myUnitController,
@@ -564,7 +565,8 @@ public class PlayerInput : NetworkBehaviour
             _aimPreviewIndicator,
             _myUnitController,
             instance,
-            aim);
+            aim,
+            IsLeftAltPressedForSelfTarget());
 
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
             service.UpdateAim(aim, followTarget);
@@ -612,13 +614,14 @@ public class PlayerInput : NetworkBehaviour
                 indicator,
                 _myUnitController,
                 instance,
-                aim);
+                aim,
+                IsLeftAltPressedForSelfTarget());
         }
 
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
             service.UpdateAim(aim, followTarget);
 
-        CmdUpdateCastAim(skillName, aim);
+        CmdUpdateCastAim(skillName, aim, IsLeftAltPressedForSelfTarget());
     }
 
     [Client]
@@ -652,7 +655,7 @@ public class PlayerInput : NetworkBehaviour
     }
 
     [Command]
-    void CmdUpdateCastAim(string skillName, Vector3 aimPoint)
+    void CmdUpdateCastAim(string skillName, Vector3 aimPoint, bool forceSelfTarget)
     {
         if (_myUnitController == null || _myUnitController.unitMediator == null)
             return;
@@ -665,7 +668,7 @@ public class PlayerInput : NetworkBehaviour
         if (instance == null)
             return;
 
-        instance.ServerUpdateRunningCastAim(aimPoint);
+        instance.ServerUpdateRunningCastAim(aimPoint, forceSelfTarget);
     }
 
     [Client]
@@ -681,6 +684,7 @@ public class PlayerInput : NetworkBehaviour
         Vector3 aim = _skillAimWorldPosition;
         UnitController followTarget = null;
         NetworkedSkillInstance instance = null;
+        bool forceSelfTarget = IsLeftAltPressedForSelfTarget();
         if (skill != null && _myUnitController != null)
         {
             aim = ResolveIndicatorAim(_myUnitController, skill, indicator);
@@ -697,7 +701,8 @@ public class PlayerInput : NetworkBehaviour
                     indicator,
                     aim,
                     instance,
-                    out _))
+                    out _,
+                    forceSelfTarget))
             {
                 PlayerActionFeedback.ShowTargetOutOfRange(
                     PlayerActionFeedback.ResolveSkillName(instance));
@@ -710,7 +715,8 @@ public class PlayerInput : NetworkBehaviour
                     indicator,
                     _myUnitController,
                     instance,
-                    aim);
+                    aim,
+                    forceSelfTarget);
             }
         }
 
@@ -722,7 +728,7 @@ public class PlayerInput : NetworkBehaviour
         ClearAimPreviewState();
 
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
-        CmdUseSkill(slot, index, aim);
+        CmdUseSkill(slot, index, aim, forceSelfTarget);
     }
 
     [Client]
@@ -752,7 +758,7 @@ public class PlayerInput : NetworkBehaviour
 
         Vector3 aim = SeedLocalAimForSkill(slot, index);
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
-        CmdUseSkill(slot, index, aim);
+        CmdUseSkill(slot, index, aim, IsLeftAltPressedForSelfTarget());
     }
 
     /// <summary>
@@ -789,7 +795,8 @@ public class PlayerInput : NetworkBehaviour
                 indicator,
                 _myUnitController,
                 instance,
-                aim);
+                aim,
+                IsLeftAltPressedForSelfTarget());
         }
 
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
@@ -810,6 +817,10 @@ public class PlayerInput : NetworkBehaviour
     }
 
     // Helpers
+    [Client]
+    private static bool IsLeftAltPressedForSelfTarget() =>
+        SkillTargetingInput.IsLeftAltPressedForSelfTarget();
+
     [Client]
     private static bool IsAltPressed()
     {
@@ -877,7 +888,7 @@ public class PlayerInput : NetworkBehaviour
     }
 
     [Command]
-    public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint)
+    public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint, bool forceSelfTarget)
     {
         if (_myUnitController == null || _myUnitController.unitMediator == null || _myUnitController.unitMediator.Skills == null)
             return;
@@ -902,7 +913,7 @@ public class PlayerInput : NetworkBehaviour
             }
         }
 
-        var result = skills.CastSkill(slot, index, aimPoint);
+        var result = skills.CastSkill(slot, index, aimPoint, forceSelfTarget);
         if (result == SkillCastResult.OnCooldown
             && PlayerActionFeedback.ShouldShowSkillCooldown(_myUnitController, slot, index))
         {

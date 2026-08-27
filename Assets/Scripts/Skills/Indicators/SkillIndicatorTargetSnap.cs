@@ -7,9 +7,10 @@ public static class SkillIndicatorTargetSnap
         SkillIndicatorData indicator,
         UnitController caster,
         NetworkedSkillInstance skillInstance,
-        Vector3 aimPoint)
+        Vector3 aimPoint,
+        bool forceSelfTarget = false)
     {
-        return ResolveInternal(indicator, caster, skillInstance, aimPoint, forPreview: false);
+        return ResolveInternal(indicator, caster, skillInstance, aimPoint, forPreview: false, forceSelfTarget);
     }
 
     /// <summary>
@@ -19,9 +20,10 @@ public static class SkillIndicatorTargetSnap
         SkillIndicatorData indicator,
         UnitController caster,
         NetworkedSkillInstance skillInstance,
-        Vector3 aimPoint)
+        Vector3 aimPoint,
+        bool forceSelfTarget = false)
     {
-        return ResolveInternal(indicator, caster, skillInstance, aimPoint, forPreview: true);
+        return ResolveInternal(indicator, caster, skillInstance, aimPoint, forPreview: true, forceSelfTarget);
     }
 
     public static bool IsUnitInSnapRange(
@@ -59,13 +61,14 @@ public static class SkillIndicatorTargetSnap
         SkillIndicatorData indicator,
         Vector3 aimPoint,
         NetworkedSkillInstance skillInstance,
-        out UnitController snapTarget)
+        out UnitController snapTarget,
+        bool forceSelfTarget = false)
     {
         snapTarget = null;
         if (indicator?.snapToTarget == null || caster == null)
             return true;
 
-        snapTarget = ResolvePreview(indicator, caster, skillInstance, aimPoint);
+        snapTarget = ResolvePreview(indicator, caster, skillInstance, aimPoint, forceSelfTarget);
         if (snapTarget == null)
             return true;
 
@@ -77,7 +80,8 @@ public static class SkillIndicatorTargetSnap
         UnitController caster,
         NetworkedSkillInstance skillInstance,
         Vector3 aimPoint,
-        bool forPreview)
+        bool forPreview,
+        bool forceSelfTarget)
     {
         if (indicator == null || indicator.snapToTarget == null || caster == null)
             return null;
@@ -86,6 +90,7 @@ public static class SkillIndicatorTargetSnap
         {
             aimPoint = aimPoint,
             aimRotation = SkillAimUtil.GetAimRotation(caster, aimPoint),
+            forceSelfTarget = forceSelfTarget,
         };
 
         var seeds = new List<UnitController> { caster };

@@ -9,6 +9,12 @@ public class CastContext
     public Quaternion? aimRotation;
 
     /// <summary>
+    /// When true, target resolution prefers the caster if the effect's team mask allows Self.
+    /// Set from client Left Alt during cast; replicated via skill command.
+    /// </summary>
+    public bool forceSelfTarget;
+
+    /// <summary>
     /// Set by the active Cast/Channel mechanic: live mouse aim updates CastContext while true.
     /// </summary>
     public bool updatesAimDuringCast;

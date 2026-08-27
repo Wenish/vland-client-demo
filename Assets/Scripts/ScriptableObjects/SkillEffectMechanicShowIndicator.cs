@@ -79,7 +79,8 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
                 indicator,
                 ctx.caster,
                 ctx.skillInstance,
-                aim);
+                aim,
+                ctx.forceSelfTarget);
         }
 
         int sessionId = ctx.skillInstance.ServerShowSkillIndicator(display, aim, followTarget);
