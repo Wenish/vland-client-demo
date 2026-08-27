@@ -235,8 +235,9 @@ public static class SkillAimUtil
         UnitController snapTarget = null)
     {
         // Snap wins for aim-point placement; for non-aim, prefer the effect target.
+        // Dead units are valid when smart-target LifeMask includes Dead (e.g. Resurrection).
         UnitController placementTarget = atAimPoint ? snapTarget : (snapTarget ?? effectTarget);
-        if (!atAimPoint && placementTarget != null && !placementTarget.IsDead)
+        if (!atAimPoint && placementTarget != null)
             return placementTarget.transform.position;
 
         Vector3 aim = castContext?.aimPoint ?? effectTarget?.transform.position ?? Vector3.zero;
@@ -263,7 +264,7 @@ public static class SkillAimUtil
             ? caster.transform.position.y + visualYOffset
             : aimPoint.y;
 
-        if (snapTarget != null && !snapTarget.IsDead)
+        if (snapTarget != null)
         {
             Vector3 pos = snapTarget.transform.position;
             pos.y = groundY;
