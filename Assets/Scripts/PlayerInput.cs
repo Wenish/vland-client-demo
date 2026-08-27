@@ -227,6 +227,13 @@ public class PlayerInput : NetworkBehaviour
         bool firePressed = (mousePressed && !overUi) || gamepadPressed || keyboardPressed;
         if (!IsAltPressed() && firePressed)
         {
+            // During aim preview, Fire1 confirms the skill cast instead of auto-attacking.
+            if (_isAimPreviewActive)
+            {
+                ConfirmAimPreview();
+                return;
+            }
+
             PlayerActionFeedback.TryNotifyAttackCooldown(_myUnitController);
             if (_delaySendSetFire1InputCoroutine != null)
             {
@@ -463,19 +470,16 @@ public class PlayerInput : NetworkBehaviour
             {
                 TryBeginAimPreview(slot, index);
             }
+            else if (_isAimPreviewActive
+                && _aimPreviewSlot == slot
+                && _aimPreviewIndex == index)
+            {
+                ConfirmAimPreview();
+            }
             else if (!_isAimPreviewActive)
             {
                 TryUseSkill(slot, index);
             }
-            return;
-        }
-
-        if (_isAimPreviewActive
-            && _aimPreviewSlot == slot
-            && _aimPreviewIndex == index
-            && key.wasReleasedThisFrame)
-        {
-            ConfirmAimPreview();
         }
     }
 
