@@ -3,5 +3,35 @@
     "dotnet.defaultSolution": "vland-client-demo.slnx",
     "files.exclude": {
         "**/*.meta": true
-    }
+    },
+    "kanban-markdown.addNewCardsToTop": true,
+    "kanban-markdown.language": "en",
+    "kanban-markdown.showDueDate": false,
+    "kanban-markdown.showEpic": false,
+    "kanban-markdown.showLabels": true,
+    "kanban-markdown.showPriorityBadges": false,
+    "kanban-markdown.showAssignee": false,
+    "kanban-markdown.columns": [
+
+        {
+            "id": "backlog",
+            "name": "Backlog",
+            "color": "#6b7280"
+        },
+        {
+            "id": "in-progress",
+            "name": "In Progress",
+            "color": "#f59e0b"
+        },
+        {
+            "id": "review",
+            "name": "Review",
+            "color": "#8b5cf6"
+        },
+        {
+            "id": "done",
+            "name": "Done",
+            "color": "#22c55e"
+        }
+    ]
 }
