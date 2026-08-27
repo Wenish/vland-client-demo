@@ -213,8 +213,19 @@ namespace ShadowInfection.Skills.Indicators
             if (_root == null || _caster == null || !_root.gameObject.activeSelf)
                 return;
 
-            if (_followTarget != null && (_followTarget.Equals(null) || _followTarget.IsDead))
+            // Drop destroyed units. Drop dead units only when the snap target filter
+            // does not allow Dead (Resurrection keeps corpses as valid snap targets).
+            if (_followTarget != null && _followTarget.Equals(null))
+            {
                 _followTarget = null;
+            }
+            else if (_followTarget != null
+                && _followTarget.IsDead
+                && (_snapToTarget == null
+                    || (_snapToTarget.lifeMask & SkillEffectTarget.LifeMask.Dead) == 0))
+            {
+                _followTarget = null;
+            }
 
             Vector3 casterPos = _caster.transform.position;
             casterPos.y += 0.05f;
