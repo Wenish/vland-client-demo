@@ -19,8 +19,13 @@ MonoBehaviour:
     50% health.
   cooldown: 6
   castCost: 0
-  castRange: 40
+  canActivateWhileBusy: 0
+  castRange: 15
   aimPreviewIndicator: {fileID: 11400000, guid: 989d850c0fab409a95e04dfca39cc439, type: 2}
+  hasRequiredWeapon: 0
+  requiredWeapon: 0
+  npcOnly: 0
   initTrigger: {fileID: 0}
   castTrigger: {fileID: 11400000, guid: e32e2b758bee74562a892ef88af0452f, type: 2}
+  reactiveTriggers: []
   iconTexture: {fileID: 2800000, guid: 9341fb2d26b8344369aa09a59b5b4c16, type: 3}
