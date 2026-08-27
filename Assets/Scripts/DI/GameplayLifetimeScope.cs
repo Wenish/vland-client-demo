@@ -226,6 +226,10 @@ namespace ShadowInfection.DI
 
             RegisterMatchContracts(builder, zombie, castle, skirmish);
 
+            builder.Register<SkillAimPreviewSession>(Lifetime.Singleton)
+                .As<ISkillAimPreviewSession>()
+                .As<ISkillAimPreviewSessionNotifier>();
+
             builder.RegisterEntryPoint<ShadowInfection.Skills.Indicators.SkillIndicatorService>()
                 .As<ISkillIndicatorService>();
         }

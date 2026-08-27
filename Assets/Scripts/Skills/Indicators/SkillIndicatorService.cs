@@ -11,6 +11,7 @@ namespace ShadowInfection.Skills.Indicators
         private const int PreviewSessionId = -1;
         private const float PendingCastPreviewTimeoutSeconds = 0.05f;
 
+        private readonly ISkillAimPreviewSessionNotifier _aimPreviewSession;
         private readonly Dictionary<int, SkillIndicatorSessionView> _sessions = new();
         private DisposableBag _subscriptions;
         private UnitController _localUnit;
@@ -23,6 +24,11 @@ namespace ShadowInfection.Skills.Indicators
         /// </summary>
         private bool _holdingPreviewForCast;
         private float _holdingPreviewForCastSince;
+
+        public SkillIndicatorService(ISkillAimPreviewSessionNotifier aimPreviewSession)
+        {
+            _aimPreviewSession = aimPreviewSession;
+        }
 
         public void Start()
         {
@@ -109,6 +115,12 @@ namespace ShadowInfection.Skills.Indicators
                 visualSource,
                 followTarget,
                 skillInstance);
+
+            _aimPreviewSession.Begin(new SkillAimPreviewState(
+                display.snapToTarget,
+                followTarget,
+                aimPoint,
+                ResolveSkillData(skillInstance)));
         }
 
         public void UpdateAim(Vector3 aimPoint, UnitController followTarget = null)
@@ -131,12 +143,16 @@ namespace ShadowInfection.Skills.Indicators
             }
 
             ApplyLatestAimToFollowSessions(immediateTick: true);
+
+            if (!_holdingPreviewForCast && _sessions.ContainsKey(PreviewSessionId))
+                _aimPreviewSession.Update(aimPoint, followTarget);
         }
 
         public void EndPreview()
         {
             _holdingPreviewForCast = false;
             EndSession(PreviewSessionId);
+            _aimPreviewSession.End();
         }
 
         public void BeginSession(
@@ -220,6 +236,8 @@ namespace ShadowInfection.Skills.Indicators
                 _hasAimPoint = false;
                 _latestFollowTarget = null;
             }
+
+            _aimPreviewSession.End();
         }
 
         private bool TryPromotePreviewToCast(
@@ -311,6 +329,8 @@ namespace ShadowInfection.Skills.Indicators
 
         private void OnAimPreviewEnded(SkillAimPreviewEndedEvent evt)
         {
+            _aimPreviewSession.End();
+
             if (evt != null && evt.ConfirmedCast)
             {
                 // Keep preview visible until cast Show promotes/replaces it.
@@ -374,6 +394,19 @@ namespace ShadowInfection.Skills.Indicators
                 skillInstance);
             _sessions[sessionId] = view;
             view.Tick();
+        }
+
+        private static SkillData ResolveSkillData(NetworkedSkillInstance skillInstance)
+        {
+            if (skillInstance == null)
+                return null;
+
+            var skill = skillInstance.skillData;
+            if (skill != null)
+                return skill;
+
+            skillInstance.ResolveSkillData();
+            return skillInstance.skillData;
         }
     }
 }
