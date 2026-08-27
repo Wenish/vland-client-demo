@@ -224,8 +224,9 @@ public static class SkillAimUtil
     }
 
     /// <summary>
-    /// Shared circle / ground AoE position for mechanics and indicators.
-    /// Self = caster, AtAimPoint = mouse aim (or snapped unit), snap wins when present.
+    /// Shared circle / ground AoE position for skill mechanics (VFX, area zones, etc.).
+    /// At aim point = mouse aim (or snapped unit). Otherwise = effect target position
+    /// (not caster — IndicatorPlacement.Self is only for indicator previews).
     /// </summary>
     public static Vector3 ResolveCirclePlacement(
         CastContext castContext,
@@ -233,6 +234,11 @@ public static class SkillAimUtil
         bool atAimPoint,
         UnitController snapTarget = null)
     {
+        // Snap wins for aim-point placement; for non-aim, prefer the effect target.
+        UnitController placementTarget = atAimPoint ? snapTarget : (snapTarget ?? effectTarget);
+        if (!atAimPoint && placementTarget != null && !placementTarget.IsDead)
+            return placementTarget.transform.position;
+
         Vector3 aim = castContext?.aimPoint ?? effectTarget?.transform.position ?? Vector3.zero;
         return ResolveCirclePlacement(
             castContext?.caster,
@@ -240,7 +246,7 @@ public static class SkillAimUtil
             atAimPoint
                 ? SkillIndicatorData.IndicatorPlacement.AtAimPoint
                 : SkillIndicatorData.IndicatorPlacement.Self,
-            snapTarget);
+            atAimPoint ? snapTarget : null);
     }
 
     /// <summary>
