@@ -157,7 +157,11 @@ namespace ShadowInfection.Zombie
                         await UniTask.Yield(PlayerLoopTiming.Update, ct);
                     }
 
+                    if (!runtime.IsServer || runtime.IsGameOver)
+                        return;
+
                     runtime.SetWaveRunning(false);
+                    runtime.NotifyWaveCompleted(runtime.CurrentWave, wavePlan.IsRecurringSpecial);
                 }
             }
             catch (OperationCanceledException)
@@ -209,6 +213,7 @@ namespace ShadowInfection.Zombie
         {
             var modeConfig = runtime.ModeConfig;
             ZombieModeConfig.WaveDefinition selectedWave = modeConfig.regularWave;
+            bool isRecurringSpecial = false;
 
             if (modeConfig.TryGetOverride(waveNumber, out var fixedOverride) && fixedOverride.wave != null)
             {
@@ -219,7 +224,10 @@ namespace ShadowInfection.Zombie
             {
                 var recurringOverride = TryGetRecurringSpecialWave(waveNumber);
                 if (recurringOverride != null && recurringOverride.wave != null && recurringOverride.replaceRegularWave)
+                {
                     selectedWave = recurringOverride.wave;
+                    isRecurringSpecial = true;
+                }
             }
 
             int playerCount = runtime.GetActivePlayerCount();
@@ -236,7 +244,8 @@ namespace ShadowInfection.Zombie
             {
                 SpawnQueue = BuildSpawnQueue(selectedWave, totalToSpawn),
                 HealthMultiplier = Mathf.Max(0.01f, healthWaveMultiplier * playerHealthMultiplier),
-                DamageMultiplier = Mathf.Max(0.01f, damageWaveMultiplier * playerDamageMultiplier)
+                DamageMultiplier = Mathf.Max(0.01f, damageWaveMultiplier * playerDamageMultiplier),
+                IsRecurringSpecial = isRecurringSpecial
             };
         }
 

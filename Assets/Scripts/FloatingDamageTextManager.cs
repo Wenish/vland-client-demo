@@ -31,6 +31,7 @@ public class FloatingDamageTextManager : MonoBehaviour
         GameMessages.Subscribe<UnitShieldedEvent>(ref subscriptions, OnUnitShielded);
         GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnMyPlayerUnitSpawned);
         GameMessages.Subscribe<UnitDroppedGoldEvent>(ref subscriptions, OnUnitDroppedGold);
+        GameMessages.Subscribe<PlayerReceivesGoldEvent>(ref subscriptions, OnPlayerReceivesGold);
     }
 
     void OnDisable()
@@ -92,11 +93,35 @@ public class FloatingDamageTextManager : MonoBehaviour
 
     public void OnUnitDroppedGold(UnitDroppedGoldEvent unitDroppedGoldEvent)
     {
-        var hasMyUnitedKilledTheUnit = unitDroppedGoldEvent.Killer == myPlayerUnitController;
-        if (hasMyUnitedKilledTheUnit)
-        {
-            SpawnDamageText($"+{unitDroppedGoldEvent.GoldAmount}<sprite name=\"gold_coin\">", unitDroppedGoldEvent.GoldAmount, unitDroppedGoldEvent.Unit.transform, yellowColor);
-        }
+        if (myPlayerUnitController == null || myPlayerUnitController.IsDead)
+            return;
+
+        if (unitDroppedGoldEvent?.Unit == null)
+            return;
+
+        SpawnDamageText(
+            $"+{unitDroppedGoldEvent.GoldAmount}<sprite name=\"gold_coin\">",
+            unitDroppedGoldEvent.GoldAmount,
+            unitDroppedGoldEvent.Unit.transform,
+            yellowColor);
+    }
+
+    public void OnPlayerReceivesGold(PlayerReceivesGoldEvent playerReceivesGoldEvent)
+    {
+        if (playerReceivesGoldEvent?.Player == null || playerReceivesGoldEvent.GoldAmount <= 0)
+            return;
+
+        if (playerReceivesGoldEvent.GoldDropUnit != null)
+            return;
+
+        if (playerReceivesGoldEvent.Player != myPlayerUnitController)
+            return;
+
+        SpawnDamageText(
+            $"+{playerReceivesGoldEvent.GoldAmount}<sprite name=\"gold_coin\">",
+            playerReceivesGoldEvent.GoldAmount,
+            playerReceivesGoldEvent.Player.transform,
+            yellowColor);
     }
 
     public void OnMyPlayerUnitSpawned(MyPlayerUnitSpawnedEvent myPlayerUnitSpawnedEvent)
