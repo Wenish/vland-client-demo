@@ -38,18 +38,18 @@
     align-items: center;
     justify-content: flex-start;
     flex-shrink: 0;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     picking-mode: Ignore;
 }
 
 .unit-nameplate__vitals {
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
+    width: 101px;
+    min-width: 101px;
+    max-width: 101px;
     flex-shrink: 0;
     flex-direction: column;
     background-color: rgb(0, 0, 0);
-    border-width: 2px;
+    border-width: 1px;
     border-color: rgb(0, 0, 0);
     overflow: hidden;
     picking-mode: Ignore;
@@ -57,18 +57,18 @@
 
 .unit-nameplate__bar-track {
     position: relative;
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
-    height: 18px;
+    width: 101px;
+    min-width: 101px;
+    max-width: 101px;
+    height: 13px;
     background-color: rgb(20, 20, 20);
     overflow: hidden;
     flex-shrink: 0;
 }
 
 .unit-nameplate__bar-track--shield {
-    height: 6px;
-    margin-bottom: 2px;
+    height: 4px;
+    margin-bottom: 1px;
 }
 
 .unit-nameplate__bar-fill {
@@ -86,35 +86,35 @@
 
 .unit-nameplate__health-row {
     position: relative;
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
-    height: 18px;
+    width: 101px;
+    min-width: 101px;
+    max-width: 101px;
+    height: 13px;
     overflow: hidden;
     flex-shrink: 0;
 }
 
 .unit-nameplate__health-row .unit-nameplate__bar-track {
-    width: 140px;
-    height: 18px;
+    width: 101px;
+    height: 13px;
 }
 
 .unit-nameplate__name {
     position: absolute;
     left: 0;
     top: 0;
-    width: 140px;
-    height: 18px;
+    width: 101px;
+    height: 13px;
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;
     margin-bottom: 0;
-    padding-left: 2px;
+    padding-left: 1px;
     padding-right: 0;
     padding-top: 0;
     padding-bottom: 0;
     -unity-text-align: middle-left;
-    font-size: 12px;
+    font-size: 9px;
     color: rgb(255, 255, 255);
     -unity-font-definition: var(--font-body);
     text-shadow: 1px 1px 0 rgb(0, 0, 0);
@@ -131,17 +131,17 @@
 }
 
 .unit-nameplate__tick--25 {
-    left: 35px;
+    left: 25px;
     bottom: auto;
     height: 50%;
 }
 
 .unit-nameplate__tick--50 {
-    left: 70px;
+    left: 50px;
 }
 
 .unit-nameplate__tick--75 {
-    left: 105px;
+    left: 76px;
     bottom: auto;
     height: 50%;
 }
@@ -150,20 +150,20 @@
     flex-direction: row;
     align-items: center;
     flex-shrink: 0;
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
-    height: 12px;
-    min-height: 12px;
-    margin-top: 2px;
+    width: 101px;
+    min-width: 101px;
+    max-width: 101px;
+    height: 9px;
+    min-height: 9px;
+    margin-top: 1px;
     picking-mode: Ignore;
 }
 
 .unit-nameplate__cast-icon {
-    width: 12px;
-    height: 12px;
+    width: 9px;
+    height: 9px;
     flex-shrink: 0;
-    margin-right: 2px;
+    margin-right: 1px;
     background-color: rgb(0, 0, 0);
     border-width: 1px;
     border-color: rgb(0, 0, 0);
@@ -171,10 +171,10 @@
 }
 
 .unit-nameplate__cast-track {
-    width: 126px;
-    min-width: 126px;
-    max-width: 126px;
-    height: 8px;
+    width: 91px;
+    min-width: 91px;
+    max-width: 91px;
+    height: 6px;
     flex-grow: 0;
     flex-shrink: 0;
     position: relative;
@@ -195,12 +195,12 @@
 
 .buff-icon {
     position: relative;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
     flex-shrink: 0;
-    margin-right: 2px;
+    margin-right: 1px;
     background-color: rgb(0, 0, 0);
     border-width: 1px;
     border-color: rgb(0, 0, 0);
@@ -211,8 +211,8 @@
 }
 
 .buff-icon__image {
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
     -unity-background-scale-mode: scale-to-fit;
 }
 
@@ -230,7 +230,7 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
-    font-size: 14px;
+    font-size: 10px;
     color: rgb(255, 255, 255);
     -unity-font-definition: var(--font-body-bold);
     -unity-text-align: middle-center;
@@ -242,7 +242,7 @@
     position: absolute;
     top: 0;
     right: 1px;
-    font-size: 8px;
+    font-size: 6px;
     color: rgb(255, 244, 231);
     -unity-font-definition: var(--font-body-bold);
     text-shadow: 0 0 1px rgb(0, 0, 0);
