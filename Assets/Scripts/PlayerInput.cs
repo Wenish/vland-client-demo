@@ -193,6 +193,9 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputWorldPing()
     {
+        // Aim preview uses Left Mouse to confirm; Left Alt is the self-target modifier.
+        if (_isAimPreviewActive)
+            return;
 
         if ((IsAltPressed()) && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -219,7 +222,8 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputPressingFire1()
     {
-        // Fire1 mapped to primary action; ignore when Alt is held
+        // Fire1 mapped to primary action. Alt+click is world ping except during aim preview,
+        // where Left Mouse confirms the skill (Left Alt remains the self-target modifier).
         // When pointer is over LoadoutPanel, block only the mouse-based press (allow gamepad/keyboard)
         bool mousePressed = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
         bool gamepadPressed = Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame;
@@ -228,14 +232,18 @@ public class PlayerInput : NetworkBehaviour
         bool overUi = UiPointerState.IsPointerOverBlockingElement;
 
         bool firePressed = (mousePressed && !overUi) || gamepadPressed || keyboardPressed;
-        if (!IsAltPressed() && firePressed)
+        if (firePressed)
         {
-            // During aim preview, Fire1 confirms the skill cast instead of auto-attacking.
+            // During aim preview, Fire1 confirms the skill even while Left Alt self-target is held.
             if (_isAimPreviewActive)
             {
                 ConfirmAimPreview();
                 return;
             }
+
+            // Outside preview, Alt+click is world ping — do not auto-attack.
+            if (IsAltPressed())
+                return;
 
             PlayerActionFeedback.TryNotifyAttackCooldown(_myUnitController);
             if (_delaySendSetFire1InputCoroutine != null)
@@ -911,6 +919,12 @@ public class PlayerInput : NetworkBehaviour
         Vector3 mouseAim = indicator != null && indicator.snapToTarget != null
             ? _skillAimWorldPosition
             : SkillAimUtil.ClampAimPoint(caster, _skillAimWorldPosition, skill);
+        mouseAim = SkillAimUtil.ApplyForceSelfAim(
+            caster,
+            mouseAim,
+            IsLeftAltPressedForSelfTarget(),
+            indicator,
+            skill);
         if (indicator == null)
             return mouseAim;
 

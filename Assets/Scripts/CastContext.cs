@@ -9,8 +9,9 @@ public class CastContext
     public Quaternion? aimRotation;
 
     /// <summary>
-    /// When true, target resolution prefers the caster if the effect's team mask allows Self.
-    /// Set from client Left Alt during cast; replicated via skill command.
+    /// When true (client Left Alt, replicated via skill command):
+    /// unit targeting prefers the caster if the effect's team mask allows Self,
+    /// and mouse-placed skills (<c>AtAimPoint</c> / <c>spawnAtAimPoint</c>) resolve at the caster.
     /// </summary>
     public bool forceSelfTarget;
 
