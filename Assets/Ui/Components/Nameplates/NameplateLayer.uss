@@ -1,0 +1,243 @@
+@import url("../../Theme/DesignTokens.uss");
+
+.nameplate-layer-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.nameplate-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.unit-nameplate {
+    position: absolute;
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__column {
+    flex-direction: column;
+    align-items: flex-start;
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__buff-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 2px;
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__vitals {
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: rgb(0, 0, 0);
+    border-width: 2px;
+    border-color: rgb(0, 0, 0);
+    overflow: hidden;
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__bar-track {
+    position: relative;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    height: 18px;
+    background-color: rgb(20, 20, 20);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.unit-nameplate__bar-track--shield {
+    height: 6px;
+    margin-bottom: 2px;
+}
+
+.unit-nameplate__bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background-color: rgb(39, 90, 145);
+}
+
+.unit-nameplate__bar-fill--shield {
+    background-color: rgb(130, 210, 230);
+}
+
+.unit-nameplate__health-row {
+    position: relative;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    height: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.unit-nameplate__health-row .unit-nameplate__bar-track {
+    width: 140px;
+    height: 18px;
+}
+
+.unit-nameplate__name {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 140px;
+    height: 18px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 2px;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    -unity-text-align: middle-left;
+    font-size: 12px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: var(--font-body);
+    text-shadow: 1px 1px 0 rgb(0, 0, 0);
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(0, 0, 0, 0.55);
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__tick--25 {
+    left: 35px;
+}
+
+.unit-nameplate__tick--50 {
+    left: 70px;
+    width: 2px;
+}
+
+.unit-nameplate__tick--75 {
+    left: 105px;
+}
+
+.unit-nameplate__cast-bar {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    height: 12px;
+    min-height: 12px;
+    margin-top: 2px;
+    picking-mode: Ignore;
+}
+
+.unit-nameplate__cast-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    margin-right: 2px;
+    background-color: rgb(0, 0, 0);
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.unit-nameplate__cast-track {
+    width: 126px;
+    min-width: 126px;
+    max-width: 126px;
+    height: 8px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: relative;
+    background-color: rgb(30, 30, 40);
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    overflow: hidden;
+}
+
+.unit-nameplate__cast-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgb(180, 180, 180);
+}
+
+.buff-icon {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    flex-shrink: 0;
+    margin-right: 2px;
+    background-color: rgb(0, 0, 0);
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    picking-mode: Ignore;
+}
+
+.buff-icon__image {
+    width: 26px;
+    height: 26px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.buff-icon__timer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: var(--font-body-bold);
+    -unity-text-align: middle-center;
+    text-shadow: 0 0 1px rgb(0, 0, 0);
+    overflow: hidden;
+}
+
+.buff-icon__stack {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    font-size: 8px;
+    color: rgb(255, 244, 231);
+    -unity-font-definition: var(--font-body-bold);
+    text-shadow: 0 0 1px rgb(0, 0, 0);
+}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ShadowInfection.DI;
 
@@ -7,6 +8,9 @@ namespace ShadowInfection.Units
     {
         private static readonly List<UnitController> pending = new List<UnitController>();
         private readonly HashSet<UnitController> units = new HashSet<UnitController>();
+
+        public event Action<UnitController> UnitRegistered = delegate { };
+        public event Action<UnitController> UnitUnregistered = delegate { };
 
         public UnitRegistry()
         {
@@ -24,14 +28,14 @@ namespace ShadowInfection.Units
 
         public void Register(UnitController unit)
         {
-            if (unit != null)
-                units.Add(unit);
+            if (unit != null && units.Add(unit))
+                UnitRegistered(unit);
         }
 
         public void Unregister(UnitController unit)
         {
-            if (unit != null)
-                units.Remove(unit);
+            if (unit != null && units.Remove(unit))
+                UnitUnregistered(unit);
         }
 
         public static void RegisterOrDefer(UnitController unit)
