@@ -52,7 +52,7 @@ namespace ShadowInfection.UI.Nameplates
 
         public UnitController Unit => unit;
         public UnitNameplateElement Element { get; private set; }
-        public float HeadAnchorHeight { get; private set; }
+        public float ColliderAnchorHeight { get; private set; }
 
         public void Attach(UnitController nextUnit, UnitNameplateElement element, CancellationToken destroyToken)
         {
@@ -63,9 +63,7 @@ namespace ShadowInfection.UI.Nameplates
             lifetimeCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
 
             actionState = unit.GetComponent<UnitActionState>();
-            HeadAnchorHeight = NameplatePositionResolver.ComputeHeadAnchorHeight(
-                unit,
-                settings.HeadWorldOffset);
+            ColliderAnchorHeight = NameplatePositionResolver.ComputeColliderAnchorHeight(unit);
 
             maxHealth = unit.maxHealth;
             maxShield = unit.maxShield;
@@ -118,7 +116,7 @@ namespace ShadowInfection.UI.Nameplates
             unit = null;
             actionState = null;
             Element = null;
-            HeadAnchorHeight = 0f;
+            ColliderAnchorHeight = 0f;
             showCastBar = false;
         }
 

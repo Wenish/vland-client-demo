@@ -111,7 +111,7 @@ namespace ShadowInfection.UI.Nameplates
 
                 if (positionResolver.TryResolve(
                         binding.Unit,
-                        binding.HeadAnchorHeight,
+                        binding.ColliderAnchorHeight,
                         container,
                         camera,
                         out var panelPosition))

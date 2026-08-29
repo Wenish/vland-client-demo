@@ -86,7 +86,4 @@ MonoBehaviour:
     TypeName: ShadowInfection.DI.GameLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
-  healthLerpSeconds: 0.2
-  headWorldOffset: 0.15
-  screenOffsetPixels: 12
-  localPlayerHealthColor: {r: 0, g: 0.6509804, b: 0.24313727, a: 1}
+  settings: {fileID: 11400000, guid: 4d8e2c91a0b74f3e9c1d5a6b7e8f9023, type: 2}

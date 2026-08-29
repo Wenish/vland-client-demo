@@ -8,19 +8,7 @@ namespace ShadowInfection.DI
     public sealed class NameplateLayerLifetimeScope : LifetimeScope
     {
         [SerializeField]
-        [Min(0.01f)]
-        private float healthLerpSeconds = 0.2f;
-
-        [SerializeField]
-        [Min(0f)]
-        private float headWorldOffset = 0.15f;
-
-        [SerializeField]
-        [Min(0f)]
-        private float screenOffsetPixels = 12f;
-
-        [SerializeField]
-        private Color localPlayerHealthColor = new Color(0f, 0.6509804f, 0.24313727f, 1f);
+        private ShadowInfection.UI.Nameplates.NameplateLayerSettings settings;
 
         protected override void Awake()
         {
@@ -43,11 +31,13 @@ namespace ShadowInfection.DI
                 return;
             }
 
-            builder.RegisterInstance(new ShadowInfection.UI.Nameplates.NameplateLayerSettings(
-                healthLerpSeconds,
-                headWorldOffset,
-                screenOffsetPixels,
-                localPlayerHealthColor));
+            if (settings == null)
+            {
+                UnityEngine.Debug.LogError("NameplateLayerLifetimeScope requires NameplateLayerSettings.");
+                return;
+            }
+
+            builder.RegisterInstance(settings);
             builder.Register<ShadowInfection.UI.Nameplates.NameplateLayerPresenter>(Lifetime.Scoped);
             builder.RegisterComponent(controller);
         }

@@ -2,23 +2,29 @@ using UnityEngine;
 
 namespace ShadowInfection.UI.Nameplates
 {
-    public sealed class NameplateLayerSettings
+    [CreateAssetMenu(
+        fileName = "NameplateLayerSettings",
+        menuName = "Game/UI/Nameplate Layer Settings")]
+    public sealed class NameplateLayerSettings : ScriptableObject
     {
-        public NameplateLayerSettings(
-            float healthLerpSeconds,
-            float headWorldOffset,
-            float screenOffsetPixels,
-            Color localPlayerHealthColor)
-        {
-            HealthLerpSeconds = healthLerpSeconds;
-            HeadWorldOffset = headWorldOffset;
-            ScreenOffsetPixels = screenOffsetPixels;
-            LocalPlayerHealthColor = localPlayerHealthColor;
-        }
+        [SerializeField]
+        [Min(0.01f)]
+        private float healthLerpSeconds = 0.2f;
 
-        public float HealthLerpSeconds { get; }
-        public float HeadWorldOffset { get; }
-        public float ScreenOffsetPixels { get; }
-        public Color LocalPlayerHealthColor { get; }
+        [SerializeField]
+        [Min(0f)]
+        private float headWorldOffset = 0.15f;
+
+        [SerializeField]
+        [Min(0f)]
+        private float screenOffsetPixels = 12f;
+
+        [SerializeField]
+        private Color localPlayerHealthColor = new Color(0f, 0.6509804f, 0.24313727f, 1f);
+
+        public float HealthLerpSeconds => healthLerpSeconds;
+        public float HeadWorldOffset => headWorldOffset;
+        public float ScreenOffsetPixels => screenOffsetPixels;
+        public Color LocalPlayerHealthColor => localPlayerHealthColor;
     }
 }

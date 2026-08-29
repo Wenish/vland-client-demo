@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18e126f54230794d8a21735e5d73f44, type: 3}
+  m_Name: NameplateLayerSettings
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.Nameplates.NameplateLayerSettings
+  healthLerpSeconds: 0.2
+  headWorldOffset: 0
+  screenOffsetPixels: 18
+  localPlayerHealthColor: {r: 0, g: 0.6509804, b: 0.24313727, a: 1}

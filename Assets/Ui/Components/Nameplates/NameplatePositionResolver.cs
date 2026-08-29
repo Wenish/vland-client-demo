@@ -14,21 +14,22 @@ namespace ShadowInfection.UI.Nameplates
 
         public bool TryResolve(
             UnitController unit,
-            float headAnchorHeight,
+            float colliderAnchorHeight,
             VisualElement container,
             Camera camera,
             out Vector2 panelPosition)
         {
             panelPosition = default;
 
-            if (unit == null || container == null || camera == null)
+            if (unit == null || container == null || camera == null || settings == null)
                 return false;
 
             var panel = container.panel;
             if (panel == null)
                 return false;
 
-            var worldPoint = unit.transform.position + Vector3.up * headAnchorHeight;
+            var worldPoint = unit.transform.position
+                + Vector3.up * (colliderAnchorHeight + settings.HeadWorldOffset);
             var viewport = camera.WorldToViewportPoint(worldPoint);
             if (viewport.z <= 0f)
                 return false;
@@ -38,21 +39,17 @@ namespace ShadowInfection.UI.Nameplates
             return true;
         }
 
-        public static float ComputeHeadAnchorHeight(UnitController unit, float headWorldOffset)
+        public static float ComputeColliderAnchorHeight(UnitController unit)
         {
-            var height = headWorldOffset;
             if (unit == null)
-                return height + 2f;
+                return 2f;
 
             var collider = unit.GetComponent<Collider>();
             if (collider is CapsuleCollider capsule)
-                height += capsule.center.y + capsule.height * 0.5f;
-            else if (collider != null)
-                height += collider.bounds.size.y;
-            else
-                height += 2f;
-
-            return height;
+                return capsule.center.y + capsule.height * 0.5f;
+            if (collider != null)
+                return collider.bounds.size.y;
+            return 2f;
         }
     }
 }
