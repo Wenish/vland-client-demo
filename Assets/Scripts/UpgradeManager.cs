@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using Mirror;
-using MyGame.Events;
-using R3;
 using UnityEngine;
 
 public class UpgradeManager : NetworkBehaviour
@@ -10,59 +8,6 @@ public class UpgradeManager : NetworkBehaviour
     private UpgradeDatabase upgradeDatabase;
 
     private readonly Dictionary<uint, Dictionary<string, int>> _purchaseCountsByPlayer = new Dictionary<uint, Dictionary<string, int>>();
-    private DisposableBag serverSubscriptions;
-
-    private void Start()
-    {
-        if (isServer)
-        {
-            GameMessages.Subscribe<BuyUpgradeEvent>(ref serverSubscriptions, OnBuyUpgradeEvent);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        serverSubscriptions.Dispose();
-        serverSubscriptions = new DisposableBag();
-    }
-
-    [Server]
-    private void OnBuyUpgradeEvent(BuyUpgradeEvent buyUpgradeEvent)
-    {
-        var buyer = buyUpgradeEvent.Buyer;
-        if (buyer == null)
-        {
-            return;
-        }
-
-        var zone = buyUpgradeEvent.Zone != null ? buyUpgradeEvent.Zone : buyer.InteractionZone;
-        if (zone == null)
-        {
-            PublishResult(buyer, false, "No interaction zone selected.", string.Empty, 0);
-            return;
-        }
-
-        var station = zone.GetComponent<UpgradeStationZone>();
-        if (station == null)
-        {
-            PublishResult(buyer, false, "Upgrade station is not configured.", string.Empty, 0);
-            return;
-        }
-
-        if (!station.TryBuildPurchaseOffer(buyUpgradeEvent.UpgradeId, out var upgrade, out var finalCost, out var reason))
-        {
-            PublishResult(buyer, false, reason, string.Empty, 0);
-            return;
-        }
-
-        if (!TryPurchase(buyer, upgrade, finalCost, out var message, out _))
-        {
-            PublishResult(buyer, false, message, upgrade != null ? upgrade.upgradeId : string.Empty, 0);
-            return;
-        }
-
-        PublishResult(buyer, true, message, upgrade.upgradeId, finalCost);
-    }
 
     [Server]
     public bool TryPurchase(PlayerController buyer, UpgradeDefinition upgrade, int finalCost, out string message, out int timesBought)
@@ -187,11 +132,5 @@ public class UpgradeManager : NetworkBehaviour
         }
 
         perUpgrade[upgradeId] += 1;
-    }
-
-    [Server]
-    private void PublishResult(PlayerController buyer, bool success, string message, string upgradeId, int cost)
-    {
-        GameMessages.Publish(new UpgradePurchaseResultEvent(buyer, success, message, upgradeId, cost));
     }
 }

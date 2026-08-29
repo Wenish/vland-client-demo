@@ -26938,37 +26938,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1798791161}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
 --- !u!4 &1798791159 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8928831251772476945, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
   m_PrefabInstance: {fileID: 1798791158}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1798791160 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8152328801114507560, guid: 32c1cf89991974d4eb69b2889b940030, type: 3}
-  m_PrefabInstance: {fileID: 1798791158}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1798791161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1798791160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78709ebb5358a314bb31ae3108997c90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UpgradeStationZone
-  stationProfile: {fileID: 11400000, guid: 516b553503d49a3468ae082943ce0a44, type: 2}
-  instanceConfig: {fileID: 0}
-  defaultUpgradeOverride: {fileID: 0}
-  useInteractionZoneGoldCostAsFallback: 1
 --- !u!1001 &1816681722
 PrefabInstance:
   m_ObjectHideFlags: 0

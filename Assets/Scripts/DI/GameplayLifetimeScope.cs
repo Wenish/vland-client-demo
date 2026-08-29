@@ -182,7 +182,6 @@ namespace ShadowInfection.DI
                 _ => new InteractionHandlerRegistry(new IInteractionHandler[]
                 {
                     new OpenGateInteractionHandler(),
-                    new BuyUpgradeInteractionHandler(),
                 }),
                 Lifetime.Singleton);
             builder.Register<InteractionZoneRegistry>(Lifetime.Singleton).As<IInteractionZoneRegistry>();
