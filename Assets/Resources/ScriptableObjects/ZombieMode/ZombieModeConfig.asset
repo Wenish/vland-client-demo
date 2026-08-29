@@ -122,3 +122,10 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     damageExtrapolation: 1
+  gold:
+    goldPerZombieKill: 10
+    wavePaydayBase: 40
+    wavePaydayPerWave: 10
+    survivalBonusBase: 25
+    survivalBonusPerWave: 5
+    specialWaveBounty: 50

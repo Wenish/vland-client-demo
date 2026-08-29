@@ -17,6 +17,7 @@ namespace ShadowInfection.Zombie
         void BeginWaveProgress(int total);
         void NotifySpawnFailure();
         void NotifyWaveStarted(int wave, int total);
+        void NotifyWaveCompleted(int wave, bool isRecurringSpecial);
         bool TrySpawnZombie(string unitName, float healthMultiplier, float damageMultiplier, out uint netId);
         void DestroyZombie(GameObject zombie);
         int GetActivePlayerCount();

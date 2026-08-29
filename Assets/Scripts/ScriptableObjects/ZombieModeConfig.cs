@@ -122,6 +122,38 @@ public class ZombieModeConfig : ScriptableObject
         public CurveExtrapolationMode damageExtrapolation = CurveExtrapolationMode.ClampToLastKey;
     }
 
+    [Serializable]
+    public class GoldSettings
+    {
+        [Tooltip("Gold granted to each alive player when a zombie dies.")]
+        [Min(0)] public int goldPerZombieKill = 10;
+
+        [Tooltip("Base gold granted to each alive player when a wave is cleared.")]
+        [Min(0)] public int wavePaydayBase = 40;
+
+        [Tooltip("Extra payday gold per wave number. Wave 1 uses base + this value.")]
+        [Min(0)] public int wavePaydayPerWave = 10;
+
+        [Tooltip("Base bonus granted to each alive player when a wave is cleared with no player deaths.")]
+        [Min(0)] public int survivalBonusBase = 25;
+
+        [Tooltip("Extra survival bonus per wave number.")]
+        [Min(0)] public int survivalBonusPerWave = 5;
+
+        [Tooltip("Extra gold granted to each alive player when a recurring special wave is cleared.")]
+        [Min(0)] public int specialWaveBounty = 50;
+
+        public int GetWavePayday(int waveNumber)
+        {
+            return Mathf.Max(0, wavePaydayBase + wavePaydayPerWave * Mathf.Max(0, waveNumber));
+        }
+
+        public int GetSurvivalBonus(int waveNumber)
+        {
+            return Mathf.Max(0, survivalBonusBase + survivalBonusPerWave * Mathf.Max(0, waveNumber));
+        }
+    }
+
     [Header("Spawning")]
     public SpawnSettings spawnSettings = new SpawnSettings();
 
@@ -145,6 +177,9 @@ public class ZombieModeConfig : ScriptableObject
 
     [Header("Scaling")]
     public ScalingSettings scaling = new ScalingSettings();
+
+    [Header("Gold")]
+    public GoldSettings gold = new GoldSettings();
 
     public float GetUnitCountWaveMultiplier(int waveNumber)
     {

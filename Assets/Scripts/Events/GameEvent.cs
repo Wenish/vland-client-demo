@@ -229,10 +229,16 @@ namespace MyGame.Events
         public UnitController Player { get; }
         public int GoldAmount { get; }
 
-        public PlayerReceivesGoldEvent(UnitController player, int goldAmount)
+        /// <summary>
+        /// Zombie (or other unit) the gold dropped from. Null for wave payouts shown on the player.
+        /// </summary>
+        public UnitController? GoldDropUnit { get; }
+
+        public PlayerReceivesGoldEvent(UnitController player, int goldAmount, UnitController? goldDropUnit = null)
         {
             Player = player;
             GoldAmount = goldAmount;
+            GoldDropUnit = goldDropUnit;
         }
     }
 

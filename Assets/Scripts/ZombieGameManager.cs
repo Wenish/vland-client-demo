@@ -9,9 +9,8 @@ using ShadowInfection.Zombie;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRunEndHost
+public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRunEndHost, IZombieGoldHost
 {
-    private const int DefaultGoldDrop = 10;
     private const float LeaderboardReconcileIntervalSeconds = 1f;
 
     [Header("Config")]
@@ -65,6 +64,7 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
     private ZombieWaveDirector waveDirector;
     private ZombieLeaderboardService leaderboardService;
     private ZombieRunEndService runEndService;
+    private ZombieGoldService goldService;
 
     public int CurrentWave => currentWave;
     public bool IsGamePaused => isGamePaused;
@@ -105,6 +105,7 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
         waveDirector ??= new ZombieWaveDirector(this);
         leaderboardService ??= new ZombieLeaderboardService(zombieLeaderboardEntries);
         runEndService ??= new ZombieRunEndService(this);
+        goldService ??= new ZombieGoldService(this);
     }
 
     private void Awake()
@@ -124,6 +125,7 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
         GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
         waveDirector.ResetRecurringState();
         leaderboardService.Reset();
+        goldService.Reset();
 
         if (autoStartOnServer)
             StartZombieMode();
@@ -198,6 +200,7 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
             return;
 
         leaderboardService.Reset();
+        goldService.Reset();
         runEndService.ResetRun();
         zombiesAlive = 0;
         queuedSpawnCount = 0;
@@ -302,13 +305,14 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
             if (unitDiedEvent.Unit.unitType == UnitType.Player)
             {
                 leaderboardService.CreditDeath(unitDiedEvent.Unit);
+                goldService.OnPlayerDied();
                 runEndService.TryTriggerGameOverFromAllHumanPlayersDead();
             }
             return;
         }
 
         leaderboardService.CreditKill(unitDiedEvent.Killer);
-        ZombieDropGold(unitDiedEvent.Unit, unitDiedEvent.Killer, DefaultGoldDrop);
+        goldService.OnZombieDied(unitDiedEvent.Unit, unitDiedEvent.Killer);
 
         var identity = unitDiedEvent.Unit.netIdentity;
         if (identity == null)
@@ -403,18 +407,6 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
             CurrentWaveKilledPercent));
     }
 
-    [Server]
-    private void ZombieDropGold(UnitController zombie, UnitController killer, int amount)
-    {
-        if (killer == null || killer.unitType != UnitType.Player)
-            return;
-
-        GameMessages.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
-        RpcZombieDroppedGold(amount, zombie, killer);
-        GameMessages.Publish(new PlayerReceivesGoldEvent(killer, amount));
-        RpcPlayerReceivedGold(amount, killer);
-    }
-
     [ClientRpc]
     private void RpcWaveStarted(int waveNumber, int totalZombies)
     {
@@ -434,12 +426,26 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
     }
 
     [ClientRpc]
-    private void RpcPlayerReceivedGold(int amount, UnitController player)
+    private void RpcPlayerReceivedGold(int amount, UnitController player, UnitController goldDropUnit)
     {
         if (isServer)
             return;
 
-        GameMessages.Publish(new PlayerReceivesGoldEvent(player, amount));
+        GameMessages.Publish(new PlayerReceivesGoldEvent(player, amount, goldDropUnit));
+    }
+
+    ZombieModeConfig IZombieGoldHost.ModeConfig => modeConfig;
+
+    void IZombieGoldHost.BroadcastZombieDroppedGold(int amount, UnitController zombie, UnitController killer)
+    {
+        GameMessages.Publish(new UnitDroppedGoldEvent(zombie, amount, killer));
+        RpcZombieDroppedGold(amount, zombie, killer);
+    }
+
+    void IZombieGoldHost.BroadcastPlayerReceivedGold(int amount, UnitController player, UnitController goldDropUnit)
+    {
+        GameMessages.Publish(new PlayerReceivesGoldEvent(player, amount, goldDropUnit));
+        RpcPlayerReceivedGold(amount, player, goldDropUnit);
     }
 
     void IZombieWaveRuntime.SetCurrentWave(int wave) => currentWave = wave;
@@ -462,8 +468,14 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
 
     void IZombieWaveRuntime.NotifyWaveStarted(int wave, int total)
     {
+        goldService?.OnWaveStarted();
         GameMessages.Publish(new WaveStartedEvent(wave, total));
         RpcWaveStarted(wave, total);
+    }
+
+    void IZombieWaveRuntime.NotifyWaveCompleted(int wave, bool isRecurringSpecial)
+    {
+        goldService?.OnWaveCleared(wave, isRecurringSpecial);
     }
 
     bool IZombieWaveRuntime.TrySpawnZombie(string unitName, float healthMultiplier, float damageMultiplier, out uint netId)
