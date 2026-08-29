@@ -346,38 +346,6 @@ namespace MyGame.Events
         }
     }
 
-    public class BuyUpgradeEvent
-    {
-        public InteractionZone Zone { get; }
-        public PlayerController Buyer { get; }
-        public string UpgradeId { get; }
-
-        public BuyUpgradeEvent(InteractionZone zone, PlayerController buyer, string upgradeId = "")
-        {
-            Zone = zone;
-            Buyer = buyer;
-            UpgradeId = upgradeId;
-        }
-    }
-
-    public class UpgradePurchaseResultEvent
-    {
-        public PlayerController Buyer { get; }
-        public bool Success { get; }
-        public string Message { get; }
-        public string UpgradeId { get; }
-        public int CostPaid { get; }
-
-        public UpgradePurchaseResultEvent(PlayerController buyer, bool success, string message, string upgradeId, int costPaid)
-        {
-            Buyer = buyer;
-            Success = success;
-            Message = message;
-            UpgradeId = upgradeId;
-            CostPaid = costPaid;
-        }
-    }
-
     public class VendorTransactResultEvent
     {
         public PlayerController Buyer { get; }

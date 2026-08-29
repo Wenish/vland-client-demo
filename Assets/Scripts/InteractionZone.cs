@@ -184,15 +184,6 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
         if (InteractionType == InteractionType.OpenVendor)
             return prompt;
 
-        if (TryGetComponent<UpgradeStationZone>(out var upgradeStationZone) && upgradeStationZone.HasMultipleOffers)
-        {
-            var offerLines = upgradeStationZone.GetTooltipOfferLines();
-            if (!string.IsNullOrWhiteSpace(offerLines))
-            {
-                return prompt + "\n" + offerLines;
-            }
-        }
-
         var purchaseSummary = ResolvePurchaseSummary();
 
         if (!string.IsNullOrWhiteSpace(purchaseSummary))
@@ -224,12 +215,6 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
         {
             case InteractionType.OpenGate:
                 return "Press F to open the gate";
-            case InteractionType.BuyUpgrade:
-                if (TryGetComponent<UpgradeStationZone>(out var upgradeStationZone) && upgradeStationZone.HasMultipleOffers)
-                {
-                    return "Press 1-9 to buy an upgrade";
-                }
-                return "Press F to buy an upgrade";
             case InteractionType.OpenVendor:
                 return "Press F to trade";
             default:
@@ -249,29 +234,13 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
             return zoneDefinition.purchaseSummary;
         }
 
-        if (TryGetComponent<UpgradeStationZone>(out var upgradeStationZone))
-        {
-            var summary = upgradeStationZone.GetTooltipPurchaseSummary();
-            if (!string.IsNullOrWhiteSpace(summary))
-            {
-                return summary;
-            }
-        }
-
-        switch (InteractionType)
-        {
-            case InteractionType.BuyUpgrade:
-                return "Configured upgrade";
-            default:
-                return string.Empty;
-        }
+        return string.Empty;
     }
 }
 
 public enum InteractionType : byte
 {
     OpenGate = 0,
-    BuyUpgrade = 2,
     OpenVendor = 3
 }
 
