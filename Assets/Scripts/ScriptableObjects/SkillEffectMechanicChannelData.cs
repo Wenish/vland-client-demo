@@ -62,12 +62,21 @@ public class SkillEffectMechanicChannelData : SkillEffectData
     )
     {
         var caster = ctx.caster;
-        caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Channeling, NetworkTime.time, channelDuration, ctx.skillInstance.skillName);
+        bool isChildAction = caster.unitActionState.IsActive;
 
-        ctx.SnapCasterFacingToAim();
+        if (isChildAction)
+            caster.unitActionState.SetChildActionState(UnitActionState.ActionType.Channeling, NetworkTime.time, channelDuration, ctx.skillInstance.skillName);
+        else
+            caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Channeling, NetworkTime.time, channelDuration, ctx.skillInstance.skillName);
 
         bool previousUpdatesAim = ctx.updatesAimDuringCast;
-        ctx.updatesAimDuringCast = updateAimDuringCast;
+        if (isChildAction && previousUpdatesAim && !SkillAimUtil.IsTurnSpeedLocked(turnSpeedPercent))
+            ctx.updatesAimDuringCast = true;
+        else
+            ctx.updatesAimDuringCast = updateAimDuringCast;
+
+        if (SkillAimUtil.IsTurnSpeedLocked(turnSpeedPercent))
+            ctx.SnapCasterFacingToAim();
 
         StatModifier moveSpeedModifier = new StatModifier() {
             Type = StatType.MovementSpeed,
@@ -153,7 +162,10 @@ public class SkillEffectMechanicChannelData : SkillEffectData
             }
         }
 
-        caster.unitActionState.SetUnitActionStateToIdle();
+        if (isChildAction)
+            caster.unitActionState.ClearChildActionState();
+        else
+            caster.unitActionState.SetUnitActionStateToIdle();
 
         // Remove the move speed modifier
         caster.unitMediator.Stats.RemoveModifier(moveSpeedModifier);

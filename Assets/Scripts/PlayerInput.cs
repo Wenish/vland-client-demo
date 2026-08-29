@@ -54,6 +54,9 @@ public class PlayerInput : NetworkBehaviour
     /// Skills, indicators, and facing must share this so E/W aim matches under a perspective camera.
     /// </summary>
     private Vector3 _skillAimWorldPosition;
+    private Vector3 _lastSentCastAim;
+    private bool _lastSentCastAimForceSelf;
+    private bool _hasLastSentCastAim;
 
     void Start()
     {
@@ -568,8 +571,9 @@ public class PlayerInput : NetworkBehaviour
             aim,
             IsLeftAltPressedForSelfTarget());
 
+        Vector2 moveInput = ReadLocalMoveInput();
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
-            service.UpdateAim(aim, followTarget);
+            service.UpdateAim(aim, followTarget, moveInput);
         else
             GameMessages.Publish(new SkillAimPreviewUpdatedEvent(aim, followTarget));
     }
@@ -581,32 +585,42 @@ public class PlayerInput : NetworkBehaviour
             return;
 
         var actionState = _myUnitController.unitActionState;
-        if (actionState == null)
+        if (actionState == null || !TryGetActiveCastSkillName(actionState, out string skillName))
+        {
+            _hasLastSentCastAim = false;
             return;
-
-        if (!TryGetActiveCastSkillName(actionState, out string skillName))
-            return;
+        }
 
         var skills = _myUnitController.unitMediator != null
             ? _myUnitController.unitMediator.Skills
             : null;
         if (skills == null)
+        {
+            _hasLastSentCastAim = false;
             return;
+        }
 
         var instance = skills.GetSkillByName(skillName);
         if (instance == null)
+        {
+            _hasLastSentCastAim = false;
             return;
+        }
 
         if (instance.skillData == null)
             instance.ResolveSkillData();
 
         var data = instance.skillData;
         if (data == null || !SkillEffectChainUtil.UpdatesAimDuringCast(data))
+        {
+            _hasLastSentCastAim = false;
             return;
+        }
 
         var indicator = SkillAimPreviewUtil.Resolve(instance);
         Vector3 aim = ResolveIndicatorAim(_myUnitController, data, indicator);
 
+        bool forceSelfTarget = IsLeftAltPressedForSelfTarget();
         UnitController followTarget = null;
         if (indicator != null && indicator.snapToTarget != null)
         {
@@ -615,13 +629,15 @@ public class PlayerInput : NetworkBehaviour
                 _myUnitController,
                 instance,
                 aim,
-                IsLeftAltPressedForSelfTarget());
+                forceSelfTarget);
         }
 
+        Vector2 moveInput = ReadLocalMoveInput();
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
-            service.UpdateAim(aim, followTarget);
+            service.UpdateAim(aim, followTarget, moveInput);
 
-        CmdUpdateCastAim(skillName, aim, IsLeftAltPressedForSelfTarget());
+        if (ShouldSendCastAim(aim, forceSelfTarget))
+            CmdUpdateCastAim(skillName, aim, forceSelfTarget);
     }
 
     [Client]
@@ -669,6 +685,23 @@ public class PlayerInput : NetworkBehaviour
             return;
 
         instance.ServerUpdateRunningCastAim(aimPoint, forceSelfTarget);
+    }
+
+    [Client]
+    bool ShouldSendCastAim(Vector3 aim, bool forceSelfTarget)
+    {
+        const float minSqrDelta = 0.0001f;
+        if (_hasLastSentCastAim
+            && _lastSentCastAimForceSelf == forceSelfTarget
+            && (aim - _lastSentCastAim).sqrMagnitude <= minSqrDelta)
+        {
+            return false;
+        }
+
+        _lastSentCastAim = aim;
+        _lastSentCastAimForceSelf = forceSelfTarget;
+        _hasLastSentCastAim = true;
+        return true;
     }
 
     [Client]
@@ -722,12 +755,13 @@ public class PlayerInput : NetworkBehaviour
 
         // Seed confirm aim before ending preview so LockOnConfirm cast locks to it.
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
-            service.UpdateAim(aim, followTarget);
+            service.UpdateAim(aim, followTarget, ReadLocalMoveInput());
 
         GameMessages.Publish(new SkillAimPreviewEndedEvent(confirmedCast: true));
         ClearAimPreviewState();
 
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
+        PredictFacingSnapIfTurnLocked(skill, indicator, aim);
         CmdUseSkill(slot, index, aim, forceSelfTarget);
     }
 
@@ -758,6 +792,18 @@ public class PlayerInput : NetworkBehaviour
 
         Vector3 aim = SeedLocalAimForSkill(slot, index);
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
+
+        var skills = _myUnitController != null && _myUnitController.unitMediator != null
+            ? _myUnitController.unitMediator.Skills
+            : null;
+        var instance = skills != null ? skills.GetSkill(slot, index) : null;
+        if (instance != null && instance.skillData == null)
+            instance.ResolveSkillData();
+        PredictFacingSnapIfTurnLocked(
+            instance != null ? instance.skillData : null,
+            SkillAimPreviewUtil.Resolve(instance),
+            aim);
+
         CmdUseSkill(slot, index, aim, IsLeftAltPressedForSelfTarget());
     }
 
@@ -800,7 +846,7 @@ public class PlayerInput : NetworkBehaviour
         }
 
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
-            service.UpdateAim(aim, followTarget);
+            service.UpdateAim(aim, followTarget, ReadLocalMoveInput());
 
         return aim;
     }
@@ -868,12 +914,8 @@ public class PlayerInput : NetworkBehaviour
         if (indicator == null)
             return mouseAim;
 
-        if ((indicator.shape != SkillIndicatorData.IndicatorShape.Directional
-                && indicator.shape != SkillIndicatorData.IndicatorShape.Cone)
-            || indicator.directionSource == SkillIndicatorData.DirectionSource.TowardAimPoint)
-        {
+        if (!SkillAimUtil.ProjectsDirectionIntoAimPoint(indicator.shape, indicator.directionSource))
             return mouseAim;
-        }
 
         float length = indicator.ResolveRange();
         if (length <= 0f)
@@ -885,6 +927,25 @@ public class PlayerInput : NetworkBehaviour
             ReadLocalMoveInput(),
             indicator.directionSource,
             length);
+    }
+
+    [Client]
+    void PredictFacingSnapIfTurnLocked(SkillData skill, SkillIndicatorData indicator, Vector3 aim)
+    {
+        if (_myUnitController == null || skill == null)
+            return;
+
+        if (!SkillEffectChainUtil.WillLockTurnSpeed(skill))
+            return;
+
+        if (!SkillAimUtil.ShouldSnapFacingToCastAim(
+            _myUnitController,
+            ReadLocalMoveInput(),
+            indicator))
+            return;
+
+        Vector3 clamped = SkillAimUtil.ClampAimPoint(_myUnitController, aim, skill);
+        _myUnitController.ClientPredictFacingSnap(clamped);
     }
 
     [Command]

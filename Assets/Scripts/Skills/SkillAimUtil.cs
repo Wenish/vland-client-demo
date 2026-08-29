@@ -3,6 +3,15 @@ using UnityEngine;
 public static class SkillAimUtil
 {
     /// <summary>
+    /// True 0% turn — facing snaps; mouse cannot steer.
+    /// Values like 0.05 still lerp (slow aim adjust).
+    /// </summary>
+    public static bool IsTurnSpeedLocked(float turnSpeed)
+    {
+        return turnSpeed <= 0.0001f;
+    }
+
+    /// <summary>
     /// Clamps <paramref name="aimPoint"/> to a horizontal circle of <paramref name="castRange"/>
     /// around <paramref name="casterPosition"/>. If castRange &lt;= 0, returns aim unchanged.
     /// Preserves aim Y (ground height).
@@ -30,6 +39,23 @@ public static class SkillAimUtil
             return aimPoint;
 
         return ClampAimPoint(caster.transform.position, aimPoint, skillData.castRange);
+    }
+
+    /// <summary>
+    /// Movement-based indicators (Evade) bake dash direction into a world point.
+    /// Facing must not: a chasing point along <c>transform.forward</c> fights mouse yaw
+    /// and dirties the live-aim pipeline every frame.
+    /// </summary>
+    public static bool ProjectsDirectionIntoAimPoint(
+        SkillIndicatorData.IndicatorShape shape,
+        SkillIndicatorData.DirectionSource directionSource)
+    {
+        if (shape != SkillIndicatorData.IndicatorShape.Directional
+            && shape != SkillIndicatorData.IndicatorShape.Cone)
+            return false;
+
+        return directionSource == SkillIndicatorData.DirectionSource.MovementThenAimPoint
+            || directionSource == SkillIndicatorData.DirectionSource.MovementThenFacing;
     }
 
     /// <summary>
@@ -146,6 +172,32 @@ public static class SkillAimUtil
     }
 
     /// <summary>
+    /// Spawn rotation for projectiles / VFX / units.
+    /// Default is the unit's current facing (turn speed can make this differ from mouse aim).
+    /// <paramref name="atAimPoint"/> uses cast aim for ground-targeted spawns.
+    /// </summary>
+    public static Quaternion ResolveSpawnRotation(
+        CastContext castContext,
+        UnitController target,
+        bool atAimPoint = false)
+    {
+        if (atAimPoint && castContext != null)
+        {
+            if (castContext.aimRotation.HasValue)
+                return castContext.aimRotation.Value;
+
+            if (castContext.aimPoint.HasValue && castContext.caster != null)
+                return GetAimRotation(castContext.caster, castContext.aimPoint.Value);
+        }
+
+        UnitController facingUnit = target != null ? target : castContext?.caster;
+        if (facingUnit == null)
+            return Quaternion.identity;
+
+        return Quaternion.LookRotation(GetFacingDirection(facingUnit), Vector3.up);
+    }
+
+    /// <summary>
     /// Yaw used by <see cref="PlayerInput"/> / <see cref="UnitController.angle"/> so snap + lerp share one convention.
     /// </summary>
     public static float GetFacingAngleYaw(Vector3 casterPosition, Vector3 aimPoint)
@@ -193,27 +245,13 @@ public static class SkillAimUtil
     }
 
     /// <summary>
-    /// Combat forward for linear/cone targeting — same horizontal aim rules as indicators.
+    /// Combat forward for linear/cone targeting and unit-spawned shots — the caster's look direction.
+    /// Mouse aim can differ while the body is still turning.
     /// </summary>
     public static Vector3 ResolveCombatDirection(CastContext castContext)
     {
         if (castContext?.caster == null)
             return Vector3.forward;
-
-        if (castContext.aimPoint.HasValue)
-        {
-            return GetAimPointDirection(
-                castContext.caster,
-                castContext.aimPoint.Value);
-        }
-
-        if (castContext.aimRotation.HasValue)
-        {
-            Vector3 fromRot = castContext.aimRotation.Value * Vector3.forward;
-            fromRot.y = 0f;
-            if (fromRot.sqrMagnitude > 0.0001f)
-                return fromRot.normalized;
-        }
 
         return GetFacingDirection(castContext.caster);
     }
@@ -303,7 +341,7 @@ public static class SkillAimUtil
     }
 
     /// <summary>
-    /// Horizontal facing for cones/lines — cast aim on mechanics, toward aim on indicators.
+    /// Indicator cones/lines follow mouse / directionSource, not body facing.
     /// </summary>
     public static Vector3 ResolveDirectionalFacing(
         CastContext castContext,
@@ -312,13 +350,15 @@ public static class SkillAimUtil
         SkillIndicatorData.DirectionSource directionSource = SkillIndicatorData.DirectionSource.TowardAimPoint,
         Vector2 moveInput = default)
     {
-        if (castContext != null)
-            return ResolveCombatDirection(castContext);
+        UnitController from = caster != null ? caster : castContext?.caster;
+        Vector3 aim = aimPoint;
+        if (castContext != null && castContext.aimPoint.HasValue)
+            aim = castContext.aimPoint.Value;
 
-        if (caster == null)
+        if (from == null)
             return Vector3.forward;
 
-        return ResolveDirection(caster, aimPoint, moveInput, directionSource);
+        return ResolveDirection(from, aim, moveInput, directionSource);
     }
 
     /// <summary>
@@ -337,16 +377,22 @@ public static class SkillAimUtil
     }
 
     /// <summary>
-    /// Horizontal forward for area VFX — uses cast aim when available.
+    /// Horizontal forward for area VFX spawned from the caster — unit facing, same as projectiles.
     /// </summary>
     public static Vector3 ResolveAreaVfxDirection(CastContext castContext, UnitController target)
     {
-        return ResolveDirectionalFacing(castContext, target, target != null ? target.transform.position : Vector3.zero);
+        if (castContext?.caster != null)
+            return GetFacingDirection(castContext.caster);
+
+        if (target != null)
+            return GetFacingDirection(target);
+
+        return Vector3.forward;
     }
 
     /// <summary>
-    /// Parent transform for attached area VFX. Directional shapes attach to the caster;
-    /// aim-placed circles stay in world space.
+    /// Parent transform for attached area VFX. Directional shapes attach to the caster so they
+    /// turn with the unit. Aim-placed circles stay in world space.
     /// </summary>
     public static Transform ResolveAreaVfxAttachTransform(
         CastContext castContext,

@@ -10,7 +10,7 @@ public interface ISkillIndicatorService
         SkillIndicatorData visualSource,
         UnitController followTarget = null,
         NetworkedSkillInstance skillInstance = null);
-    void UpdateAim(Vector3 aimPoint, UnitController followTarget = null);
+    void UpdateAim(Vector3 aimPoint, UnitController followTarget = null, Vector2 moveInput = default);
     void EndPreview();
 
     void BeginSession(

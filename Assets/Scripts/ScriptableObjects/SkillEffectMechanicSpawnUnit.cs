@@ -34,7 +34,7 @@ public class SkillEffectMechanicSpawnUnit : SkillEffectMechanic
         foreach (var target in targets)
         {
             var position = spawnAtAimPoint && castContext.aimPoint.HasValue ? castContext.aimPoint.Value : target.transform.position;
-            var rotation = spawnAtAimPoint && castContext.aimRotation.HasValue ? castContext.aimRotation.Value : target.transform.rotation;
+            var rotation = SkillAimUtil.ResolveSpawnRotation(castContext, target, spawnAtAimPoint);
             SpawnUnit(castContext, position, rotation);
         }
         return targets;

@@ -13,16 +13,10 @@ MonoBehaviour:
   m_Name: OblivionBeamSkillEffectChain
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectChainData
   rootNodes:
-  - rid: 9100000000000000008
   - rid: 4372648377487196458
   references:
     version: 2
     RefIds:
-    - rid: 9100000000000000008
-      type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
-      data:
-        effect: {fileID: 11400000, guid: a115de7e872a46e5a4968101f1702db3, type: 2}
-        children: []
     - rid: 4372648377487196458
       type: {class: SkillEffectNodeData, ns: , asm: Assembly-CSharp}
       data:
