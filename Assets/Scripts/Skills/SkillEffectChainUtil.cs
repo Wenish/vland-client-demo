@@ -74,6 +74,17 @@ public static class SkillEffectChainUtil
         return SkillAimUtil.IsTurnSpeedLocked(GetMinTurnSpeedPercent(skillData));
     }
 
+    /// <summary>
+    /// True when any effect in the main cast chain spawns/places at <see cref="CastContext.aimPoint"/>.
+    /// </summary>
+    public static bool HasSpawnAtAimPoint(SkillData skillData)
+    {
+        if (skillData == null)
+            return false;
+
+        return AnyEffect(skillData.castTrigger, IsSpawnAtAimPoint);
+    }
+
     private static void ForEachEffect(SkillEffectChainData chain, Action<SkillEffectData> action)
     {
         if (chain == null || action == null || chain.rootNodes == null)
@@ -141,5 +152,22 @@ public static class SkillEffectChainUtil
         }
 
         return false;
+    }
+
+    private static bool IsSpawnAtAimPoint(SkillEffectData effect)
+    {
+        switch (effect)
+        {
+            case SkillEffectMechanicAreaZone zone:
+                return zone.spawnAtAimPoint;
+            case SkillEffectMechanicSpawnUnit spawn:
+                return spawn.spawnAtAimPoint;
+            case SkillEffectMechanicVFXGraph vfx:
+                return vfx.spawnAtAimPoint;
+            case SkillEffectTargetAreaVFX areaVfx:
+                return areaVfx.spawnAtAimPoint;
+            default:
+                return false;
+        }
     }
 }

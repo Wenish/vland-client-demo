@@ -262,6 +262,42 @@ public static class SkillAimUtil
     }
 
     /// <summary>
+    /// Ground / mouse-placed skills: indicator at aim, or a chain effect that spawns at aim.
+    /// Directional cones/lines (<see cref="SkillIndicatorData.IndicatorPlacement.FromCasterTowardAim"/>)
+    /// are not mouse-placed.
+    /// </summary>
+    public static bool PlacesAtAimPoint(SkillIndicatorData indicator, SkillData skillData)
+    {
+        if (indicator != null && PlacementUsesAimPoint(indicator.placement))
+            return true;
+
+        return SkillEffectChainUtil.HasSpawnAtAimPoint(skillData);
+    }
+
+    /// <summary>
+    /// Left Alt force-self: rewrite mouse aim to the caster for ground-placed skills.
+    /// Preserves aim Y (aim-plane height). No-op when the flag is off or the skill is not
+    /// mouse-placed (unit self-target still uses <see cref="CastContext.forceSelfTarget"/>).
+    /// </summary>
+    public static Vector3 ApplyForceSelfAim(
+        UnitController caster,
+        Vector3 aimPoint,
+        bool forceSelfTarget,
+        SkillIndicatorData indicator,
+        SkillData skillData)
+    {
+        if (!forceSelfTarget || caster == null)
+            return aimPoint;
+
+        if (!PlacesAtAimPoint(indicator, skillData))
+            return aimPoint;
+
+        Vector3 atCaster = caster.transform.position;
+        atCaster.y = aimPoint.y;
+        return atCaster;
+    }
+
+    /// <summary>
     /// Shared circle / ground AoE position for skill mechanics (VFX, area zones, etc.).
     /// At aim point = mouse aim (or snapped unit). Otherwise = effect target position
     /// (not caster — IndicatorPlacement.Self is only for indicator previews).

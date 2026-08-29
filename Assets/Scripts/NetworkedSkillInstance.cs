@@ -217,6 +217,12 @@ public class NetworkedSkillInstance : NetworkBehaviour
         if (clampedAim.HasValue && skillData != null)
         {
             clampedAim = SkillAimUtil.ClampAimPoint(unit, clampedAim.Value, skillData);
+            clampedAim = SkillAimUtil.ApplyForceSelfAim(
+                unit,
+                clampedAim.Value,
+                forceSelfTarget,
+                indicator,
+                skillData);
         }
 
         Quaternion? aimRotation = clampedAim.HasValue
@@ -449,6 +455,13 @@ public class NetworkedSkillInstance : NetworkBehaviour
             return;
 
         Vector3 clamped = SkillAimUtil.ClampAimPoint(unit, aimPoint, skillData);
+        var indicator = SkillAimPreviewUtil.Resolve(this);
+        clamped = SkillAimUtil.ApplyForceSelfAim(
+            unit,
+            clamped,
+            forceSelfTarget,
+            indicator,
+            skillData);
         _runningCastContext.aimPoint = clamped;
         _runningCastContext.aimRotation = SkillAimUtil.GetAimRotation(unit, clamped);
         _runningCastContext.forceSelfTarget = forceSelfTarget;
