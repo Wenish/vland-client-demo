@@ -20,8 +20,9 @@ namespace ShadowInfection.UI.Nameplates
         private readonly Queue<BuffIconElement> buffIconPool = new();
         private float cachedWidth = UnitNameplateMetrics.EstimatedPlateWidth;
         private float cachedHeight = UnitNameplateMetrics.EstimatedPlateHeight;
+        private Vector2 lastPanelPosition;
         private bool isShown;
-        private bool awaitingFirstLayout;
+        private bool hasBeenPositioned;
 
         public UnitNameplateElement()
         {
@@ -57,10 +58,8 @@ namespace ShadowInfection.UI.Nameplates
 
         public void HideAndReset()
         {
-            style.display = DisplayStyle.None;
-            style.visibility = Visibility.Hidden;
-            isShown = false;
-            awaitingFirstLayout = false;
+            Hide();
+            transform.position = Vector3.zero;
         }
 
         public void Apply(in UnitNameplateSnapshot snapshot)
@@ -73,10 +72,7 @@ namespace ShadowInfection.UI.Nameplates
 
             if (!shouldShow)
             {
-                style.display = DisplayStyle.None;
-                style.visibility = Visibility.Hidden;
-                isShown = false;
-                awaitingFirstLayout = false;
+                Hide();
                 return;
             }
 
@@ -116,7 +112,7 @@ namespace ShadowInfection.UI.Nameplates
             if (showingNow)
             {
                 style.visibility = Visibility.Hidden;
-                awaitingFirstLayout = true;
+                hasBeenPositioned = false;
             }
 
             isShown = true;
@@ -124,13 +120,28 @@ namespace ShadowInfection.UI.Nameplates
 
         public void SetScreenPosition(Vector2 panelPosition)
         {
+            lastPanelPosition = panelPosition;
+            ApplyTransform(panelPosition);
+            hasBeenPositioned = true;
+
+            if (isShown)
+                style.visibility = Visibility.Visible;
+        }
+
+        private void Hide()
+        {
+            style.display = DisplayStyle.None;
+            style.visibility = Visibility.Hidden;
+            isShown = false;
+            hasBeenPositioned = false;
+        }
+
+        private void ApplyTransform(Vector2 panelPosition)
+        {
             transform.position = new Vector3(
                 panelPosition.x - cachedWidth * 0.5f,
                 panelPosition.y - cachedHeight,
                 0f);
-
-            if (!awaitingFirstLayout)
-                style.visibility = Visibility.Visible;
         }
 
         private void OnGeometryChanged(GeometryChangedEvent evt)
@@ -144,12 +155,8 @@ namespace ShadowInfection.UI.Nameplates
             cachedWidth = evt.newRect.width;
             cachedHeight = evt.newRect.height;
 
-            if (!awaitingFirstLayout)
-                return;
-
-            awaitingFirstLayout = false;
-            if (isShown)
-                style.visibility = Visibility.Visible;
+            if (hasBeenPositioned)
+                ApplyTransform(lastPanelPosition);
         }
 
         private static bool IsPlausibleLayout(Rect rect)
