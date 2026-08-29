@@ -64,36 +64,38 @@ namespace ShadowInfection.UI.Nameplates
             presenter?.Tick(Time.deltaTime);
         }
 
+        private void LateUpdate()
+        {
+            SyncWithWorldCamera(Camera.main);
+        }
+
         private void OnEnable()
         {
-            RenderPipelineManager.beginContextRendering += HandleBeginContextRendering;
+            RenderPipelineManager.beginCameraRendering += HandleBeginCameraRendering;
             presenter?.SetEnabled(true);
         }
 
         private void OnDisable()
         {
-            RenderPipelineManager.beginContextRendering -= HandleBeginContextRendering;
+            RenderPipelineManager.beginCameraRendering -= HandleBeginCameraRendering;
             presenter?.SetEnabled(false);
         }
 
-        private void HandleBeginContextRendering(ScriptableRenderContext context, System.Collections.Generic.List<Camera> cameras)
+        private void HandleBeginCameraRendering(ScriptableRenderContext context, Camera camera)
         {
-            Camera worldCamera = null;
-            for (var i = 0; i < cameras.Count; i++)
-            {
-                var camera = cameras[i];
-                if (camera != null && camera.cameraType == CameraType.Game)
-                {
-                    worldCamera = camera;
-                    break;
-                }
-            }
+            if (camera == null || camera.cameraType != CameraType.Game)
+                return;
 
-            if (worldCamera == null)
-                worldCamera = Camera.main;
+            if (camera != Camera.main)
+                return;
 
-            if (worldCamera != null)
-                presenter?.SyncPositions(worldCamera);
+            SyncWithWorldCamera(camera);
+        }
+
+        private void SyncWithWorldCamera(Camera camera)
+        {
+            if (camera != null)
+                presenter?.SyncPositions(camera);
         }
 
         private void OnDestroy()

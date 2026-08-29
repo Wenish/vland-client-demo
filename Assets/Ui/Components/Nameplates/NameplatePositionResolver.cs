@@ -35,7 +35,9 @@ namespace ShadowInfection.UI.Nameplates
                 return false;
 
             panelPosition = RuntimePanelUtils.CameraTransformWorldToPanel(panel, worldPoint, camera);
-            panelPosition.y -= settings.ScreenOffsetPixels;
+            var t = Mathf.Clamp01(viewport.y);
+            var screenOffset = Mathf.Lerp(settings.ScreenOffsetPixels, settings.TopScreenOffsetPixels, t);
+            panelPosition.y -= screenOffset;
             return true;
         }
 

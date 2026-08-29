@@ -15,4 +15,5 @@ MonoBehaviour:
   healthLerpSeconds: 0.2
   headWorldOffset: 0
   screenOffsetPixels: 36
+  topScreenOffsetPixels: 8
   localPlayerHealthColor: {r: 0, g: 0.6509804, b: 0.24313727, a: 1}

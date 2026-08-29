@@ -139,8 +139,8 @@ namespace ShadowInfection.UI.Nameplates
         private void ApplyTransform(Vector2 panelPosition)
         {
             transform.position = new Vector3(
-                Mathf.Round(panelPosition.x - cachedWidth * 0.5f),
-                Mathf.Round(panelPosition.y - cachedHeight),
+                panelPosition.x - cachedWidth * 0.5f,
+                panelPosition.y - cachedHeight,
                 0f);
         }
 
