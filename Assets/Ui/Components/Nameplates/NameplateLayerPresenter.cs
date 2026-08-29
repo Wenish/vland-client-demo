@@ -62,6 +62,7 @@ namespace ShadowInfection.UI.Nameplates
         {
             enabled = false;
             subscriptions.Dispose();
+            subscriptions = new R3.DisposableBag();
             unitRegistry.UnitRegistered -= RegisterUnit;
             unitRegistry.UnitUnregistered -= UnregisterUnit;
 
@@ -88,11 +89,7 @@ namespace ShadowInfection.UI.Nameplates
             tickList.AddRange(bindings.Values);
 
             foreach (var binding in tickList)
-            {
                 binding.Tick(deltaTime);
-                var snapshot = binding.BuildSnapshot();
-                binding.Element.Apply(in snapshot);
-            }
         }
 
         public void SyncPositions(Camera camera)
@@ -112,7 +109,12 @@ namespace ShadowInfection.UI.Nameplates
                 if (binding.Element.resolvedStyle.display == DisplayStyle.None)
                     continue;
 
-                if (positionResolver.TryResolve(binding.Unit, container, camera, out var panelPosition))
+                if (positionResolver.TryResolve(
+                        binding.Unit,
+                        binding.HeadAnchorHeight,
+                        container,
+                        camera,
+                        out var panelPosition))
                     binding.Element.SetScreenPosition(panelPosition);
                 else
                     binding.Element.style.visibility = Visibility.Hidden;

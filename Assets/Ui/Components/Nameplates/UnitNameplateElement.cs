@@ -10,7 +10,6 @@ namespace ShadowInfection.UI.Nameplates
         private readonly VisualElement vitals;
         private readonly VisualElement shieldTrack;
         private readonly VisualElement shieldFill;
-        private readonly VisualElement healthTrack;
         private readonly VisualElement healthFill;
         private readonly Label nameLabel;
         private readonly VisualElement buffRow;
@@ -19,7 +18,7 @@ namespace ShadowInfection.UI.Nameplates
         private readonly VisualElement castFill;
         private readonly List<BuffIconElement> buffIcons = new();
         private readonly Queue<BuffIconElement> buffIconPool = new();
-        private float cachedWidth = UnitNameplateMetrics.BarWidth;
+        private float cachedWidth = UnitNameplateMetrics.EstimatedPlateWidth;
         private float cachedHeight = UnitNameplateMetrics.EstimatedPlateHeight;
         private bool isShown;
         private bool awaitingFirstLayout;
@@ -42,16 +41,14 @@ namespace ShadowInfection.UI.Nameplates
             buffRow = CreateBuffRow();
             column.Add(buffRow);
 
-            var vitalsBox = CreateVitals();
-            column.Add(vitalsBox);
-            vitals = vitalsBox;
+            vitals = CreateVitals();
+            column.Add(vitals);
 
             shieldTrack = CreateBarTrack("unit-nameplate__bar-fill--shield", out shieldFill);
             shieldTrack.AddToClassList("unit-nameplate__bar-track--shield");
-            PinSize(shieldTrack, UnitNameplateMetrics.BarWidth, UnitNameplateMetrics.ShieldHeight);
             vitals.Add(shieldTrack);
 
-            healthRow = CreateHealthRow(out healthTrack, out healthFill, out nameLabel);
+            healthRow = CreateHealthRow(out healthFill, out nameLabel);
             vitals.Add(healthRow);
 
             castBarRoot = CreateCastBar(out castIcon, out castFill);
@@ -89,11 +86,11 @@ namespace ShadowInfection.UI.Nameplates
             SetVisible(vitals, snapshot.ShowHealth || snapshot.ShowShield);
 
             if (snapshot.ShowShield)
-                SetBarFill(shieldFill, snapshot.ShieldFill);
+                SetFill(shieldFill, snapshot.ShieldFill);
 
             if (snapshot.ShowHealth)
             {
-                SetBarFill(healthFill, snapshot.HealthFill);
+                SetFill(healthFill, snapshot.HealthFill);
                 healthFill.style.backgroundColor = snapshot.HealthColor;
             }
 
@@ -105,7 +102,7 @@ namespace ShadowInfection.UI.Nameplates
                 : Visibility.Hidden;
             if (snapshot.ShowCastBar)
             {
-                SetCastFill(castFill, snapshot.CastProgress);
+                SetFill(castFill, snapshot.CastProgress);
                 if (snapshot.CastIcon != null)
                     castIcon.style.backgroundImage = new StyleBackground(snapshot.CastIcon);
                 else
@@ -166,7 +163,6 @@ namespace ShadowInfection.UI.Nameplates
             var column = new VisualElement { name = "column" };
             column.AddToClassList("unit-nameplate__column");
             column.pickingMode = PickingMode.Ignore;
-            column.style.flexShrink = 0;
             return column;
         }
 
@@ -176,7 +172,6 @@ namespace ShadowInfection.UI.Nameplates
             row.AddToClassList("unit-nameplate__buff-row");
             row.pickingMode = PickingMode.Ignore;
             row.style.display = DisplayStyle.None;
-            row.style.flexShrink = 0;
             return row;
         }
 
@@ -185,9 +180,6 @@ namespace ShadowInfection.UI.Nameplates
             var vitals = new VisualElement { name = "vitals" };
             vitals.AddToClassList("unit-nameplate__vitals");
             vitals.pickingMode = PickingMode.Ignore;
-            PinWidth(vitals, UnitNameplateMetrics.BarWidth);
-            vitals.style.overflow = Overflow.Hidden;
-            vitals.style.flexShrink = 0;
             return vitals;
         }
 
@@ -196,66 +188,46 @@ namespace ShadowInfection.UI.Nameplates
             var track = new VisualElement();
             track.AddToClassList("unit-nameplate__bar-track");
             track.pickingMode = PickingMode.Ignore;
-            PinSize(track, UnitNameplateMetrics.BarWidth, UnitNameplateMetrics.HealthHeight);
-            track.style.overflow = Overflow.Hidden;
 
             fill = new VisualElement();
             fill.AddToClassList("unit-nameplate__bar-fill");
             if (!string.IsNullOrEmpty(fillModifierClass))
                 fill.AddToClassList(fillModifierClass);
             fill.pickingMode = PickingMode.Ignore;
-            fill.style.position = Position.Absolute;
-            fill.style.left = 0;
-            fill.style.top = 0;
-            fill.style.bottom = 0;
-            fill.style.width = 0f;
 
             track.Add(fill);
             return track;
         }
 
         private static VisualElement CreateHealthRow(
-            out VisualElement healthTrack,
             out VisualElement healthFill,
             out Label nameLabel)
         {
             var row = new VisualElement { name = "health-row" };
             row.AddToClassList("unit-nameplate__health-row");
             row.pickingMode = PickingMode.Ignore;
-            PinSize(row, UnitNameplateMetrics.BarWidth, UnitNameplateMetrics.HealthHeight);
-            row.style.overflow = Overflow.Hidden;
-            row.style.position = Position.Relative;
 
-            healthTrack = CreateBarTrack(string.Empty, out healthFill);
+            var healthTrack = CreateBarTrack(string.Empty, out healthFill);
             row.Add(healthTrack);
 
-            AddTick(row, UnitNameplateMetrics.BarWidth * 0.25f, 1f);
-            AddTick(row, UnitNameplateMetrics.BarWidth * 0.5f, 2f);
-            AddTick(row, UnitNameplateMetrics.BarWidth * 0.75f, 1f);
+            AddTick(row, "unit-nameplate__tick--25");
+            AddTick(row, "unit-nameplate__tick--50");
+            AddTick(row, "unit-nameplate__tick--75");
 
             nameLabel = new Label { name = "name-label" };
             nameLabel.AddToClassList("unit-nameplate__name");
             nameLabel.pickingMode = PickingMode.Ignore;
-            nameLabel.style.position = Position.Absolute;
-            nameLabel.style.left = 0;
-            nameLabel.style.top = 0;
-            nameLabel.style.right = StyleKeyword.None;
-            PinSize(nameLabel, UnitNameplateMetrics.BarWidth, UnitNameplateMetrics.HealthHeight);
             row.Add(nameLabel);
 
             return row;
         }
 
-        private static void AddTick(VisualElement parent, float left, float width)
+        private static void AddTick(VisualElement parent, string modifierClass)
         {
             var tick = new VisualElement();
             tick.AddToClassList("unit-nameplate__tick");
+            tick.AddToClassList(modifierClass);
             tick.pickingMode = PickingMode.Ignore;
-            tick.style.position = Position.Absolute;
-            tick.style.left = left;
-            tick.style.top = 0;
-            tick.style.bottom = 0;
-            tick.style.width = width;
             parent.Add(tick);
         }
 
@@ -265,30 +237,20 @@ namespace ShadowInfection.UI.Nameplates
             root.AddToClassList("unit-nameplate__cast-bar");
             root.pickingMode = PickingMode.Ignore;
             root.style.visibility = Visibility.Hidden;
-            PinSize(root, UnitNameplateMetrics.CastWidth, UnitNameplateMetrics.CastHeight);
 
             icon = new VisualElement { name = "cast-icon" };
             icon.AddToClassList("unit-nameplate__cast-icon");
             icon.pickingMode = PickingMode.Ignore;
-            PinSize(icon, UnitNameplateMetrics.CastIconSize, UnitNameplateMetrics.CastIconSize);
             root.Add(icon);
 
             var track = new VisualElement { name = "cast-track" };
             track.AddToClassList("unit-nameplate__cast-track");
             track.pickingMode = PickingMode.Ignore;
-            PinSize(track, UnitNameplateMetrics.CastTrackWidth, 8f);
-            track.style.overflow = Overflow.Hidden;
-            track.style.position = Position.Relative;
             root.Add(track);
 
             fill = new VisualElement { name = "cast-fill" };
             fill.AddToClassList("unit-nameplate__cast-fill");
             fill.pickingMode = PickingMode.Ignore;
-            fill.style.position = Position.Absolute;
-            fill.style.left = 0;
-            fill.style.top = 0;
-            fill.style.bottom = 0;
-            fill.style.width = 0f;
             track.Add(fill);
 
             return root;
@@ -325,32 +287,9 @@ namespace ShadowInfection.UI.Nameplates
             buffRow.style.display = buffs.Count > 0 ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        private static void SetBarFill(VisualElement fill, float normalized)
+        private static void SetFill(VisualElement fill, float normalized)
         {
-            fill.style.width = Mathf.Clamp01(normalized) * UnitNameplateMetrics.BarWidth;
-        }
-
-        private static void SetCastFill(VisualElement fill, float normalized)
-        {
-            fill.style.width = Mathf.Clamp01(normalized) * UnitNameplateMetrics.CastTrackWidth;
-        }
-
-        private static void PinSize(VisualElement element, float width, float height)
-        {
-            element.style.width = width;
-            element.style.minWidth = width;
-            element.style.maxWidth = width;
-            element.style.height = height;
-            element.style.minHeight = height;
-            element.style.flexShrink = 0;
-        }
-
-        private static void PinWidth(VisualElement element, float width)
-        {
-            element.style.width = width;
-            element.style.minWidth = width;
-            element.style.maxWidth = width;
-            element.style.flexShrink = 0;
+            fill.style.width = Length.Percent(Mathf.Clamp01(normalized) * 100f);
         }
 
         private static void SetVisible(VisualElement element, bool visible)

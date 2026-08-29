@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using ShadowInfection.DI;
 using UnityEngine;
@@ -9,17 +7,18 @@ namespace ShadowInfection.UI.Nameplates
 {
     internal sealed class UnitNameplateBinding : IDisposable
     {
+        private static readonly UiBuffData[] NoBuffs = Array.Empty<UiBuffData>();
+
         private readonly NameplateLayerSettings settings;
         private readonly IGameDatabases databases;
         private readonly ITeamColorService teamColors;
         private readonly Action<UnitNameplateBinding> onChanged;
-        private readonly List<UiBuffData> buffs = new();
         private readonly UnitNameplateVisibilityState visibility = new();
 
         private UnitController unit;
         private UnitActionState actionState;
-        private UnitNetworkBuffs networkBuffs;
         private UnitNameplateCastBarDriver castBarDriver;
+        private UnitNameplateBuffDriver buffDriver;
         private CancellationTokenSource lifetimeCts;
 
         private bool showCastBar;
@@ -53,6 +52,7 @@ namespace ShadowInfection.UI.Nameplates
 
         public UnitController Unit => unit;
         public UnitNameplateElement Element { get; private set; }
+        public float HeadAnchorHeight { get; private set; }
 
         public void Attach(UnitController nextUnit, UnitNameplateElement element, CancellationToken destroyToken)
         {
@@ -63,7 +63,9 @@ namespace ShadowInfection.UI.Nameplates
             lifetimeCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
 
             actionState = unit.GetComponent<UnitActionState>();
-            networkBuffs = unit.GetComponent<UnitNetworkBuffs>();
+            HeadAnchorHeight = NameplatePositionResolver.ComputeHeadAnchorHeight(
+                unit,
+                settings.HeadWorldOffset);
 
             maxHealth = unit.maxHealth;
             maxShield = unit.maxShield;
@@ -85,13 +87,8 @@ namespace ShadowInfection.UI.Nameplates
             castBarDriver = new UnitNameplateCastBarDriver(databases, ApplyCastBar);
             castBarDriver.Bind(actionState, lifetimeCts.Token);
 
-            if (networkBuffs != null)
-            {
-                networkBuffs.NetworkBuffs.OnAdd += OnBuffAdded;
-                networkBuffs.NetworkBuffs.OnRemove += OnBuffRemoved;
-                networkBuffs.NetworkBuffs.OnSet += OnBuffChanged;
-                SeedBuffs();
-            }
+            buffDriver = new UnitNameplateBuffDriver(databases, NotifyChanged);
+            buffDriver.Bind(unit.GetComponent<UnitNetworkBuffs>());
 
             NotifyChanged();
         }
@@ -100,6 +97,9 @@ namespace ShadowInfection.UI.Nameplates
         {
             castBarDriver?.Unbind();
             castBarDriver = null;
+
+            buffDriver?.Unbind();
+            buffDriver = null;
 
             if (unit != null)
             {
@@ -111,22 +111,14 @@ namespace ShadowInfection.UI.Nameplates
                 unit.OnRevive -= HandleRevive;
             }
 
-            if (networkBuffs != null)
-            {
-                networkBuffs.NetworkBuffs.OnAdd -= OnBuffAdded;
-                networkBuffs.NetworkBuffs.OnRemove -= OnBuffRemoved;
-                networkBuffs.NetworkBuffs.OnSet -= OnBuffChanged;
-            }
-
             lifetimeCts?.Cancel();
             lifetimeCts?.Dispose();
             lifetimeCts = null;
 
-            buffs.Clear();
             unit = null;
-            networkBuffs = null;
             actionState = null;
             Element = null;
+            HeadAnchorHeight = 0f;
             showCastBar = false;
         }
 
@@ -159,7 +151,7 @@ namespace ShadowInfection.UI.Nameplates
                 changed = true;
             }
 
-            if (UpdateBuffTimers())
+            if (buffDriver != null && buffDriver.Tick())
                 changed = true;
 
             if (changed)
@@ -170,7 +162,7 @@ namespace ShadowInfection.UI.Nameplates
         {
             var healthFill = maxHealth > 0 ? displayedHealth / maxHealth : 0f;
             var shieldFill = maxShield > 0 ? displayedShield / maxShield : 0f;
-            var orderedBuffs = buffs.OrderByDescending(b => b.TimeRemaining).ToList();
+            var buffs = buffDriver != null ? buffDriver.Buffs : NoBuffs;
 
             return new UnitNameplateSnapshot(
                 visibility.ShowRoot,
@@ -184,7 +176,7 @@ namespace ShadowInfection.UI.Nameplates
                 healthColor,
                 castIcon,
                 castProgress,
-                orderedBuffs);
+                buffs);
         }
 
         public void Dispose()
@@ -259,105 +251,6 @@ namespace ShadowInfection.UI.Nameplates
             healthColor = isLocalPlayer
                 ? settings.LocalPlayerHealthColor
                 : teamColors.GetColorForTeam(unit.team);
-        }
-
-        private void SeedBuffs()
-        {
-            buffs.Clear();
-            for (var i = 0; i < networkBuffs.NetworkBuffs.Count; i++)
-            {
-                var buff = networkBuffs.NetworkBuffs[i];
-                if (!buff.ShowInUnitUiBuffBar)
-                    continue;
-
-                if (buffs.Any(b => b.InstanceId == buff.InstanceId))
-                    continue;
-
-                buffs.Add(CreateBuffData(buff));
-            }
-        }
-
-        private void OnBuffAdded(int index)
-        {
-            var buff = networkBuffs.NetworkBuffs[index];
-            if (!buff.ShowInUnitUiBuffBar)
-                return;
-
-            var existing = buffs.FirstOrDefault(b => b.InstanceId == buff.InstanceId);
-            if (existing != null)
-            {
-                UpdateBuffData(existing, buff);
-            }
-            else
-            {
-                buffs.Add(CreateBuffData(buff));
-            }
-
-            NotifyChanged();
-        }
-
-        private void OnBuffRemoved(int index, UnitNetworkBuffs.NetworkBuffData oldBuff)
-        {
-            var buffData = buffs.FirstOrDefault(b => b.InstanceId == oldBuff.InstanceId);
-            if (buffData != null)
-            {
-                buffs.Remove(buffData);
-                NotifyChanged();
-            }
-        }
-
-        private void OnBuffChanged(int index, UnitNetworkBuffs.NetworkBuffData oldBuff)
-        {
-            var buff = networkBuffs.NetworkBuffs[index];
-            var buffData = buffs.FirstOrDefault(b => b.InstanceId == buff.InstanceId);
-            if (buffData != null)
-            {
-                buffData.TimeRemaining = buff.Remaining;
-                NotifyChanged();
-            }
-        }
-
-        private bool UpdateBuffTimers()
-        {
-            var changed = false;
-            foreach (var buffData in buffs)
-            {
-                if (buffData.Duration <= 0f || buffData.Duration >= Mathf.Infinity)
-                    continue;
-
-                var buff = networkBuffs.NetworkBuffs.FirstOrDefault(b => b.InstanceId == buffData.InstanceId);
-                if (buff == null)
-                    continue;
-
-                if (!Mathf.Approximately(buffData.TimeRemaining, buff.Remaining))
-                {
-                    buffData.TimeRemaining = buff.Remaining;
-                    changed = true;
-                }
-            }
-
-            return changed;
-        }
-
-        private UiBuffData CreateBuffData(UnitNetworkBuffs.NetworkBuffData buff)
-        {
-            var isInfinite = buff.Duration == Mathf.Infinity;
-            return new UiBuffData
-            {
-                InstanceId = buff.InstanceId,
-                BuffId = buff.BuffId,
-                IconTexture = databases?.Skills?.GetSkillByName(buff.SkillName)?.iconTexture,
-                Duration = buff.Duration,
-                TimeRemaining = isInfinite ? Mathf.Infinity : buff.Remaining
-            };
-        }
-
-        private static void UpdateBuffData(UiBuffData target, UnitNetworkBuffs.NetworkBuffData buff)
-        {
-            var isInfinite = buff.Duration == Mathf.Infinity;
-            target.BuffId = buff.BuffId;
-            target.Duration = buff.Duration;
-            target.TimeRemaining = isInfinite ? Mathf.Infinity : buff.Remaining;
         }
 
         private void NotifyChanged()

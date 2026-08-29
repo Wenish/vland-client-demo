@@ -13,13 +13,6 @@ namespace ShadowInfection.UI.Nameplates
         {
             AddToClassList("buff-icon");
             pickingMode = PickingMode.Ignore;
-            style.width = UnitNameplateMetrics.BuffSize;
-            style.height = UnitNameplateMetrics.BuffSize;
-            style.minWidth = UnitNameplateMetrics.BuffSize;
-            style.maxWidth = UnitNameplateMetrics.BuffSize;
-            style.minHeight = UnitNameplateMetrics.BuffSize;
-            style.flexShrink = 0;
-            style.overflow = Overflow.Hidden;
 
             iconImage = new VisualElement { name = "buff-icon-image" };
             iconImage.AddToClassList("buff-icon__image");
@@ -29,15 +22,6 @@ namespace ShadowInfection.UI.Nameplates
             timerLabel = new Label { name = "buff-timer" };
             timerLabel.AddToClassList("buff-icon__timer");
             timerLabel.pickingMode = PickingMode.Ignore;
-            timerLabel.style.marginTop = 0;
-            timerLabel.style.marginRight = 0;
-            timerLabel.style.marginBottom = 0;
-            timerLabel.style.marginLeft = 0;
-            timerLabel.style.paddingTop = 0;
-            timerLabel.style.paddingRight = 0;
-            timerLabel.style.paddingBottom = 0;
-            timerLabel.style.paddingLeft = 0;
-            timerLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
             Add(timerLabel);
 
             stackLabel = new Label { name = "buff-stack" };

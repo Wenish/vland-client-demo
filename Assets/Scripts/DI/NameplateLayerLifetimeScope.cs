@@ -20,7 +20,7 @@ namespace ShadowInfection.DI
         private float screenOffsetPixels = 12f;
 
         [SerializeField]
-        private Color localPlayerHealthColor = Color.green;
+        private Color localPlayerHealthColor = new Color(0f, 0.6509804f, 0.24313727f, 1f);
 
         protected override void Awake()
         {

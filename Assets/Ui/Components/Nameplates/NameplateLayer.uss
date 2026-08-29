@@ -29,6 +29,7 @@
 .unit-nameplate__column {
     flex-direction: column;
     align-items: flex-start;
+    flex-shrink: 0;
     picking-mode: Ignore;
 }
 
@@ -36,6 +37,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+    flex-shrink: 0;
     margin-bottom: 2px;
     picking-mode: Ignore;
 }
@@ -184,6 +186,7 @@
     left: 0;
     top: 0;
     bottom: 0;
+    width: 0;
     background-color: rgb(180, 180, 180);
 }
 
