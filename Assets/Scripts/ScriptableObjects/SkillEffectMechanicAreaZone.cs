@@ -23,9 +23,7 @@ public class SkillEffectMechanicAreaZone : SkillEffectMechanic
                 castContext,
                 target,
                 spawnAtAimPoint);
-            var rotation = spawnAtAimPoint && castContext.aimRotation.HasValue
-                ? castContext.aimRotation.Value
-                : target.transform.rotation;
+            var rotation = SkillAimUtil.ResolveSpawnRotation(castContext, target, spawnAtAimPoint);
             SpawnAreaZone(castContext, position, rotation);
         }
         return targets;

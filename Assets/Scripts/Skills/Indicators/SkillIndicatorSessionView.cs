@@ -30,6 +30,8 @@ namespace ShadowInfection.Skills.Indicators
         public SkillIndicatorDisplayParams Display { get; private set; }
         private Vector3 _aimPoint;
         private UnitController _followTarget;
+        private Vector2 _moveInput;
+        private bool _hasMoveInput;
         private Vector3? _lockedDirection;
 
         /// <summary>
@@ -51,9 +53,7 @@ namespace ShadowInfection.Skills.Indicators
                     || display.shape == SkillIndicatorData.IndicatorShape.Cone)
                 && _caster != null)
             {
-                Vector3 casterPos = _caster.transform.position;
-                casterPos.y += 0.05f;
-                _lockedDirection = ResolveActiveDirection(casterPos, _aimPoint);
+                _lockedDirection = ResolveActiveDirection(_aimPoint);
             }
 
             SetVisible(true);
@@ -163,9 +163,7 @@ namespace ShadowInfection.Skills.Indicators
                     || display.shape == SkillIndicatorData.IndicatorShape.Cone)
                 && _caster != null)
             {
-                Vector3 casterPos = _caster.transform.position;
-                casterPos.y += 0.05f;
-                _lockedDirection = ResolveActiveDirection(casterPos, _aimPoint);
+                _lockedDirection = ResolveActiveDirection(_aimPoint);
             }
 
             Tick();
@@ -218,6 +216,12 @@ namespace ShadowInfection.Skills.Indicators
         public void SetFollowTarget(UnitController target)
         {
             _followTarget = target;
+        }
+
+        public void SetMoveInput(Vector2 moveInput)
+        {
+            _moveInput = moveInput;
+            _hasMoveInput = true;
         }
 
         public void SetVisible(bool visible)
@@ -284,7 +288,7 @@ namespace ShadowInfection.Skills.Indicators
 
             if (_directional != null && _directional.gameObject.activeSelf)
             {
-                Vector3 dir = ResolveActiveDirection(casterPos, aim);
+                Vector3 dir = ResolveActiveDirection(aim);
                 float length = Mathf.Max(0.01f, Display.effectRange > 0f ? Display.effectRange : 1f);
                 float width = Mathf.Max(0.01f, Display.effectWidth > 0f ? Display.effectWidth : 1f);
                 _directional.position = directionalOrigin + dir * (length * 0.5f);
@@ -295,7 +299,7 @@ namespace ShadowInfection.Skills.Indicators
             if (_cone != null && _cone.gameObject.activeSelf)
             {
                 EnsureConeMesh(Display.effectAngle);
-                Vector3 dir = ResolveActiveDirection(casterPos, aim);
+                Vector3 dir = ResolveActiveDirection(aim);
                 float range = Mathf.Max(0.05f, Display.effectRange > 0f ? Display.effectRange : 1f);
                 _cone.position = directionalOrigin;
                 _cone.rotation = Quaternion.LookRotation(dir, Vector3.up);
@@ -303,7 +307,7 @@ namespace ShadowInfection.Skills.Indicators
             }
         }
 
-        private Vector3 ResolveActiveDirection(Vector3 casterPos, Vector3 aimPoint)
+        private Vector3 ResolveActiveDirection(Vector3 aimPoint)
         {
             if (Display.aimFollowMode == SkillIndicatorData.AimFollowMode.LockOnConfirm
                 && _lockedDirection.HasValue)
@@ -311,18 +315,17 @@ namespace ShadowInfection.Skills.Indicators
                 return _lockedDirection.Value;
             }
 
-            CastContext castContext = _skillInstance != null && _caster != null
-                ? new CastContext(_caster, _skillInstance)
-                {
-                    aimPoint = aimPoint,
-                    aimRotation = SkillAimUtil.GetAimRotation(_caster, aimPoint),
-                }
-                : null;
+            if (_caster == null)
+                return Vector3.forward;
 
-            return SkillAimUtil.ResolveDirectionalFacing(
-                castContext,
+            Vector2 moveInput = _hasMoveInput
+                ? _moveInput
+                : new Vector2(_caster.horizontalInput, _caster.verticalInput);
+
+            return SkillAimUtil.ResolveDirection(
                 _caster,
                 aimPoint,
+                moveInput,
                 Display.directionSource);
         }
 

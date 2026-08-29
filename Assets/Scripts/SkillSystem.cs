@@ -137,7 +137,7 @@ public class SkillSystem : NetworkBehaviour
         float turnSpeed = unit != null && unit.unitMediator != null
             ? unit.unitMediator.Stats.GetStat(StatType.TurnSpeed)
             : 1f;
-        if (turnSpeed > 0.05f)
+        if (!SkillAimUtil.IsTurnSpeedLocked(turnSpeed))
             return false;
 
         if (TryGetLockedCastFacingYaw(normalSkills, out yaw)
@@ -169,6 +169,17 @@ public class SkillSystem : NetworkBehaviour
             // Live-aim casts and recast windows still follow the mouse.
             if (updatesAim || skill.IsRecastWindowOpen)
                 continue;
+
+            // Movement-based indicators (Evade) encode dash direction, not facing —
+            // leave the model at its current yaw while turn speed is frozen.
+            var indicator = SkillAimPreviewUtil.Resolve(skill);
+            if (!SkillAimUtil.ShouldSnapFacingToCastAim(
+                unit,
+                new Vector2(unit.horizontalInput, unit.verticalInput),
+                indicator))
+            {
+                continue;
+            }
 
             yaw = SkillAimUtil.GetFacingAngleYaw(unit.transform.position, aimPoint);
             // Prefer rotation when aim point is essentially on the caster.

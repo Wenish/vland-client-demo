@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: BlazingShotSkillEffectMechanicCast
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffectMechanicCast
   countsAsCasted: 0
+  enabled: 1
   castDuration: 1.6
   moveSpeedPercent: 0
   turnSpeedPercent: 1
+  updateAimDuringCast: 1

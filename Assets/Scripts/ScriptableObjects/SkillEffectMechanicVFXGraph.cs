@@ -29,9 +29,10 @@ public class SkillEffectMechanicVFXGraph : SkillEffectMechanic
                     castContext,
                     target,
                     spawnAtAimPoint);
-                Quaternion rotation = spawnAtAimPoint && castContext.aimRotation.HasValue
-                    ? castContext.aimRotation.Value
-                    : target.transform.rotation;
+                Quaternion rotation = SkillAimUtil.ResolveSpawnRotation(
+                    castContext,
+                    target,
+                    spawnAtAimPoint);
                 uint targetNetId = target.netId;
 
                 // If spawning at aim point, avoid parenting so the VFX stays at world position

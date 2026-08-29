@@ -693,8 +693,8 @@ public class UnitController : NetworkBehaviour
     private float baseTurnSpeed = 20f;
 
     /// <summary>
-    /// While a skill cast has a fixed aim and turn speed is locked, keep facing that aim
-    /// instead of the live mouse — otherwise the unit drifts off the indicator mid-cast.
+    /// While a skill cast has a fixed aim and turn speed is 0, snap facing to that aim.
+    /// Slow turn (e.g. 0.05) still lerps toward the mouse.
     /// </summary>
     [Server]
     private void ApplyLockedCastFacing()
@@ -706,6 +706,7 @@ public class UnitController : NetworkBehaviour
             return;
 
         angle = yaw;
+        ApplyFacingYawImmediate(yaw);
     }
 
     [Server]
@@ -744,6 +745,19 @@ public class UnitController : NetworkBehaviour
 
         angle = SkillAimUtil.GetFacingAngleYaw(aimRotation);
         ApplyFacingYawImmediate(angle);
+    }
+
+    /// <summary>
+    /// Local-player visual snap so facing matches confirm aim before NetworkTransform catches up.
+    /// Host skips this — server <see cref="SnapFacingToAimPoint"/> already ran in the same command.
+    /// </summary>
+    public void ClientPredictFacingSnap(Vector3 aimPoint)
+    {
+        if (isServer || IsDead)
+            return;
+
+        float yaw = SkillAimUtil.GetFacingAngleYaw(transform.position, aimPoint);
+        transform.rotation = Quaternion.AngleAxis(yaw, Vector3.up);
     }
 
     [Server]

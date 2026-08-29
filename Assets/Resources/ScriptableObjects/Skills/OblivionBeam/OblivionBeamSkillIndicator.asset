@@ -15,8 +15,8 @@ MonoBehaviour:
   shape: 2
   placement: 2
   aimFollowMode: 1
-  directionSource: 0
-  showRangeRing: 1
+  directionSource: 3
+  showRangeRing: 0
   showRangeRingDuringCast: 0
   snapToTarget: {fileID: 0}
   sizeSource: {fileID: 11400000, guid: b82e87d73ec23394d86f6c55f0c3ed86, type: 2}

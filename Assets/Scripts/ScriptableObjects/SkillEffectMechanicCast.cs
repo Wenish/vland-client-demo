@@ -49,12 +49,15 @@ public class SkillEffectMechanicCast : SkillEffectData
         else
             caster.unitActionState.SetUnitActionState(UnitActionState.ActionType.Casting, NetworkTime.time, castDuration, ctx.skillInstance.skillName);
 
-        // Snap before turn lock so a fast mouse swing cannot freeze the unit mid-turn
-        // while skill mechanics still resolve toward the cast aim.
-        ctx.SnapCasterFacingToAim();
-
         bool previousUpdatesAim = ctx.updatesAimDuringCast;
-        ctx.updatesAimDuringCast = updateAimDuringCast;
+        // Nested windup keeps parent live-aim when this cast still allows turning.
+        if (isChildAction && previousUpdatesAim && !SkillAimUtil.IsTurnSpeedLocked(turnSpeedPercent))
+            ctx.updatesAimDuringCast = true;
+        else
+            ctx.updatesAimDuringCast = updateAimDuringCast;
+
+        if (SkillAimUtil.IsTurnSpeedLocked(turnSpeedPercent))
+            ctx.SnapCasterFacingToAim();
 
         StatModifier moveSpeedModifier = new StatModifier()
         {

@@ -16,6 +16,7 @@ namespace ShadowInfection.Skills.Indicators
         private DisposableBag _subscriptions;
         private UnitController _localUnit;
         private Vector3 _latestAimPoint;
+        private Vector2 _latestMoveInput;
         private bool _hasAimPoint;
         private UnitController _latestFollowTarget;
 
@@ -74,6 +75,7 @@ namespace ShadowInfection.Skills.Indicators
                     && !_holdingPreviewForCast)
                 {
                     session.SetAimPoint(_latestAimPoint);
+                    session.SetMoveInput(_latestMoveInput);
                     if (_latestFollowTarget != null)
                         session.SetFollowTarget(_latestFollowTarget);
                 }
@@ -123,10 +125,14 @@ namespace ShadowInfection.Skills.Indicators
                 ResolveSkillData(skillInstance)));
         }
 
-        public void UpdateAim(Vector3 aimPoint, UnitController followTarget = null)
+        public void UpdateAim(
+            Vector3 aimPoint,
+            UnitController followTarget = null,
+            Vector2 moveInput = default)
         {
             _latestAimPoint = aimPoint;
             _latestFollowTarget = followTarget;
+            _latestMoveInput = moveInput;
             _hasAimPoint = true;
 
             // While holding confirm→cast, keep the frozen preview; don't track mouse again.
@@ -139,6 +145,7 @@ namespace ShadowInfection.Skills.Indicators
             {
                 preview.SetAimPoint(aimPoint);
                 preview.SetFollowTarget(followTarget);
+                preview.SetMoveInput(moveInput);
                 preview.Tick();
             }
 
@@ -290,6 +297,7 @@ namespace ShadowInfection.Skills.Indicators
                     continue;
 
                 session.SetAimPoint(_latestAimPoint);
+                session.SetMoveInput(_latestMoveInput);
                 if (_latestFollowTarget != null)
                     session.SetFollowTarget(_latestFollowTarget);
                 session.SetVisible(true);

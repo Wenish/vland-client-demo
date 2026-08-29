@@ -34,12 +34,12 @@ public class SkillEffectMechanicProjectile : SkillEffectMechanic
         }
 
         Vector3 targetPosition = target.transform.position;
-        Quaternion targetRotation = target.transform.rotation;
+        Quaternion spawnRotation = SkillAimUtil.ResolveSpawnRotation(castContext, target);
 
-        Vector3 spawnPosition = targetPosition + targetRotation * Vector3.forward * spawnDistance;
+        Vector3 spawnPosition = targetPosition + spawnRotation * Vector3.forward * spawnDistance;
 
         var projectileInstance = castContext.ProjectileSpawner != null
-            ? castContext.ProjectileSpawner.SpawnProjectile(projectileData, spawnPosition + Vector3.up, targetRotation)
+            ? castContext.ProjectileSpawner.SpawnProjectile(projectileData, spawnPosition + Vector3.up, spawnRotation)
             : null;
         if (projectileInstance == null)
         {

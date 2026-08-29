@@ -144,6 +144,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
     private Coroutine _runningCastCoroutine;
     private CastContext _runningCastContext;
+    private StatModifier _castTurnSpeedLockModifier;
     private int _lastCastStartFrame = -1;
 
     [Server]
@@ -243,6 +244,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
             aimRotation = aimRotation,
             forceSelfTarget = forceSelfTarget,
         };
+        ApplyCastTurnSpeedLockIfNeeded();
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
         return SkillCastResult.Started;
     }
@@ -274,6 +276,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
         finally
         {
+            ClearCastTurnSpeedLock();
             _runningCastCoroutine = null;
             _runningCastContext = null;
             ServerHideAllSkillIndicators();
@@ -285,6 +288,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
     {
         _isRecastWindowOpen = false;
         _recastWindowEndTime = -Mathf.Infinity;
+        ClearCastTurnSpeedLock();
         _runningCastContext?.Cancel();
         _runningCastContext = null;
         if (_runningCastCoroutine != null)
@@ -294,6 +298,36 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
         Rpc_CleanupSpawnedVfx();
         ServerHideAllSkillIndicators();
+    }
+
+    [Server]
+    private void ApplyCastTurnSpeedLockIfNeeded()
+    {
+        ClearCastTurnSpeedLock();
+        if (unit?.unitMediator?.Stats == null)
+            return;
+
+        float min = SkillEffectChainUtil.GetMinTurnSpeedPercent(skillData);
+        if (!SkillAimUtil.IsTurnSpeedLocked(min))
+            return;
+
+        _castTurnSpeedLockModifier = new StatModifier
+        {
+            Type = StatType.TurnSpeed,
+            ModifierType = ModifierType.Percent,
+            Value = min
+        };
+        unit.unitMediator.Stats.ApplyModifier(_castTurnSpeedLockModifier);
+    }
+
+    [Server]
+    private void ClearCastTurnSpeedLock()
+    {
+        if (_castTurnSpeedLockModifier == null)
+            return;
+
+        unit?.unitMediator?.Stats?.RemoveModifier(_castTurnSpeedLockModifier);
+        _castTurnSpeedLockModifier = null;
     }
 
     [Server]
@@ -424,7 +458,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         float turnSpeed = unit.unitMediator != null
             ? unit.unitMediator.Stats.GetStat(StatType.TurnSpeed)
             : 1f;
-        if (turnSpeed <= 0.05f)
+        if (SkillAimUtil.IsTurnSpeedLocked(turnSpeed))
             unit.SnapFacingToAimPoint(clamped);
     }
 
@@ -561,9 +595,20 @@ public class NetworkedSkillInstance : NetworkBehaviour
 
         if (attachToTarget && target != null)
         {
-            // Convert world to local
-            localPos = target.InverseTransformPoint(worldPos);
-            localRot = Quaternion.Inverse(target.rotation) * worldRot;
+            // Stick to parent forward so cones/rectangles turn with the unit.
+            if (shape == AreaVFXShape.Rectangle || shape == AreaVFXShape.Cone)
+            {
+                Vector3 localOffset = new Vector3(offset.x, 0f, offset.y);
+                if (shape == AreaVFXShape.Rectangle)
+                    localOffset.z += range * 0.5f;
+                localPos = Vector3.up * 0.01f + localOffset;
+                localRot = Quaternion.identity;
+            }
+            else
+            {
+                localPos = target.InverseTransformPoint(worldPos);
+                localRot = Quaternion.Inverse(target.rotation) * worldRot;
+            }
         }
 
         var materialPropertyBlock = new MaterialPropertyBlock();

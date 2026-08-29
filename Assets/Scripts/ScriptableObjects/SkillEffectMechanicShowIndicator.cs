@@ -55,9 +55,7 @@ public class SkillEffectMechanicShowIndicator : SkillEffectData
         Vector3 mouseAim = ctx.aimPoint ?? ctx.caster.transform.position;
         Vector3 aim = mouseAim;
 
-        if ((indicator.shape == SkillIndicatorData.IndicatorShape.Directional
-                || indicator.shape == SkillIndicatorData.IndicatorShape.Cone)
-            && indicator.directionSource != SkillIndicatorData.DirectionSource.TowardAimPoint)
+        if (SkillAimUtil.ProjectsDirectionIntoAimPoint(indicator.shape, indicator.directionSource))
         {
             float length = indicator.ResolveRange();
             if (length <= 0f)

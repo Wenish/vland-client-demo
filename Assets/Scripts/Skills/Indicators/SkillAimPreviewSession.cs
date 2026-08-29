@@ -17,6 +17,10 @@ public sealed class SkillAimPreviewSession : ISkillAimPreviewSession, ISkillAimP
         if (_state.Value is not { } current)
             return;
 
+        if (current.FollowTarget == followTarget
+            && (current.AimPoint - aimPoint).sqrMagnitude < 0.0001f)
+            return;
+
         _state.Value = new SkillAimPreviewState(
             current.SnapsToTarget,
             followTarget,
