@@ -3,14 +3,17 @@ using ShadowInfection;
 using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class UnitHighlighter : MonoBehaviour
 {
     public LayerMask unitLayerMask; // Set this to your unit layer in the inspector
     private GameObject lastHighlighted;
     private UnitController _snapHighlightTarget;
+    private ISkillAimPreviewSession _previewSession;
     private Camera _mainCamera;
     private R3.DisposableBag subscriptions;
+    private bool _sceneEventsRegistered;
 
     [ColorUsage(true, true)]
     public Color outlineColorDefault = Color.yellow; // Default highlight color
@@ -25,20 +28,13 @@ public class UnitHighlighter : MonoBehaviour
 
     void OnEnable()
     {
-        subscriptions.Dispose();
-        subscriptions = new R3.DisposableBag();
-
-        if (!GameplayLifetimeScope.TryResolve<ISkillAimPreviewSession>(out var session))
-            return;
-
-        subscriptions.Add(session.State.Subscribe(OnAimPreviewStateChanged));
-        OnAimPreviewStateChanged(session.State.CurrentValue);
+        EnsureSceneEventsRegistered();
+        TryBindPreviewSession();
     }
 
     void OnDisable()
     {
-        subscriptions.Dispose();
-        subscriptions = new R3.DisposableBag();
+        UnbindPreviewSession();
         _snapHighlightTarget = null;
     }
 
@@ -48,6 +44,9 @@ public class UnitHighlighter : MonoBehaviour
         {
             return;
         }
+
+        TryBindPreviewSession();
+        RefreshSnapTargetFromSession();
 
         if (TryGetSnapHighlightTarget(out GameObject snapTarget))
         {
@@ -68,25 +67,61 @@ public class UnitHighlighter : MonoBehaviour
             SetHighlight(null);
     }
 
-    void OnAimPreviewStateChanged(SkillAimPreviewState? state)
+    void EnsureSceneEventsRegistered()
     {
-        var previous = _snapHighlightTarget;
-        _snapHighlightTarget = state?.ShouldOverrideHoverHighlight == true
-            ? state.Value.FollowTarget
-            : null;
+        if (_sceneEventsRegistered)
+            return;
 
-        if (_snapHighlightTarget != null)
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        _sceneEventsRegistered = true;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        UnbindPreviewSession();
+        TryBindPreviewSession();
+    }
+
+    void TryBindPreviewSession()
+    {
+        if (_previewSession != null)
+            return;
+
+        if (!GameplayLifetimeScope.TryResolve<ISkillAimPreviewSession>(out var session))
+            return;
+
+        _previewSession = session;
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+        subscriptions.Add(session.State.Subscribe(OnAimPreviewStateChanged));
+    }
+
+    void UnbindPreviewSession()
+    {
+        subscriptions.Dispose();
+        subscriptions = new R3.DisposableBag();
+        _previewSession = null;
+    }
+
+    void RefreshSnapTargetFromSession()
+    {
+        if (_previewSession == null)
         {
-            SetHighlight(_snapHighlightTarget.gameObject);
+            _snapHighlightTarget = null;
             return;
         }
 
-        if (previous != null)
-        {
-            RemoveHighlightFrom(previous.gameObject);
-            if (lastHighlighted == previous.gameObject)
-                lastHighlighted = null;
-        }
+        var state = _previewSession.State.CurrentValue;
+        _snapHighlightTarget = state?.ShouldOverrideHoverHighlight == true
+            ? state.Value.FollowTarget
+            : null;
+    }
+
+    void OnAimPreviewStateChanged(SkillAimPreviewState? state)
+    {
+        _snapHighlightTarget = state?.ShouldOverrideHoverHighlight == true
+            ? state.Value.FollowTarget
+            : null;
     }
 
     bool TryGetSnapHighlightTarget(out GameObject snapTarget)
@@ -95,8 +130,8 @@ public class UnitHighlighter : MonoBehaviour
         if (_snapHighlightTarget == null)
             return false;
 
-        snapTarget = _snapHighlightTarget.gameObject;
-        return true;
+        snapTarget = ResolveHighlightTarget(_snapHighlightTarget.gameObject);
+        return snapTarget != null;
     }
 
     static bool TryGetPointerPosition(out Vector2 pointerPosition)
@@ -193,6 +228,9 @@ public class UnitHighlighter : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (_sceneEventsRegistered)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+
         subscriptions.Dispose();
         RemoveHighlight(); // Ensure highlight is removed when the script is destroyed
     }

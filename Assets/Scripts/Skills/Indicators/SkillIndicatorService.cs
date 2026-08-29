@@ -144,7 +144,7 @@ namespace ShadowInfection.Skills.Indicators
 
             ApplyLatestAimToFollowSessions(immediateTick: true);
 
-            if (!_holdingPreviewForCast && _sessions.ContainsKey(PreviewSessionId))
+            if (!_holdingPreviewForCast)
                 _aimPreviewSession.Update(aimPoint, followTarget);
         }
 
