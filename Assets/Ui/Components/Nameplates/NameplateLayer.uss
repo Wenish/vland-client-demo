@@ -81,7 +81,7 @@
 }
 
 .unit-nameplate__bar-fill--shield {
-    background-color: rgb(130, 210, 230);
+    background-color: var(--sky);
 }
 
 .unit-nameplate__health-row {
@@ -125,22 +125,25 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 1px;
+    width: 2px;
     background-color: rgba(0, 0, 0, 0.55);
     picking-mode: Ignore;
 }
 
 .unit-nameplate__tick--25 {
     left: 35px;
+    bottom: auto;
+    height: 50%;
 }
 
 .unit-nameplate__tick--50 {
     left: 70px;
-    width: 2px;
 }
 
 .unit-nameplate__tick--75 {
     left: 105px;
+    bottom: auto;
+    height: 50%;
 }
 
 .unit-nameplate__cast-bar {

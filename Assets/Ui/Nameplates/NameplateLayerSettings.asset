@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.UI.Nameplates.NameplateLayerSettings
   healthLerpSeconds: 0.2
   headWorldOffset: 0
-  screenOffsetPixels: 18
+  screenOffsetPixels: 36
   localPlayerHealthColor: {r: 0, g: 0.6509804, b: 0.24313727, a: 1}
