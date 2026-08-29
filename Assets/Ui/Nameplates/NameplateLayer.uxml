@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase"/>
+    <ui:VisualElement name="nameplate-layer-root" picking-mode="Ignore" class="nameplate-layer-root">
+        <ui:VisualElement name="nameplate-container" picking-mode="Ignore" class="nameplate-container" />
+    </ui:VisualElement>
+</ui:UXML>
