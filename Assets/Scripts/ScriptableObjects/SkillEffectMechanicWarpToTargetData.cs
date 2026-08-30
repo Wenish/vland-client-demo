@@ -9,8 +9,6 @@ public class SkillEffectMechanicWarpToTargetData : SkillEffectMechanic
         CastContext castContext,
         List<UnitController> targets)
     {
-        Debug.Log($"Warping {castContext.caster.name} to first target in list.");
-        Debug.Log($"Number of targets: {targets.Count}");
         var firstTarget = targets.Count > 0 ? targets[0] : null;
         var newTargetList = new List<UnitController>();
 
