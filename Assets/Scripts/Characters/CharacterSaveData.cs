@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ShadowInfection.Items;
 
 [Serializable]
 public class CharacterSaveData
@@ -17,8 +18,10 @@ public class CharacterSaveData
 
     // Future meta stubs (unused in v1)
     public List<string> UnlockedSkillIds = new List<string>();
-    public List<string> InventoryItemIds = new List<string>();
     public List<string> ArmorSlotIds = new List<string>();
+
+    public List<InventoryEntry> InventoryEquipment = new List<InventoryEntry>();
+    public List<ItemStack> InventoryStacks = new List<ItemStack>();
 
     public LocalLoadout ToLoadout()
     {
@@ -55,8 +58,9 @@ public class CharacterSaveData
             Name = name ?? string.Empty,
             Gender = gender,
             UnlockedSkillIds = new List<string>(),
-            InventoryItemIds = new List<string>(),
-            ArmorSlotIds = new List<string>()
+            ArmorSlotIds = new List<string>(),
+            InventoryEquipment = new List<InventoryEntry>(),
+            InventoryStacks = new List<ItemStack>()
         };
 
         if (initialLoadout != null)

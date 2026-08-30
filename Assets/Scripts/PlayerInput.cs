@@ -2,6 +2,7 @@ using System.Collections;
 using Game.Scripts.Controllers;
 using Mirror;
 using MyGame.Events;
+using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
 using ShadowInfection.Input;
@@ -33,6 +34,7 @@ public class PlayerInput : NetworkBehaviour
     private Plane _plane;
     private ControllerCamera _controllerCamera;
     private DisposableBag serverSubscriptions;
+    private DisposableBag peerSubscriptions;
 
     private bool _isAimPreviewActive;
     private SkillSlotType _aimPreviewSlot;
@@ -74,12 +76,16 @@ public class PlayerInput : NetworkBehaviour
                 SetMyUnit(unit);
             GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
         }
+
+        GameMessages.Subscribe<UnitExitedInteractionZone>(ref peerSubscriptions, OnUnitExitedInteractionZone);
     }
 
     void OnDestroy()
     {
         serverSubscriptions.Dispose();
         serverSubscriptions = new DisposableBag();
+        peerSubscriptions.Dispose();
+        peerSubscriptions = new DisposableBag();
     }
 
     [Server]
@@ -138,12 +144,62 @@ public class PlayerInput : NetworkBehaviour
             InputInterrupt();
             UpdateAimPreview();
             UpdateAimDuringCast();
+            TryOpenVendorFromLobby();
         }
 
         if (isServer)
         {
             ControlMyUnit();
         }
+    }
+
+    /// <summary>
+    /// Lobby room players have no <see cref="PlayerController"/>; that is where match interact lives.
+    /// Open a nearby vendor from the same input that already drives lobby walking.
+    /// </summary>
+    private void TryOpenVendorFromLobby()
+    {
+        if (GetComponent<PlayerController>() != null)
+            return;
+
+        var reader = GameServices.Input;
+        if (reader == null || !reader.WasPressed(PlayerActionId.Interact))
+            return;
+
+        var unit = _myUnitController;
+        if (unit == null && myUnit != null)
+            unit = myUnit.GetComponent<UnitController>();
+        if (unit == null)
+            return;
+
+        var zone = VendorManager.FindReachableVendor(unit, null);
+        if (zone == null)
+            return;
+
+        var session = zone.GetVendorSession();
+        if (session == null)
+        {
+            UnityEngine.Debug.LogWarning("OpenVendor zone is missing a VendorDefinition.", zone);
+            return;
+        }
+
+        GameMessages.Publish(new OpenVendorWindowEvent(session, null));
+    }
+
+    private void OnUnitExitedInteractionZone(UnitExitedInteractionZone evt)
+    {
+        if (!isLocalPlayer || evt == null || evt.Zone == null)
+            return;
+        if (GetComponent<PlayerController>() != null)
+            return;
+
+        var unit = _myUnitController;
+        if (unit == null && myUnit != null)
+            unit = myUnit.GetComponent<UnitController>();
+        if (unit == null || evt.Unit != unit)
+            return;
+
+        GameMessages.Publish(new CloseVendorWindowIfInteractableEvent(evt.Zone));
     }
 
     /// <summary>

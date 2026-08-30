@@ -42,8 +42,19 @@ public sealed class CatalogVendorSession : IVendorSession
         if (catalog == null || player == null)
             return false;
 
+        return IsReachableBy(player.GetControlledUnit());
+    }
+
+    public bool IsReachableBy(UnitController unit)
+    {
+        if (source == null)
+            return true;
+
+        if (unit == null)
+            return false;
+
         if (source is InteractionZone zone)
-            return VendorManager.IsUnitInVendorRange(player.GetControlledUnit(), zone);
+            return VendorManager.IsUnitInVendorRange(unit, zone);
 
         return true;
     }
@@ -55,6 +66,9 @@ public sealed class CatalogVendorSession : IVendorSession
 
     public int GetBuyStock(string entryId)
     {
+        if (catalog != null && catalog.UsesItemCatalog)
+            return VendorStock.Unlimited;
+
         if (string.IsNullOrEmpty(entryId) || !buyStock.TryGetValue(entryId, out var stock))
             return 0;
         return stock;
@@ -72,6 +86,9 @@ public sealed class CatalogVendorSession : IVendorSession
 
     public bool TryConsumeBuyStock(string entryId, int quantity = 1)
     {
+        if (catalog != null && catalog.UsesItemCatalog)
+            return quantity > 0;
+
         if (quantity <= 0 || string.IsNullOrEmpty(entryId))
             return false;
         if (!buyStock.TryGetValue(entryId, out var stock))
@@ -88,7 +105,7 @@ public sealed class CatalogVendorSession : IVendorSession
     private void CacheTemplateStock()
     {
         buyStock.Clear();
-        if (catalog?.buyEntries == null)
+        if (catalog?.buyEntries == null || catalog.UsesItemCatalog)
             return;
 
         foreach (var entry in catalog.buyEntries)

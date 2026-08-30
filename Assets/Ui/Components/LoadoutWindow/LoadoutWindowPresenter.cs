@@ -18,6 +18,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private readonly ILoadoutStore store;
         private readonly ILoadoutCatalog catalog;
         private readonly ISubscriber<SetLoadoutWindowOpenEvent> setOpen;
+        private readonly IPublisher<SetInventoryWindowOpenEvent> inventoryOpen;
         private readonly ApplicationSettings settings;
         private readonly IInputReader input;
 
@@ -33,12 +34,14 @@ namespace ShadowInfection.UI.LoadoutWindow
             ILoadoutStore store,
             ILoadoutCatalog catalog,
             ISubscriber<SetLoadoutWindowOpenEvent> setOpen,
+            IPublisher<SetInventoryWindowOpenEvent> inventoryOpen,
             ApplicationSettings settings,
             IInputReader input)
         {
             this.store = store;
             this.catalog = catalog;
             this.setOpen = setOpen;
+            this.inventoryOpen = inventoryOpen;
             this.settings = settings;
             this.input = input;
         }
@@ -98,6 +101,7 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         private void Open()
         {
+            inventoryOpen?.Publish(new SetInventoryWindowOpenEvent(false));
             view?.SetOpen(true);
         }
 
@@ -111,6 +115,9 @@ namespace ShadowInfection.UI.LoadoutWindow
             var wantOpen = evt != null && evt.IsOpen;
             if (wantOpen && !IsInRoomLobby())
                 wantOpen = false;
+
+            if (wantOpen)
+                inventoryOpen?.Publish(new SetInventoryWindowOpenEvent(false));
 
             view?.SetOpen(wantOpen);
         }
@@ -130,6 +137,8 @@ namespace ShadowInfection.UI.LoadoutWindow
             }
 
             view.SetOpen(!view.IsOpen);
+            if (view.IsOpen)
+                inventoryOpen?.Publish(new SetInventoryWindowOpenEvent(false));
         }
 
         private static bool IsInRoomLobby()

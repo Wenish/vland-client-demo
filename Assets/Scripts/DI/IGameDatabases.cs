@@ -1,3 +1,5 @@
+using ShadowInfection.Items;
+
 namespace ShadowInfection.DI
 {
     public interface IGameDatabases
@@ -8,6 +10,7 @@ namespace ShadowInfection.DI
         ModelDatabase Models { get; }
         ProjectileDatabase Projectiles { get; }
         AreaZoneDatabase AreaZones { get; }
+        ItemDatabase Items { get; }
     }
 
     public sealed class GameDatabases : IGameDatabases
@@ -18,7 +21,8 @@ namespace ShadowInfection.DI
             UnitDatabase units,
             ModelDatabase models,
             ProjectileDatabase projectiles,
-            AreaZoneDatabase areaZones)
+            AreaZoneDatabase areaZones,
+            ItemDatabase items)
         {
             Weapons = weapons;
             Skills = skills;
@@ -26,6 +30,7 @@ namespace ShadowInfection.DI
             Models = models;
             Projectiles = projectiles;
             AreaZones = areaZones;
+            Items = items;
         }
 
         public WeaponDatabase Weapons { get; }
@@ -34,5 +39,6 @@ namespace ShadowInfection.DI
         public ModelDatabase Models { get; }
         public ProjectileDatabase Projectiles { get; }
         public AreaZoneDatabase AreaZones { get; }
+        public ItemDatabase Items { get; }
     }
 }

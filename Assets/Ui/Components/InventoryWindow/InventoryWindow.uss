@@ -1,0 +1,369 @@
+.inventory {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    cursor: var(--cursor-ui);
+}
+
+.inventory-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 4, 10, 0.72);
+    cursor: var(--cursor-ui);
+}
+
+.inventory-panel {
+    width: 70%;
+    height: 75%;
+    max-width: 1100px;
+    max-height: 800px;
+    min-width: 640px;
+    min-height: 480px;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    padding-top: 18px;
+    padding-right: 18px;
+    padding-bottom: 18px;
+    padding-left: 18px;
+    cursor: var(--cursor-ui);
+}
+
+.inventory-header-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.inventory-header {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 32px;
+    color: rgb(254, 221, 183);
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 0;
+    cursor: var(--cursor-ui);
+}
+
+.inventory-close-button {
+    margin-top: 0;
+    margin-bottom: 0;
+    min-width: 148px;
+    flex-shrink: 0;
+}
+
+.inventory-search {
+    flex-shrink: 0;
+    margin-bottom: 8px;
+    min-height: 32px;
+    color: rgb(255, 244, 231);
+}
+
+.inventory-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+.inventory-filter {
+    min-height: 28px;
+    max-height: 28px;
+    height: 28px;
+    margin-top: 0;
+    margin-bottom: 6px;
+    margin-right: 6px;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 13px;
+    color: rgb(204, 208, 214);
+    background-image: none;
+    background-color: rgba(255, 244, 231, 0.06);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.35);
+    border-right-color: rgba(202, 159, 108, 0.35);
+    border-top-color: rgba(202, 159, 108, 0.35);
+    border-bottom-color: rgba(202, 159, 108, 0.35);
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    cursor: var(--cursor-hover);
+}
+
+.inventory-filter:hover {
+    color: rgb(255, 244, 231);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.inventory-filter--active {
+    color: rgb(254, 221, 183);
+    background-color: rgba(253, 199, 135, 0.16);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.inventory-body {
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 0;
+    margin-top: 4px;
+}
+
+.inventory-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-right: 12px;
+}
+
+.inventory-list {
+    flex-direction: column;
+    width: 100%;
+}
+
+.inventory-row {
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 6px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    background-color: rgba(255, 244, 231, 0.04);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(202, 159, 108, 0.25);
+    border-right-color: rgba(202, 159, 108, 0.25);
+    border-top-color: rgba(202, 159, 108, 0.25);
+    border-bottom-color: rgba(202, 159, 108, 0.25);
+    cursor: var(--cursor-hover);
+}
+
+.inventory-row:hover {
+    background-color: rgba(255, 244, 231, 0.08);
+}
+
+.inventory-row--selected {
+    background-color: rgba(253, 199, 135, 0.14);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+}
+
+.inventory-row--last {
+    margin-bottom: 0;
+}
+
+.inventory-row__icon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    margin-right: 12px;
+    background-color: rgba(0, 0, 0, 0.35);
+    background-size: cover;
+    background-position: center;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    cursor: var(--cursor-hover);
+}
+
+.inventory-row__stack {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    font-size: 11px;
+    color: rgb(255, 244, 231);
+    background-color: rgba(0, 0, 0, 0.65);
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.inventory-icon--common {
+    border-left-color: rgb(170, 170, 170);
+    border-right-color: rgb(170, 170, 170);
+    border-top-color: rgb(170, 170, 170);
+    border-bottom-color: rgb(170, 170, 170);
+}
+
+.inventory-icon--uncommon {
+    border-left-color: rgb(64, 200, 90);
+    border-right-color: rgb(64, 200, 90);
+    border-top-color: rgb(64, 200, 90);
+    border-bottom-color: rgb(64, 200, 90);
+}
+
+.inventory-icon--rare {
+    border-left-color: rgb(64, 140, 255);
+    border-right-color: rgb(64, 140, 255);
+    border-top-color: rgb(64, 140, 255);
+    border-bottom-color: rgb(64, 140, 255);
+}
+
+.inventory-icon--epic {
+    border-left-color: rgb(176, 80, 255);
+    border-right-color: rgb(176, 80, 255);
+    border-top-color: rgb(176, 80, 255);
+    border-bottom-color: rgb(176, 80, 255);
+}
+
+.inventory-icon--legendary {
+    border-left-color: rgb(255, 180, 60);
+    border-right-color: rgb(255, 180, 60);
+    border-top-color: rgb(255, 180, 60);
+    border-bottom-color: rgb(255, 180, 60);
+}
+
+.inventory-row__body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: column;
+    min-width: 0;
+    cursor: var(--cursor-hover);
+}
+
+.inventory-row__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+    margin: 0;
+    padding: 0;
+    white-space: normal;
+    cursor: var(--cursor-hover);
+}
+
+.inventory-row__meta {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 12px;
+    color: rgb(254, 221, 183);
+    margin-top: 4px;
+    margin-bottom: 0;
+    padding: 0;
+    cursor: var(--cursor-hover);
+}
+
+.inventory-row__summary {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(204, 208, 214);
+    margin-top: 4px;
+    margin-bottom: 0;
+    padding: 0;
+    white-space: normal;
+    cursor: var(--cursor-hover);
+}
+
+.inventory-empty {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgba(204, 208, 214, 0.75);
+    white-space: normal;
+    padding-top: 12px;
+    padding-right: 8px;
+    padding-bottom: 12px;
+    padding-left: 8px;
+}
+
+.inventory-detail {
+    width: 280px;
+    flex-shrink: 0;
+    flex-direction: column;
+    padding-left: 8px;
+}
+
+.inventory-detail__icon {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.35);
+    background-size: cover;
+    background-position: center;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+}
+
+.inventory-detail__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 22px;
+    color: rgb(254, 221, 183);
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.inventory-detail__meta {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(204, 208, 214);
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.inventory-detail__stats {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgb(204, 208, 214);
+    white-space: normal;
+    flex-grow: 1;
+}
+
+.inventory-detail__empty {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 14px;
+    color: rgba(204, 208, 214, 0.75);
+    white-space: normal;
+}
+
+.inventory-destroy-button {
+    margin-top: 12px;
+    flex-shrink: 0;
+}
+
+.inventory-confirm {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 16px;
+    background-color: rgba(0, 4, 10, 0.92);
+    border-top-width: 1px;
+    border-top-color: rgb(152, 119, 81);
+    flex-direction: column;
+}
+
+.inventory-confirm__message {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 15px;
+    color: rgb(255, 244, 231);
+    margin-bottom: 10px;
+}
+
+.inventory-confirm__row {
+    flex-direction: row;
+    justify-content: flex-end;
+}

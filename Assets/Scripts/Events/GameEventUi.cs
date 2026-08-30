@@ -50,6 +50,16 @@ namespace MyGame.Events.Ui
         }
     }
 
+    public class SetInventoryWindowOpenEvent
+    {
+        public bool IsOpen { get; }
+
+        public SetInventoryWindowOpenEvent(bool isOpen)
+        {
+            IsOpen = isOpen;
+        }
+    }
+
     public class SetLoadoutWindowOpenEvent
     {
         public bool IsOpen { get; }

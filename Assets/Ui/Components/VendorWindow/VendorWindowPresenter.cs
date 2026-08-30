@@ -5,6 +5,7 @@ using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.Input;
+using ShadowInfection.Items;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -27,6 +28,9 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly ISubscriber<CloseVendorWindowIfInteractableEvent> closeIfInteractable;
         private readonly IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged;
         private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
+        private readonly IPublisher<SetInventoryWindowOpenEvent> inventoryOpen;
+        private readonly IItemCatalog itemCatalog;
+        private readonly IItemInventory itemInventory;
         private readonly IInputReader input;
 
         private VendorView view;
@@ -57,6 +61,9 @@ namespace ShadowInfection.UI.VendorWindow
             ISubscriber<CloseVendorWindowIfInteractableEvent> closeIfInteractable,
             IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged,
             IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen,
+            IPublisher<SetInventoryWindowOpenEvent> inventoryOpen,
+            IItemCatalog itemCatalog,
+            IItemInventory itemInventory,
             IInputReader input)
         {
             this.zombieMatchSession = zombieMatchSession;
@@ -69,6 +76,9 @@ namespace ShadowInfection.UI.VendorWindow
             this.closeIfInteractable = closeIfInteractable;
             this.visibilityChanged = visibilityChanged;
             this.loadoutOpen = loadoutOpen;
+            this.inventoryOpen = inventoryOpen;
+            this.itemCatalog = itemCatalog;
+            this.itemInventory = itemInventory;
             this.input = input;
         }
 
@@ -169,6 +179,7 @@ namespace ShadowInfection.UI.VendorWindow
                 return;
 
             loadoutOpen.Publish(new SetLoadoutWindowOpenEvent(false));
+            inventoryOpen.Publish(new SetInventoryWindowOpenEvent(false));
 
             session = nextSession;
             player = nextPlayer != null ? nextPlayer : ResolveLocalPlayer();
@@ -186,7 +197,7 @@ namespace ShadowInfection.UI.VendorWindow
             BindPlayerStats();
             Refresh();
 
-            if (player != null && player.isLocalPlayer)
+            if (player != null && player.isLocalPlayer && (nextSession.Catalog == null || !nextSession.Catalog.UsesItemCatalog))
             {
                 player.CmdBeginVendorTrade(nextSession.VendorId);
                 player.CmdRequestVendorSnapshot(nextSession.VendorId);
@@ -243,7 +254,20 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void TickInput()
         {
-            if (!IsOpen || input == null)
+            if (!IsOpen)
+                return;
+
+            if (session != null)
+            {
+                var unit = ResolveLocalUnit();
+                if (unit != null && !session.IsReachableBy(unit))
+                {
+                    Close();
+                    return;
+                }
+            }
+
+            if (input == null)
                 return;
 
             if (input.WasPressed(PlayerActionId.VendorTabs))
@@ -303,7 +327,10 @@ namespace ShadowInfection.UI.VendorWindow
         private void OnRowTransactRequested(string id)
         {
             if (player == null || session == null)
-                return;
+            {
+                if (session == null || Catalog == null || !Catalog.UsesItemCatalog)
+                    return;
+            }
 
             var rows = BuildRows();
             var model = FindRow(rows, id);
@@ -313,6 +340,14 @@ namespace ShadowInfection.UI.VendorWindow
             selectedId = id;
             if (ShadowInfection.DI.GameLifetimeScope.TryResolve<ShadowInfection.Audio.ISfxPlayer>(out var sfx))
                 sfx.Play(ShadowInfection.Audio.SfxPlayer.Ids.UiButtonClick);
+
+            if (Catalog != null && Catalog.UsesItemCatalog)
+            {
+                if (itemInventory != null && itemInventory.TryGrantItem(model.Id))
+                    Refresh();
+                return;
+            }
+
             player.CmdVendorTransact(session.VendorId, (byte)model.Tab, model.Id);
             RefreshVisibleRows(rows);
         }
@@ -447,6 +482,12 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void BuildBuyRows(List<VendorRowVm> rows)
         {
+            if (Catalog != null && Catalog.UsesItemCatalog)
+            {
+                BuildItemCatalogRows(rows);
+                return;
+            }
+
             if (Catalog.buyEntries == null)
                 return;
 
@@ -485,6 +526,40 @@ namespace ShadowInfection.UI.VendorWindow
                     CanTransact = !soldOut,
                     PriceNote = soldOut ? "sold out" : null,
                     TooltipAction = "Right-click to buy"
+                });
+            }
+        }
+
+        private void BuildItemCatalogRows(List<VendorRowVm> rows)
+        {
+            if (itemCatalog == null)
+                return;
+
+            var all = itemCatalog.All;
+            for (var i = 0; i < all.Count; i++)
+            {
+                var item = all[i];
+                if (item == null || string.IsNullOrWhiteSpace(item.itemId))
+                    continue;
+
+                var typeLine = ItemPresentation.TypeLine(item);
+                rows.Add(new VendorRowVm
+                {
+                    Id = item.itemId,
+                    Tab = VendorTab.Buy,
+                    Icon = itemCatalog.ResolveIcon(item),
+                    IconClass = "vendor-row__icon--weapon",
+                    Name = item.DisplayName,
+                    Subtitle = $"{item.rarity} · {typeLine}",
+                    TypeLine = typeLine,
+                    StatBlock = ItemPresentation.FormatStats(item.statModifiers),
+                    PriceGold = 0,
+                    StackCount = 1,
+                    Dimmed = false,
+                    Locked = false,
+                    CanTransact = true,
+                    PriceNote = "DEBUG",
+                    TooltipAction = "Right-click to add to bag"
                 });
             }
         }
@@ -596,7 +671,7 @@ namespace ShadowInfection.UI.VendorWindow
             return null;
         }
 
-        private static string HintFor(VendorTab currentTab)
+        private string HintFor(VendorTab currentTab)
         {
             switch (currentTab)
             {
@@ -605,6 +680,8 @@ namespace ShadowInfection.UI.VendorWindow
                 case VendorTab.Upgrades:
                     return "Permanent stat boosts. Right-click to buy.";
                 default:
+                    if (Catalog != null && Catalog.UsesItemCatalog)
+                        return "DEBUG: free items. Right-click to add a copy to your bag.";
                     return "Right-click to buy. Hover for details.";
             }
         }
@@ -634,6 +711,24 @@ namespace ShadowInfection.UI.VendorWindow
             if (Mirror.NetworkClient.localPlayer == null)
                 return null;
             return Mirror.NetworkClient.localPlayer.GetComponent<PlayerController>();
+        }
+
+        private static UnitController ResolveLocalUnit()
+        {
+            var local = Mirror.NetworkClient.localPlayer;
+            if (local == null)
+                return null;
+
+            var playerInput = local.GetComponent<PlayerInput>();
+            if (playerInput != null && playerInput.myUnit != null)
+            {
+                var fromUnit = playerInput.myUnit.GetComponent<UnitController>();
+                if (fromUnit != null)
+                    return fromUnit;
+            }
+
+            var player = local.GetComponent<PlayerController>();
+            return player != null ? player.GetControlledUnit() : null;
         }
 
         private bool IsTabAvailable(VendorTab candidate)
