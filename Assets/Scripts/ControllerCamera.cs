@@ -165,9 +165,27 @@ namespace Game.Scripts.Controllers
                 return;
 
             if (reader.WasPressed(PlayerActionId.SpectateNext))
+            {
+                if (ShouldSelectTargetSuppressSpectate(reader))
+                    return;
                 CycleSpectateTarget(1);
+            }
             else if (reader.WasPressed(PlayerActionId.SpectatePrevious))
                 CycleSpectateTarget(-1);
+        }
+
+        private bool ShouldSelectTargetSuppressSpectate(IInputReader reader)
+        {
+            if (reader == null || !reader.WasPressed(PlayerActionId.SelectTarget))
+                return false;
+
+            if (GameplayLifetimeScope.TryResolve<ISkillAimPreviewSession>(out var preview)
+                && preview.State.CurrentValue != null)
+                return true;
+
+            return ShadowInfection.Targeting.UnitPointerQuery.TryGetUnitUnderPointer(
+                Camera.main,
+                out _);
         }
 
         private void CycleSpectateTarget(int direction)

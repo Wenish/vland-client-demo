@@ -55,7 +55,24 @@ namespace ShadowInfection.Input
                     group = PlayerActionGroup.Combat,
                     defaultPrimary = InputBindingKey.Mouse(InputMouseButton.Right),
                     showInSettings = true,
-                    allowedOverlaps = new List<PlayerActionId> { PlayerActionId.SpectateNext }
+                    allowedOverlaps = new List<PlayerActionId>
+                    {
+                        PlayerActionId.SpectateNext,
+                        PlayerActionId.SelectTarget
+                    }
+                },
+                new PlayerActionDefinition
+                {
+                    id = PlayerActionId.SelectTarget,
+                    settingsLabel = "Select Target",
+                    group = PlayerActionGroup.Combat,
+                    defaultPrimary = InputBindingKey.Mouse(InputMouseButton.Right),
+                    showInSettings = true,
+                    allowedOverlaps = new List<PlayerActionId>
+                    {
+                        PlayerActionId.CancelCast,
+                        PlayerActionId.SpectateNext
+                    }
                 },
                 Bind(PlayerActionId.Interrupt, "Interrupt", PlayerActionGroup.Combat, Key.H),
                 new PlayerActionDefinition
@@ -110,7 +127,11 @@ namespace ShadowInfection.Input
                     group = PlayerActionGroup.Camera,
                     defaultPrimary = InputBindingKey.Mouse(InputMouseButton.Right),
                     showInSettings = true,
-                    allowedOverlaps = new List<PlayerActionId> { PlayerActionId.CancelCast }
+                    allowedOverlaps = new List<PlayerActionId>
+                    {
+                        PlayerActionId.CancelCast,
+                        PlayerActionId.SelectTarget
+                    }
                 },
                 Bind(PlayerActionId.Loadout, "Loadout", PlayerActionGroup.Interface, Key.I),
                 new PlayerActionDefinition

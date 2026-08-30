@@ -5,6 +5,7 @@ using MessagePipe;
 using ShadowInfection.Audio;
 using ShadowInfection.Input;
 using ShadowInfection.Match;
+using ShadowInfection.Targeting;
 using ShadowInfection.UI.LoadoutWindow;
 using ShadowInfection.UI.Session;
 using ShadowInfection.UI.ZombieMatch;
@@ -306,6 +307,7 @@ namespace ShadowInfection.DI
             builder.RegisterInstance<IMatchUiSession>(UnmatchedMatchUiSession.Instance);
             builder.RegisterInstance<ICastleSiegeUiSession>(UnmatchedCastleSiegeUiSession.Instance);
             builder.RegisterInstance<ISkirmishUiSession>(UnmatchedSkirmishUiSession.Instance);
+            builder.RegisterInstance<IPlayerTarget>(NullPlayerTarget.Instance);
         }
 
         private void RegisterDatabases(IContainerBuilder builder)

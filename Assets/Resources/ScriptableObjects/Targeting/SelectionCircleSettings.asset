@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f3a1c6e2d4b49a0b7c5e9d1a0f3b628, type: 3}
+  m_Name: SelectionCircleSettings
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Targeting.SelectionCircleSettings
+  prefab: {fileID: 0}
+  texture: {fileID: 2800000, guid: bfad246a554cd5e4aa19f8b0e3371052, type: 3}
+  material: {fileID: 0}
+  radius: 0.8
+  scaleWithCollider: 1
+  colliderRadiusMultiplier: 1.15
+  heightOffset: 0.05
+  selfColor: {r: 0.15, g: 0.85, b: 0.35, a: 1}
+  allyColor: {r: 0.25, g: 0.55, b: 1, a: 1}
+  enemyColor: {r: 0.9, g: 0.2, b: 0.15, a: 1}
+  opacity: 0.75

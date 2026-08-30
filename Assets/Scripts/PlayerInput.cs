@@ -5,6 +5,7 @@ using MyGame.Events;
 using R3;
 using ShadowInfection.DI;
 using ShadowInfection.Input;
+using ShadowInfection.Targeting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -57,6 +58,7 @@ public class PlayerInput : NetworkBehaviour
     private Vector3 _skillAimWorldPosition;
     private Vector3 _lastSentCastAim;
     private bool _lastSentCastAimForceSelf;
+    private uint _lastSentPreferredTargetNetId;
     private bool _hasLastSentCastAim;
 
     void Start()
@@ -404,6 +406,7 @@ public class PlayerInput : NetworkBehaviour
         StopCoroutine(WaitForUnit());
         _myUnitController = null;
         _cameraMain = null;
+        ClearLocalPlayerTarget();
     }
 
     [Command]
@@ -441,10 +444,15 @@ public class PlayerInput : NetworkBehaviour
         if (reader == null)
             return;
 
+        bool selectedUnitThisPress = TrySelectTarget(reader);
+
         if (_isAimPreviewActive && reader.WasPressed(PlayerActionId.CancelCast))
         {
-            CancelAimPreview();
-            return;
+            if (!selectedUnitThisPress)
+            {
+                CancelAimPreview();
+                return;
+            }
         }
 
         var skills = PlayerActionSkillMap.SkillActions;
@@ -525,7 +533,8 @@ public class PlayerInput : NetworkBehaviour
             _myUnitController,
             instance,
             aim,
-            IsLeftAltPressedForSelfTarget());
+            IsLeftAltPressedForSelfTarget(),
+            PlayerTargetLookup.CurrentOrNull());
         GameMessages.Publish(
             new SkillAimPreviewStartedEvent(
                 _myUnitController,
@@ -559,7 +568,8 @@ public class PlayerInput : NetworkBehaviour
             _myUnitController,
             instance,
             aim,
-            IsLeftAltPressedForSelfTarget());
+            IsLeftAltPressedForSelfTarget(),
+            PlayerTargetLookup.CurrentOrNull());
 
         Vector2 moveInput = ReadLocalMoveInput();
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
@@ -619,15 +629,16 @@ public class PlayerInput : NetworkBehaviour
                 _myUnitController,
                 instance,
                 aim,
-                forceSelfTarget);
+                forceSelfTarget,
+                PlayerTargetLookup.CurrentOrNull());
         }
 
         Vector2 moveInput = ReadLocalMoveInput();
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
             service.UpdateAim(aim, followTarget, moveInput);
 
-        if (ShouldSendCastAim(aim, forceSelfTarget))
-            CmdUpdateCastAim(skillName, aim, forceSelfTarget);
+        if (ShouldSendCastAim(aim, forceSelfTarget, PlayerTargetLookup.CurrentNetId()))
+            CmdUpdateCastAim(skillName, aim, forceSelfTarget, PlayerTargetLookup.CurrentNetId());
     }
 
     [Client]
@@ -661,7 +672,7 @@ public class PlayerInput : NetworkBehaviour
     }
 
     [Command]
-    void CmdUpdateCastAim(string skillName, Vector3 aimPoint, bool forceSelfTarget)
+    void CmdUpdateCastAim(string skillName, Vector3 aimPoint, bool forceSelfTarget, uint preferredTargetNetId)
     {
         if (_myUnitController == null || _myUnitController.unitMediator == null)
             return;
@@ -674,15 +685,16 @@ public class PlayerInput : NetworkBehaviour
         if (instance == null)
             return;
 
-        instance.ServerUpdateRunningCastAim(aimPoint, forceSelfTarget);
+        instance.ServerUpdateRunningCastAim(aimPoint, forceSelfTarget, preferredTargetNetId);
     }
 
     [Client]
-    bool ShouldSendCastAim(Vector3 aim, bool forceSelfTarget)
+    bool ShouldSendCastAim(Vector3 aim, bool forceSelfTarget, uint preferredTargetNetId)
     {
         const float minSqrDelta = 0.0001f;
         if (_hasLastSentCastAim
             && _lastSentCastAimForceSelf == forceSelfTarget
+            && _lastSentPreferredTargetNetId == preferredTargetNetId
             && (aim - _lastSentCastAim).sqrMagnitude <= minSqrDelta)
         {
             return false;
@@ -690,6 +702,7 @@ public class PlayerInput : NetworkBehaviour
 
         _lastSentCastAim = aim;
         _lastSentCastAimForceSelf = forceSelfTarget;
+        _lastSentPreferredTargetNetId = preferredTargetNetId;
         _hasLastSentCastAim = true;
         return true;
     }
@@ -725,7 +738,8 @@ public class PlayerInput : NetworkBehaviour
                     aim,
                     instance,
                     out _,
-                    forceSelfTarget))
+                    forceSelfTarget,
+                    PlayerTargetLookup.CurrentOrNull()))
             {
                 PlayerActionFeedback.ShowTargetOutOfRange(
                     PlayerActionFeedback.ResolveSkillName(instance));
@@ -739,7 +753,8 @@ public class PlayerInput : NetworkBehaviour
                     _myUnitController,
                     instance,
                     aim,
-                    forceSelfTarget);
+                    forceSelfTarget,
+                    PlayerTargetLookup.CurrentOrNull());
             }
         }
 
@@ -752,7 +767,7 @@ public class PlayerInput : NetworkBehaviour
 
         PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
         PredictFacingSnapIfTurnLocked(skill, indicator, aim);
-        CmdUseSkill(slot, index, aim, forceSelfTarget);
+        CmdUseSkill(slot, index, aim, forceSelfTarget, PlayerTargetLookup.CurrentNetId());
     }
 
     [Client]
@@ -780,21 +795,45 @@ public class PlayerInput : NetworkBehaviour
         if (_isAimPreviewActive)
             CancelAimPreview();
 
-        Vector3 aim = SeedLocalAimForSkill(slot, index);
-        PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
-
         var skills = _myUnitController != null && _myUnitController.unitMediator != null
             ? _myUnitController.unitMediator.Skills
             : null;
         var instance = skills != null ? skills.GetSkill(slot, index) : null;
         if (instance != null && instance.skillData == null)
             instance.ResolveSkillData();
+
+        var indicator = SkillAimPreviewUtil.Resolve(instance);
+        bool forceSelfTarget = IsLeftAltPressedForSelfTarget();
+        var preferred = PlayerTargetLookup.CurrentOrNull();
+        Vector3 aim = SeedLocalAimForSkill(slot, index);
+
+        if (indicator != null
+            && !forceSelfTarget
+            && preferred != null
+            && SkillIndicatorTargetSnap.TryValidateSnapCast(
+                _myUnitController,
+                instance != null ? instance.skillData : null,
+                indicator,
+                aim,
+                instance,
+                out var snapTarget,
+                forceSelfTarget,
+                preferred)
+            == false
+            && snapTarget == preferred)
+        {
+            PlayerActionFeedback.ShowTargetOutOfRange(
+                PlayerActionFeedback.ResolveSkillName(instance));
+            return;
+        }
+
+        PlayerActionFeedback.TryNotifySkillCooldown(_myUnitController, slot, index);
         PredictFacingSnapIfTurnLocked(
             instance != null ? instance.skillData : null,
-            SkillAimPreviewUtil.Resolve(instance),
+            indicator,
             aim);
 
-        CmdUseSkill(slot, index, aim, IsLeftAltPressedForSelfTarget());
+        CmdUseSkill(slot, index, aim, forceSelfTarget, PlayerTargetLookup.CurrentNetId());
     }
 
     /// <summary>
@@ -832,13 +871,45 @@ public class PlayerInput : NetworkBehaviour
                 _myUnitController,
                 instance,
                 aim,
-                IsLeftAltPressedForSelfTarget());
+                IsLeftAltPressedForSelfTarget(),
+                PlayerTargetLookup.CurrentOrNull());
         }
 
         if (GameplayLifetimeScope.TryResolve<ISkillIndicatorService>(out var service))
             service.UpdateAim(aim, followTarget, ReadLocalMoveInput());
 
         return aim;
+    }
+
+    [Client]
+    bool TrySelectTarget(IInputReader reader)
+    {
+        bool overUi = UiPointerState.IsPointerOverBlockingElement;
+        bool mousePressed = reader.WasMousePressed(PlayerActionId.SelectTarget);
+        bool otherPressed = reader.WasPressedExcludingMouse(PlayerActionId.SelectTarget);
+        if (!otherPressed && !(mousePressed && !overUi))
+            return false;
+
+        if (!GameplayLifetimeScope.TryResolve<IPlayerTarget>(out var playerTarget) || playerTarget == null)
+            return false;
+
+        if (UnitPointerQuery.TryGetUnitUnderPointer(_cameraMain, out var unit))
+        {
+            playerTarget.Set(unit);
+            return true;
+        }
+
+        if (!_isAimPreviewActive)
+            playerTarget.Clear();
+
+        return false;
+    }
+
+    [Client]
+    static void ClearLocalPlayerTarget()
+    {
+        if (GameplayLifetimeScope.TryResolve<IPlayerTarget>(out var playerTarget))
+            playerTarget.Clear();
     }
 
     [Client]
@@ -932,7 +1003,12 @@ public class PlayerInput : NetworkBehaviour
     }
 
     [Command]
-    public void CmdUseSkill(SkillSlotType slot, int index, Vector3? aimPoint, bool forceSelfTarget)
+    public void CmdUseSkill(
+        SkillSlotType slot,
+        int index,
+        Vector3? aimPoint,
+        bool forceSelfTarget,
+        uint preferredTargetNetId)
     {
         if (_myUnitController == null || _myUnitController.unitMediator == null || _myUnitController.unitMediator.Skills == null)
             return;
@@ -957,7 +1033,7 @@ public class PlayerInput : NetworkBehaviour
             }
         }
 
-        var result = skills.CastSkill(slot, index, aimPoint, forceSelfTarget);
+        var result = skills.CastSkill(slot, index, aimPoint, forceSelfTarget, preferredTargetNetId);
         if (result == SkillCastResult.OnCooldown
             && PlayerActionFeedback.ShouldShowSkillCooldown(_myUnitController, slot, index))
         {

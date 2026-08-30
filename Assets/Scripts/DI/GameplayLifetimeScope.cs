@@ -1,5 +1,6 @@
 using ShadowInfection.Interactions;
 using ShadowInfection.Match;
+using ShadowInfection.Targeting;
 using ShadowInfection.UI.ZombieMatch;
 using ShadowInfection.Units;
 using ShadowInfection.World;
@@ -231,6 +232,16 @@ namespace ShadowInfection.DI
 
             builder.RegisterEntryPoint<ShadowInfection.Skills.Indicators.SkillIndicatorService>()
                 .As<ISkillIndicatorService>();
+
+            builder.RegisterEntryPoint<PlayerTargetService>()
+                .As<IPlayerTarget>();
+
+            var circleSettings = Resources.Load<SelectionCircleSettings>(
+                "ScriptableObjects/Targeting/SelectionCircleSettings");
+            if (circleSettings == null)
+                circleSettings = ScriptableObject.CreateInstance<SelectionCircleSettings>();
+            builder.RegisterInstance(circleSettings);
+            builder.RegisterEntryPoint<SelectionCirclePresenter>();
         }
 
         private static void RegisterMatchContracts(

@@ -506,3 +506,122 @@
     width: 0%;
     background-color: rgb(202, 159, 108);
 }
+
+.si-target-frame {
+    position: absolute;
+    left: 100%;
+    bottom: 72px;
+    margin-left: 16px;
+    min-width: 220px;
+    max-width: 280px;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: rgba(2, 19, 52, 0.85);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgba(202, 159, 108, 0.55);
+    border-right-color: rgba(202, 159, 108, 0.55);
+    border-bottom-color: rgba(202, 159, 108, 0.55);
+    border-left-color: rgba(202, 159, 108, 0.55);
+    overflow: visible;
+}
+
+.si-target-frame__name {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
+    font-size: 14px;
+    color: rgb(255, 244, 231);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.si-target-frame .si-vitals {
+    margin-bottom: 0;
+}
+
+.si-target-frame__buffs {
+    flex-direction: column;
+    margin-top: 4px;
+}
+
+.si-target-frame__buff-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.si-target-frame__buff-row--debuffs {
+    justify-content: flex-end;
+}
+
+.si-target-frame__castbar {
+    margin-top: 6px;
+    width: 100%;
+    height: 20px;
+}
+
+.si-target-frame .buff-icon {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    flex-shrink: 0;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    background-color: rgb(0, 0, 0);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-left-color: rgb(0, 0, 0);
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    picking-mode: Position;
+}
+
+.si-target-frame .buff-icon--debuff {
+    border-top-color: rgb(180, 60, 50);
+    border-right-color: rgb(180, 60, 50);
+    border-bottom-color: rgb(180, 60, 50);
+    border-left-color: rgb(180, 60, 50);
+}
+
+.si-target-frame .buff-icon__image {
+    width: 20px;
+    height: 20px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.si-target-frame .buff-icon__timer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 10px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    text-shadow: 0 0 1px rgb(0, 0, 0);
+}
+
+.si-target-frame .buff-icon__stack {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    font-size: 8px;
+    color: rgb(255, 244, 231);
+    text-shadow: 0 0 1px rgb(0, 0, 0);
+}

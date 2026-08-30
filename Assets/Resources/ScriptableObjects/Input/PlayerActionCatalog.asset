@@ -252,7 +252,31 @@ MonoBehaviour:
     isRequired: 0
     hasQuickCast: 0
     showInSettings: 1
-    allowedOverlaps: 13000000
+    allowedOverlaps: 1300000018000000
+  - id: 24
+    settingsLabel: Select Target
+    group: 1
+    defaultPrimary:
+      device: 2
+      keyboardKey: 0
+      mouseButton: 2
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 0a00000013000000
   - id: 11
     settingsLabel: Interrupt
     group: 1
@@ -468,7 +492,7 @@ MonoBehaviour:
     isRequired: 0
     hasQuickCast: 0
     showInSettings: 1
-    allowedOverlaps: 0a000000
+    allowedOverlaps: 0a00000018000000
   - id: 20
     settingsLabel: Loadout
     group: 5

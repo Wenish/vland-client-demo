@@ -8,9 +8,17 @@ public static class SkillIndicatorTargetSnap
         UnitController caster,
         NetworkedSkillInstance skillInstance,
         Vector3 aimPoint,
-        bool forceSelfTarget = false)
+        bool forceSelfTarget = false,
+        UnitController preferredTarget = null)
     {
-        return ResolveInternal(indicator, caster, skillInstance, aimPoint, forPreview: false, forceSelfTarget);
+        return ResolveInternal(
+            indicator,
+            caster,
+            skillInstance,
+            aimPoint,
+            forPreview: false,
+            forceSelfTarget,
+            preferredTarget);
     }
 
     /// <summary>
@@ -21,9 +29,17 @@ public static class SkillIndicatorTargetSnap
         UnitController caster,
         NetworkedSkillInstance skillInstance,
         Vector3 aimPoint,
-        bool forceSelfTarget = false)
+        bool forceSelfTarget = false,
+        UnitController preferredTarget = null)
     {
-        return ResolveInternal(indicator, caster, skillInstance, aimPoint, forPreview: true, forceSelfTarget);
+        return ResolveInternal(
+            indicator,
+            caster,
+            skillInstance,
+            aimPoint,
+            forPreview: true,
+            forceSelfTarget,
+            preferredTarget);
     }
 
     public static bool IsUnitInSnapRange(
@@ -62,13 +78,14 @@ public static class SkillIndicatorTargetSnap
         Vector3 aimPoint,
         NetworkedSkillInstance skillInstance,
         out UnitController snapTarget,
-        bool forceSelfTarget = false)
+        bool forceSelfTarget = false,
+        UnitController preferredTarget = null)
     {
         snapTarget = null;
         if (indicator?.snapToTarget == null || caster == null)
             return true;
 
-        snapTarget = ResolvePreview(indicator, caster, skillInstance, aimPoint, forceSelfTarget);
+        snapTarget = ResolvePreview(indicator, caster, skillInstance, aimPoint, forceSelfTarget, preferredTarget);
         if (snapTarget == null)
             return true;
 
@@ -81,7 +98,8 @@ public static class SkillIndicatorTargetSnap
         NetworkedSkillInstance skillInstance,
         Vector3 aimPoint,
         bool forPreview,
-        bool forceSelfTarget)
+        bool forceSelfTarget,
+        UnitController preferredTarget)
     {
         if (indicator == null || indicator.snapToTarget == null || caster == null)
             return null;
@@ -91,7 +109,17 @@ public static class SkillIndicatorTargetSnap
             aimPoint = aimPoint,
             aimRotation = SkillAimUtil.GetAimRotation(caster, aimPoint),
             forceSelfTarget = forceSelfTarget,
+            preferredTarget = preferredTarget,
         };
+
+        // Sticky selection wins over mouse/hover for every snap type, not only Smart.
+        // Left Alt force-self still goes through GetTargets so Self-mask skills keep current behavior.
+        if (!forceSelfTarget
+            && preferredTarget != null
+            && indicator.snapToTarget.PassesCommonFilters(ctx, preferredTarget))
+        {
+            return preferredTarget;
+        }
 
         var seeds = new List<UnitController> { caster };
         List<UnitController> targets;

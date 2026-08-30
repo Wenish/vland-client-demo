@@ -34,7 +34,10 @@ namespace ShadowInfection.Input
                 return;
             }
 
-            if (MergeEmptyDefaultsFromSpec())
+            var changed = MergeEmptyDefaultsFromSpec();
+            if (MergeMissingFromSpec())
+                changed = true;
+            if (changed)
                 UnityEditor.EditorUtility.SetDirty(this);
 #endif
         }
@@ -58,6 +61,30 @@ namespace ShadowInfection.Input
                 def.defaultPrimary = primary;
                 def.defaultSecondary = secondary;
                 def.defaultGamepad = gamepad;
+                changed = true;
+            }
+
+            return changed;
+        }
+
+        private bool MergeMissingFromSpec()
+        {
+            var spec = PlayerActionCatalogDefaults.Create();
+            var have = new HashSet<PlayerActionId>();
+            for (var i = 0; i < actions.Count; i++)
+            {
+                if (actions[i] != null)
+                    have.Add(actions[i].id);
+            }
+
+            var changed = false;
+            for (var i = 0; i < spec.Count; i++)
+            {
+                var def = spec[i];
+                if (def == null || def.id == PlayerActionId.None || have.Contains(def.id))
+                    continue;
+                actions.Add(def);
+                have.Add(def.id);
                 changed = true;
             }
 

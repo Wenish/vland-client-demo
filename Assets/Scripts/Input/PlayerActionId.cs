@@ -35,7 +35,8 @@ namespace ShadowInfection.Input
         Loadout = 20,
         Leaderboard = 21,
         VendorTabs = 22,
-        Menu = 23
+        Menu = 23,
+        SelectTarget = 24
     }
 
     public enum InputBindingSlot

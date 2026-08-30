@@ -154,9 +154,11 @@ namespace ShadowInfection.UI.Nameplates
             {
                 InstanceId = buff.InstanceId,
                 BuffId = buff.BuffId,
+                DisplayName = !string.IsNullOrWhiteSpace(buff.DisplayName) ? buff.DisplayName : buff.BuffId,
                 IconTexture = databases?.Skills?.GetSkillByName(buff.SkillName)?.iconTexture,
                 Duration = buff.Duration,
-                TimeRemaining = isInfinite ? Mathf.Infinity : buff.Remaining
+                TimeRemaining = isInfinite ? Mathf.Infinity : buff.Remaining,
+                IsNegative = buff.IsNegative
             };
         }
 
@@ -164,8 +166,10 @@ namespace ShadowInfection.UI.Nameplates
         {
             var isInfinite = buff.Duration == Mathf.Infinity;
             target.BuffId = buff.BuffId;
+            target.DisplayName = !string.IsNullOrWhiteSpace(buff.DisplayName) ? buff.DisplayName : buff.BuffId;
             target.Duration = buff.Duration;
             target.TimeRemaining = isInfinite ? Mathf.Infinity : buff.Remaining;
+            target.IsNegative = buff.IsNegative;
         }
 
         private void SortOrdered()
