@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SelectionCircleSettings
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Targeting.SelectionCircleSettings
   prefab: {fileID: 0}
-  texture: {fileID: 2800000, guid: bfad246a554cd5e4aa19f8b0e3371052, type: 3}
+  texture: {fileID: 2800000, guid: ab157cf7f33dee34b802db9b24b680a6, type: 3}
   material: {fileID: 0}
   radius: 0.8
   scaleWithCollider: 1
