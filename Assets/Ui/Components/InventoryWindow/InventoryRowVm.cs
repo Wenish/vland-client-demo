@@ -28,6 +28,7 @@ namespace ShadowInfection.UI.InventoryWindow
         public int Count;
         public string Name;
         public string Meta;
+        public string Description;
         public string Summary;
         public Texture2D Icon;
         public string RarityClass;

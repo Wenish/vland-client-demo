@@ -64,10 +64,13 @@ namespace ShadowInfection.Input
 
         public bool IsListening => listening;
 
+        private bool IsGameplaySuppressed =>
+            listening || suppressGameplayThisFrame || UiTextInputFocus.IsBlocking;
+
         public bool WasPressed(PlayerActionId id)
         {
             EnsureFrame();
-            if (listening || suppressGameplayThisFrame)
+            if (IsGameplaySuppressed)
                 return false;
             return AnySlot(id, control => control != null && control.wasPressedThisFrame);
         }
@@ -75,7 +78,7 @@ namespace ShadowInfection.Input
         public bool WasReleased(PlayerActionId id)
         {
             EnsureFrame();
-            if (listening || suppressGameplayThisFrame)
+            if (IsGameplaySuppressed)
                 return false;
             return AnySlot(id, control => control != null && control.wasReleasedThisFrame);
         }
@@ -83,7 +86,7 @@ namespace ShadowInfection.Input
         public bool IsHeld(PlayerActionId id)
         {
             EnsureFrame();
-            if (listening || suppressGameplayThisFrame)
+            if (IsGameplaySuppressed)
                 return false;
             return AnySlot(id, control => control != null && control.isPressed);
         }
@@ -91,7 +94,7 @@ namespace ShadowInfection.Input
         public bool WasMousePressed(PlayerActionId id)
         {
             EnsureFrame();
-            if (listening || suppressGameplayThisFrame)
+            if (IsGameplaySuppressed)
                 return false;
             return SlotPressed(id, InputBindingDevice.Mouse);
         }
@@ -99,7 +102,7 @@ namespace ShadowInfection.Input
         public bool WasPressedExcludingMouse(PlayerActionId id)
         {
             EnsureFrame();
-            if (listening || suppressGameplayThisFrame)
+            if (IsGameplaySuppressed)
                 return false;
             return SlotPressed(id, InputBindingDevice.Keyboard)
                 || SlotPressed(id, InputBindingDevice.Gamepad);
@@ -114,7 +117,7 @@ namespace ShadowInfection.Input
         public Vector2 ReadMoveAxis()
         {
             EnsureFrame();
-            if (listening || suppressGameplayThisFrame)
+            if (IsGameplaySuppressed)
                 return Vector2.zero;
             var x = (IsHeld(PlayerActionId.MoveRight) ? 1f : 0f) - (IsHeld(PlayerActionId.MoveLeft) ? 1f : 0f);
             var y = (IsHeld(PlayerActionId.MoveForward) ? 1f : 0f) - (IsHeld(PlayerActionId.MoveBackward) ? 1f : 0f);

@@ -302,7 +302,6 @@ public class CharacterManager : MonoBehaviour
 
             var character = CharacterSaveData.CreateNew(name, CharacterGender.Male, legacy);
             CharacterInventory.EnsureLists(character);
-            TryGrantItemOn(character, ItemIds.StarterDagger, persist: false);
             _roster.Characters.Add(character);
             _roster.ActiveCharacterId = character.Id;
             SaveRoster();

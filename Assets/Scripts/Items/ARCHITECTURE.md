@@ -14,7 +14,7 @@ Catalog + character bag. Combat, wear, and loot are later tickets.
 - Equipment grant always adds a new row. Gems and materials increment a stack.
 - `TryGrantItem` / destroy are the only mutation path. Future loot tables call the same methods.
 - Do not put bags on `UnitController`. Wear later reads this bag; it does not replace it.
-- `ItemRules.ArmorWeightFor` and `SocketsPerPiece` exist for the wear ticket. Unused in combat now.
+- `ItemRules.TryGetArmorWeightFor` and `SocketsPerPiece` exist for the wear ticket. Unused in combat now.
 
 ## Save shape later
 

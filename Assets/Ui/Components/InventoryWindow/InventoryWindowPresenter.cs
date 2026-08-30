@@ -102,7 +102,10 @@ namespace ShadowInfection.UI.InventoryWindow
 
         private void TickToggle()
         {
-            if (view == null || input == null || !input.WasPressed(PlayerActionId.Inventory))
+            if (view == null || input == null || view.IsSearchFocused)
+                return;
+
+            if (!input.WasPressed(PlayerActionId.Inventory))
                 return;
 
             if (UiModalInputBlock.IsBlocked)
@@ -337,6 +340,7 @@ namespace ShadowInfection.UI.InventoryWindow
                 Count = 1,
                 Name = def != null ? def.DisplayName : "Unknown item",
                 Meta = def != null ? $"{def.rarity} · {ItemPresentation.TypeLine(def)}" : entry.itemId,
+                Description = def != null ? def.description : string.Empty,
                 Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
                 Icon = catalog != null ? catalog.ResolveIcon(def) : null,
                 RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
@@ -356,6 +360,7 @@ namespace ShadowInfection.UI.InventoryWindow
                 Meta = def != null
                     ? $"{def.rarity} · {ItemPresentation.TypeLine(def)} · ×{stack.count}"
                     : $"{stack.itemId} · ×{stack.count}",
+                Description = def != null ? def.description : string.Empty,
                 Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
                 Icon = catalog != null ? catalog.ResolveIcon(def) : null,
                 RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),

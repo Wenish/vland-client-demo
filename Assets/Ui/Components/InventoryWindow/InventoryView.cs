@@ -31,6 +31,7 @@ namespace ShadowInfection.UI.InventoryWindow
         private readonly VisualElement confirmHost;
         private readonly Label detailName;
         private readonly Label detailMeta;
+        private readonly Label detailDescription;
         private readonly Label detailStats;
         private readonly Label detailEmpty;
         private readonly Label confirmMessage;
@@ -42,6 +43,7 @@ namespace ShadowInfection.UI.InventoryWindow
         private readonly Dictionary<InventoryFilter, Button> filterButtons = new();
 
         private bool isOpen;
+        private bool searchInputActive;
 
         public event Action CloseClicked;
         public event Action OverlayClicked;
@@ -53,6 +55,7 @@ namespace ShadowInfection.UI.InventoryWindow
         public event Action<string> SearchChanged;
 
         public bool IsOpen => isOpen;
+        public bool IsSearchFocused => searchInputActive;
 
         public InventoryView(VisualElement root)
         {
@@ -64,6 +67,7 @@ namespace ShadowInfection.UI.InventoryWindow
             confirmHost = root.Q<VisualElement>("confirmHost");
             detailName = root.Q<Label>("detailName");
             detailMeta = root.Q<Label>("detailMeta");
+            detailDescription = root.Q<Label>("detailDescription");
             detailStats = root.Q<Label>("detailStats");
             detailEmpty = root.Q<Label>("detailEmpty");
             confirmMessage = root.Q<Label>("confirmMessage");
@@ -101,8 +105,12 @@ namespace ShadowInfection.UI.InventoryWindow
                 confirmNo.clicked += () => CancelDestroyClicked?.Invoke();
             if (searchField != null)
             {
-                searchField.label = "Search";
+                searchField.label = string.Empty;
                 searchField.RegisterValueChangedCallback(evt => SearchChanged?.Invoke(evt.newValue));
+                searchField.RegisterCallback<FocusInEvent>(_ => CaptureSearchInput());
+                searchField.RegisterCallback<FocusOutEvent>(_ => ReleaseSearchInput());
+                searchField.RegisterCallback<DetachFromPanelEvent>(_ => ReleaseSearchInput());
+                searchField.RegisterCallback<KeyDownEvent>(OnSearchKeyDown, TrickleDown.TrickleDown);
             }
 
             BuildFilters();
@@ -113,6 +121,7 @@ namespace ShadowInfection.UI.InventoryWindow
 
         public void Dispose()
         {
+            ReleaseSearchInput();
             UiPointerState.UnregisterBlockingElement(overlay);
         }
 
@@ -122,7 +131,11 @@ namespace ShadowInfection.UI.InventoryWindow
             if (overlay != null)
                 overlay.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (!open)
+            {
+                searchField?.Blur();
+                ReleaseSearchInput();
                 SetConfirmVisible(false);
+            }
         }
 
         public void SetFilter(InventoryFilter filter)
@@ -177,6 +190,15 @@ namespace ShadowInfection.UI.InventoryWindow
             {
                 detailMeta.style.display = has ? DisplayStyle.Flex : DisplayStyle.None;
                 detailMeta.text = has ? row.Meta : string.Empty;
+            }
+
+            if (detailDescription != null)
+            {
+                var description = has ? row.Description : string.Empty;
+                detailDescription.style.display = has && !string.IsNullOrWhiteSpace(description)
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
+                detailDescription.text = description ?? string.Empty;
             }
 
             if (detailStats != null)
@@ -237,6 +259,33 @@ namespace ShadowInfection.UI.InventoryWindow
         {
             if (row != null)
                 RowClicked?.Invoke(row.Id);
+        }
+
+        private void OnSearchKeyDown(KeyDownEvent evt)
+        {
+            if (evt.keyCode != KeyCode.Escape)
+                return;
+
+            searchField?.Blur();
+            evt.StopImmediatePropagation();
+        }
+
+        private void CaptureSearchInput()
+        {
+            if (searchInputActive)
+                return;
+
+            searchInputActive = true;
+            UiTextInputFocus.Push();
+        }
+
+        private void ReleaseSearchInput()
+        {
+            if (!searchInputActive)
+                return;
+
+            searchInputActive = false;
+            UiTextInputFocus.Pop();
         }
 
         private static string FilterLabel(InventoryFilter filter)

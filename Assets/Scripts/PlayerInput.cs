@@ -129,7 +129,7 @@ public class PlayerInput : NetworkBehaviour
         if (!isThisInputActive) return;
         if (isLocalPlayer && myUnit != null)
         {
-            if (UiModalInputBlock.IsBlocked)
+            if (UiModalInputBlock.IsBlocked || UiTextInputFocus.IsBlocking)
             {
                 // Inputs already cancelled when the modal opened; keep reading blocked.
                 return;

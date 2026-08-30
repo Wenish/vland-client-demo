@@ -27,10 +27,9 @@ namespace ShadowInfection.Items
             get
             {
                 var active = characters != null ? characters.GetActive() : null;
-                CharacterInventory.EnsureLists(active);
-                return active != null && active.InventoryEquipment != null
-                    ? active.InventoryEquipment
-                    : Array.Empty<InventoryEntry>();
+                if (active != null && active.InventoryEquipment != null)
+                    return active.InventoryEquipment;
+                return Array.Empty<InventoryEntry>();
             }
         }
 
@@ -39,10 +38,9 @@ namespace ShadowInfection.Items
             get
             {
                 var active = characters != null ? characters.GetActive() : null;
-                CharacterInventory.EnsureLists(active);
-                return active != null && active.InventoryStacks != null
-                    ? active.InventoryStacks
-                    : Array.Empty<ItemStack>();
+                if (active != null && active.InventoryStacks != null)
+                    return active.InventoryStacks;
+                return Array.Empty<ItemStack>();
             }
         }
 

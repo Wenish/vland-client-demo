@@ -6,7 +6,7 @@ assignee: null
 epic: null
 dueDate: null
 created: "2026-08-30T15:46:48.099Z"
-modified: "2026-08-30T16:24:00.000Z"
+modified: "2026-08-30T21:55:00.000Z"
 completedAt: null
 labels: []
 order: "Zt"
@@ -186,7 +186,7 @@ One ScriptableObject. ~15 fields, not an inheritance tree.
 - `displayName`, `description`, icon
 - `kind` — `Equipment` | `Gem` | `Material`
 - `slot` (equipment only: paper-doll slots)
-- `rarity` (Common / Rare / Epic / Legendary)
+- `rarity` (Common / Uncommon / Rare / Epic / Legendary)
 - `armorWeight` (only if armor)
 - `weaponData` (only if main-hand weapon — the `WeaponData` it equips)
 - `statModifiers` (`List<StatModifier>`, already in the game)
@@ -202,14 +202,15 @@ One ScriptableObject. ~15 fields, not an inheritance tree.
 
 ## Rarity
 
-Four. Color the icon border. That's enough excitement.
+Five. Color the icon border. That's enough excitement.
 
-| Rarity | What it means |
-| --- | --- |
-| Common | A few flat stats. Starter / filler. |
-| Rare | Noticeable. The usual drop you are happy to slam on. |
-| Epic | Strong or a slightly spicy stat mix. |
-| Legendary | Named. One unique trick via existing buffs (on-hit feel, a defensive proc, a tiny identity). Not a new skill on the bar. |
+| Rarity | Border | What it means |
+| --- | --- | --- |
+| Common | Grey | A few flat stats. Starter / filler. |
+| Uncommon | Green | A clear step up from starter. Easy to spot in the bag. |
+| Rare | Blue | Noticeable. The usual drop you are happy to slam on. |
+| Epic | Purple | Strong or a slightly spicy stat mix. |
+| Legendary | Gold | Named. One unique trick via existing buffs (on-hit feel, a defensive proc, a tiny identity). Not a new skill on the bar. |
 
 No item level. No "required wave 12". If a legendary is too early, don't put it in that loot table.
 
@@ -264,8 +265,8 @@ A test stall in `Assets/Scenes/Lobby.unity` so you can exercise gear without fin
 
 - Opens in the **lobby and in-match** (keybind on the existing input map).
 - Sort / filter by item type: All, each armor slot, Weapon, Gem, Material.
-- Search box: item name (case-insensitive contains).
-- Detail on select: name, rarity, type, stats text. No equip button that changes the unit.
+- Search box: item name (case-insensitive contains). Typing in search does not fire gameplay or UI hotkeys (inventory, loadout, skills, movement).
+- Detail on select: name, rarity, type, description, stats text. No equip button that changes the unit.
 - Stackables show count. Duplicate gear shows as separate rows.
 - Destroy / remove on the selected row (confirm if cheap; no sell gold).
 
