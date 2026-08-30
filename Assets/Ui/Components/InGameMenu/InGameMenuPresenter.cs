@@ -6,7 +6,7 @@ using R3;
 using ShadowInfection.DI;
 using ShadowInfection.UI.Session;
 using ShadowInfection.UI.SettingsPanel;
-using UnityEngine.InputSystem;
+using ShadowInfection.Input;
 using UnityEngine.SceneManagement;
 
 namespace ShadowInfection.UI.InGameMenu
@@ -16,6 +16,7 @@ namespace ShadowInfection.UI.InGameMenu
         private readonly ISessionFlowCommands sessionCommands;
         private readonly IPublisher<RequestCloseVendorWindowEvent> closeVendor;
         private readonly ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility;
+        private readonly IInputReader input;
 
         private InGameMenuView view;
         private SettingsPanelBinder settingsBinder;
@@ -29,11 +30,13 @@ namespace ShadowInfection.UI.InGameMenu
         public InGameMenuPresenter(
             ISessionFlowCommands sessionCommands,
             IPublisher<RequestCloseVendorWindowEvent> closeVendor,
-            ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility)
+            ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility,
+            IInputReader input)
         {
             this.sessionCommands = sessionCommands;
             this.closeVendor = closeVendor;
             this.vendorVisibility = vendorVisibility;
+            this.input = input;
         }
 
         public void Bind(InGameMenuView nextView, CancellationToken token)
@@ -96,7 +99,7 @@ namespace ShadowInfection.UI.InGameMenu
 
         private void TickEscape()
         {
-            if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
+            if (input == null || input.IsListening || !input.WasPressed(PlayerActionId.Menu))
                 return;
 
             if (vendorIsOpen)
@@ -139,6 +142,7 @@ namespace ShadowInfection.UI.InGameMenu
 
         private void CloseSettings()
         {
+            GameServices.Get<IInputBindingCommands>()?.CancelListen();
             view?.SetSettingsOverlayVisible(false);
         }
 

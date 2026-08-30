@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using ShadowInfection.DI;
+using ShadowInfection.Input;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,6 +11,7 @@ namespace ShadowInfection.UI.SettingsPanel
         private const int AudioDefaultValue = 100;
 
         private readonly SettingsPanelView view;
+        private readonly KeybindingsPanelBinder keybindings;
         private ApplicationSettings settings;
 
         private EventCallback<ChangeEvent<int>> masterCallback;
@@ -27,6 +30,7 @@ namespace ShadowInfection.UI.SettingsPanel
         public SettingsPanelBinder(SettingsPanelView view)
         {
             this.view = view;
+            keybindings = new KeybindingsPanelBinder(view);
         }
 
         public void Bind(ApplicationSettings nextSettings)
@@ -54,6 +58,9 @@ namespace ShadowInfection.UI.SettingsPanel
             LoadAndApplyCurrentSettings();
             RegisterCallbacks();
             view.ResetClicked += OnResetClicked;
+            keybindings.Bind(
+                GameServices.Get<IInputBindingSession>(),
+                GameServices.Get<IInputBindingCommands>());
             isBound = true;
         }
 
@@ -66,6 +73,7 @@ namespace ShadowInfection.UI.SettingsPanel
             if (view != null)
                 view.ResetClicked -= OnResetClicked;
 
+            keybindings.Unbind();
             settings = null;
             isBound = false;
         }
@@ -73,6 +81,7 @@ namespace ShadowInfection.UI.SettingsPanel
         public void Refresh()
         {
             LoadAndApplyCurrentSettings();
+            keybindings.Refresh();
         }
 
         private void RegisterCallbacks()
@@ -171,6 +180,12 @@ namespace ShadowInfection.UI.SettingsPanel
 
         private void OnResetClicked()
         {
+            if (keybindings.HandleResetIfActive())
+            {
+                view?.BlurResetButton();
+                return;
+            }
+
             if (settings == null)
                 return;
 

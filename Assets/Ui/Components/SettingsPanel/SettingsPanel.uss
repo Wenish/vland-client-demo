@@ -5,6 +5,7 @@
 }
 
 .settings-panel {
+    position: relative;
     min-height: 0;
     overflow: hidden;
     align-items: center;
@@ -58,6 +59,7 @@
 
 .settings-tabs {
     flex-direction: row;
+    flex-wrap: wrap;
     flex-grow: 0;
     flex-shrink: 0;
     align-items: center;
@@ -399,4 +401,231 @@
     padding-right: 0;
     padding-bottom: 4px;
     padding-left: 0;
+}
+
+.keybind-hint {
+    font-size: 13px;
+    color: rgb(204, 208, 214);
+    margin-bottom: 10px;
+    white-space: normal;
+}
+
+.keybind-header {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(101, 80, 54);
+}
+
+.keybind-header__action {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    font-size: 12px;
+    color: rgb(154, 161, 174);
+    letter-spacing: 0.5px;
+}
+
+.keybind-header__slot {
+    width: 92px;
+    min-width: 92px;
+    max-width: 92px;
+    margin-left: 6px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: rgb(154, 161, 174);
+    -unity-text-align: middle-center;
+}
+
+.keybind-list {
+    width: 100%;
+    flex-direction: column;
+}
+
+.keybind-section {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgb(202, 159, 108);
+}
+
+.keybind-row {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    min-height: 36px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.keybind-row:hover {
+    background-color: rgba(253, 199, 135, 0.08);
+}
+
+.keybind-row__label {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+}
+
+.keybind-slot {
+    width: 92px;
+    min-width: 92px;
+    max-width: 92px;
+    height: 28px;
+    margin-left: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: rgb(255, 244, 231);
+    background-color: rgba(0, 4, 10, 0.7);
+    border-width: 2px;
+    border-color: rgb(202, 159, 108);
+    -unity-text-align: middle-center;
+    cursor: var(--cursor-hover);
+}
+
+.keybind-slot:hover {
+    border-color: rgb(253, 199, 135);
+}
+
+.keybind-slot--empty {
+    color: rgb(154, 161, 174);
+}
+
+.keybind-slot--listening {
+    color: rgb(254, 221, 183);
+    border-color: rgb(253, 199, 135);
+    background-color: rgba(253, 199, 135, 0.12);
+}
+
+.keybind-slot--reject {
+    border-color: rgb(220, 90, 70);
+}
+
+.keybind-quick-cell {
+    width: 136px;
+    min-width: 136px;
+    max-width: 136px;
+    margin-left: 8px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+    overflow: visible;
+}
+
+.keybind-quick {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    cursor: var(--cursor-hover);
+}
+
+.keybind-quick__box {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: transparent;
+    border-width: 2px;
+    border-color: rgb(202, 159, 108);
+}
+
+.keybind-quick:hover .keybind-quick__box {
+    border-color: rgb(253, 199, 135);
+}
+
+.keybind-quick--on .keybind-quick__box {
+    background-color: rgb(253, 199, 135);
+    border-color: rgb(253, 199, 135);
+}
+
+.keybind-quick__label {
+    margin-left: 6px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13px;
+    color: rgb(255, 244, 231);
+    white-space: nowrap;
+}
+
+.keybind-conflict-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 4, 10, 0.78);
+    padding-top: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    padding-left: 24px;
+}
+
+.keybind-conflict-dialog {
+    width: 420px;
+    max-width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: rgba(2, 19, 52, 0.97);
+}
+
+.keybind-conflict__text {
+    font-size: 16px;
+    color: rgb(255, 244, 231);
+    white-space: normal;
+    margin-bottom: 16px;
+}
+
+.keybind-conflict__actions {
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.keybind-conflict__button {
+    height: 32px;
+    min-height: 32px;
+    margin-left: 8px;
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 14px;
+    color: rgb(254, 221, 183);
+    background-color: rgba(0, 4, 10, 0.7);
+    border-width: 2px;
+    border-color: rgb(202, 159, 108);
+}
+
+.keybind-conflict__button:hover {
+    border-color: rgb(253, 199, 135);
+    color: rgb(255, 244, 231);
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ShadowInfection.DI;
+using ShadowInfection.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,21 +47,21 @@ namespace Game.Scripts.Controllers
 
         void Update()
         {
-            // Camera lock (Z / QWERTZ Y). Only while controlling a character — never in
-            // character select/create or other modal UI.
-            if (Keyboard.current != null
-                && Keyboard.current.zKey.wasPressedThisFrame
+            var reader = GameServices.Input;
+            if (reader != null
+                && reader.WasPressed(PlayerActionId.CameraFollow)
                 && !UiModalInputBlock.IsBlocked
                 && IsControllingCharacter())
             {
                 IsFocusingPlayer = !IsFocusingPlayer;
             }
 
-            // Fixed follow (MMB): keep focus on target but disable mouse look-ahead.
-            if (Mouse.current != null
-                && Mouse.current.middleButton.wasPressedThisFrame
+            bool fixedPressed = reader != null
+                && (reader.WasPressedExcludingMouse(PlayerActionId.CameraFixed)
+                    || (reader.WasMousePressed(PlayerActionId.CameraFixed)
+                        && !UiPointerState.IsPointerOverBlockingElement));
+            if (fixedPressed
                 && !UiModalInputBlock.IsBlocked
-                && !UiPointerState.IsPointerOverBlockingElement
                 && IsControllingCharacter())
             {
                 IsFixedToTarget = !IsFixedToTarget;
@@ -158,17 +159,15 @@ namespace Game.Scripts.Controllers
         {
             if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
                 return;
-            if (Mouse.current == null) return;
 
-            // Right click = next, Left click = previous
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-            {
+            var reader = GameServices.Input;
+            if (reader == null)
+                return;
+
+            if (reader.WasPressed(PlayerActionId.SpectateNext))
                 CycleSpectateTarget(1);
-            }
-            else if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
+            else if (reader.WasPressed(PlayerActionId.SpectatePrevious))
                 CycleSpectateTarget(-1);
-            }
         }
 
         private void CycleSpectateTarget(int direction)

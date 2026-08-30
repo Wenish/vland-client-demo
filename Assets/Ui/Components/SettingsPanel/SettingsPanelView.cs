@@ -7,7 +7,8 @@ namespace ShadowInfection.UI.SettingsPanel
     {
         General,
         Graphics,
-        Audio
+        Audio,
+        Keybindings
     }
 
     public sealed class SettingsPanelView
@@ -17,14 +18,17 @@ namespace ShadowInfection.UI.SettingsPanel
         private readonly Button tabGeneral;
         private readonly Button tabGraphics;
         private readonly Button tabAudio;
+        private readonly Button tabKeybindings;
         private readonly VisualElement contentGeneral;
         private readonly VisualElement contentGraphics;
         private readonly VisualElement contentAudio;
+        private readonly VisualElement contentKeybindings;
         private readonly Button resetButton;
         private readonly Button backButton;
 
         public event Action ResetClicked;
         public event Action BackClicked;
+        public event Action<SettingsTab> TabChanged;
 
         public VisualElement Root => root;
 
@@ -39,6 +43,12 @@ namespace ShadowInfection.UI.SettingsPanel
         public Toggle FullscreenToggle { get; }
         public DropdownField ResolutionDropdown { get; }
 
+        public VisualElement KeybindingsList { get; }
+        public VisualElement KeybindingsConflict { get; }
+        public Label KeybindingsConflictText { get; }
+        public Button KeybindingsConflictSwap { get; }
+        public Button KeybindingsConflictCancel { get; }
+
         public SettingsTab ActiveTab { get; private set; } = SettingsTab.General;
 
         public SettingsPanelView(VisualElement searchRoot)
@@ -51,9 +61,11 @@ namespace ShadowInfection.UI.SettingsPanel
             tabGeneral = root.Q<Button>("TabGeneral");
             tabGraphics = root.Q<Button>("TabGraphics");
             tabAudio = root.Q<Button>("TabAudio");
+            tabKeybindings = root.Q<Button>("TabKeybindings");
             contentGeneral = root.Q<VisualElement>("TabContentGeneral");
             contentGraphics = root.Q<VisualElement>("TabContentGraphics");
             contentAudio = root.Q<VisualElement>("TabContentAudio");
+            contentKeybindings = root.Q<VisualElement>("TabContentKeybindings");
 
             NicknameField = root.Q<TextField>("TextFieldNickname");
             AudioToggle = root.Q<Toggle>("ToggleAudio");
@@ -66,6 +78,12 @@ namespace ShadowInfection.UI.SettingsPanel
             FullscreenToggle = root.Q<Toggle>("ToggleWindowFullscreen");
             ResolutionDropdown = root.Q<DropdownField>("DropdownFieldResolution");
 
+            KeybindingsList = root.Q<VisualElement>("KeybindingsList");
+            KeybindingsConflict = root.Q<VisualElement>("KeybindingsConflict");
+            KeybindingsConflictText = root.Q<Label>("KeybindingsConflictText");
+            KeybindingsConflictSwap = root.Q<Button>("KeybindingsConflictSwap");
+            KeybindingsConflictCancel = root.Q<Button>("KeybindingsConflictCancel");
+
             resetButton = root.Q<Button>("ButtonResetSettings");
             backButton = root.Q<Button>("ButtonBackToMenu");
 
@@ -75,6 +93,8 @@ namespace ShadowInfection.UI.SettingsPanel
                 tabGraphics.clicked += () => SetActiveTab(SettingsTab.Graphics);
             if (tabAudio != null)
                 tabAudio.clicked += () => SetActiveTab(SettingsTab.Audio);
+            if (tabKeybindings != null)
+                tabKeybindings.clicked += () => SetActiveTab(SettingsTab.Keybindings);
             if (resetButton != null)
                 resetButton.clicked += () => ResetClicked?.Invoke();
             if (backButton != null)
@@ -98,13 +118,18 @@ namespace ShadowInfection.UI.SettingsPanel
 
         public void SetActiveTab(SettingsTab tab)
         {
+            var changed = ActiveTab != tab;
             ActiveTab = tab;
             SetContentVisible(contentGeneral, tab == SettingsTab.General);
             SetContentVisible(contentGraphics, tab == SettingsTab.Graphics);
             SetContentVisible(contentAudio, tab == SettingsTab.Audio);
+            SetContentVisible(contentKeybindings, tab == SettingsTab.Keybindings);
             SetTabActive(tabGeneral, tab == SettingsTab.General);
             SetTabActive(tabGraphics, tab == SettingsTab.Graphics);
             SetTabActive(tabAudio, tab == SettingsTab.Audio);
+            SetTabActive(tabKeybindings, tab == SettingsTab.Keybindings);
+            if (changed)
+                TabChanged?.Invoke(tab);
         }
 
         public void BlurResetButton()

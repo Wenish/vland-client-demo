@@ -4,6 +4,7 @@ using Mirror;
 using MyGame.Events;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -193,14 +194,15 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputWorldPing()
     {
-        // Aim preview uses Left Mouse to confirm; Left Alt is the self-target modifier.
         if (_isAimPreviewActive)
             return;
 
-        if ((IsAltPressed()) && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
+        var reader = GameServices.Input;
+        if (reader == null)
+            return;
+
+        if (reader.WasPressed(PlayerActionId.Ping) || IsWorldPingMouseChord(reader))
             CmdWorldPing(_mouseWorldPosition);
-        }
     }
 
     [Command]
@@ -222,27 +224,23 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputPressingFire1()
     {
-        // Fire1 mapped to primary action. Alt+click is world ping except during aim preview,
-        // where Left Mouse confirms the skill (Left Alt remains the self-target modifier).
-        // When pointer is over LoadoutPanel, block only the mouse-based press (allow gamepad/keyboard)
-        bool mousePressed = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
-        bool gamepadPressed = Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame;
-        bool keyboardPressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        var reader = GameServices.Input;
+        if (reader == null)
+            return;
 
         bool overUi = UiPointerState.IsPointerOverBlockingElement;
-
-        bool firePressed = (mousePressed && !overUi) || gamepadPressed || keyboardPressed;
+        bool mousePressed = reader.WasMousePressed(PlayerActionId.Attack);
+        bool otherPressed = reader.WasPressedExcludingMouse(PlayerActionId.Attack);
+        bool firePressed = otherPressed || (mousePressed && !overUi);
         if (firePressed)
         {
-            // During aim preview, Fire1 confirms the skill even while Left Alt self-target is held.
             if (_isAimPreviewActive)
             {
                 ConfirmAimPreview();
                 return;
             }
 
-            // Outside preview, Alt+click is world ping — do not auto-attack.
-            if (IsAltPressed())
+            if (IsWorldPingMouseChord(reader))
                 return;
 
             PlayerActionFeedback.TryNotifyAttackCooldown(_myUnitController);
@@ -252,10 +250,7 @@ public class PlayerInput : NetworkBehaviour
             }
             CmdSetFire1(true);
         }
-        bool fireReleased = (Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame)
-                    || (Gamepad.current != null && Gamepad.current.rightTrigger.wasReleasedThisFrame)
-                    || (Keyboard.current != null && Keyboard.current.spaceKey.wasReleasedThisFrame);
-        if (fireReleased)
+        if (reader.WasReleased(PlayerActionId.Attack))
         {
             _delaySendSetFire1InputCoroutine = StartCoroutine(DelaySendSetFire1Input(0.15f, false));
         }
@@ -345,23 +340,13 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     void InputAxis()
     {
-        float newHorizontalInput = 0f;
-        float newVerticalInput = 0f;
-        // Keyboard
-        if (Keyboard.current != null)
-        {
-            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) newHorizontalInput -= 1f;
-            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) newHorizontalInput += 1f;
-            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) newVerticalInput -= 1f;
-            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) newVerticalInput += 1f;
-        }
-        // Gamepad
-        if (Gamepad.current != null)
-        {
-            Vector2 leftStick = Gamepad.current.leftStick.ReadValue();
-            if (Mathf.Abs(leftStick.x) > Mathf.Abs(newHorizontalInput)) newHorizontalInput = leftStick.x;
-            if (Mathf.Abs(leftStick.y) > Mathf.Abs(newVerticalInput)) newVerticalInput = leftStick.y;
-        }
+        var reader = GameServices.Input;
+        if (reader == null)
+            return;
+
+        var move = reader.ReadMoveAxis();
+        float newHorizontalInput = move.x;
+        float newVerticalInput = move.y;
 
         var hasHorizontalInputChanged = !Mathf.Approximately(newHorizontalInput, HorizontalInput);
         var hasVerticalInputChanged = !Mathf.Approximately(newVerticalInput, VerticalInput);
@@ -452,45 +437,42 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     public void InputUseSkills()
     {
-        if (Keyboard.current == null)
+        var reader = GameServices.Input;
+        if (reader == null)
             return;
 
-        // Cancel aim preview without casting.
-        if (_isAimPreviewActive
-            && (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame))
+        if (_isAimPreviewActive && reader.WasPressed(PlayerActionId.CancelCast))
         {
             CancelAimPreview();
             return;
         }
 
-        HandleSkillKey(Keyboard.current.qKey, SkillSlotType.Normal, 0);
-        HandleSkillKey(Keyboard.current.eKey, SkillSlotType.Normal, 1);
-        HandleSkillKey(Keyboard.current.cKey, SkillSlotType.Normal, 2);
-        HandleSkillKey(Keyboard.current.xKey, SkillSlotType.Ultimate, 0);
+        var skills = PlayerActionSkillMap.SkillActions;
+        for (var i = 0; i < skills.Length; i++)
+            HandleSkillAction(skills[i]);
     }
 
     [Client]
-    void HandleSkillKey(UnityEngine.InputSystem.Controls.KeyControl key, SkillSlotType slot, int index)
+    void HandleSkillAction(PlayerActionId actionId)
     {
-        if (key == null)
+        var reader = GameServices.Input;
+        if (reader == null || !reader.WasPressed(actionId))
+            return;
+        if (!PlayerActionSkillMap.TryGetSlot(actionId, out var slot, out var index))
             return;
 
-        if (key.wasPressedThisFrame)
+        bool wantPreview = reader.IsQuickCast(actionId) == reader.IsHeld(PlayerActionId.CastModifier);
+        if (_isAimPreviewActive && _aimPreviewSlot == slot && _aimPreviewIndex == index)
         {
-            if (IsShiftPressed())
-            {
-                TryBeginAimPreview(slot, index);
-            }
-            else if (_isAimPreviewActive
-                && _aimPreviewSlot == slot
-                && _aimPreviewIndex == index)
-            {
-                ConfirmAimPreview();
-            }
-            else if (!_isAimPreviewActive)
-            {
-                TryUseSkill(slot, index);
-            }
+            ConfirmAimPreview();
+        }
+        else if (wantPreview)
+        {
+            TryBeginAimPreview(slot, index);
+        }
+        else if (!_isAimPreviewActive)
+        {
+            TryUseSkill(slot, index);
         }
     }
 
@@ -862,7 +844,8 @@ public class PlayerInput : NetworkBehaviour
     [Client]
     public void InputInterrupt()
     {
-        if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame)
+        var reader = GameServices.Input;
+        if (reader != null && reader.WasPressed(PlayerActionId.Interrupt))
         {
             if (_isAimPreviewActive)
                 CancelAimPreview();
@@ -870,47 +853,33 @@ public class PlayerInput : NetworkBehaviour
         }
     }
 
-    // Helpers
+    [Client]
+    Vector2 ReadLocalMoveInput()
+    {
+        var reader = GameServices.Input;
+        return reader != null ? reader.ReadMoveAxis() : Vector2.zero;
+    }
+
     [Client]
     private static bool IsLeftAltPressedForSelfTarget() =>
         SkillTargetingInput.IsLeftAltPressedForSelfTarget();
 
     [Client]
-    private static bool IsAltPressed()
+    private static bool IsWorldPingMouseChord(IInputReader reader)
     {
-        if (Keyboard.current == null) return false;
-        return Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
-    }
+        if (reader == null || reader.IsListening)
+            return false;
 
-    [Client]
-    private static bool IsShiftPressed()
-    {
-        if (Keyboard.current == null) return false;
-        return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
-    }
+        if (reader.IsHeld(PlayerActionId.SelfTargetModifier)
+            && reader.WasMousePressed(PlayerActionId.Attack))
+            return true;
 
-    [Client]
-    Vector2 ReadLocalMoveInput()
-    {
-        float horizontal = 0f;
-        float vertical = 0f;
-
-        if (Keyboard.current != null)
-        {
-            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) horizontal -= 1f;
-            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) horizontal += 1f;
-            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) vertical -= 1f;
-            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) vertical += 1f;
-        }
-
-        if (Gamepad.current != null)
-        {
-            Vector2 leftStick = Gamepad.current.leftStick.ReadValue();
-            if (Mathf.Abs(leftStick.x) > Mathf.Abs(horizontal)) horizontal = leftStick.x;
-            if (Mathf.Abs(leftStick.y) > Mathf.Abs(vertical)) vertical = leftStick.y;
-        }
-
-        return new Vector2(horizontal, vertical);
+        var keyboard = Keyboard.current;
+        var mouse = Mouse.current;
+        return keyboard != null
+            && mouse != null
+            && keyboard.leftAltKey.isPressed
+            && mouse.leftButton.wasPressedThisFrame;
     }
 
     [Client]

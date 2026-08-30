@@ -4,6 +4,7 @@ using MessagePipe;
 using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection.Input;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,6 +27,7 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly ISubscriber<CloseVendorWindowIfInteractableEvent> closeIfInteractable;
         private readonly IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged;
         private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
+        private readonly IInputReader input;
 
         private VendorView view;
         private R3.DisposableBag subscriptions;
@@ -54,7 +56,8 @@ namespace ShadowInfection.UI.VendorWindow
             ISubscriber<OpenVendorWindowEvent> openRequested,
             ISubscriber<CloseVendorWindowIfInteractableEvent> closeIfInteractable,
             IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged,
-            IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen)
+            IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen,
+            IInputReader input)
         {
             this.zombieMatchSession = zombieMatchSession;
             this.goldChanged = goldChanged;
@@ -66,6 +69,7 @@ namespace ShadowInfection.UI.VendorWindow
             this.closeIfInteractable = closeIfInteractable;
             this.visibilityChanged = visibilityChanged;
             this.loadoutOpen = loadoutOpen;
+            this.input = input;
         }
 
         public void Bind(VendorView nextView, CancellationToken token)
@@ -239,10 +243,10 @@ namespace ShadowInfection.UI.VendorWindow
 
         private void TickInput()
         {
-            if (!IsOpen || Keyboard.current == null)
+            if (!IsOpen || input == null)
                 return;
 
-            if (Keyboard.current.tabKey.wasPressedThisFrame)
+            if (input.WasPressed(PlayerActionId.VendorTabs))
                 SetTab(NextVisibleTab());
         }
 
