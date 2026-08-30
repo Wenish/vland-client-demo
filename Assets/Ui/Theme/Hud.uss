@@ -18,6 +18,7 @@
 .si-round-completion-left,
 .si-round-completion-percent,
 .si-round-stats__underline,
+.si-player-cast-slot,
 .si-player-info-feed,
 .si-player-info-feed__line {
     cursor: var(--cursor-ui);
@@ -41,17 +42,27 @@
     overflow: visible;
 }
 
-.si-player-castbar {
+.si-player-cast-slot {
     position: absolute;
     left: 50%;
     bottom: 25%;
     translate: -50% 0;
+    width: 400px;
+    height: 24px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    overflow: visible;
+}
+
+.si-player-castbar {
     width: 240px;
     height: 24px;
     margin-bottom: 0;
     flex-direction: row;
     align-items: stretch;
     overflow: visible;
+    flex-shrink: 0;
 }
 
 .si-hud-main {
@@ -302,17 +313,18 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 56px;
+    bottom: 28px;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
+    width: 100%;
 }
 
 .si-player-info-feed__line {
     -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Bold.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e81&type=3#MerriweatherSans-Bold");
-    font-size: 18px;
+    font-size: 16px;
     color: rgb(255, 244, 231);
-    -unity-text-align: upper-center;
+    -unity-text-align: middle-center;
     margin-top: 0;
     margin-bottom: 2px;
     margin-left: 0;
@@ -322,7 +334,7 @@
     padding-left: 0;
     padding-right: 0;
     background-color: rgba(0, 0, 0, 0);
-    max-width: 520px;
+    max-width: 400px;
     -unity-text-outline-width: 2px;
     -unity-text-outline-color: rgb(0, 0, 0);
     text-shadow: 0 2px 4px rgb(0, 0, 0), 0 0 8px rgb(0, 0, 0);
