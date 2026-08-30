@@ -51,6 +51,7 @@ namespace Game.Scripts.Controllers
             if (reader != null
                 && reader.WasPressed(PlayerActionId.CameraFollow)
                 && !UiModalInputBlock.IsBlocked
+                && !UiTextInputFocus.IsBlocking
                 && IsControllingCharacter())
             {
                 IsFocusingPlayer = !IsFocusingPlayer;
@@ -62,6 +63,7 @@ namespace Game.Scripts.Controllers
                         && !UiPointerState.IsPointerOverBlockingElement));
             if (fixedPressed
                 && !UiModalInputBlock.IsBlocked
+                && !UiTextInputFocus.IsBlocking
                 && IsControllingCharacter())
             {
                 IsFixedToTarget = !IsFixedToTarget;
@@ -75,7 +77,7 @@ namespace Game.Scripts.Controllers
             }
 
             UpdateSpectatorMode();
-            if (!UiModalInputBlock.IsBlocked)
+            if (!UiModalInputBlock.IsBlocked && !UiTextInputFocus.IsBlocking)
             {
                 OnScroll();
                 MousePositionChange();
@@ -157,7 +159,7 @@ namespace Game.Scripts.Controllers
 
         private void HandleSpectatorInput()
         {
-            if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
+            if (UiModalInputBlock.IsBlocked || UiTextInputFocus.IsBlocking || UiPointerState.IsPointerOverBlockingElement)
                 return;
 
             var reader = GameServices.Input;
@@ -266,7 +268,7 @@ namespace Game.Scripts.Controllers
 
         void OnScroll()
         {
-            if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
+            if (UiModalInputBlock.IsBlocked || UiTextInputFocus.IsBlocking || UiPointerState.IsPointerOverBlockingElement)
                 return;
             float oldZoom = Zoom;
             float scroll = GetScrollDelta();
@@ -302,7 +304,7 @@ namespace Game.Scripts.Controllers
             }
             else
             {
-                if (UiModalInputBlock.IsBlocked || UiPointerState.IsPointerOverBlockingElement)
+                if (UiModalInputBlock.IsBlocked || UiTextInputFocus.IsBlocking || UiPointerState.IsPointerOverBlockingElement)
                     return;
                 Vector3 pos = transform.position;
                 Vector2 mousePos = GetMousePosition();

@@ -589,3 +589,27 @@ MonoBehaviour:
     hasQuickCast: 0
     showInSettings: 1
     allowedOverlaps: 
+  - id: 25
+    settingsLabel: Inventory
+    group: 5
+    defaultPrimary:
+      device: 1
+      keyboardKey: 16
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 

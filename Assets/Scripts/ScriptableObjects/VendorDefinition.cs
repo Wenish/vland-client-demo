@@ -9,6 +9,12 @@ public enum VendorTab : byte
     Upgrades = 2
 }
 
+public enum VendorCatalogSource : byte
+{
+    BuyEntries = 0,
+    ItemDatabase = 1
+}
+
 [Serializable]
 public class VendorBuyEntry
 {
@@ -62,6 +68,12 @@ public class VendorDefinition : ScriptableObject
     public List<VendorBuyEntry> buyEntries = new List<VendorBuyEntry>();
     public List<VendorSellEntry> sellEntries = new List<VendorSellEntry>();
     public List<UpgradeDefinition> upgradeEntries = new List<UpgradeDefinition>();
+
+    [Header("Catalog Source")]
+    [Tooltip("BuyEntries uses the weapon list below. ItemDatabase lists every ItemDefinition (debug stall).")]
+    public VendorCatalogSource catalogSource = VendorCatalogSource.BuyEntries;
+
+    public bool UsesItemCatalog => catalogSource == VendorCatalogSource.ItemDatabase;
 
     public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? name : displayName;
 

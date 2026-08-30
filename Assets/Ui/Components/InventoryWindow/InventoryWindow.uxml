@@ -1,0 +1,37 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
+    <Style src="project://database/Assets/Ui/Components/InventoryWindow/InventoryWindow.uss?fileID=7433441132597879392&amp;guid=6a1b2c3d4e5f708192a3b4c5d6e7f802&amp;type=3#InventoryWindow" />
+    <ui:VisualElement name="inventoryRoot" picking-mode="Ignore" class="inventory">
+        <ui:VisualElement name="inventoryOverlay" picking-mode="Position" class="inventory-overlay" style="display: none;">
+            <ui:VisualElement name="InventoryPanel" picking-mode="Position" class="si-panel inventory-panel">
+                <ui:VisualElement name="headerRow" class="inventory-header-row">
+                    <ui:Label text="Inventory" name="header" class="inventory-header" />
+                    <OrnateButton name="closeButton" text="Close" class="si-button si-button--compact inventory-close-button" />
+                </ui:VisualElement>
+                <ui:TextField name="searchField" placeholder-text="Search items..." class="inventory-search" />
+                <ui:VisualElement name="filterBar" class="inventory-filters" />
+                <ui:VisualElement name="body" class="inventory-body">
+                    <ui:ScrollView name="itemScroll" mode="Vertical" horizontal-scroller-visibility="Hidden" class="inventory-scroll">
+                        <ui:VisualElement name="itemList" class="inventory-list" />
+                    </ui:ScrollView>
+                    <ui:VisualElement name="detailPane" class="inventory-detail">
+                        <ui:VisualElement name="detailIcon" class="inventory-detail__icon" />
+                        <ui:Label name="detailName" text="" class="inventory-detail__name" />
+                        <ui:Label name="detailMeta" text="" class="inventory-detail__meta" />
+                        <ui:Label name="detailDescription" text="" class="inventory-detail__description" />
+                        <ui:Label name="detailStats" text="" class="inventory-detail__stats" />
+                        <ui:Label name="detailEmpty" text="Select an item." class="inventory-detail__empty" />
+                        <OrnateButton name="destroyButton" text="Destroy" class="si-button si-button--compact inventory-destroy-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="confirmHost" class="inventory-confirm" style="display: none;">
+                    <ui:Label name="confirmMessage" text="Destroy this item?" class="inventory-confirm__message" />
+                    <ui:VisualElement class="inventory-confirm__row">
+                        <OrnateButton name="confirmYes" text="Destroy" class="si-button si-button--compact" />
+                        <OrnateButton name="confirmNo" text="Cancel" class="si-button si-button--compact" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

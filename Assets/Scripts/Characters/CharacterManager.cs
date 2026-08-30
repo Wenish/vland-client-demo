@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ShadowInfection.DI;
+using ShadowInfection.Items;
 using UnityEngine;
 
 [DefaultExecutionOrder(-100)]
@@ -119,6 +120,8 @@ public class CharacterManager : MonoBehaviour
         }
 
         var character = CharacterSaveData.CreateNew(sanitized, gender);
+        CharacterInventory.EnsureLists(character);
+        TryGrantItemOn(character, ItemIds.StarterDagger, persist: false);
         _roster.Characters.Add(character);
         SaveRoster();
         OnRosterChanged?.Invoke();
@@ -187,6 +190,68 @@ public class CharacterManager : MonoBehaviour
         loadoutManager.ApplyFromCharacter(active.ToLoadout(), notify);
     }
 
+    public bool TryGrantItem(string itemId)
+    {
+        return TryGrantItemOn(GetActive(), itemId, persist: true);
+    }
+
+    public bool TryDestroyEquipment(string instanceId)
+    {
+        var active = GetActive();
+        CharacterInventory.EnsureLists(active);
+        if (!CharacterInventory.TryDestroyEquipment(active, instanceId))
+            return false;
+
+        SaveRoster();
+        OnRosterChanged?.Invoke();
+        return true;
+    }
+
+    public bool TryDestroyStack(string itemId, int amount = 1)
+    {
+        var active = GetActive();
+        CharacterInventory.EnsureLists(active);
+        if (!CharacterInventory.TryDestroyStack(active, itemId, amount))
+            return false;
+
+        SaveRoster();
+        OnRosterChanged?.Invoke();
+        return true;
+    }
+
+    public bool TryDestroyItem(string instanceId, string itemId)
+    {
+        if (!string.IsNullOrWhiteSpace(instanceId))
+            return TryDestroyEquipment(instanceId);
+
+        return TryDestroyStack(itemId);
+    }
+
+    private bool TryGrantItemOn(CharacterSaveData character, string itemId, bool persist)
+    {
+        if (character == null || string.IsNullOrWhiteSpace(itemId))
+            return false;
+
+        var items = GameServices.Databases != null ? GameServices.Databases.Items : null;
+        if (items == null || !items.TryGet(itemId, out var definition) || definition == null)
+        {
+            Debug.LogWarning($"[CharacterManager] Unknown item '{itemId}'.");
+            return false;
+        }
+
+        CharacterInventory.EnsureLists(character);
+        if (!CharacterInventory.TryGrant(character, definition))
+            return false;
+
+        if (persist)
+        {
+            SaveRoster();
+            OnRosterChanged?.Invoke();
+        }
+
+        return true;
+    }
+
     private void LoadRoster()
     {
         _roster = new CharacterRosterSave();
@@ -209,6 +274,9 @@ public class CharacterManager : MonoBehaviour
 
         if (_roster.Characters == null)
             _roster.Characters = new List<CharacterSaveData>();
+
+        for (var i = 0; i < _roster.Characters.Count; i++)
+            CharacterInventory.EnsureLists(_roster.Characters[i]);
 
         MigrateLegacyLoadoutIfNeeded();
 
@@ -233,6 +301,7 @@ public class CharacterManager : MonoBehaviour
                 name = "Hero";
 
             var character = CharacterSaveData.CreateNew(name, CharacterGender.Male, legacy);
+            CharacterInventory.EnsureLists(character);
             _roster.Characters.Add(character);
             _roster.ActiveCharacterId = character.Id;
             SaveRoster();

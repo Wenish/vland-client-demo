@@ -15,6 +15,7 @@ public interface IVendorSession
     int GetBuyStock(string entryId);
 
     bool IsAvailableTo(PlayerController player);
+    bool IsReachableBy(UnitController unit);
     bool BelongsToInteractable(IVendorInteractable interactable);
 
     bool TryCreditGold(int amount);

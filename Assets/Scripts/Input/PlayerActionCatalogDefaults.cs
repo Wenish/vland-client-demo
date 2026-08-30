@@ -134,6 +134,7 @@ namespace ShadowInfection.Input
                     }
                 },
                 Bind(PlayerActionId.Loadout, "Loadout", PlayerActionGroup.Interface, Key.I),
+                Bind(PlayerActionId.Inventory, "Inventory", PlayerActionGroup.Interface, Key.B),
                 new PlayerActionDefinition
                 {
                     id = PlayerActionId.Leaderboard,

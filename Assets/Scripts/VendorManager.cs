@@ -38,12 +38,26 @@ public class VendorManager : NetworkBehaviour
         if (unit == null)
             return null;
 
-        InteractionZone best = null;
-        var bestSqr = float.MaxValue;
         var zones = GameServices.Get<IInteractionZoneRegistry>()?.Zones;
-        if (zones == null)
+        if (zones == null || zones.Count == 0)
+        {
+            var found = Object.FindObjectsByType<InteractionZone>(FindObjectsSortMode.None);
+            return PickReachableVendor(unit, vendorId, found);
+        }
+
+        return PickReachableVendor(unit, vendorId, zones);
+    }
+
+    private static InteractionZone PickReachableVendor(
+        UnitController unit,
+        string vendorId,
+        IEnumerable<InteractionZone> zones)
+    {
+        if (unit == null || zones == null)
             return null;
 
+        InteractionZone best = null;
+        var bestSqr = float.MaxValue;
         foreach (var zone in zones)
         {
             if (zone == null || zone.InteractionType != InteractionType.OpenVendor || zone.VendorCatalog == null)

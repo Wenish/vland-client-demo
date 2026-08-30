@@ -4,8 +4,10 @@ using Gapa.Audio.VContainer;
 using MessagePipe;
 using ShadowInfection.Audio;
 using ShadowInfection.Input;
+using ShadowInfection.Items;
 using ShadowInfection.Match;
 using ShadowInfection.Targeting;
+using ShadowInfection.UI.InventoryWindow;
 using ShadowInfection.UI.LoadoutWindow;
 using ShadowInfection.UI.Session;
 using ShadowInfection.UI.ZombieMatch;
@@ -63,6 +65,9 @@ namespace ShadowInfection.DI
 
         [SerializeField]
         private AreaZoneDatabase areaZoneDatabase;
+
+        [SerializeField]
+        private ItemDatabase itemDatabase;
 
         [Header("Input")]
         [SerializeField]
@@ -296,6 +301,11 @@ namespace ShadowInfection.DI
                 .As<ILoadoutStore>();
             builder.Register<DatabaseLoadoutCatalog>(Lifetime.Singleton)
                 .As<ILoadoutCatalog>();
+            builder.Register<DatabaseItemCatalog>(Lifetime.Singleton)
+                .As<IItemCatalog>();
+            builder.Register<ActiveCharacterInventory>(Lifetime.Singleton)
+                .As<IItemInventory>();
+            builder.RegisterEntryPoint<InventoryWindowBootstrap>();
 
             var unmatchedSession = new ZombieGameManagerUiSession(null);
             builder.RegisterInstance<IZombieMatchUiSession>(unmatchedSession);
@@ -324,6 +334,8 @@ namespace ShadowInfection.DI
                 ?? ScriptableObject.CreateInstance<ProjectileDatabase>();
             var areaZones = LoadDatabase(areaZoneDatabase, "ScriptableObjects/AreaZoneDatabase")
                 ?? ScriptableObject.CreateInstance<AreaZoneDatabase>();
+            var items = LoadDatabase(itemDatabase, "ScriptableObjects/ItemDatabase")
+                ?? ScriptableObject.CreateInstance<ItemDatabase>();
 
             builder.RegisterInstance(weapons);
             builder.RegisterInstance(skills);
@@ -331,8 +343,9 @@ namespace ShadowInfection.DI
             builder.RegisterInstance(models);
             builder.RegisterInstance(projectiles);
             builder.RegisterInstance(areaZones);
+            builder.RegisterInstance(items);
             builder.RegisterInstance<IGameDatabases>(new GameDatabases(
-                weapons, skills, units, models, projectiles, areaZones));
+                weapons, skills, units, models, projectiles, areaZones, items));
         }
 
         private static T LoadDatabase<T>(T serialized, string resourcePath) where T : ScriptableObject
