@@ -824,6 +824,7 @@ public class PlayerInput : NetworkBehaviour
         {
             PlayerActionFeedback.ShowTargetOutOfRange(
                 PlayerActionFeedback.ResolveSkillName(instance));
+            TryBeginAimPreview(slot, index);
             return;
         }
 
