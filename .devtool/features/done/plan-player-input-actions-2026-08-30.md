@@ -1,15 +1,15 @@
 ---
 id: "plan-player-input-actions-2026-08-30"
-status: "review"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-29T23:16:00.000Z"
-modified: "2026-08-30T02:09:34.166Z"
-completedAt: null
+modified: "2026-08-30T04:18:51.091Z"
+completedAt: "2026-08-30T04:18:51.091Z"
 labels: ["Usability"]
-order: "a3"
+order: "Zq"
 ---
 # Plan player key bindings
 

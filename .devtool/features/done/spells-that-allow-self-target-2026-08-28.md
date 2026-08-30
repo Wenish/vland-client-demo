@@ -1,15 +1,15 @@
 ---
 id: "spells-that-allow-self-target-2026-08-28"
-status: "review"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-27T22:12:31.022Z"
-modified: "2026-08-27T22:53:18.652Z"
-completedAt: null
+modified: "2026-08-30T04:18:50.315Z"
+completedAt: "2026-08-30T04:18:50.315Z"
 labels: ["Usability"]
-order: "a2"
+order: "Zr"
 ---
 # Spells that allow self target
 
