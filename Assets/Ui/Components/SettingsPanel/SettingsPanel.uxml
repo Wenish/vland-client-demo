@@ -7,6 +7,7 @@
             <ui:Button name="TabGeneral" text="GENERAL" class="settings-tab settings-tab--active" />
             <ui:Button name="TabGraphics" text="GRAPHICS" class="settings-tab" />
             <ui:Button name="TabAudio" text="AUDIO" class="settings-tab" />
+            <ui:Button name="TabKeybindings" text="KEYBINDINGS" class="settings-tab" />
         </ui:VisualElement>
         <ui:ScrollView name="SettingsScroll" class="settings-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
             <ui:VisualElement name="SettingsContent" class="settings-content si-panel">
@@ -30,11 +31,30 @@
                     <ui:SliderInt label="Voice" value="100" high-value="100" fill="true" name="SliderAudioVoice" low-value="0" class="input-slider" />
                     <ui:SliderInt label="Ambient" value="100" high-value="100" fill="true" name="SliderAudioAmbient" low-value="0" class="input-slider" />
                 </ui:VisualElement>
+                <ui:VisualElement name="TabContentKeybindings" class="settings-tab-content" style="display: none;">
+                    <ui:Label name="KeybindingsHint" text="Click a key, then press a new one. Right-click to clear. Esc to cancel." class="keybind-hint" />
+                    <ui:VisualElement name="KeybindingsHeader" class="keybind-header">
+                        <ui:Label text="Action" class="keybind-header__action" />
+                        <ui:Label text="Key" class="keybind-header__slot" />
+                        <ui:Label text="Secondary" class="keybind-header__slot" />
+                        <ui:VisualElement class="keybind-quick-cell" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="KeybindingsList" class="keybind-list" />
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:ScrollView>
         <ui:VisualElement name="SettingsPanelActions" class="main-menu-stack settings-panel__actions">
             <OrnateButton text="RESET" name="ButtonResetSettings" class="si-button si-button--compact" />
             <OrnateButton text="BACK" name="ButtonBackToMenu" class="si-button si-button--compact" icon-image="project://database/Assets/Art/Ui/Icons/icon-back.svg?fileID=2800000&amp;guid=e1a1b2c3d4e5f60718293a4b5c6d7ea8&amp;type=3#icon-back" />
+        </ui:VisualElement>
+        <ui:VisualElement name="KeybindingsConflict" picking-mode="Position" class="keybind-conflict-overlay" style="display: none;">
+            <ui:VisualElement name="KeybindingsConflictDialog" picking-mode="Position" class="si-panel keybind-conflict-dialog">
+                <ui:Label name="KeybindingsConflictText" class="keybind-conflict__text" />
+                <ui:VisualElement class="keybind-conflict__actions">
+                    <ui:Button name="KeybindingsConflictSwap" text="Swap" class="keybind-conflict__button" />
+                    <ui:Button name="KeybindingsConflictCancel" text="Cancel" class="keybind-conflict__button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

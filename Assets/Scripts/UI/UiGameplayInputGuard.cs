@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ShadowInfection.DI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -76,6 +77,10 @@ public static class UiGameplayInputGuard
 
     private static bool IsGameplayNavigationKey(KeyCode keyCode)
     {
+        var input = GameServices.Input;
+        if (input != null)
+            return input.IsMoveOrAttackKeyboardKey(keyCode);
+
         switch (keyCode)
         {
             case KeyCode.W:

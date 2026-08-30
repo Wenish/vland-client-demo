@@ -1,5 +1,7 @@
 using MyGame.Events;
 using R3;
+using ShadowInfection.DI;
+using ShadowInfection.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -49,7 +51,6 @@ public class ZombieModusLogger : MonoBehaviour
     {
         public string ActionName;
         public string Key;
-
     }
 
     private void LogKeyboardInput(string actionName, string key)
@@ -65,53 +66,38 @@ public class ZombieModusLogger : MonoBehaviour
 
     void Update()
     {
-        if (!Keyboard.current.leftAltKey.isPressed && !Keyboard.current.rightAltKey.isPressed && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Fire1", "Mouse0");
-        }
-        if (!Keyboard.current.leftAltKey.isPressed && !Keyboard.current.rightAltKey.isPressed && Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Fire2", "Mouse1");
-        }
-        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Skill1", "Q");
-        }
-        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Skill2", "E");
-        }
-        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Skill3", "C");
-        }
-        if (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Skill4", "X");
-        }
-        if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("Interact", "F");
-        }
-        if (Keyboard.current != null && (Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed) && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            LogKeyboardInput("WorldPing", "Alt+Mouse0");
-        }
-        if (Keyboard.current != null && Keyboard.current.wKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("MoveForward", "W");
-        }
-        if (Keyboard.current != null && Keyboard.current.aKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("MoveLeft", "A");
-        }
-        if (Keyboard.current != null && Keyboard.current.sKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("MoveBackward", "S");
-        }
-        if (Keyboard.current != null && Keyboard.current.dKey.wasPressedThisFrame)
-        {
-            LogKeyboardInput("MoveRight", "D");
-        }
+        var reader = GameServices.Input;
+        if (reader == null)
+            return;
+
+        if (reader.WasPressed(PlayerActionId.Attack) && !reader.IsHeld(PlayerActionId.SelfTargetModifier))
+            LogKeyboardInput("Fire1", "Attack");
+        if (reader.WasPressed(PlayerActionId.CancelCast))
+            LogKeyboardInput("Fire2", "CancelCast");
+        if (reader.WasPressed(PlayerActionId.Skill1))
+            LogKeyboardInput("Skill1", "Skill1");
+        if (reader.WasPressed(PlayerActionId.Skill2))
+            LogKeyboardInput("Skill2", "Skill2");
+        if (reader.WasPressed(PlayerActionId.Skill3))
+            LogKeyboardInput("Skill3", "Skill3");
+        if (reader.WasPressed(PlayerActionId.Ultimate))
+            LogKeyboardInput("Skill4", "Ultimate");
+        if (reader.WasPressed(PlayerActionId.Interact))
+            LogKeyboardInput("Interact", "Interact");
+        if (reader.WasPressed(PlayerActionId.Ping)
+            || (reader.IsHeld(PlayerActionId.SelfTargetModifier) && reader.WasMousePressed(PlayerActionId.Attack))
+            || (Keyboard.current != null
+                && Mouse.current != null
+                && Keyboard.current.leftAltKey.isPressed
+                && Mouse.current.leftButton.wasPressedThisFrame))
+            LogKeyboardInput("WorldPing", "Ping");
+        if (reader.WasPressed(PlayerActionId.MoveForward))
+            LogKeyboardInput("MoveForward", "MoveForward");
+        if (reader.WasPressed(PlayerActionId.MoveLeft))
+            LogKeyboardInput("MoveLeft", "MoveLeft");
+        if (reader.WasPressed(PlayerActionId.MoveBackward))
+            LogKeyboardInput("MoveBackward", "MoveBackward");
+        if (reader.WasPressed(PlayerActionId.MoveRight))
+            LogKeyboardInput("MoveRight", "MoveRight");
     }
 }

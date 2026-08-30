@@ -1,0 +1,567 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e9a12b8d04f6e9a3c5d1f8b2e0476, type: 3}
+  m_Name: PlayerActionCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Input.PlayerActionCatalog
+  actions:
+  - id: 1
+    settingsLabel: Move Forward
+    group: 0
+    defaultPrimary:
+      device: 1
+      keyboardKey: 37
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 1
+      keyboardKey: 63
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 1
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 2
+    settingsLabel: Move Backward
+    group: 0
+    defaultPrimary:
+      device: 1
+      keyboardKey: 33
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 1
+      keyboardKey: 64
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 1
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 3
+    settingsLabel: Move Left
+    group: 0
+    defaultPrimary:
+      device: 1
+      keyboardKey: 15
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 1
+      keyboardKey: 61
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 1
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 4
+    settingsLabel: Move Right
+    group: 0
+    defaultPrimary:
+      device: 1
+      keyboardKey: 18
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 1
+      keyboardKey: 62
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 1
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 5
+    settingsLabel: Attack
+    group: 1
+    defaultPrimary:
+      device: 2
+      keyboardKey: 0
+      mouseButton: 1
+      gamepadButton: 0
+    defaultSecondary:
+      device: 1
+      keyboardKey: 1
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 3
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 12
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 1
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 12000000
+  - id: 6
+    settingsLabel: Skill 1
+    group: 1
+    defaultPrimary:
+      device: 1
+      keyboardKey: 31
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 1
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 7
+    settingsLabel: Skill 2
+    group: 1
+    defaultPrimary:
+      device: 1
+      keyboardKey: 19
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 1
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 8
+    settingsLabel: Skill 3
+    group: 1
+    defaultPrimary:
+      device: 1
+      keyboardKey: 17
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 1
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 9
+    settingsLabel: Ultimate
+    group: 1
+    defaultPrimary:
+      device: 1
+      keyboardKey: 38
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 1
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 10
+    settingsLabel: Cancel Cast
+    group: 1
+    defaultPrimary:
+      device: 2
+      keyboardKey: 0
+      mouseButton: 2
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 13000000
+  - id: 11
+    settingsLabel: Interrupt
+    group: 1
+    defaultPrimary:
+      device: 1
+      keyboardKey: 22
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 12
+    settingsLabel: Ping
+    group: 1
+    defaultPrimary:
+      device: 1
+      keyboardKey: 21
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 13
+    settingsLabel: Self Target Modifier
+    group: 2
+    defaultPrimary:
+      device: 1
+      keyboardKey: 53
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 1
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 14
+    settingsLabel: Cast Modifier
+    group: 2
+    defaultPrimary:
+      device: 1
+      keyboardKey: 51
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 1
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 15
+    settingsLabel: Interact
+    group: 3
+    defaultPrimary:
+      device: 1
+      keyboardKey: 20
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 16
+    settingsLabel: Camera Follow
+    group: 4
+    defaultPrimary:
+      device: 1
+      keyboardKey: 40
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 17
+    settingsLabel: Camera Fixed
+    group: 4
+    defaultPrimary:
+      device: 2
+      keyboardKey: 0
+      mouseButton: 3
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 18
+    settingsLabel: Spectate Previous
+    group: 4
+    defaultPrimary:
+      device: 2
+      keyboardKey: 0
+      mouseButton: 1
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 05000000
+  - id: 19
+    settingsLabel: Spectate Next
+    group: 4
+    defaultPrimary:
+      device: 2
+      keyboardKey: 0
+      mouseButton: 2
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 0a000000
+  - id: 20
+    settingsLabel: Loadout
+    group: 5
+    defaultPrimary:
+      device: 1
+      keyboardKey: 23
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 
+  - id: 21
+    settingsLabel: Leaderboard
+    group: 5
+    defaultPrimary:
+      device: 1
+      keyboardKey: 3
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 16000000
+  - id: 22
+    settingsLabel: Vendor Tabs
+    group: 5
+    defaultPrimary:
+      device: 1
+      keyboardKey: 3
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 15000000
+  - id: 23
+    settingsLabel: Menu
+    group: 5
+    defaultPrimary:
+      device: 1
+      keyboardKey: 60
+      mouseButton: 0
+      gamepadButton: 0
+    defaultSecondary:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultGamepad:
+      device: 0
+      keyboardKey: 0
+      mouseButton: 0
+      gamepadButton: 0
+    defaultQuickCast: 0
+    isModifier: 0
+    isRequired: 0
+    hasQuickCast: 0
+    showInSettings: 1
+    allowedOverlaps: 

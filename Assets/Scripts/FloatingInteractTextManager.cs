@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using MyGame.Events;
+using ShadowInfection.Input;
 using TMPro;
 using UnityEngine;
 
@@ -13,8 +13,7 @@ public class FloatingInteractTextManager : MonoBehaviour
     [SerializeField]
     private UnitController myPlayerUnitController;
 
-    // Store references to spawned text per interaction zone
-    private Dictionary<Transform, GameObject> activeInteractTexts = new Dictionary<Transform, GameObject>();
+    private readonly Dictionary<InteractionZone, GameObject> activeInteractTexts = new();
     private R3.DisposableBag subscriptions;
 
     void OnEnable()
@@ -24,6 +23,7 @@ public class FloatingInteractTextManager : MonoBehaviour
         GameMessages.Subscribe<UnitEnteredInteractionZone>(ref subscriptions, OnUnitEnteredInteractionZone);
         GameMessages.Subscribe<UnitExitedInteractionZone>(ref subscriptions, OnUnitExitedInteractionZone);
         GameMessages.Subscribe<MyPlayerUnitSpawnedEvent>(ref subscriptions, OnMyPlayerUnitSpawned);
+        GameMessages.Subscribe<InputBindingsChangedEvent>(ref subscriptions, OnInputBindingsChanged);
     }
 
     void OnDisable()
@@ -39,7 +39,7 @@ public class FloatingInteractTextManager : MonoBehaviour
         {
             var interactionText = zone.Zone.BuildTooltipText();
             GameObject textObj = SpawnInteractText(interactionText, zone.Zone.transform);
-            activeInteractTexts[zone.Zone.transform] = textObj;
+            activeInteractTexts[zone.Zone] = textObj;
         }
     }
 
@@ -48,11 +48,23 @@ public class FloatingInteractTextManager : MonoBehaviour
         var hasMyUnitExitedTheZone = zone.Unit == myPlayerUnitController;
         if (hasMyUnitExitedTheZone)
         {
-            if (activeInteractTexts.TryGetValue(zone.Zone.transform, out GameObject textObj))
+            if (activeInteractTexts.TryGetValue(zone.Zone, out GameObject textObj))
             {
                 Destroy(textObj);
-                activeInteractTexts.Remove(zone.Zone.transform);
+                activeInteractTexts.Remove(zone.Zone);
             }
+        }
+    }
+
+    private void OnInputBindingsChanged(InputBindingsChangedEvent _)
+    {
+        foreach (var pair in activeInteractTexts)
+        {
+            if (pair.Key == null || pair.Value == null)
+                continue;
+            var textMeshPro = pair.Value.GetComponent<TextMeshPro>();
+            if (textMeshPro != null)
+                textMeshPro.text = pair.Key.BuildTooltipText();
         }
     }
 

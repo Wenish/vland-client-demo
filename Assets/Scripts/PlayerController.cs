@@ -6,6 +6,7 @@ using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.Input;
 using ShadowInfection.Interactions;
 using UnityEngine.InputSystem;
 
@@ -97,18 +98,14 @@ public class PlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (Keyboard.current == null)
-            {
+            var reader = GameServices.Input;
+            if (reader == null || !reader.WasPressed(PlayerActionId.Interact))
                 return;
-            }
 
-            if (Keyboard.current.fKey.wasPressedThisFrame)
-            {
-                if (TryOpenVendorWindow())
-                    return;
+            if (TryOpenVendorWindow())
+                return;
 
-                CmdInteract();
-            }
+            CmdInteract();
         }
     }
 

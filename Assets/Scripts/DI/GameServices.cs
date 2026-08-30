@@ -1,3 +1,4 @@
+using ShadowInfection.Input;
 using ShadowInfection.Interactions;
 using ShadowInfection.Units;
 using ShadowInfection.World;
@@ -31,6 +32,7 @@ namespace ShadowInfection.DI
 
         public static IGameDatabases Databases => Get<IGameDatabases>();
         public static ApplicationSettings Settings => Get<ApplicationSettings>();
+        public static IInputReader Input => Get<IInputReader>();
         public static LoadoutManager Loadout => Get<LoadoutManager>();
         public static CharacterManager Characters => Get<CharacterManager>();
         public static PlayerUnitsManager PlayerUnits => Get<PlayerUnitsManager>();

@@ -3,6 +3,7 @@ using Gapa.Audio.Music;
 using Gapa.Audio.VContainer;
 using MessagePipe;
 using ShadowInfection.Audio;
+using ShadowInfection.Input;
 using ShadowInfection.Match;
 using ShadowInfection.UI.LoadoutWindow;
 using ShadowInfection.UI.Session;
@@ -61,6 +62,10 @@ namespace ShadowInfection.DI
 
         [SerializeField]
         private AreaZoneDatabase areaZoneDatabase;
+
+        [Header("Input")]
+        [SerializeField]
+        private PlayerActionCatalog playerActionCatalog;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
@@ -282,6 +287,7 @@ namespace ShadowInfection.DI
             RegisterCharacterManager(builder);
             RegisterLoadoutManager(builder);
             RegisterApplicationSettings(builder);
+            RegisterInputBindings(builder);
 
             builder.Register<MirrorSessionFlowCommands>(Lifetime.Singleton)
                 .As<ISessionFlowCommands>();
@@ -373,6 +379,21 @@ namespace ShadowInfection.DI
                 return host.GetComponent<ApplicationSettings>()
                     ?? host.AddComponent<ApplicationSettings>();
             }, Lifetime.Singleton);
+        }
+
+        private void RegisterInputBindings(IContainerBuilder builder)
+        {
+            var catalog = playerActionCatalog != null
+                ? playerActionCatalog
+                : Resources.Load<PlayerActionCatalog>("ScriptableObjects/Input/PlayerActionCatalog");
+            if (catalog == null || !catalog.HasActions)
+                catalog = PlayerActionCatalog.CreateRuntime();
+
+            builder.RegisterInstance(catalog);
+            builder.Register<InputBindingsService>(Lifetime.Singleton)
+                .As<IInputReader>()
+                .As<IInputBindingSession>()
+                .As<IInputBindingCommands>();
         }
     }
 }

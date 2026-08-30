@@ -6,6 +6,7 @@ using Mirror;
 using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vland.UI;
@@ -18,6 +19,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private readonly ILoadoutCatalog catalog;
         private readonly ISubscriber<SetLoadoutWindowOpenEvent> setOpen;
         private readonly ApplicationSettings settings;
+        private readonly IInputReader input;
 
         private LoadoutView view;
         private R3.DisposableBag subscriptions;
@@ -31,12 +33,14 @@ namespace ShadowInfection.UI.LoadoutWindow
             ILoadoutStore store,
             ILoadoutCatalog catalog,
             ISubscriber<SetLoadoutWindowOpenEvent> setOpen,
-            ApplicationSettings settings)
+            ApplicationSettings settings,
+            IInputReader input)
         {
             this.store = store;
             this.catalog = catalog;
             this.setOpen = setOpen;
             this.settings = settings;
+            this.input = input;
         }
 
         public void Bind(LoadoutView nextView, CancellationToken token)
@@ -113,7 +117,7 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         private void TickToggle()
         {
-            if (view == null || Keyboard.current == null || !Keyboard.current.iKey.wasPressedThisFrame)
+            if (view == null || input == null || !input.WasPressed(PlayerActionId.Loadout))
                 return;
 
             // Character select/create (and other modals) are not gameplay — don't open loadout.

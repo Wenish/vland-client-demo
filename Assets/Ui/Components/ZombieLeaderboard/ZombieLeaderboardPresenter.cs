@@ -4,6 +4,7 @@ using System.Threading;
 using MessagePipe;
 using MyGame.Events;
 using R3;
+using ShadowInfection.Input;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine.InputSystem;
 
@@ -14,6 +15,7 @@ namespace ShadowInfection.UI.ZombieLeaderboard
         private readonly IZombieMatchUiSession session;
         private readonly ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged;
         private readonly ISubscriber<ZombieGameOverEvent> gameOver;
+        private readonly IInputReader input;
 
         private ZombieLeaderboardView view;
         private R3.DisposableBag subscriptions;
@@ -25,11 +27,13 @@ namespace ShadowInfection.UI.ZombieLeaderboard
         public ZombieLeaderboardPresenter(
             IZombieMatchUiSession session,
             ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged,
-            ISubscriber<ZombieGameOverEvent> gameOver)
+            ISubscriber<ZombieGameOverEvent> gameOver,
+            IInputReader input)
         {
             this.session = session;
             this.leaderboardChanged = leaderboardChanged;
             this.gameOver = gameOver;
+            this.input = input;
         }
 
         public void Bind(ZombieLeaderboardView nextView, CancellationToken token)
@@ -104,7 +108,7 @@ namespace ShadowInfection.UI.ZombieLeaderboard
 
         private void TickInput()
         {
-            if (Keyboard.current == null || !Keyboard.current.tabKey.wasPressedThisFrame)
+            if (input == null || !input.WasPressed(PlayerActionId.Leaderboard))
                 return;
 
             isVisible = !isVisible;

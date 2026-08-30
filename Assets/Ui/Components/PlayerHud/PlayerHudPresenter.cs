@@ -10,6 +10,7 @@ using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.Input;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 
@@ -39,6 +40,7 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly ISubscriber<PlayerHudInfoMessageEvent> infoMessages;
         private readonly ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged;
         private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
+        private readonly IInputBindingSession inputBindings;
         private readonly PlayerHudCastBarDriver castBarDriver;
         private readonly PlayerHudInfoFeedDriver infoFeedDriver;
 
@@ -87,7 +89,8 @@ namespace ShadowInfection.UI.PlayerHud
             ISubscriber<MyPlayerUnitSpawnedEvent> myUnitSpawned,
             ISubscriber<PlayerHudInfoMessageEvent> infoMessages,
             ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged,
-            IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen)
+            IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen,
+            IInputBindingSession inputBindings)
         {
             this.settings = settings;
             this.zombieMatchSession = zombieMatchSession;
@@ -99,6 +102,7 @@ namespace ShadowInfection.UI.PlayerHud
             this.infoMessages = infoMessages;
             this.leaderboardChanged = leaderboardChanged;
             this.loadoutOpen = loadoutOpen;
+            this.inputBindings = inputBindings;
             castBarDriver = new PlayerHudCastBarDriver(settings, ResolveSkillIcon);
             infoFeedDriver = new PlayerHudInfoFeedDriver(settings);
         }
@@ -364,7 +368,8 @@ namespace ShadowInfection.UI.PlayerHud
                     false,
                     0f,
                     lastWeaponData.iconTexture,
-                    weaponTooltip));
+                    weaponTooltip,
+                    HudActivationKey(PlayerActionId.Attack)));
             }
             else
             {
@@ -377,29 +382,35 @@ namespace ShadowInfection.UI.PlayerHud
             view.SetAbilitySlot(PlayerHudAbilitySlot.Passive, BuildSkillVm(
                 skillSystem.GetSkill(SkillSlotType.Passive, 0),
                 ref lastPassiveData,
-                ref passiveTooltip));
+                ref passiveTooltip,
+                PlayerActionId.None));
             view.SetAbilitySlot(PlayerHudAbilitySlot.Normal1, BuildSkillVm(
                 skillSystem.GetSkill(SkillSlotType.Normal, 0),
                 ref lastNormal1Data,
-                ref normal1Tooltip));
+                ref normal1Tooltip,
+                PlayerActionId.Skill1));
             view.SetAbilitySlot(PlayerHudAbilitySlot.Normal2, BuildSkillVm(
                 skillSystem.GetSkill(SkillSlotType.Normal, 1),
                 ref lastNormal2Data,
-                ref normal2Tooltip));
+                ref normal2Tooltip,
+                PlayerActionId.Skill2));
             view.SetAbilitySlot(PlayerHudAbilitySlot.Normal3, BuildSkillVm(
                 skillSystem.GetSkill(SkillSlotType.Normal, 2),
                 ref lastNormal3Data,
-                ref normal3Tooltip));
+                ref normal3Tooltip,
+                PlayerActionId.Skill3));
             view.SetAbilitySlot(PlayerHudAbilitySlot.Ultimate, BuildSkillVm(
                 skillSystem.GetSkill(SkillSlotType.Ultimate, 0),
                 ref lastUltimateData,
-                ref ultimateTooltip));
+                ref ultimateTooltip,
+                PlayerActionId.Ultimate));
         }
 
-        private static AbilitySlotVm BuildSkillVm(
+        private AbilitySlotVm BuildSkillVm(
             NetworkedSkillInstance skill,
             ref SkillData cachedData,
-            ref string cachedTooltip)
+            ref string cachedTooltip,
+            PlayerActionId actionId)
         {
             if (skill == null)
             {
@@ -424,7 +435,17 @@ namespace ShadowInfection.UI.PlayerHud
                 skill.IsRecastWindowOpen,
                 skill.RecastWindowRemaining,
                 cachedData.iconTexture,
-                cachedTooltip);
+                cachedTooltip,
+                HudActivationKey(actionId));
+        }
+
+        private string HudActivationKey(PlayerActionId actionId)
+        {
+            if (actionId == PlayerActionId.None || inputBindings == null)
+                return string.Empty;
+            if (!inputBindings.TryGetDisplayBind(actionId, out var key) || key.IsEmpty)
+                return string.Empty;
+            return InputBindingDisplay.ToHudActivationKey(key);
         }
 
         private void OnInfoMessage(PlayerHudInfoMessageEvent message)
