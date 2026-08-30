@@ -158,7 +158,7 @@ namespace ShadowInfection.UI.PlayerHud
 
             SetPickingIgnoreRecursive(root.Q<VisualElement>("roundInfos"));
             SetPickingIgnoreRecursive(root.Q<Label>("labelRoundStarted")?.parent);
-            SetPickingIgnoreRecursive(root.Q<CastBar>("playerCastbar"));
+            SetPickingIgnoreRecursive(root.Q<VisualElement>("playerCastSlot") ?? playerCastbar);
             SetPickingIgnoreRecursive(root.Q(className: "si-hud-bottom"));
             SetPickingIgnoreRecursive(infoFeed);
 
@@ -478,6 +478,7 @@ namespace ShadowInfection.UI.PlayerHud
                 return;
 
             var count = lines != null ? lines.Count : 0;
+            infoFeed.style.display = count > 0 ? DisplayStyle.Flex : DisplayStyle.None;
             EnsureInfoLabelCount(count);
 
             for (var i = 0; i < infoLabels.Count; i++)

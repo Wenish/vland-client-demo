@@ -101,7 +101,9 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" icon-texture="project://database/Assets/Art/Skills/monk_hands.jpg?fileID=2800000&amp;guid=32e55def1e718487e909fb7642359dde&amp;type=3#monk_hands" progress="0.84" text-time="4.2s" text-name="Healing Hands" name="playerCastbar" picking-mode="Ignore" class="si-player-castbar"/>
-    <ui:VisualElement name="playerInfoFeed" picking-mode="Ignore" class="si-player-info-feed"/>
+    <ui:VisualElement name="playerCastSlot" picking-mode="Ignore" class="si-player-cast-slot">
+        <ui:VisualElement name="playerInfoFeed" picking-mode="Ignore" class="si-player-info-feed"/>
+        <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" icon-texture="project://database/Assets/Art/Skills/monk_hands.jpg?fileID=2800000&amp;guid=32e55def1e718487e909fb7642359dde&amp;type=3#monk_hands" progress="0.84" text-time="4.2s" text-name="Healing Hands" name="playerCastbar" picking-mode="Ignore" class="si-player-castbar" style="display: none;"/>
+    </ui:VisualElement>
     <ui:Instance template="Watermark" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>
 </ui:UXML>
