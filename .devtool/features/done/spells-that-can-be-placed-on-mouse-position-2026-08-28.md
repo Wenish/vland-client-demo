@@ -1,15 +1,15 @@
 ---
 id: "spells-that-can-be-placed-on-mouse-position-2026-08-28"
-status: "review"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-27T22:56:22.052Z"
-modified: "2026-08-29T22:56:00.000Z"
-completedAt: null
+modified: "2026-08-30T04:18:47.581Z"
+completedAt: "2026-08-30T04:18:47.581Z"
 labels: []
-order: "Zw"
+order: "Zu"
 ---
 # Spells that can be placed on mouse position
 

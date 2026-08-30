@@ -1,15 +1,15 @@
 ---
 id: "default-behavior-for-casting-skills-2026-08-27"
-status: "backlog"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-27T20:38:47.359Z"
-modified: "2026-08-27T20:49:52.867Z"
-completedAt: null
+modified: "2026-08-30T04:18:01.650Z"
+completedAt: "2026-08-30T04:18:01.650Z"
 labels: ["Usability"]
-order: "Zy"
+order: "Zw"
 ---
 # Default behavior for casting skills
 

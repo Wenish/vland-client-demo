@@ -1,15 +1,15 @@
 ---
 id: "point-to-click-spells-should-also-target-2026-08-27"
-status: "review"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-27T20:33:07.591Z"
-modified: "2026-08-27T22:12:52.023Z"
-completedAt: null
+modified: "2026-08-30T04:18:49.182Z"
+completedAt: "2026-08-30T04:18:49.182Z"
 labels: ["Usability"]
-order: "a1"
+order: "Zs"
 ---
 # Point To Click Spells targetig outsite of range usability
 

@@ -1,15 +1,15 @@
 ---
 id: "unit-highlight-when-using-spell-preview-indicator-2026-08-27"
-status: "review"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-27T20:44:58.725Z"
-modified: "2026-08-27T21:22:30.535Z"
-completedAt: null
+modified: "2026-08-30T04:18:48.412Z"
+completedAt: "2026-08-30T04:18:48.412Z"
 labels: ["Usability"]
-order: "a0"
+order: "Zt"
 ---
 # Unit Highlight when using Spell preview indicator
 
