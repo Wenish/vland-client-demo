@@ -1,4 +1,5 @@
 using System;
+using ShadowInfection.Input;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -87,7 +88,7 @@ public partial class AbilityCooldownElement : VisualElement
         }
 
         var hasKey = !string.IsNullOrEmpty(_activationKey);
-        var isMouseLeft = _activationKey == "LM";
+        var isMouseLeft = InputBindingDisplay.IsMouseLeftHudToken(_activationKey);
 
         if (_keyIcon != null)
         {

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using MyGame.Events;
+using ShadowInfection.DI;
+using ShadowInfection.Input;
 using ShadowInfection.Interactions;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InteractionZone : MonoBehaviour, IVendorInteractable
 {
@@ -201,25 +204,30 @@ public class InteractionZone : MonoBehaviour, IVendorInteractable
 
     private string ResolvePromptLine()
     {
+        var interactKey = ResolveInteractBind();
         if (!string.IsNullOrWhiteSpace(promptLineOverride))
-        {
-            return promptLineOverride;
-        }
+            return InputBindingDisplay.ApplyInteractPrompt(promptLineOverride, interactKey);
 
         if (zoneDefinition != null && !string.IsNullOrWhiteSpace(zoneDefinition.customPromptLine))
-        {
-            return zoneDefinition.customPromptLine;
-        }
+            return InputBindingDisplay.ApplyInteractPrompt(zoneDefinition.customPromptLine, interactKey);
 
-        switch (InteractionType)
+        var remainder = InteractionType switch
         {
-            case InteractionType.OpenGate:
-                return "Press F to open the gate";
-            case InteractionType.OpenVendor:
-                return "Press F to trade";
-            default:
-                return "Press F to interact";
-        }
+            InteractionType.OpenGate => "to open the gate",
+            InteractionType.OpenVendor => "to trade",
+            _ => "to interact"
+        };
+        return "Press " + InputBindingDisplay.ToPromptLabel(interactKey) + " " + remainder;
+    }
+
+    private static InputBindingKey ResolveInteractBind()
+    {
+        if (GameServices.TryGet<IInputBindingSession>(out var session)
+            && session.TryGetDisplayBind(PlayerActionId.Interact, out var key)
+            && !key.IsEmpty)
+            return key;
+
+        return InputBindingKey.Keyboard(Key.F);
     }
 
     private string ResolvePurchaseSummary()
