@@ -1,12 +1,12 @@
 ---
 id: "plan-player-input-actions-2026-08-30"
-status: "backlog"
+status: "review"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-29T23:16:00.000Z"
-modified: "2026-08-29T23:51:00.000Z"
+modified: "2026-08-30T02:09:34.166Z"
 completedAt: null
 labels: ["Usability"]
 order: "a3"
