@@ -1,3 +1,4 @@
+using System;
 using UnityEngine.InputSystem;
 
 namespace ShadowInfection.Input
@@ -5,6 +6,7 @@ namespace ShadowInfection.Input
     public static class InputBindingDisplay
     {
         public const string EmptySlot = "—";
+        public const string MouseLeftHudToken = "LM";
 
         public static string ToLabel(InputBindingKey key)
         {
@@ -18,6 +20,51 @@ namespace ShadowInfection.Input
                 InputBindingDevice.Gamepad => GamepadLabel(key.gamepadButton),
                 _ => EmptySlot
             };
+        }
+
+        public static bool IsLeftMouse(in InputBindingKey key)
+        {
+            return key.device == InputBindingDevice.Mouse && key.mouseButton == InputMouseButton.Left;
+        }
+
+        public static bool IsMouseLeftHudToken(string activationKey)
+        {
+            return string.Equals(activationKey, MouseLeftHudToken, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(activationKey, "LMB", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string ToHudActivationKey(in InputBindingKey key)
+        {
+            if (key.IsEmpty)
+                return string.Empty;
+            if (IsLeftMouse(key))
+                return MouseLeftHudToken;
+            var label = ToLabel(key);
+            return label == EmptySlot ? string.Empty : label;
+        }
+
+        public static string ToPromptLabel(in InputBindingKey key)
+        {
+            if (key.IsEmpty)
+                return EmptySlot;
+            if (IsLeftMouse(key))
+                return "Left Click";
+            return ToLabel(key);
+        }
+
+        public static string ApplyInteractPrompt(string template, in InputBindingKey key)
+        {
+            var label = ToPromptLabel(key);
+            if (string.IsNullOrWhiteSpace(template))
+                return "Press " + label + " to interact";
+            if (template.IndexOf("{key}", StringComparison.Ordinal) >= 0)
+                return template.Replace("{key}", label);
+
+            const string pressF = "Press F";
+            if (template.StartsWith(pressF, StringComparison.OrdinalIgnoreCase))
+                return "Press " + label + template.Substring(pressF.Length);
+
+            return template;
         }
 
         public static string KeyboardLabel(Key key)

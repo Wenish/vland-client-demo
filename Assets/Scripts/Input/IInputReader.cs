@@ -27,6 +27,8 @@ namespace ShadowInfection.Input
     public interface IInputBindingSession
     {
         bool TryGetSnapshot(out InputBindingsSnapshot snapshot);
+
+        bool TryGetDisplayBind(PlayerActionId id, out InputBindingKey key);
     }
 
     public interface IInputBindingCommands

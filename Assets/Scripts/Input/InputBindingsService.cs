@@ -151,6 +151,27 @@ namespace ShadowInfection.Input
             return true;
         }
 
+        public bool TryGetDisplayBind(PlayerActionId id, out InputBindingKey key)
+        {
+            key = InputBindingKey.None;
+            var index = ToIndex(id);
+            if (index < 0 || definitionById[index] == null)
+                return false;
+            if (!primary[index].IsEmpty)
+            {
+                key = primary[index];
+                return true;
+            }
+
+            if (!secondary[index].IsEmpty)
+            {
+                key = secondary[index];
+                return true;
+            }
+
+            return false;
+        }
+
         public void BeginListen(PlayerActionId id, InputBindingSlot slot)
         {
             if (slot == InputBindingSlot.Gamepad || !IsKnown(id))
