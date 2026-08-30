@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Text;
+using ShadowInfection.UI.Nameplates;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -105,8 +106,11 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly VisualElement infoFeed;
         private readonly List<Label> infoLabels = new();
         private readonly VisualElement characterHudRoot;
+        private readonly TargetFrameView targetFrame;
 
         public event Action LoadoutButtonClicked;
+
+        public TargetFrameView TargetFrame => targetFrame;
 
         public PlayerHudView(VisualElement root)
         {
@@ -150,6 +154,7 @@ namespace ShadowInfection.UI.PlayerHud
             labelStatMagicResist = root.Q<Label>("labelStatMagicResist");
             labelStatCritChance = root.Q<Label>("labelStatCritChance");
             infoFeed = root.Q<VisualElement>("playerInfoFeed");
+            targetFrame = new TargetFrameView(root);
 
             SetPickingIgnoreRecursive(root.Q<VisualElement>("roundInfos"));
             SetPickingIgnoreRecursive(root.Q<Label>("labelRoundStarted")?.parent);
@@ -213,6 +218,7 @@ namespace ShadowInfection.UI.PlayerHud
             SetAbilitySlot(PlayerHudAbilitySlot.Ultimate, AbilitySlotVm.Empty);
             ResetCastBar();
             HideCastBar();
+            targetFrame?.Hide();
             ClearInfoLines();
             if (playerCastbar != null)
                 playerCastbar.style.opacity = 1f;
@@ -544,7 +550,7 @@ namespace ShadowInfection.UI.PlayerHud
             if (element == null)
                 return;
 
-            if (element is AbilityCooldownElement or OrnateButton)
+            if (element is AbilityCooldownElement or OrnateButton or BuffIconElement)
                 return;
 
             element.pickingMode = PickingMode.Ignore;

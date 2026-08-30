@@ -9,8 +9,10 @@ using Mirror;
 using MyGame.Events;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection;
 using ShadowInfection.DI;
 using ShadowInfection.Input;
+using ShadowInfection.Targeting;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 
@@ -43,6 +45,7 @@ namespace ShadowInfection.UI.PlayerHud
         private readonly IInputBindingSession inputBindings;
         private readonly PlayerHudCastBarDriver castBarDriver;
         private readonly PlayerHudInfoFeedDriver infoFeedDriver;
+        private readonly TargetFrameDriver targetFrameDriver;
 
         private PlayerHudView view;
         private R3.DisposableBag subscriptions;
@@ -90,7 +93,10 @@ namespace ShadowInfection.UI.PlayerHud
             ISubscriber<PlayerHudInfoMessageEvent> infoMessages,
             ISubscriber<ZombieLeaderboardChangedEvent> leaderboardChanged,
             IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen,
-            IInputBindingSession inputBindings)
+            IInputBindingSession inputBindings,
+            IPlayerTarget playerTarget,
+            ITeamColorService teamColors,
+            ISubscriber<PlayerTargetChangedEvent> targetChanged)
         {
             this.settings = settings;
             this.zombieMatchSession = zombieMatchSession;
@@ -105,6 +111,12 @@ namespace ShadowInfection.UI.PlayerHud
             this.inputBindings = inputBindings;
             castBarDriver = new PlayerHudCastBarDriver(settings, ResolveSkillIcon);
             infoFeedDriver = new PlayerHudInfoFeedDriver(settings);
+            targetFrameDriver = new TargetFrameDriver(
+                playerTarget,
+                teamColors,
+                databases,
+                settings,
+                targetChanged);
         }
 
         public void Bind(PlayerHudView nextView, Color successColor, CancellationToken token)
@@ -127,6 +139,7 @@ namespace ShadowInfection.UI.PlayerHud
             TickZombieGameInfo();
             castBarDriver.Bind(view, successColor, destroyToken);
             infoFeedDriver.Bind(view);
+            targetFrameDriver.Bind(view.TargetFrame, destroyToken);
 
             subscriptions.Add(goldChanged.Subscribe(OnGoldChanged));
             subscriptions.Add(waveStarted.Subscribe(OnWaveStarted));
@@ -142,6 +155,7 @@ namespace ShadowInfection.UI.PlayerHud
                             return;
 
                         infoFeedDriver.Tick();
+                        targetFrameDriver.Tick();
                         if (!enabled)
                             return;
 
@@ -162,6 +176,7 @@ namespace ShadowInfection.UI.PlayerHud
             UnbindPlayerUnit();
             castBarDriver.Unbind();
             infoFeedDriver.Unbind();
+            targetFrameDriver.Unbind();
             ResetZombieGameInfo();
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
@@ -547,6 +562,8 @@ namespace ShadowInfection.UI.PlayerHud
             if (playerUnit == null || view == null)
                 return;
 
+            targetFrameDriver.SetLocalPlayer(playerUnit);
+
             weaponController = playerUnit.GetComponent<WeaponController>();
             skillSystem = playerUnit.GetComponent<SkillSystem>();
             var actionState = playerUnit.GetComponent<UnitActionState>();
@@ -592,6 +609,7 @@ namespace ShadowInfection.UI.PlayerHud
                 statSystem.OnStatChanged -= HandleStatChanged;
 
             castBarDriver.SetActionState(null);
+            targetFrameDriver.SetLocalPlayer(null);
             playerUnit = null;
             weaponController = null;
             skillSystem = null;

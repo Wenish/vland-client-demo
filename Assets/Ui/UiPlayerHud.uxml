@@ -59,6 +59,30 @@
                         <AbilityCooldownElement name="skillUltimate" cooldown-progress="-0.3" cooldown-remaining="-0.07" enabled="true" icon-texture="project://database/Assets/Art/Skills/ritual_ghost_healing.jpg?fileID=2800000&amp;guid=29a96695c13274ef5b2ec61422d1b054&amp;type=3#ritual_ghost_healing" activation-key="X" class="ability-container--ultimate"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
+                <ui:VisualElement name="targetFrame" picking-mode="Ignore" class="si-target-frame" style="display: none;">
+                    <ui:Label text="" name="targetFrameName" picking-mode="Ignore" class="si-target-frame__name"/>
+                    <ui:VisualElement name="targetFrameVitals" picking-mode="Ignore" class="si-vitals">
+                        <ui:VisualElement name="targetFrameShieldContainer" picking-mode="Ignore" class="si-vital-row">
+                            <ui:VisualElement class="si-vital-track">
+                                <ui:VisualElement name="targetFrameShieldFill" class="si-vital-fill--shield" style="width: 0%;"/>
+                                <ui:VisualElement class="si-vital-row__icon si-vital-row__icon--shield si-vital-bar-icon"/>
+                                <ui:Label text="0 / 0" name="targetFrameShieldValue" picking-mode="Ignore" class="si-vital-value si-vital-value--overlay si-vital-value--shield"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="targetFrameHealthContainer" picking-mode="Ignore" class="si-vital-row si-vital-row--health">
+                            <ui:VisualElement name="targetFrameHealthTrack" class="si-vital-track si-vital-track--health">
+                                <ui:VisualElement name="targetFrameHealthFill" class="si-vital-fill--health" style="width: 100%;"/>
+                                <ui:VisualElement class="si-vital-row__icon si-vital-row__icon--health si-vital-bar-icon"/>
+                                <ui:Label text="0 / 0" name="targetFrameHealthValue" picking-mode="Ignore" class="si-vital-value si-vital-value--overlay"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="targetFrameBuffs" picking-mode="Ignore" class="si-target-frame__buffs">
+                        <ui:VisualElement name="targetFrameBuffRow" class="si-target-frame__buff-row"/>
+                        <ui:VisualElement name="targetFrameDebuffRow" class="si-target-frame__buff-row si-target-frame__buff-row--debuffs"/>
+                    </ui:VisualElement>
+                    <CastBar template="project://database/Assets/Ui/Components/CastBar/CastBar.uxml?fileID=9197481963319205126&amp;guid=d16387cf40130114b9f2c178be8cfe08&amp;type=3#CastBar" name="targetFrameCastbar" picking-mode="Ignore" class="si-target-frame__castbar" style="display: none;"/>
+                </ui:VisualElement>
                 <ui:VisualElement name="playerStatsContainer" class="si-player-stats" style="display: none;">
                     <ui:VisualElement class="si-player-stats__column si-player-stats__column--left">
                         <ui:Label name="labelStatAttackPower" text="ATK: 0" class="si-player-stats__label"/>

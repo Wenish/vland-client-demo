@@ -25,6 +25,7 @@ namespace ShadowInfection.UI.Nameplates
         private Texture2D castIcon;
         private float castProgress;
         private bool isLocalPlayer;
+        private bool isSelected;
         private float displayedHealth;
         private float displayedShield;
         private float targetHealth;
@@ -118,12 +119,22 @@ namespace ShadowInfection.UI.Nameplates
             Element = null;
             ColliderAnchorHeight = 0f;
             showCastBar = false;
+            isSelected = false;
         }
 
         public void SetLocalPlayer(bool local)
         {
             isLocalPlayer = local;
             ApplyHealthColor();
+            NotifyChanged();
+        }
+
+        public void SetSelected(bool selected)
+        {
+            if (isSelected == selected)
+                return;
+
+            isSelected = selected;
             NotifyChanged();
         }
 
@@ -163,10 +174,10 @@ namespace ShadowInfection.UI.Nameplates
             var buffs = buffDriver != null ? buffDriver.Buffs : NoBuffs;
 
             return new UnitNameplateSnapshot(
-                visibility.ShowRoot,
-                visibility.ShowHealth,
-                visibility.ShowShield,
-                visibility.ShowName,
+                visibility.ShowRoot || isSelected,
+                visibility.ShowHealth || isSelected,
+                isSelected ? (maxShield > 0 && unit != null && !unit.IsDead) : visibility.ShowShield,
+                visibility.ShowName || isSelected,
                 showCastBar,
                 healthFill,
                 shieldFill,

@@ -44,6 +44,10 @@ public class SkillEffectTargetSmart : SkillEffectTarget
         if (forcedSelf != null)
             return forcedSelf;
 
+        var preferred = TryGetPreferredTarget(castContext, enforceRange);
+        if (preferred != null)
+            return preferred;
+
         var caster = castContext.caster;
 
         Vector3 aimPoint = castContext.aimPoint ?? caster.transform.position;
@@ -99,6 +103,28 @@ public class SkillEffectTargetSmart : SkillEffectTarget
                 return new List<UnitController> { caster };
             }
         }
+
+        return new List<UnitController>(0);
+    }
+
+    /// <summary>
+    /// Sticky selection: if the preferred unit passes team + life, use it.
+    /// Out of range on a real cast returns an empty list so we do not fall back to mouse snap.
+    /// Wrong team/life returns null so mouse snap still runs.
+    /// </summary>
+    private List<UnitController> TryGetPreferredTarget(CastContext castContext, bool enforceRange)
+    {
+        var preferred = castContext?.preferredTarget;
+        if (preferred == null)
+            return null;
+
+        var filtered = ApplyCommonFilters(castContext, new List<UnitController> { preferred }).ToList();
+        if (filtered.Count == 0)
+            return null;
+
+        var unit = filtered[0];
+        if (!enforceRange || IsWithinRange(castContext.caster, unit))
+            return new List<UnitController> { unit };
 
         return new List<UnitController>(0);
     }

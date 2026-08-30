@@ -16,6 +16,11 @@ public class CastContext
     public bool forceSelfTarget;
 
     /// <summary>
+    /// Optional sticky unit selection from the caster's client. Server validates team, life, and range.
+    /// </summary>
+    public UnitController preferredTarget;
+
+    /// <summary>
     /// Set by the active Cast/Channel mechanic: live mouse aim updates CastContext while true.
     /// </summary>
     public bool updatesAimDuringCast;

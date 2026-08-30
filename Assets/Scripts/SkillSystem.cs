@@ -220,7 +220,12 @@ public class SkillSystem : NetworkBehaviour
     }
 
     [Server]
-    public SkillCastResult CastSkill(SkillSlotType slot, int index, Vector3? aimPoint, bool forceSelfTarget = false)
+    public SkillCastResult CastSkill(
+        SkillSlotType slot,
+        int index,
+        Vector3? aimPoint,
+        bool forceSelfTarget = false,
+        uint preferredTargetNetId = 0)
     {
         if (unit.IsDead)
         {
@@ -236,7 +241,7 @@ public class SkillSystem : NetworkBehaviour
         var list = GetList(slot);
         if (index < 0 || index >= list.Count)
             return SkillCastResult.Rejected;
-        return list[index].Cast(aimPoint, forceSelfTarget);
+        return list[index].Cast(aimPoint, forceSelfTarget, preferredTargetNetId);
     }
 
     [Server]

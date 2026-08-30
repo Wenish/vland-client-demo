@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Mirror;
 using MyGame.Events;
 using ShadowInfection.DI;
+using ShadowInfection.Targeting;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -148,7 +149,10 @@ public class NetworkedSkillInstance : NetworkBehaviour
     private int _lastCastStartFrame = -1;
 
     [Server]
-    public SkillCastResult Cast(Vector3? aimPoint, bool forceSelfTarget = false)
+    public SkillCastResult Cast(
+        Vector3? aimPoint,
+        bool forceSelfTarget = false,
+        uint preferredTargetNetId = 0)
     {
         if (unit == null || unit.IsDead || unit.IsKnockedUp)
             return SkillCastResult.Rejected;
@@ -197,6 +201,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         }
         _lastCastStartFrame = Time.frameCount;
 
+        var preferredTarget = PlayerTargetLookup.FromNetId(preferredTargetNetId);
         var indicator = SkillAimPreviewUtil.Resolve(this);
         if (indicator?.snapToTarget != null && aimPoint.HasValue)
         {
@@ -207,7 +212,8 @@ public class NetworkedSkillInstance : NetworkBehaviour
                 aimPoint.Value,
                 this,
                 out _,
-                forceSelfTarget))
+                forceSelfTarget,
+                preferredTarget))
             {
                 return SkillCastResult.OutOfRange;
             }
@@ -249,6 +255,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
             aimPoint = clampedAim,
             aimRotation = aimRotation,
             forceSelfTarget = forceSelfTarget,
+            preferredTarget = preferredTarget,
         };
         ApplyCastTurnSpeedLockIfNeeded();
         _runningCastCoroutine = StartCoroutine(CastCoroutineWrapper(_runningCastContext));
@@ -443,7 +450,10 @@ public class NetworkedSkillInstance : NetworkBehaviour
     }
 
     [Server]
-    public void ServerUpdateRunningCastAim(Vector3 aimPoint, bool forceSelfTarget = false)
+    public void ServerUpdateRunningCastAim(
+        Vector3 aimPoint,
+        bool forceSelfTarget = false,
+        uint preferredTargetNetId = 0)
     {
         if (_runningCastContext == null || _runningCastContext.IsCancelled)
             return;
@@ -465,6 +475,7 @@ public class NetworkedSkillInstance : NetworkBehaviour
         _runningCastContext.aimPoint = clamped;
         _runningCastContext.aimRotation = SkillAimUtil.GetAimRotation(unit, clamped);
         _runningCastContext.forceSelfTarget = forceSelfTarget;
+        _runningCastContext.preferredTarget = PlayerTargetLookup.FromNetId(preferredTargetNetId);
 
         // Keep facing on the live aim without NetworkTransform teleports (those fire every frame).
         unit.angle = SkillAimUtil.GetFacingAngleYaw(unit.transform.position, clamped);

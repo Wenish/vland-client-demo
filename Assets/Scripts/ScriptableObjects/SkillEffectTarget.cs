@@ -85,6 +85,18 @@ public abstract class SkillEffectTarget : SkillEffectData
         return new List<UnitController> { context.caster };
     }
 
+    public bool PassesCommonFilters(CastContext context, UnitController candidate)
+    {
+        if (candidate == null || context?.caster == null)
+            return false;
+
+        var state = candidate.IsDead ? LifeMask.Dead : LifeMask.Alive;
+        if ((lifeMask & state) == 0)
+            return false;
+
+        return PassesTeamMask(context, candidate);
+    }
+
     protected IEnumerable<UnitController> ApplyCommonFilters(CastContext context, IEnumerable<UnitController> raw)
     {
         var caster = context.caster;
