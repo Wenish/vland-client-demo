@@ -42,13 +42,11 @@ public class CapturePointVisualsCaptureProgress : MonoBehaviour
 
     private void HandleCaptureProgressChanged(float newProgress)
     {
-        Debug.Log($"Capture progress changed: {newProgress}");
         UpdateVisualEffect(newProgress, capturePointController.contenderTeam);
     }
 
     private void HandleContenderTeamChanged((int oldTeam, int newTeam) teamChange)
     {
-        Debug.Log($"Contender team changed: {teamChange.oldTeam} -> {teamChange.newTeam}");
         UpdateVisualEffect(capturePointController.captureProgress, teamChange.newTeam);
     }
 
