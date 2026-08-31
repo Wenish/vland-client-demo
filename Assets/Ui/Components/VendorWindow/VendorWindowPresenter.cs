@@ -428,13 +428,8 @@ namespace ShadowInfection.UI.VendorWindow
             view.SetGold(player != null ? player.Gold : 0);
 
             var rows = BuildRows();
-            var pageCount = Mathf.Max(1, Mathf.CeilToInt(rows.Count / (float)VendorView.RowsPerPage));
-            page = Mathf.Clamp(page, 0, pageCount - 1);
-
             if (tab == VendorTab.Sell)
                 view.SetBuybackVisible(true);
-            else
-                view.SetPage(page, pageCount, true);
 
             RefreshVisibleRows(rows);
         }
@@ -444,6 +439,9 @@ namespace ShadowInfection.UI.VendorWindow
             pageRows.Clear();
             if (tab != VendorTab.Sell)
             {
+                var pageCount = Mathf.Max(1, Mathf.CeilToInt(rows.Count / (float)VendorView.RowsPerPage));
+                page = Mathf.Clamp(page, 0, pageCount - 1);
+                view.SetPage(page, pageCount, true);
                 var start = page * VendorView.RowsPerPage;
                 var end = Mathf.Min(rows.Count, start + VendorView.RowsPerPage);
                 for (var i = start; i < end; i++)

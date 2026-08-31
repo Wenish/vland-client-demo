@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 // Global helper to track whether pointer is over any registered UI element
@@ -8,8 +10,26 @@ public static class UiPointerState
     // Track registered elements and whether each is currently hovered
     private static readonly Dictionary<VisualElement, bool> _registered = new Dictionary<VisualElement, bool>();
     private static int _hoverCount = 0;
+    private static int _insideFrame = -1;
+    private static bool _insideCached;
 
-    public static bool IsPointerOverBlockingElement => _hoverCount > 0;
+    public static bool IsPointerOverBlockingElement
+    {
+        get
+        {
+            var frame = Time.frameCount;
+            if (_insideFrame == frame)
+                return _insideCached;
+
+            _insideFrame = frame;
+            if (TryIsPointerInsideRegistered(out var inside))
+                _insideCached = inside;
+            else
+                _insideCached = _hoverCount > 0;
+
+            return _insideCached;
+        }
+    }
 
     /// <summary>
     /// Returns the smallest registered blocking element on this panel that
@@ -62,6 +82,7 @@ public static class UiPointerState
         if (element == null) return;
         if (_registered.ContainsKey(element)) return;
 
+        _insideFrame = -1;
         // Start as not hovered
         _registered[element] = false;
         element.RegisterCallback<PointerEnterEvent>(OnPointerEnter);
@@ -83,6 +104,7 @@ public static class UiPointerState
             }
 
             _registered.Remove(element);
+            _insideFrame = -1;
         }
         else
         {
@@ -91,6 +113,45 @@ public static class UiPointerState
         }
         element.UnregisterCallback<PointerEnterEvent>(OnPointerEnter);
         element.UnregisterCallback<PointerLeaveEvent>(OnPointerLeave);
+    }
+
+    private static bool TryIsPointerInsideRegistered(out bool inside)
+    {
+        inside = false;
+        if (_registered.Count == 0)
+            return true;
+
+        var mouse = Mouse.current;
+        if (mouse == null)
+            return false;
+
+        var screenPos = mouse.position.ReadValue();
+        foreach (var pair in _registered)
+        {
+            var element = pair.Key;
+            if (element?.panel == null)
+                continue;
+            if (!IsDisplayedInHierarchy(element))
+                continue;
+
+            Vector2 panelPos;
+            try
+            {
+                panelPos = RuntimePanelUtils.ScreenToPanel(element.panel, screenPos);
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+
+            if (element.worldBound.Contains(panelPos))
+            {
+                inside = true;
+                return true;
+            }
+        }
+
+        return true;
     }
 
     private static void OnPointerEnter(PointerEnterEvent e)
@@ -112,6 +173,11 @@ public static class UiPointerState
     {
         var ve = e.currentTarget as VisualElement;
         if (ve == null) return;
+
+        // Rebuilding children under the cursor (vendor list paging) can raise
+        // Leave even though the pointer is still inside the registered element.
+        if (IsDisplayedInHierarchy(ve) && ve.worldBound.Contains(e.position))
+            return;
 
         if (_registered.TryGetValue(ve, out bool isHovered))
         {
