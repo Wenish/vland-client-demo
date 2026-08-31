@@ -40,6 +40,9 @@ namespace ShadowInfection.Items
             if (string.IsNullOrWhiteSpace(itemId))
                 UnityEngine.Debug.LogWarning($"ItemDefinition '{name}' is missing itemId.", this);
 
+            if (kind != ItemKind.Equipment)
+                slot = ItemSlot.None;
+
             if (kind == ItemKind.Equipment && slot == ItemSlot.MainHand && weaponData == null)
                 UnityEngine.Debug.LogWarning($"ItemDefinition '{itemId}' is a main-hand weapon without WeaponData.", this);
         }
