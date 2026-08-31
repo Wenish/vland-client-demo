@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
+  m_Name: StarterSword
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
+  itemId: starter_sword
+  displayName: Starter Sword
+  description: A short iron sword. Heavy line.
+  icon: {fileID: 2800000, guid: 6633b04c972f302449b125f45cffda85, type: 3}
+  kind: 0
+  slot: 8
+  rarity: 0
+  armorWeight: 2
+  weaponData: {fileID: 11400000, guid: 923d2dec128b0d348a65e81a8c3ac9fc, type: 2}
+  statModifiers:
+  - Type: 6
+    Value: 3
+    ModifierType: 0
+  legendaryBuff: {fileID: 0}
+  keyword: 
+  keywordBonus: []
+  activeSkill: {fileID: 0}

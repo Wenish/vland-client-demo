@@ -15,7 +15,7 @@ MonoBehaviour:
   itemId: cloth_cape
   displayName: Cloth Cape
   description: Light cloth for casters.
-  icon: {fileID: 2800000, guid: cb7ac6100ecc3254c9605d71546b9259, type: 3}
+  icon: {fileID: 2800000, guid: 8fb1af6efa247cc4884f2c5fa7b16c3f, type: 3}
   kind: 0
   slot: 3
   rarity: 2

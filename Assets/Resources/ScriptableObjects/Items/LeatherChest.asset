@@ -15,7 +15,7 @@ MonoBehaviour:
   itemId: leather_chest
   displayName: Leather Chest
   description: Skirmish-cut leather.
-  icon: {fileID: 2800000, guid: cb7ac6100ecc3254c9605d71546b9259, type: 3}
+  icon: {fileID: 2800000, guid: 756af2b328cad9e48b665a15b2f5e58f, type: 3}
   kind: 0
   slot: 4
   rarity: 2
