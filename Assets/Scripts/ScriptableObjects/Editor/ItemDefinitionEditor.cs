@@ -20,6 +20,8 @@ public sealed class ItemDefinitionEditor : Editor
             DrawEquipment(slot, rarity);
         else if (kind == ItemKind.Gem)
             DrawGem();
+        else if (kind == ItemKind.Material)
+            DrawMaterial();
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("activeSkill"));
         serializedObject.ApplyModifiedProperties();
@@ -66,6 +68,12 @@ public sealed class ItemDefinitionEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("statModifiers"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("keyword"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("keywordBonus"), true);
+        EditorGUILayout.Space();
+    }
+
+    private void DrawMaterial()
+    {
+        EditorGUILayout.HelpBox("Stackable crafting ingredient. No extra fields.", MessageType.Info);
         EditorGUILayout.Space();
     }
 }
