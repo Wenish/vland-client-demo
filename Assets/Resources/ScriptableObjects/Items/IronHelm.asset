@@ -15,7 +15,7 @@ MonoBehaviour:
   itemId: iron_helm
   displayName: Iron Helm
   description: Heavy plate for the sword line.
-  icon: {fileID: 2800000, guid: cb7ac6100ecc3254c9605d71546b9259, type: 3}
+  icon: {fileID: 2800000, guid: 23924ea2634d5b04c8b2b6332191e76f, type: 3}
   kind: 0
   slot: 1
   rarity: 0

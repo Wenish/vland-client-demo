@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
   itemId: starter_bow
   displayName: Starter Bow
-  description: 
+  description: A hunting bow. Light and honest.
   icon: {fileID: 2800000, guid: 10219178254618e4389cf928f91b8bf0, type: 3}
   kind: 0
   slot: 8

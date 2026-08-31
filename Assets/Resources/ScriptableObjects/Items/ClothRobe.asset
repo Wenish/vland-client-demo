@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
+  m_Name: ClothRobe
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
+  itemId: cloth_robe
+  displayName: Cloth Robe
+  description: Belted robe. The biggest cloth numbers.
+  icon: {fileID: 2800000, guid: 45063b7fa9d25fb4fb049121e0917026, type: 3}
+  kind: 0
+  slot: 4
+  rarity: 0
+  armorWeight: 0
+  weaponData: {fileID: 0}
+  statModifiers:
+  - Type: 7
+    Value: 10
+    ModifierType: 0
+  legendaryBuff: {fileID: 0}
+  keyword: 
+  keywordBonus: []
+  activeSkill: {fileID: 0}

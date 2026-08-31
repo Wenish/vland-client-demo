@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
+  m_Name: StarterRifle
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
+  itemId: starter_rifle
+  displayName: Starter Rifle
+  description: Long barrel. Hits from far.
+  icon: {fileID: 2800000, guid: f47e53c49def6eb469cf2d4f3f723140, type: 3}
+  kind: 0
+  slot: 8
+  rarity: 0
+  armorWeight: 1
+  weaponData: {fileID: 11400000, guid: f287fcc8010e8481898e3987f5ebe009, type: 2}
+  statModifiers:
+  - Type: 6
+    Value: 4
+    ModifierType: 0
+  legendaryBuff: {fileID: 0}
+  keyword: 
+  keywordBonus: []
+  activeSkill: {fileID: 0}
