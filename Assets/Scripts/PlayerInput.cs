@@ -259,7 +259,8 @@ public class PlayerInput : NetworkBehaviour
         if (reader == null)
             return;
 
-        if (reader.WasPressed(PlayerActionId.Ping) || IsWorldPingMouseChord(reader))
+        if (reader.WasPressed(PlayerActionId.Ping)
+            || (!UiPointerState.IsPointerOverBlockingElement && IsWorldPingMouseChord(reader)))
             CmdWorldPing(_mouseWorldPosition);
     }
 

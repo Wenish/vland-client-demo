@@ -67,12 +67,14 @@ namespace ShadowInfection.Input
         private bool IsGameplaySuppressed =>
             listening || suppressGameplayThisFrame || UiTextInputFocus.IsBlocking;
 
+        private bool IgnoreMouseGameplay => UiPointerState.IsPointerOverBlockingElement;
+
         public bool WasPressed(PlayerActionId id)
         {
             EnsureFrame();
             if (IsGameplaySuppressed)
                 return false;
-            return AnySlot(id, control => control != null && control.wasPressedThisFrame);
+            return AnySlot(id, control => control != null && control.wasPressedThisFrame, IgnoreMouseGameplay);
         }
 
         public bool WasReleased(PlayerActionId id)
@@ -80,7 +82,7 @@ namespace ShadowInfection.Input
             EnsureFrame();
             if (IsGameplaySuppressed)
                 return false;
-            return AnySlot(id, control => control != null && control.wasReleasedThisFrame);
+            return AnySlot(id, control => control != null && control.wasReleasedThisFrame, ignoreMouse: false);
         }
 
         public bool IsHeld(PlayerActionId id)
@@ -88,13 +90,13 @@ namespace ShadowInfection.Input
             EnsureFrame();
             if (IsGameplaySuppressed)
                 return false;
-            return AnySlot(id, control => control != null && control.isPressed);
+            return AnySlot(id, control => control != null && control.isPressed, ignoreMouse: false);
         }
 
         public bool WasMousePressed(PlayerActionId id)
         {
             EnsureFrame();
-            if (IsGameplaySuppressed)
+            if (IsGameplaySuppressed || IgnoreMouseGameplay)
                 return false;
             return SlotPressed(id, InputBindingDevice.Mouse);
         }
@@ -404,14 +406,14 @@ namespace ShadowInfection.Input
             return false;
         }
 
-        private bool AnySlot(PlayerActionId id, Func<ButtonControl, bool> predicate)
+        private bool AnySlot(PlayerActionId id, Func<ButtonControl, bool> predicate, bool ignoreMouse)
         {
             var index = ToIndex(id);
             if (index < 0)
                 return false;
-            return Matches(primary[index], predicate)
-                || Matches(secondary[index], predicate)
-                || Matches(gamepad[index], predicate);
+            return Matches(primary[index], predicate, ignoreMouse)
+                || Matches(secondary[index], predicate, ignoreMouse)
+                || Matches(gamepad[index], predicate, ignoreMouse: false);
         }
 
         private bool SlotPressed(PlayerActionId id, InputBindingDevice device)
@@ -432,8 +434,10 @@ namespace ShadowInfection.Input
             return control != null && control.wasPressedThisFrame;
         }
 
-        private static bool Matches(InputBindingKey key, Func<ButtonControl, bool> predicate)
+        private static bool Matches(InputBindingKey key, Func<ButtonControl, bool> predicate, bool ignoreMouse)
         {
+            if (ignoreMouse && key.device == InputBindingDevice.Mouse)
+                return false;
             var control = InputControlResolver.Resolve(key);
             return predicate(control);
         }

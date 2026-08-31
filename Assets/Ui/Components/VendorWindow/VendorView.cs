@@ -109,6 +109,10 @@ namespace Vland.UI
             panel.pickingMode = PickingMode.Position;
             UiGameplayInputGuard.Apply(panel);
             UiPointerState.RegisterBlockingElement(panel);
+            if (tooltip != null)
+                UiPointerState.RegisterBlockingElement(tooltip);
+
+            panel.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
 
             if (closeButton != null)
                 closeButton.clicked += () => CloseClicked?.Invoke();
@@ -117,10 +121,8 @@ namespace Vland.UI
             WireTab(tabSell, VendorTab.Sell);
             WireTab(tabUpgrades, VendorTab.Upgrades);
 
-            if (pagePrev != null)
-                pagePrev.clicked += () => PagePrevClicked?.Invoke();
-            if (pageNext != null)
-                pageNext.clicked += () => PageNextClicked?.Invoke();
+            WirePageButton(pagePrev, () => PagePrevClicked?.Invoke());
+            WirePageButton(pageNext, () => PageNextClicked?.Invoke());
 
             if (buybackButton != null)
             {
@@ -162,6 +164,7 @@ namespace Vland.UI
         public void Dispose()
         {
             UiPointerState.UnregisterBlockingElement(panel);
+            UiPointerState.UnregisterBlockingElement(tooltip);
         }
 
         public void SetOpen(bool open)
@@ -399,6 +402,15 @@ namespace Vland.UI
 
             button.focusable = false;
             button.clicked += () => TabClicked?.Invoke(tab);
+        }
+
+        private static void WirePageButton(Button button, Action clicked)
+        {
+            if (button == null)
+                return;
+
+            button.focusable = false;
+            button.clicked += () => clicked?.Invoke();
         }
 
         private static void SetTabActive(Button button, bool active)
