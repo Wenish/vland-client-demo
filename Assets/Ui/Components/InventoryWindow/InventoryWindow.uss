@@ -192,6 +192,88 @@
     margin-right: 12px;
 }
 
+.inventory-scroll .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.inventory-scroll .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
+    display: none;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.inventory-scroll > .unity-scroll-view__content-viewport {
+    margin-right: 4px;
+}
+
+.inventory-scroll .unity-scroller--vertical {
+    width: 10px;
+    min-width: 10px;
+    margin-left: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.inventory-scroll .unity-base-slider--vertical {
+    width: 10px;
+    min-width: 10px;
+}
+
+.inventory-scroll .unity-scroller--vertical > .unity-scroller__slider {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.inventory-scroll .unity-scroller--vertical,
+.inventory-scroll .unity-base-slider--vertical,
+.inventory-scroll .unity-base-slider__tracker,
+.inventory-scroll .unity-base-slider__drag-container {
+    cursor: var(--cursor-ui);
+}
+
+.inventory-scroll .unity-base-slider--vertical .unity-base-slider__tracker {
+    background-color: rgb(1, 11, 31);
+    width: 6px;
+    min-width: 6px;
+    left: 2px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(101, 80, 54);
+    border-right-color: rgb(101, 80, 54);
+    border-top-color: rgb(101, 80, 54);
+    border-bottom-color: rgb(101, 80, 54);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.inventory-scroll .unity-base-slider__dragger {
+    background-color: rgb(202, 159, 108);
+    width: 6px;
+    min-width: 6px;
+    left: 2px;
+    border-width: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    cursor: var(--cursor-hover);
+}
+
+.inventory-scroll .unity-base-slider__dragger-border {
+    border-width: 0;
+    background-color: transparent;
+}
+
+.inventory-scroll .unity-scroller--vertical:hover .unity-base-slider__dragger,
+.inventory-scroll .unity-base-slider__dragger:hover {
+    background-color: rgb(253, 199, 135);
+}
+
 .inventory-list {
     flex-direction: column;
     width: 100%;
