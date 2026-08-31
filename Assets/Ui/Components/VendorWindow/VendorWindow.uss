@@ -408,6 +408,7 @@
     padding: 0;
     font-size: 16px;
     color: rgb(254, 221, 183);
+    background-image: none;
     background-color: rgba(0, 4, 10, 0.45);
     border-top-width: 1px;
     border-right-width: 1px;
@@ -424,7 +425,25 @@
     cursor: var(--cursor-hover);
 }
 
-.vendor-page__btn:disabled {
+.vendor-page__btn:hover,
+.vendor-page__btn:focus {
+    color: rgb(255, 244, 231);
+    border-left-color: rgb(253, 199, 135);
+    border-right-color: rgb(253, 199, 135);
+    border-top-color: rgb(253, 199, 135);
+    border-bottom-color: rgb(253, 199, 135);
+    background-color: rgba(255, 244, 231, 0.08);
+}
+
+.vendor-page__btn:disabled,
+.vendor-page__btn:disabled:hover,
+.vendor-page__btn:disabled:focus {
+    color: rgb(254, 221, 183);
+    background-color: rgba(0, 4, 10, 0.45);
+    border-left-color: rgb(152, 119, 81);
+    border-right-color: rgb(152, 119, 81);
+    border-top-color: rgb(152, 119, 81);
+    border-bottom-color: rgb(152, 119, 81);
     opacity: 0.35;
     cursor: var(--cursor-ui);
 }
