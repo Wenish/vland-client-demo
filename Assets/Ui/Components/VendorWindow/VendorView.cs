@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ShadowInfection.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,7 +9,6 @@ namespace Vland.UI
     public sealed class VendorView
     {
         public const int RowsPerPage = 7;
-        private const float ViewportMargin = 20f;
         private const float TooltipDelayMs = 150f;
         private const float TooltipGap = 8f;
         private const float TooltipWidth = 240f;
@@ -45,16 +45,8 @@ namespace Vland.UI
 
         private VendorRowVm pendingTooltip;
         private int tooltipToken;
-        private bool dragging;
-        private Vector2 dragPointerStart;
-        private Vector2 dragPanelStart;
-        private int dragPointerId;
         private bool isOpen;
-        private float posLeft;
-        private float posTop;
-        private float writtenLeft = float.NaN;
-        private float writtenTop = float.NaN;
-        private bool hasPosition;
+        private UiDraggablePanel draggable;
 
         public event Action CloseClicked;
         public event Action PositionChanged;
@@ -133,14 +125,8 @@ namespace Vland.UI
             if (tooltip != null)
                 tooltip.pickingMode = PickingMode.Position;
 
-            if (titleBar != null)
-            {
-                titleBar.pickingMode = PickingMode.Position;
-                titleBar.RegisterCallback<PointerDownEvent>(OnTitlePointerDown, TrickleDown.TrickleDown);
-            }
-
-            panel.RegisterCallback<PointerMoveEvent>(OnPanelPointerMove, TrickleDown.TrickleDown);
-            panel.RegisterCallback<PointerUpEvent>(OnPanelPointerUp, TrickleDown.TrickleDown);
+            draggable = new UiDraggablePanel(host, panel, titleBar);
+            draggable.PositionChanged += () => PositionChanged?.Invoke();
 
             if (rowList != null)
             {
@@ -153,9 +139,6 @@ namespace Vland.UI
                     evt.StopPropagation();
                 });
             }
-
-            panel.RegisterCallback<GeometryChangedEvent>(_ => OnHostOrPanelGeometryChanged());
-            host.RegisterCallback<GeometryChangedEvent>(_ => OnHostOrPanelGeometryChanged());
 
             HideTooltip();
             SetOpen(false);
@@ -170,6 +153,7 @@ namespace Vland.UI
         public void SetOpen(bool open)
         {
             isOpen = open;
+            draggable?.SetOpen(open);
             if (host != null)
                 host.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (!open)
@@ -287,113 +271,15 @@ namespace Vland.UI
             }
         }
 
-        public void ApplyPosition(float left, float top)
-        {
-            hasPosition = true;
-            posLeft = left;
-            posTop = top;
-            WritePosition(left, top);
-            ClampToViewport();
-        }
+        public void ApplyPosition(float left, float top) => draggable?.ApplyPosition(left, top);
 
-        public void ApplyDefaultPosition()
-        {
-            hasPosition = false;
-            if (!TryComputeDefaultPosition(out var left, out var top))
-                return;
+        public void ApplyDefaultPosition() => draggable?.ApplyDefaultPosition();
 
-            ApplyPosition(left, top);
-        }
+        public Vector2 GetPosition() => draggable != null ? draggable.GetPosition() : Vector2.zero;
 
-        public Vector2 GetPosition()
-        {
-            if (hasPosition)
-                return new Vector2(posLeft, posTop);
+        public bool HasUsableLayout() => draggable != null && draggable.HasUsableLayout();
 
-            if (TryComputeDefaultPosition(out var left, out var top))
-                return new Vector2(left, top);
-
-            return Vector2.zero;
-        }
-
-        public bool HasUsableLayout()
-        {
-            return TryGetLayoutSize(out _, out _, out _, out _);
-        }
-
-        private void OnHostOrPanelGeometryChanged()
-        {
-            if (!isOpen || dragging)
-                return;
-
-            if (!hasPosition)
-                ApplyDefaultPosition();
-            else
-                ClampToViewport();
-        }
-
-        public void ClampToViewport()
-        {
-            if (!isOpen || !TryGetLayoutSize(out var hostWidth, out var hostHeight, out var width, out var height))
-                return;
-
-            var left = hasPosition ? posLeft : panel.resolvedStyle.left;
-            var top = hasPosition ? posTop : panel.resolvedStyle.top;
-            var maxLeft = Mathf.Max(ViewportMargin, hostWidth - width - ViewportMargin);
-            var maxTop = Mathf.Max(ViewportMargin, hostHeight - height - ViewportMargin);
-            left = Mathf.Clamp(left, ViewportMargin, maxLeft);
-            top = Mathf.Clamp(top, ViewportMargin, maxTop);
-            posLeft = left;
-            posTop = top;
-            hasPosition = true;
-            WritePosition(left, top);
-        }
-
-        private void WritePosition(float left, float top)
-        {
-            if (panel == null)
-                return;
-            if (Mathf.Approximately(writtenLeft, left) && Mathf.Approximately(writtenTop, top))
-                return;
-
-            writtenLeft = left;
-            writtenTop = top;
-            panel.style.left = left;
-            panel.style.top = top;
-            panel.style.right = StyleKeyword.Auto;
-            panel.style.bottom = StyleKeyword.Auto;
-        }
-
-        private bool TryComputeDefaultPosition(out float left, out float top)
-        {
-            left = 0f;
-            top = 0f;
-            if (!TryGetLayoutSize(out var hostWidth, out var hostHeight, out var width, out var height))
-                return false;
-
-            // Sit on the left with the world still readable on the right.
-            left = Mathf.Clamp(hostWidth * 0.06f, 72f, 128f);
-            top = (hostHeight - height) * 0.42f;
-            return true;
-        }
-
-        private bool TryGetLayoutSize(out float hostWidth, out float hostHeight, out float width, out float height)
-        {
-            hostWidth = 0f;
-            hostHeight = 0f;
-            width = 0f;
-            height = 0f;
-            if (panel == null || host == null || host.panel == null)
-                return false;
-            if (host.resolvedStyle.display == DisplayStyle.None)
-                return false;
-
-            hostWidth = host.resolvedStyle.width;
-            hostHeight = host.resolvedStyle.height;
-            width = panel.resolvedStyle.width;
-            height = panel.resolvedStyle.height;
-            return hostWidth > 0f && hostHeight > 0f && width > 0f && height > 0f;
-        }
+        public void ClampToViewport() => draggable?.ClampToViewport();
 
         private void WireTab(Button button, VendorTab tab)
         {
@@ -422,66 +308,6 @@ namespace Vland.UI
         {
             if (element != null)
                 element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-        }
-
-        private void OnTitlePointerDown(PointerDownEvent evt)
-        {
-            if (evt.button != 0 || panel == null || titleBar == null)
-                return;
-            if (IsCloseControl(evt.target))
-                return;
-
-            dragging = true;
-            dragPointerId = evt.pointerId;
-            dragPointerStart = (Vector2)evt.position;
-            dragPanelStart = hasPosition
-                ? new Vector2(posLeft, posTop)
-                : new Vector2(panel.resolvedStyle.left, panel.resolvedStyle.top);
-            panel.CapturePointer(evt.pointerId);
-            evt.StopImmediatePropagation();
-        }
-
-        private void OnPanelPointerMove(PointerMoveEvent evt)
-        {
-            if (!dragging || panel == null || evt.pointerId != dragPointerId)
-                return;
-
-            var delta = (Vector2)evt.position - dragPointerStart;
-            ApplyPosition(dragPanelStart.x + delta.x, dragPanelStart.y + delta.y);
-            evt.StopImmediatePropagation();
-        }
-
-        private void OnPanelPointerUp(PointerUpEvent evt)
-        {
-            if (!dragging || evt.pointerId != dragPointerId)
-                return;
-
-            EndDrag();
-            evt.StopImmediatePropagation();
-        }
-
-        private void EndDrag()
-        {
-            if (!dragging)
-                return;
-
-            dragging = false;
-            if (panel != null && panel.HasPointerCapture(dragPointerId))
-                panel.ReleasePointer(dragPointerId);
-            PositionChanged?.Invoke();
-        }
-
-        private bool IsCloseControl(IEventHandler target)
-        {
-            for (var element = target as VisualElement; element != null; element = element.parent)
-            {
-                if (element == titleBar || element == panel)
-                    return false;
-                if (element is Button || element.name == "closeButton")
-                    return true;
-            }
-
-            return false;
         }
 
         private void ScheduleTooltip(VendorRowVm model, Vector2 pointerPosition)

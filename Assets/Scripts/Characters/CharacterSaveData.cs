@@ -18,7 +18,8 @@ public class CharacterSaveData
 
     // Future meta stubs (unused in v1)
     public List<string> UnlockedSkillIds = new List<string>();
-    public List<string> ArmorSlotIds = new List<string>();
+
+    public List<EquippedSlotEntry> EquippedSlots = new List<EquippedSlotEntry>();
 
     public List<InventoryEntry> InventoryEquipment = new List<InventoryEntry>();
     public List<ItemStack> InventoryStacks = new List<ItemStack>();
@@ -58,7 +59,7 @@ public class CharacterSaveData
             Name = name ?? string.Empty,
             Gender = gender,
             UnlockedSkillIds = new List<string>(),
-            ArmorSlotIds = new List<string>(),
+            EquippedSlots = new List<EquippedSlotEntry>(),
             InventoryEquipment = new List<InventoryEntry>(),
             InventoryStacks = new List<ItemStack>()
         };

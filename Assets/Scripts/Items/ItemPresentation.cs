@@ -126,5 +126,18 @@ namespace ShadowInfection.Items
                 default: return "inventory-icon--common";
             }
         }
+
+        public static string ArmorWeightMismatchReason(ItemDefinition piece, WeaponType? mainHandWeapon)
+        {
+            if (piece == null || !ItemRules.EnforcesArmorWeight(piece.slot))
+                return null;
+            if (ItemRules.CanEquipWithWeapon(piece, mainHandWeapon))
+                return null;
+            if (!mainHandWeapon.HasValue
+                || !ItemRules.TryGetArmorWeightFor(mainHandWeapon.Value, out var required))
+                return "Cannot equip with current main-hand weapon.";
+
+            return $"Requires {required} armor with your equipped weapon.";
+        }
     }
 }

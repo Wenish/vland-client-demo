@@ -5,25 +5,21 @@
     cursor: var(--cursor-ui);
 }
 
-.inventory-overlay {
+.inventory-host {
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 4, 10, 0.72);
     cursor: var(--cursor-ui);
 }
 
 .inventory-panel {
-    width: 70%;
-    height: 75%;
-    max-width: 1100px;
-    max-height: 800px;
-    min-width: 640px;
-    min-height: 480px;
+    position: absolute;
+    left: 96px;
+    top: 120px;
+    width: 720px;
+    height: 620px;
     flex-direction: column;
     align-items: stretch;
     overflow: hidden;
@@ -40,6 +36,7 @@
     justify-content: space-between;
     margin-bottom: 12px;
     flex-shrink: 0;
+    cursor: var(--cursor-hover);
 }
 
 .inventory-header {
@@ -480,11 +477,32 @@
     flex-grow: 1;
 }
 
+.inventory-row--disabled {
+    opacity: 0.45;
+}
+
+.inventory-row--disabled:hover {
+    background-color: rgba(255, 244, 231, 0.04);
+}
+
+.inventory-detail__notice {
+    -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
+    font-size: 13px;
+    color: rgb(255, 170, 120);
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
 .inventory-detail__empty {
     -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
     font-size: 14px;
     color: rgba(204, 208, 214, 0.75);
     white-space: normal;
+}
+
+.inventory-equip-button {
+    margin-top: 12px;
+    flex-shrink: 0;
 }
 
 .inventory-destroy-button {

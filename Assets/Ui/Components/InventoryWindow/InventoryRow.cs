@@ -10,8 +10,10 @@ namespace ShadowInfection.UI.InventoryWindow
         public InventoryRowVm Model { get; }
 
         public event Action<InventoryRow> Clicked;
+        public event Action<InventoryRow> QuickEquipRequested;
 
         private bool _selected;
+        private float lastClickTime;
 
         public bool Selected
         {
@@ -31,6 +33,9 @@ namespace ShadowInfection.UI.InventoryWindow
             AddToClassList("inventory-row");
             pickingMode = PickingMode.Position;
             focusable = false;
+
+            if (Model.Dimmed)
+                AddToClassList("inventory-row--disabled");
 
             var icon = new VisualElement { name = "icon", pickingMode = PickingMode.Ignore };
             icon.AddToClassList("inventory-row__icon");
@@ -70,10 +75,38 @@ namespace ShadowInfection.UI.InventoryWindow
             Add(icon);
             Add(body);
 
-            RegisterCallback<ClickEvent>(_ => Clicked?.Invoke(this));
+            RegisterCallback<ClickEvent>(OnClick);
+            RegisterCallback<PointerDownEvent>(OnPointerDown);
             RegisterCallback<PointerEnterEvent>(_ => UiCursorRefresh.PushInteractiveHover(), TrickleDown.TrickleDown);
             RegisterCallback<PointerLeaveEvent>(_ => UiCursorRefresh.PopInteractiveHover(), TrickleDown.TrickleDown);
             RegisterCallback<DetachFromPanelEvent>(_ => UiCursorRefresh.PopInteractiveHover());
+        }
+
+        private void OnClick(ClickEvent evt)
+        {
+            if (evt.button != 0)
+                return;
+
+            var now = Time.unscaledTime;
+            if (now - lastClickTime <= 0.35f && Model.CanQuickEquip)
+            {
+                QuickEquipRequested?.Invoke(this);
+                lastClickTime = 0f;
+                evt.StopImmediatePropagation();
+                return;
+            }
+
+            lastClickTime = now;
+            Clicked?.Invoke(this);
+        }
+
+        private void OnPointerDown(PointerDownEvent evt)
+        {
+            if (evt.button != 1 || !Model.CanQuickEquip)
+                return;
+
+            QuickEquipRequested?.Invoke(this);
+            evt.StopImmediatePropagation();
         }
     }
 }

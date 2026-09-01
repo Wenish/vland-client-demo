@@ -46,17 +46,29 @@ namespace ShadowInfection.Items
 
         public bool TryGrantItem(string itemId)
         {
-            return characters != null && characters.TryGrantItem(itemId);
+            if (characters == null || !characters.TryGrantItem(itemId))
+                return false;
+
+            NetworkInventorySync.NotifyLocalInventoryChanged();
+            return true;
         }
 
         public bool TryDestroyEquipment(string instanceId)
         {
-            return characters != null && characters.TryDestroyEquipment(instanceId);
+            if (characters == null || !characters.TryDestroyEquipment(instanceId))
+                return false;
+
+            NetworkInventorySync.NotifyLocalInventoryChanged();
+            return true;
         }
 
         public bool TryDestroyStack(string itemId, int amount = 1)
         {
-            return characters != null && characters.TryDestroyStack(itemId, amount);
+            if (characters == null || !characters.TryDestroyStack(itemId, amount))
+                return false;
+
+            NetworkInventorySync.NotifyLocalInventoryChanged();
+            return true;
         }
 
         public void Dispose()

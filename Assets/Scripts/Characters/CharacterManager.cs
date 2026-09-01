@@ -199,6 +199,8 @@ public class CharacterManager : MonoBehaviour
     {
         var active = GetActive();
         CharacterInventory.EnsureLists(active);
+        if (CharacterInventory.IsEquipped(active, instanceId))
+            return false;
         if (!CharacterInventory.TryDestroyEquipment(active, instanceId))
             return false;
 
@@ -225,6 +227,12 @@ public class CharacterManager : MonoBehaviour
             return TryDestroyEquipment(instanceId);
 
         return TryDestroyStack(itemId);
+    }
+
+    public void PersistRoster()
+    {
+        SaveRoster();
+        OnRosterChanged?.Invoke();
     }
 
     private bool TryGrantItemOn(CharacterSaveData character, string itemId, bool persist)

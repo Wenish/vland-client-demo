@@ -33,5 +33,8 @@ namespace ShadowInfection.UI.InventoryWindow
         public Texture2D Icon;
         public string RarityClass;
         public ItemDefinition Definition;
+        public bool Dimmed;
+        public bool CanQuickEquip;
+        public string EquipBlockReason;
     }
 }
