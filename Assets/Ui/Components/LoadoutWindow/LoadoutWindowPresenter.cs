@@ -19,6 +19,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private readonly ILoadoutCatalog catalog;
         private readonly ISubscriber<SetLoadoutWindowOpenEvent> setOpen;
         private readonly IPublisher<SetInventoryWindowOpenEvent> inventoryOpen;
+        private readonly IPublisher<SetCharacterWindowOpenEvent> characterOpen;
         private readonly ApplicationSettings settings;
         private readonly IInputReader input;
 
@@ -35,6 +36,7 @@ namespace ShadowInfection.UI.LoadoutWindow
             ILoadoutCatalog catalog,
             ISubscriber<SetLoadoutWindowOpenEvent> setOpen,
             IPublisher<SetInventoryWindowOpenEvent> inventoryOpen,
+            IPublisher<SetCharacterWindowOpenEvent> characterOpen,
             ApplicationSettings settings,
             IInputReader input)
         {
@@ -42,6 +44,7 @@ namespace ShadowInfection.UI.LoadoutWindow
             this.catalog = catalog;
             this.setOpen = setOpen;
             this.inventoryOpen = inventoryOpen;
+            this.characterOpen = characterOpen;
             this.settings = settings;
             this.input = input;
         }
@@ -102,6 +105,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private void Open()
         {
             inventoryOpen?.Publish(new SetInventoryWindowOpenEvent(false));
+            characterOpen?.Publish(new SetCharacterWindowOpenEvent(false));
             view?.SetOpen(true);
         }
 
@@ -117,7 +121,10 @@ namespace ShadowInfection.UI.LoadoutWindow
                 wantOpen = false;
 
             if (wantOpen)
+            {
                 inventoryOpen?.Publish(new SetInventoryWindowOpenEvent(false));
+                characterOpen?.Publish(new SetCharacterWindowOpenEvent(false));
+            }
 
             view?.SetOpen(wantOpen);
         }
@@ -138,7 +145,10 @@ namespace ShadowInfection.UI.LoadoutWindow
 
             view.SetOpen(!view.IsOpen);
             if (view.IsOpen)
+            {
                 inventoryOpen?.Publish(new SetInventoryWindowOpenEvent(false));
+                characterOpen?.Publish(new SetCharacterWindowOpenEvent(false));
+            }
         }
 
         private static bool IsInRoomLobby()

@@ -53,7 +53,7 @@ public sealed class ItemDefinitionEditor : Editor
         if (ItemRules.IsArmorSlot(slot))
             EditorGUILayout.PropertyField(serializedObject.FindProperty("armorWeight"));
 
-        if (slot == ItemSlot.MainHand)
+        if (slot == ItemSlot.MainHand || slot == ItemSlot.OffHand)
             EditorGUILayout.PropertyField(serializedObject.FindProperty("weaponData"));
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("statModifiers"), true);

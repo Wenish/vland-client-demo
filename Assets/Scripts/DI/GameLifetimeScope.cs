@@ -8,6 +8,8 @@ using ShadowInfection.Items;
 using ShadowInfection.Match;
 using ShadowInfection.Targeting;
 using ShadowInfection.UI.InventoryWindow;
+using ShadowInfection.UI;
+using ShadowInfection.UI.CharacterWindow;
 using ShadowInfection.UI.LoadoutWindow;
 using ShadowInfection.UI.Session;
 using ShadowInfection.UI.ZombieMatch;
@@ -305,7 +307,13 @@ namespace ShadowInfection.DI
                 .As<IItemCatalog>();
             builder.Register<ActiveCharacterInventory>(Lifetime.Singleton)
                 .As<IItemInventory>();
+            builder.Register<ActiveCharacterEquipment>(Lifetime.Singleton)
+                .As<ICharacterEquipment>();
+            builder.Register<EquipSlotSelection>(Lifetime.Singleton)
+                .As<IEquipSlotSelection>();
+            builder.Register<CharacterInventoryPanelCoordinator>(Lifetime.Singleton);
             builder.RegisterEntryPoint<InventoryWindowBootstrap>();
+            builder.RegisterEntryPoint<CharacterWindowBootstrap>();
 
             var unmatchedSession = new ZombieGameManagerUiSession(null);
             builder.RegisterInstance<IZombieMatchUiSession>(unmatchedSession);

@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
     <Style src="project://database/Assets/Ui/Components/InventoryWindow/InventoryWindow.uss?fileID=7433441132597879392&amp;guid=6a1b2c3d4e5f708192a3b4c5d6e7f802&amp;type=3#InventoryWindow" />
     <ui:VisualElement name="inventoryRoot" picking-mode="Ignore" class="inventory">
-        <ui:VisualElement name="inventoryOverlay" picking-mode="Position" class="inventory-overlay" style="display: none;">
+        <ui:VisualElement name="inventoryHost" picking-mode="Ignore" class="inventory-host" style="display: none;">
             <ui:VisualElement name="InventoryPanel" picking-mode="Position" class="si-panel inventory-panel">
                 <ui:VisualElement name="headerRow" class="inventory-header-row">
                     <ui:Label text="Inventory" name="header" class="inventory-header" />
@@ -20,7 +20,9 @@
                         <ui:Label name="detailMeta" text="" class="inventory-detail__meta" />
                         <ui:Label name="detailDescription" text="" class="inventory-detail__description" />
                         <ui:Label name="detailStats" text="" class="inventory-detail__stats" />
+                        <ui:Label name="detailNotice" text="" class="inventory-detail__notice" />
                         <ui:Label name="detailEmpty" text="Select an item." class="inventory-detail__empty" />
+                        <OrnateButton name="equipButton" text="Equip" class="si-button si-button--compact inventory-equip-button" />
                         <OrnateButton name="destroyButton" text="Destroy" class="si-button si-button--compact inventory-destroy-button" />
                     </ui:VisualElement>
                 </ui:VisualElement>

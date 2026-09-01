@@ -1,0 +1,41 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
+    <Style src="project://database/Assets/Ui/Components/CharacterWindow/CharacterWindow.uss?fileID=7433441132597879392&amp;guid=7a1b2c3d4e5f708192a3b4c5d6e7f902&amp;type=3#CharacterWindow" />
+    <ui:VisualElement name="characterRoot" picking-mode="Ignore" class="character">
+        <ui:VisualElement name="characterHost" picking-mode="Ignore" class="character-host" style="display: none;">
+            <ui:VisualElement name="CharacterPanel" picking-mode="Position" class="si-panel character-panel">
+                <ui:VisualElement name="headerRow" class="character-header-row">
+                    <ui:Label text="Character" name="header" class="character-header" />
+                    <OrnateButton name="closeButton" text="Close" class="si-button si-button--compact character-close-button" />
+                </ui:VisualElement>
+                <ui:Label name="subheading" text="" class="character-subheading" />
+                <ui:VisualElement name="paperDoll" class="character-paper-doll">
+                    <ui:VisualElement name="rowHead" class="character-slot-row character-slot-row--center">
+                        <ui:VisualElement name="slotHead" class="character-slot" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="rowUpper" class="character-slot-row">
+                        <ui:VisualElement name="slotShoulder" class="character-slot" />
+                        <ui:VisualElement name="modelPlaceholder" class="character-model-placeholder">
+                            <ui:Label text="Character preview" class="character-model-placeholder__label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="slotCape" class="character-slot" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="rowMiddle" class="character-slot-row">
+                        <ui:VisualElement name="slotGloves" class="character-slot" />
+                        <ui:VisualElement name="slotChest" class="character-slot character-slot--center" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="rowLower" class="character-slot-row character-slot-row--center">
+                        <ui:VisualElement name="slotPants" class="character-slot" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="rowFeet" class="character-slot-row character-slot-row--center">
+                        <ui:VisualElement name="slotFeet" class="character-slot" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="rowWeapons" class="character-slot-row">
+                        <ui:VisualElement name="slotMainHand" class="character-slot" />
+                        <ui:VisualElement name="slotOffHand" class="character-slot" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

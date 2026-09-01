@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6026645248580221611}
   - component: {fileID: 8901443433731581867}
   - component: {fileID: -8919587317460072903}
+  - component: {fileID: 7123456789012345678}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -110,3 +111,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _autoDesiredName: Player
+--- !u!114 &7123456789012345678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125180839234756980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a1b2c3d4e5f708192a3b4c5d6e7f901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEquipment
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0

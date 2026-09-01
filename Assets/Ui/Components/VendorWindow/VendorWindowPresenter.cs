@@ -29,6 +29,7 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged;
         private readonly IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen;
         private readonly IPublisher<SetInventoryWindowOpenEvent> inventoryOpen;
+        private readonly IPublisher<SetCharacterWindowOpenEvent> characterOpen;
         private readonly IItemCatalog itemCatalog;
         private readonly IItemInventory itemInventory;
         private readonly IInputReader input;
@@ -62,6 +63,7 @@ namespace ShadowInfection.UI.VendorWindow
             IPublisher<VendorWindowVisibilityChangedEvent> visibilityChanged,
             IPublisher<SetLoadoutWindowOpenEvent> loadoutOpen,
             IPublisher<SetInventoryWindowOpenEvent> inventoryOpen,
+            IPublisher<SetCharacterWindowOpenEvent> characterOpen,
             IItemCatalog itemCatalog,
             IItemInventory itemInventory,
             IInputReader input)
@@ -77,6 +79,7 @@ namespace ShadowInfection.UI.VendorWindow
             this.visibilityChanged = visibilityChanged;
             this.loadoutOpen = loadoutOpen;
             this.inventoryOpen = inventoryOpen;
+            this.characterOpen = characterOpen;
             this.itemCatalog = itemCatalog;
             this.itemInventory = itemInventory;
             this.input = input;
@@ -180,6 +183,7 @@ namespace ShadowInfection.UI.VendorWindow
 
             loadoutOpen.Publish(new SetLoadoutWindowOpenEvent(false));
             inventoryOpen.Publish(new SetInventoryWindowOpenEvent(false));
+            characterOpen.Publish(new SetCharacterWindowOpenEvent(false));
 
             session = nextSession;
             player = nextPlayer != null ? nextPlayer : ResolveLocalPlayer();

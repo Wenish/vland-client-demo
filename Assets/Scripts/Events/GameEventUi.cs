@@ -70,6 +70,16 @@ namespace MyGame.Events.Ui
         }
     }
 
+    public class SetCharacterWindowOpenEvent
+    {
+        public bool IsOpen { get; }
+
+        public SetCharacterWindowOpenEvent(bool isOpen)
+        {
+            IsOpen = isOpen;
+        }
+    }
+
     public class LoadoutChangedEvent
     {
         public LocalLoadout Loadout { get; }

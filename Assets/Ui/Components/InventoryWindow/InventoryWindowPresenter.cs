@@ -3,8 +3,11 @@ using System.Threading;
 using MessagePipe;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection.DI;
 using ShadowInfection.Input;
 using ShadowInfection.Items;
+using ShadowInfection.UI;
+using ShadowInfection.UI.CharacterWindow;
 using UnityEngine;
 
 namespace ShadowInfection.UI.InventoryWindow
@@ -13,44 +16,70 @@ namespace ShadowInfection.UI.InventoryWindow
     {
         private readonly IItemInventory inventory;
         private readonly IItemCatalog catalog;
+        private readonly ICharacterEquipment equipment;
+        private readonly IEquipSlotSelection slotSelection;
         private readonly IInputReader input;
         private readonly ISubscriber<InventoryChangedEvent> inventoryChanged;
+        private readonly ISubscriber<EquipmentChangedEvent> equipmentChanged;
         private readonly ISubscriber<SetInventoryWindowOpenEvent> setOpen;
         private readonly ISubscriber<SetLoadoutWindowOpenEvent> loadoutOpen;
+        private readonly ISubscriber<SetCharacterWindowOpenEvent> characterOpen;
         private readonly ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility;
         private readonly IPublisher<SetInventoryWindowOpenEvent> publishOpen;
         private readonly IPublisher<SetLoadoutWindowOpenEvent> publishLoadout;
         private readonly IPublisher<RequestCloseVendorWindowEvent> closeVendor;
+        private readonly CharacterInventoryPanelCoordinator panelCoordinator;
 
         private InventoryView view;
+        private CharacterWindowPresenter characterPresenter;
         private R3.DisposableBag subscriptions;
         private InventoryFilter filter = InventoryFilter.All;
         private string search = string.Empty;
         private string selectedRowId;
+        private bool characterOpenState;
+        private bool sideBySideApplied;
         private readonly List<InventoryRowVm> rows = new();
+
+        public bool IsOpen => view != null && view.IsOpen;
+        public UiDraggablePanel Draggable => view?.Draggable;
 
         public InventoryWindowPresenter(
             IItemInventory inventory,
             IItemCatalog catalog,
+            ICharacterEquipment equipment,
+            IEquipSlotSelection slotSelection,
             IInputReader input,
             ISubscriber<InventoryChangedEvent> inventoryChanged,
+            ISubscriber<EquipmentChangedEvent> equipmentChanged,
             ISubscriber<SetInventoryWindowOpenEvent> setOpen,
             ISubscriber<SetLoadoutWindowOpenEvent> loadoutOpen,
+            ISubscriber<SetCharacterWindowOpenEvent> characterOpen,
             ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility,
             IPublisher<SetInventoryWindowOpenEvent> publishOpen,
             IPublisher<SetLoadoutWindowOpenEvent> publishLoadout,
-            IPublisher<RequestCloseVendorWindowEvent> closeVendor)
+            IPublisher<RequestCloseVendorWindowEvent> closeVendor,
+            CharacterInventoryPanelCoordinator panelCoordinator)
         {
             this.inventory = inventory;
             this.catalog = catalog;
+            this.equipment = equipment;
+            this.slotSelection = slotSelection;
             this.input = input;
             this.inventoryChanged = inventoryChanged;
+            this.equipmentChanged = equipmentChanged;
             this.setOpen = setOpen;
             this.loadoutOpen = loadoutOpen;
+            this.characterOpen = characterOpen;
             this.vendorVisibility = vendorVisibility;
             this.publishOpen = publishOpen;
             this.publishLoadout = publishLoadout;
             this.closeVendor = closeVendor;
+            this.panelCoordinator = panelCoordinator;
+        }
+
+        internal void LinkCharacterPresenter(CharacterWindowPresenter presenter)
+        {
+            characterPresenter = presenter;
         }
 
         public void Bind(InventoryView nextView, CancellationToken token)
@@ -60,22 +89,30 @@ namespace ShadowInfection.UI.InventoryWindow
             if (view == null)
                 return;
 
+            panelCoordinator?.RegisterInventory(this);
+
             view.CloseClicked += Close;
-            view.OverlayClicked += Close;
             view.RowClicked += OnRowClicked;
+            view.RowQuickEquip += OnRowQuickEquip;
+            view.EquipClicked += OnEquipClicked;
             view.DestroyClicked += OnDestroyClicked;
             view.ConfirmDestroyClicked += OnConfirmDestroy;
             view.CancelDestroyClicked += OnCancelDestroy;
             view.FilterClicked += OnFilterClicked;
             view.SearchChanged += OnSearchChanged;
+            view.PositionChanged += PersistPosition;
 
             view.SetFilter(filter);
             Refresh();
 
             subscriptions.Add(inventoryChanged.Subscribe(_ => Refresh()));
+            subscriptions.Add(equipmentChanged.Subscribe(_ => Refresh()));
             subscriptions.Add(setOpen.Subscribe(OnSetOpen));
             subscriptions.Add(loadoutOpen.Subscribe(OnLoadoutOpen));
+            subscriptions.Add(characterOpen.Subscribe(OnCharacterOpen));
             subscriptions.Add(vendorVisibility.Subscribe(OnVendorVisibility));
+            if (slotSelection != null)
+                slotSelection.Changed += OnSlotSelectionChanged;
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, token)
                     .Subscribe(_ => TickToggle()));
@@ -86,14 +123,19 @@ namespace ShadowInfection.UI.InventoryWindow
             if (view != null)
             {
                 view.CloseClicked -= Close;
-                view.OverlayClicked -= Close;
                 view.RowClicked -= OnRowClicked;
+                view.RowQuickEquip -= OnRowQuickEquip;
+                view.EquipClicked -= OnEquipClicked;
                 view.DestroyClicked -= OnDestroyClicked;
                 view.ConfirmDestroyClicked -= OnConfirmDestroy;
                 view.CancelDestroyClicked -= OnCancelDestroy;
                 view.FilterClicked -= OnFilterClicked;
                 view.SearchChanged -= OnSearchChanged;
+                view.PositionChanged -= PersistPosition;
             }
+
+            if (slotSelection != null)
+                slotSelection.Changed -= OnSlotSelectionChanged;
 
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
@@ -108,13 +150,6 @@ namespace ShadowInfection.UI.InventoryWindow
             if (!input.WasPressed(PlayerActionId.Inventory))
                 return;
 
-            if (UiModalInputBlock.IsBlocked)
-            {
-                if (view.IsOpen)
-                    Close();
-                return;
-            }
-
             if (view.IsOpen)
                 Close();
             else
@@ -127,14 +162,18 @@ namespace ShadowInfection.UI.InventoryWindow
             closeVendor.Publish(new RequestCloseVendorWindowEvent());
             view?.SetOpen(true);
             publishOpen.Publish(new SetInventoryWindowOpenEvent(true));
+            RestorePosition();
             Refresh();
+            TryApplySideBySideLayout();
         }
 
         private void Close()
         {
+            PersistPosition();
             view?.SetConfirmVisible(false);
             view?.SetOpen(false);
             publishOpen.Publish(new SetInventoryWindowOpenEvent(false));
+            sideBySideApplied = false;
         }
 
         private void OnSetOpen(SetInventoryWindowOpenEvent evt)
@@ -147,12 +186,15 @@ namespace ShadowInfection.UI.InventoryWindow
                 if (UiModalInputBlock.IsBlocked)
                     return;
                 view.SetOpen(true);
+                RestorePosition();
                 Refresh();
+                TryApplySideBySideLayout();
             }
             else
             {
                 view.SetConfirmVisible(false);
                 view.SetOpen(false);
+                sideBySideApplied = false;
             }
         }
 
@@ -162,10 +204,22 @@ namespace ShadowInfection.UI.InventoryWindow
                 Close();
         }
 
+        private void OnCharacterOpen(SetCharacterWindowOpenEvent evt)
+        {
+            characterOpenState = evt != null && evt.IsOpen;
+            if (characterOpenState && view != null && view.IsOpen)
+                TryApplySideBySideLayout();
+        }
+
         private void OnVendorVisibility(VendorWindowVisibilityChangedEvent evt)
         {
             if (evt != null && evt.IsOpen && view != null && view.IsOpen)
                 Close();
+        }
+
+        private void OnSlotSelectionChanged()
+        {
+            Refresh();
         }
 
         private void OnFilterClicked(InventoryFilter next)
@@ -188,6 +242,51 @@ namespace ShadowInfection.UI.InventoryWindow
             selectedRowId = rowId;
             view?.SetConfirmVisible(false);
             Refresh();
+        }
+
+        private void OnRowQuickEquip(string rowId)
+        {
+            var row = FindRow(rowId);
+            if (row == null || !row.CanQuickEquip || equipment == null)
+                return;
+
+            if (!TryResolveEquipTarget(row.Definition, out var targetSlot))
+                return;
+
+            if (equipment.TryEquip(row.InstanceId, targetSlot))
+                view?.SetConfirmVisible(false);
+            Refresh();
+        }
+
+        private void OnEquipClicked()
+        {
+            var selected = FindSelected();
+            if (selected == null || !selected.CanQuickEquip || equipment == null)
+                return;
+
+            if (!TryResolveEquipTarget(selected.Definition, out var targetSlot))
+                return;
+
+            if (equipment.TryEquip(selected.InstanceId, targetSlot))
+                view?.SetConfirmVisible(false);
+            Refresh();
+        }
+
+        private bool TryResolveEquipTarget(ItemDefinition definition, out ItemSlot targetSlot)
+        {
+            targetSlot = default;
+            if (definition == null)
+                return false;
+
+            var active = GameServices.Characters?.GetActive();
+            if (active == null)
+                return false;
+
+            var selectedSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
+                ? slotSelection.SelectedSlot
+                : null;
+
+            return ItemRules.TryResolveEquipSlot(active, catalog, definition, selectedSlot, out targetSlot);
         }
 
         private void OnDestroyClicked()
@@ -235,8 +334,13 @@ namespace ShadowInfection.UI.InventoryWindow
             if (FindSelected() == null)
                 selectedRowId = rows.Count > 0 ? rows[0].RowId : null;
 
+            var selected = FindSelected();
             view.SetRows(rows, selectedRowId, EmptyMessage());
-            view.SetDetail(FindSelected());
+            view.SetDetail(
+                selected,
+                BuildDetailNotice(selected),
+                selected != null && selected.CanQuickEquip,
+                selected != null && CanDestroy(selected));
         }
 
         private void BuildRows()
@@ -245,12 +349,12 @@ namespace ShadowInfection.UI.InventoryWindow
             if (inventory == null)
                 return;
 
-            var equipment = inventory.Equipment;
-            if (equipment != null)
+            var equipmentRows = inventory.Equipment;
+            if (equipmentRows != null)
             {
-                for (var i = 0; i < equipment.Count; i++)
+                for (var i = 0; i < equipmentRows.Count; i++)
                 {
-                    var entry = equipment[i];
+                    var entry = equipmentRows[i];
                     if (entry == null)
                         continue;
 
@@ -278,6 +382,124 @@ namespace ShadowInfection.UI.InventoryWindow
                     rows.Add(ToStackRow(stack, def));
                 }
             }
+        }
+
+        private InventoryRowVm ToEquipmentRow(InventoryEntry entry, ItemDefinition def)
+        {
+            var equipped = equipment != null && equipment.IsEquipped(entry.instanceId);
+            var mainHandWeapon = ResolveMainHandWeaponType();
+            var offHandWeapon = ResolveOffHandWeaponType();
+            var active = GameServices.Characters?.GetActive();
+            var selectedSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
+                ? slotSelection.SelectedSlot
+                : (ItemSlot?)null;
+            var weightReason = def != null
+                ? ItemPresentation.ArmorWeightMismatchReason(def, mainHandWeapon)
+                : null;
+            string handReason = null;
+            var canEquip = def != null
+                && def.kind == ItemKind.Equipment
+                && !equipped
+                && string.IsNullOrEmpty(weightReason)
+                && active != null
+                && ItemRules.TryResolveEquipSlot(active, catalog, def, selectedSlot, out var _);
+
+            if (def != null && !canEquip && def.kind == ItemKind.Equipment && !equipped && string.IsNullOrEmpty(weightReason))
+            {
+                var probeSlot = selectedSlot
+                    ?? (def.weaponData != null && ItemRules.IsShieldWeapon(def.weaponData.weaponType)
+                        ? ItemSlot.OffHand
+                        : ItemSlot.MainHand);
+                handReason = ItemPresentation.HandEquipBlockReason(def, probeSlot, mainHandWeapon, offHandWeapon);
+            }
+
+            return new InventoryRowVm
+            {
+                RowId = "eq:" + entry.instanceId,
+                InstanceId = entry.instanceId,
+                ItemId = entry.itemId,
+                IsStack = false,
+                Count = 1,
+                Name = def != null ? def.DisplayName : "Unknown item",
+                Meta = def != null ? $"{def.rarity} · {ItemPresentation.TypeLine(def)}" : entry.itemId,
+                Description = def != null ? def.description : string.Empty,
+                Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
+                Icon = catalog != null ? catalog.ResolveIcon(def) : null,
+                RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
+                Definition = def,
+                Dimmed = !canEquip && def != null && def.kind == ItemKind.Equipment && !equipped,
+                CanQuickEquip = canEquip,
+                EquipBlockReason = equipped
+                    ? "Equipped — unequip first"
+                    : weightReason ?? handReason
+            };
+        }
+
+        private InventoryRowVm ToStackRow(ItemStack stack, ItemDefinition def)
+        {
+            return new InventoryRowVm
+            {
+                RowId = "st:" + stack.itemId,
+                ItemId = stack.itemId,
+                IsStack = true,
+                Count = stack.count,
+                Name = def != null ? def.DisplayName : "Unknown item",
+                Meta = def != null
+                    ? $"{def.rarity} · {ItemPresentation.TypeLine(def)} · ×{stack.count}"
+                    : $"{stack.itemId} · ×{stack.count}",
+                Description = def != null ? def.description : string.Empty,
+                Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
+                Icon = catalog != null ? catalog.ResolveIcon(def) : null,
+                RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
+                Definition = def,
+                Dimmed = false,
+                CanQuickEquip = false
+            };
+        }
+
+        private string BuildDetailNotice(InventoryRowVm selected)
+        {
+            if (selected == null)
+                return null;
+
+            if (!string.IsNullOrWhiteSpace(selected.EquipBlockReason))
+                return selected.EquipBlockReason;
+
+            return null;
+        }
+
+        private bool CanDestroy(InventoryRowVm selected)
+        {
+            if (selected == null || selected.IsStack)
+                return true;
+
+            return equipment == null || !equipment.IsEquipped(selected.InstanceId);
+        }
+
+        private WeaponType? ResolveMainHandWeaponType()
+        {
+            if (equipment == null || catalog == null)
+                return null;
+            if (!equipment.TryGetEquippedEntry(ItemSlot.MainHand, out var entry)
+                || string.IsNullOrWhiteSpace(entry.itemId))
+                return null;
+            if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
+                return null;
+
+            return definition.weaponData.weaponType;
+        }
+
+        private WeaponType? ResolveOffHandWeaponType()
+        {
+            if (equipment == null || catalog == null)
+                return null;
+            if (!equipment.TryGetEquippedEntry(ItemSlot.OffHand, out var entry)
+                || string.IsNullOrWhiteSpace(entry.itemId))
+                return null;
+            if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
+                return null;
+
+            return definition.weaponData.weaponType;
         }
 
         private ItemDefinition ResolveItem(string itemId)
@@ -329,53 +551,19 @@ namespace ShadowInfection.UI.InventoryWindow
             return name != null && name.IndexOf(search.Trim(), System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
-        private InventoryRowVm ToEquipmentRow(InventoryEntry entry, ItemDefinition def)
-        {
-            return new InventoryRowVm
-            {
-                RowId = "eq:" + entry.instanceId,
-                InstanceId = entry.instanceId,
-                ItemId = entry.itemId,
-                IsStack = false,
-                Count = 1,
-                Name = def != null ? def.DisplayName : "Unknown item",
-                Meta = def != null ? $"{def.rarity} · {ItemPresentation.TypeLine(def)}" : entry.itemId,
-                Description = def != null ? def.description : string.Empty,
-                Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
-                Icon = catalog != null ? catalog.ResolveIcon(def) : null,
-                RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
-                Definition = def
-            };
-        }
-
-        private InventoryRowVm ToStackRow(ItemStack stack, ItemDefinition def)
-        {
-            return new InventoryRowVm
-            {
-                RowId = "st:" + stack.itemId,
-                ItemId = stack.itemId,
-                IsStack = true,
-                Count = stack.count,
-                Name = def != null ? def.DisplayName : "Unknown item",
-                Meta = def != null
-                    ? $"{def.rarity} · {ItemPresentation.TypeLine(def)} · ×{stack.count}"
-                    : $"{stack.itemId} · ×{stack.count}",
-                Description = def != null ? def.description : string.Empty,
-                Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
-                Icon = catalog != null ? catalog.ResolveIcon(def) : null,
-                RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
-                Definition = def
-            };
-        }
-
         private InventoryRowVm FindSelected()
         {
-            if (string.IsNullOrEmpty(selectedRowId))
+            return FindRow(selectedRowId);
+        }
+
+        private InventoryRowVm FindRow(string rowId)
+        {
+            if (string.IsNullOrEmpty(rowId))
                 return null;
 
             for (var i = 0; i < rows.Count; i++)
             {
-                if (rows[i].RowId == selectedRowId)
+                if (rows[i].RowId == rowId)
                     return rows[i];
             }
 
@@ -387,6 +575,53 @@ namespace ShadowInfection.UI.InventoryWindow
             if (!string.IsNullOrWhiteSpace(search) || filter != InventoryFilter.All)
                 return "No items match that filter.";
             return "Your bag is empty.";
+        }
+
+        private void RestorePosition()
+        {
+            if (view == null)
+                return;
+
+            if (FloatingPanelLayout.TryReadPosition(
+                    FloatingPanelLayout.InventoryPosX,
+                    FloatingPanelLayout.InventoryPosY,
+                    out var left,
+                    out var top))
+                view.ApplyPosition(left, top);
+            else
+                view.ApplyDefaultPosition();
+        }
+
+        private void PersistPosition()
+        {
+            if (view == null || !view.IsOpen || !view.HasUsableLayout())
+                return;
+
+            var pos = view.GetPosition();
+            FloatingPanelLayout.WritePosition(
+                FloatingPanelLayout.InventoryPosX,
+                FloatingPanelLayout.InventoryPosY,
+                pos.x,
+                pos.y);
+        }
+
+        private void TryApplySideBySideLayout()
+        {
+            if (view == null || !view.IsOpen || !characterOpenState || sideBySideApplied)
+                return;
+            if (FloatingPanelLayout.HasSavedPosition(FloatingPanelLayout.InventoryPosX, FloatingPanelLayout.InventoryPosY)
+                || FloatingPanelLayout.HasSavedPosition(FloatingPanelLayout.CharacterPosX, FloatingPanelLayout.CharacterPosY))
+                return;
+
+            var characterDraggable = characterPresenter?.Draggable;
+            if (characterDraggable == null || !view.HasUsableLayout() || !characterDraggable.HasUsableLayout())
+            {
+                view.Draggable?.Panel?.schedule.Execute(TryApplySideBySideLayout);
+                return;
+            }
+
+            if (FloatingPanelLayout.TryTileSideBySide(characterDraggable, view.Draggable))
+                sideBySideApplied = true;
         }
     }
 }

@@ -69,4 +69,5 @@ public enum WeaponType : byte
     Pistols,
     SwordAndShield,
     Staff,
+    Shield,
 }

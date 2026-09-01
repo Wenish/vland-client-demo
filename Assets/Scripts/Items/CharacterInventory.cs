@@ -26,12 +26,116 @@ namespace ShadowInfection.Items
 
             if (character.UnlockedSkillIds == null)
                 character.UnlockedSkillIds = new List<string>();
-            if (character.ArmorSlotIds == null)
-                character.ArmorSlotIds = new List<string>();
+            if (character.EquippedSlots == null)
+                character.EquippedSlots = new List<EquippedSlotEntry>();
             if (character.InventoryEquipment == null)
                 character.InventoryEquipment = new List<InventoryEntry>();
             if (character.InventoryStacks == null)
                 character.InventoryStacks = new List<ItemStack>();
+        }
+
+        public static bool TryFindBagEntry(CharacterSaveData character, string instanceId, out InventoryEntry entry)
+        {
+            entry = null;
+            if (character == null || string.IsNullOrWhiteSpace(instanceId))
+                return false;
+
+            EnsureLists(character);
+            for (var i = 0; i < character.InventoryEquipment.Count; i++)
+            {
+                var candidate = character.InventoryEquipment[i];
+                if (candidate != null && candidate.instanceId == instanceId)
+                {
+                    entry = candidate;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryRemoveBagEntry(CharacterSaveData character, string instanceId)
+        {
+            if (character == null || string.IsNullOrWhiteSpace(instanceId))
+                return false;
+
+            EnsureLists(character);
+            for (var i = 0; i < character.InventoryEquipment.Count; i++)
+            {
+                var entry = character.InventoryEquipment[i];
+                if (entry != null && entry.instanceId == instanceId)
+                {
+                    character.InventoryEquipment.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryGetEquipped(CharacterSaveData character, ItemSlot slot, out EquippedSlotEntry entry)
+        {
+            entry = null;
+            if (character == null)
+                return false;
+
+            EnsureLists(character);
+            for (var i = 0; i < character.EquippedSlots.Count; i++)
+            {
+                var candidate = character.EquippedSlots[i];
+                if (candidate != null && candidate.slot == slot)
+                {
+                    entry = candidate;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static void SetEquipped(CharacterSaveData character, ItemSlot slot, string instanceId, string itemId)
+        {
+            if (character == null)
+                return;
+
+            EnsureLists(character);
+            RemoveEquipped(character, slot);
+            character.EquippedSlots.Add(new EquippedSlotEntry
+            {
+                slot = slot,
+                instanceId = instanceId,
+                itemId = itemId
+            });
+        }
+
+        public static void RemoveEquipped(CharacterSaveData character, ItemSlot slot)
+        {
+            if (character == null)
+                return;
+
+            EnsureLists(character);
+            for (var i = character.EquippedSlots.Count - 1; i >= 0; i--)
+            {
+                var entry = character.EquippedSlots[i];
+                if (entry != null && entry.slot == slot)
+                    character.EquippedSlots.RemoveAt(i);
+            }
+        }
+
+        public static bool IsEquipped(CharacterSaveData character, string instanceId)
+        {
+            if (character == null || string.IsNullOrWhiteSpace(instanceId))
+                return false;
+
+            EnsureLists(character);
+            for (var i = 0; i < character.EquippedSlots.Count; i++)
+            {
+                var entry = character.EquippedSlots[i];
+                if (entry != null && entry.instanceId == instanceId)
+                    return true;
+            }
+
+            return false;
         }
 
         public static bool TryGrant(CharacterSaveData character, ItemDefinition definition)
@@ -71,6 +175,9 @@ namespace ShadowInfection.Items
         public static bool TryDestroyEquipment(CharacterSaveData character, string instanceId)
         {
             if (character == null || string.IsNullOrWhiteSpace(instanceId))
+                return false;
+
+            if (IsEquipped(character, instanceId))
                 return false;
 
             EnsureLists(character);

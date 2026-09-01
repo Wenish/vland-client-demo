@@ -44,6 +44,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
     {
         base.OnRoomStopServer();
         ServerCharacterSelections.Clear();
+        ServerPlayerInventories.Clear();
         if (upnpSuccess)
         {
             Debug.Log("Schliesse UPnP Port...");
@@ -81,7 +82,10 @@ public class MyNetworkRoomManager : NetworkRoomManager
     {
         base.OnRoomServerDisconnect(conn);
         if (conn != null)
+        {
             ServerCharacterSelections.Remove(conn.connectionId);
+            ServerPlayerInventories.Remove(conn.connectionId);
+        }
         OnPlayerExitRoom?.Invoke(conn);
     }
 

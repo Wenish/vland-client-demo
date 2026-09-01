@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbc6dfc18dc3c8f4396c30f954b5b087, type: 3}
+  m_Name: Shield
+  m_EditorClassIdentifier: 
+  weaponName: Shield
+  weaponType: 8
+  npcOnly: 0
+  attackPower: 0
+  attackRange: 0
+  attackTime: 0
+  attackSpeed: 0
+  moveSpeedPercentWhileAttacking: 1
+  iconTexture: {fileID: 2800000, guid: 11792612afb5cb6448a704e214fbe3ca, type: 3}
+  weaponModelRightHand: {fileID: 0}
+  weaponModelLeftHand: {fileID: 5890908271968539576, guid: c9bf77097f95a2d42a1d9fb1ac0c7dbe, type: 3}
+  swingVfxs: []
+  onAttackStartAudioClips: []
+  swingAudioClips: []
+  onHitAudioClips: []
+  mode: 0
+  maxHits: 0
+  coneAngleRadians: 0
+  numRays: 0
+  weighting: 0.5
