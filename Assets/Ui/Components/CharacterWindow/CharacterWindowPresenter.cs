@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace ShadowInfection.UI.CharacterWindow
 {
-    internal sealed class CharacterWindowPresenter
+    internal sealed class CharacterWindowPresenter : IUiOverlay
     {
         private static readonly ItemSlot[] PaperDollSlots =
         {
@@ -40,6 +40,7 @@ namespace ShadowInfection.UI.CharacterWindow
         private readonly IPublisher<SetLoadoutWindowOpenEvent> publishLoadout;
         private readonly IPublisher<RequestCloseVendorWindowEvent> closeVendor;
         private readonly CharacterInventoryPanelCoordinator panelCoordinator;
+        private readonly IUiOverlayRegistry overlays;
 
         private CharacterView view;
         private InventoryWindowPresenter inventoryPresenter;
@@ -65,7 +66,8 @@ namespace ShadowInfection.UI.CharacterWindow
             IPublisher<SetCharacterWindowOpenEvent> publishOpen,
             IPublisher<SetLoadoutWindowOpenEvent> publishLoadout,
             IPublisher<RequestCloseVendorWindowEvent> closeVendor,
-            CharacterInventoryPanelCoordinator panelCoordinator)
+            CharacterInventoryPanelCoordinator panelCoordinator,
+            IUiOverlayRegistry overlays)
         {
             this.equipment = equipment;
             this.catalog = catalog;
@@ -81,6 +83,7 @@ namespace ShadowInfection.UI.CharacterWindow
             this.publishLoadout = publishLoadout;
             this.closeVendor = closeVendor;
             this.panelCoordinator = panelCoordinator;
+            this.overlays = overlays;
         }
 
         internal void LinkInventoryPresenter(InventoryWindowPresenter presenter)
@@ -96,6 +99,7 @@ namespace ShadowInfection.UI.CharacterWindow
                 return;
 
             panelCoordinator?.RegisterCharacter(this);
+            overlays?.Register(this);
 
             view.CloseClicked += Close;
             view.SlotClicked += OnSlotClicked;
@@ -117,6 +121,8 @@ namespace ShadowInfection.UI.CharacterWindow
 
         public void Unbind()
         {
+            overlays?.Unregister(this);
+
             if (view != null)
             {
                 view.CloseClicked -= Close;
@@ -155,7 +161,7 @@ namespace ShadowInfection.UI.CharacterWindow
             TryApplySideBySideLayout();
         }
 
-        private void Close()
+        public void Close()
         {
             PersistPosition();
             slotSelection?.Clear();

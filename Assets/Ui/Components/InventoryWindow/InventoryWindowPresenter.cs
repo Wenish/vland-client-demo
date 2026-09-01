@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace ShadowInfection.UI.InventoryWindow
 {
-    internal sealed class InventoryWindowPresenter
+    internal sealed class InventoryWindowPresenter : IUiOverlay
     {
         private readonly IItemInventory inventory;
         private readonly IItemCatalog catalog;
@@ -29,6 +29,7 @@ namespace ShadowInfection.UI.InventoryWindow
         private readonly IPublisher<SetLoadoutWindowOpenEvent> publishLoadout;
         private readonly IPublisher<RequestCloseVendorWindowEvent> closeVendor;
         private readonly CharacterInventoryPanelCoordinator panelCoordinator;
+        private readonly IUiOverlayRegistry overlays;
 
         private InventoryView view;
         private CharacterWindowPresenter characterPresenter;
@@ -58,7 +59,8 @@ namespace ShadowInfection.UI.InventoryWindow
             IPublisher<SetInventoryWindowOpenEvent> publishOpen,
             IPublisher<SetLoadoutWindowOpenEvent> publishLoadout,
             IPublisher<RequestCloseVendorWindowEvent> closeVendor,
-            CharacterInventoryPanelCoordinator panelCoordinator)
+            CharacterInventoryPanelCoordinator panelCoordinator,
+            IUiOverlayRegistry overlays)
         {
             this.inventory = inventory;
             this.catalog = catalog;
@@ -75,6 +77,7 @@ namespace ShadowInfection.UI.InventoryWindow
             this.publishLoadout = publishLoadout;
             this.closeVendor = closeVendor;
             this.panelCoordinator = panelCoordinator;
+            this.overlays = overlays;
         }
 
         internal void LinkCharacterPresenter(CharacterWindowPresenter presenter)
@@ -90,6 +93,7 @@ namespace ShadowInfection.UI.InventoryWindow
                 return;
 
             panelCoordinator?.RegisterInventory(this);
+            overlays?.Register(this);
 
             view.CloseClicked += Close;
             view.RowClicked += OnRowClicked;
@@ -120,6 +124,8 @@ namespace ShadowInfection.UI.InventoryWindow
 
         public void Unbind()
         {
+            overlays?.Unregister(this);
+
             if (view != null)
             {
                 view.CloseClicked -= Close;
@@ -167,7 +173,7 @@ namespace ShadowInfection.UI.InventoryWindow
             TryApplySideBySideLayout();
         }
 
-        private void Close()
+        public void Close()
         {
             PersistPosition();
             view?.SetConfirmVisible(false);
