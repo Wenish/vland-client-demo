@@ -2,7 +2,7 @@
     <engine:Template name="SettingsPanel" src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uxml?fileID=9197481963319205126&amp;guid=9e6a1c3d4f5b6273c8d9e0f1a2b3c4d5&amp;type=3#SettingsPanel"/>
     <Style src="project://database/Assets/Ui/MainMenu.uss?fileID=7433441132597879392&amp;guid=645b526f6f65da14b84ed1a387c0c38e&amp;type=3#MainMenu"/>
     <Style src="project://database/Assets/Ui/PageSettings.uss?fileID=7433441132597879392&amp;guid=c0d125950126a4907bf9909cff1baa2d&amp;type=3#PageSettings"/>
-    <Style src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uss?fileID=7433441132597879392&amp;guid=8d5f0b2c3e4a5162b7c8d9e0f1a2b3c4&amp;type=3#SettingsPanel"/>
+    <Style src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uss?fileID=7433441132597879392&amp;guid=1b6eacdaa4cee1542b725257a1ea80f9&amp;type=3#SettingsPanel"/>
     <engine:VisualElement name="PageSettings" class="page-content page-settings">
         <engine:Instance template="SettingsPanel" name="SettingsPanelInstance" style="width: 100%; height: 100%; display: flex;"/>
     </engine:VisualElement>

@@ -416,7 +416,7 @@
     border-color: rgba(202, 159, 108, 0.35);
 }
 
-.room-lobby__gender-button:last-child {
+.room-lobby__gender-button--last {
     margin-right: 0;
 }
 

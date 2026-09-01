@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
-    <Style src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uss?fileID=7433441132597879392&amp;guid=8d5f0b2c3e4a5162b7c8d9e0f1a2b3c4&amp;type=3#SettingsPanel" />
+    <Style src="project://database/Assets/Ui/Components/SettingsPanel/SettingsPanel.uss?fileID=7433441132597879392&amp;guid=1b6eacdaa4cee1542b725257a1ea80f9&amp;type=3#SettingsPanel" />
     <ui:VisualElement name="SettingsPanel" class="settings-panel">
         <ui:Label name="SettingsPanelTitle" text="SETTINGS" class="settings-panel__title" />
         <ui:VisualElement name="SettingsTabBar" class="settings-tabs">

@@ -44,6 +44,7 @@ namespace ShadowInfection.UI.InventoryWindow
 
         private bool isOpen;
         private bool searchInputActive;
+        private bool modalInputPushed;
 
         public event Action CloseClicked;
         public event Action OverlayClicked;
@@ -106,9 +107,11 @@ namespace ShadowInfection.UI.InventoryWindow
             if (searchField != null)
             {
                 searchField.label = string.Empty;
+                searchField.focusable = false;
                 searchField.RegisterValueChangedCallback(evt => SearchChanged?.Invoke(evt.newValue));
+                searchField.RegisterCallback<PointerDownEvent>(OnSearchPointerDown, TrickleDown.TrickleDown);
                 searchField.RegisterCallback<FocusInEvent>(_ => CaptureSearchInput());
-                searchField.RegisterCallback<FocusOutEvent>(_ => ReleaseSearchInput());
+                searchField.RegisterCallback<FocusOutEvent>(OnSearchFocusOut);
                 searchField.RegisterCallback<DetachFromPanelEvent>(_ => ReleaseSearchInput());
                 searchField.RegisterCallback<KeyDownEvent>(OnSearchKeyDown, TrickleDown.TrickleDown);
             }
@@ -121,6 +124,7 @@ namespace ShadowInfection.UI.InventoryWindow
 
         public void Dispose()
         {
+            ReleaseModalInputBlock();
             ReleaseSearchInput();
             UiPointerState.UnregisterBlockingElement(overlay);
         }
@@ -130,12 +134,18 @@ namespace ShadowInfection.UI.InventoryWindow
             isOpen = open;
             if (overlay != null)
                 overlay.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
-            if (!open)
+            if (open)
+            {
+                PrepareSearchForOpen();
+            }
+            else
             {
                 searchField?.Blur();
                 ReleaseSearchInput();
                 SetConfirmVisible(false);
             }
+
+            RefreshModalInputBlock();
         }
 
         public void SetFilter(InventoryFilter filter)
@@ -261,6 +271,23 @@ namespace ShadowInfection.UI.InventoryWindow
                 RowClicked?.Invoke(row.Id);
         }
 
+        private void OnSearchPointerDown(PointerDownEvent evt)
+        {
+            if (searchField == null)
+                return;
+
+            searchField.focusable = true;
+            searchField.Focus();
+            evt.StopPropagation();
+        }
+
+        private void OnSearchFocusOut(FocusOutEvent _)
+        {
+            ReleaseSearchInput();
+            if (searchField != null)
+                searchField.focusable = false;
+        }
+
         private void OnSearchKeyDown(KeyDownEvent evt)
         {
             if (evt.keyCode != KeyCode.Escape)
@@ -268,6 +295,48 @@ namespace ShadowInfection.UI.InventoryWindow
 
             searchField?.Blur();
             evt.StopImmediatePropagation();
+        }
+
+        private void PrepareSearchForOpen()
+        {
+            if (searchField == null)
+                return;
+
+            searchField.focusable = false;
+            searchField.Blur();
+            overlay?.schedule.Execute(() =>
+            {
+                searchField.focusable = false;
+                searchField.Blur();
+            });
+        }
+
+        private void RefreshModalInputBlock()
+        {
+            var shouldBlock = isOpen;
+            if (shouldBlock == modalInputPushed)
+                return;
+
+            if (shouldBlock)
+            {
+                PlayerInput.CancelLocalGameplayInput();
+                UiModalInputBlock.Push();
+            }
+            else
+            {
+                UiModalInputBlock.Pop();
+            }
+
+            modalInputPushed = shouldBlock;
+        }
+
+        private void ReleaseModalInputBlock()
+        {
+            if (!modalInputPushed)
+                return;
+
+            UiModalInputBlock.Pop();
+            modalInputPushed = false;
         }
 
         private void CaptureSearchInput()

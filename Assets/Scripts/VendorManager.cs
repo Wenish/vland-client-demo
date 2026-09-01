@@ -41,7 +41,7 @@ public class VendorManager : NetworkBehaviour
         var zones = GameServices.Get<IInteractionZoneRegistry>()?.Zones;
         if (zones == null || zones.Count == 0)
         {
-            var found = Object.FindObjectsByType<InteractionZone>(FindObjectsSortMode.None);
+            var found = Object.FindObjectsByType<InteractionZone>();
             return PickReachableVendor(unit, vendorId, found);
         }
 
