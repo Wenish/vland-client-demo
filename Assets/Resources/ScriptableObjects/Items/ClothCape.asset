@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
   m_Name: ClothCape
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
-  itemId: cloth_cape
+  itemId: cape_cloth
   displayName: Cloth Cape
-  description: Light cloth for casters.
+  description: Long flowing cloak with a simple clasp. Easy flair on any build.
   icon: {fileID: 2800000, guid: 8fb1af6efa247cc4884f2c5fa7b16c3f, type: 3}
   kind: 0
   slot: 3

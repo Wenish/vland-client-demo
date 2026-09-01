@@ -1,15 +1,15 @@
 ---
 id: "item-sytem-2026-08-30"
-status: "backlog"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-30T15:46:48.099Z"
-modified: "2026-08-30T21:55:00.000Z"
-completedAt: null
+modified: "2026-09-01T16:23:24.774Z"
+completedAt: "2026-09-01T16:23:24.774Z"
 labels: []
-order: "Zt"
+order: "Zn"
 ---
 # Item System
 
@@ -158,7 +158,7 @@ One function: `ArmorWeightFor(WeaponType)`. A piece is legal when `piece.weight 
 
 **Equip refuse:** paper-doll greys out other weights. Server strips them on loadout apply. No toast essay — the slot just won't take it.
 
-Don't invent a fourth weight. Cape is still cloth/leather/plate like every other slot (a plate cape only on heavy weapons). No move-speed penalty tables — the type *is* the identity.
+Don't invent a fourth weight. **Exception:** [cape slot](cape-universal-armor-weight-2026-09-01.md) — any cape fits any weapon; capes are personality, not armor-family identity. All other slots stay cloth / leather / plate. No move-speed penalty tables — the type *is* the identity.
 
 ## Weapons (player-facing → existing `WeaponType`)
 
