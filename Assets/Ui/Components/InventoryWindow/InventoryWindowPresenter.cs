@@ -3,6 +3,7 @@ using System.Threading;
 using MessagePipe;
 using MyGame.Events.Ui;
 using R3;
+using ShadowInfection.DI;
 using ShadowInfection.Input;
 using ShadowInfection.Items;
 using ShadowInfection.UI;
@@ -249,9 +250,8 @@ namespace ShadowInfection.UI.InventoryWindow
             if (row == null || !row.CanQuickEquip || equipment == null)
                 return;
 
-            var targetSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
-                ? slotSelection.SelectedSlot.Value
-                : row.Definition.slot;
+            if (!TryResolveEquipTarget(row.Definition, out var targetSlot))
+                return;
 
             if (equipment.TryEquip(row.InstanceId, targetSlot))
                 view?.SetConfirmVisible(false);
@@ -264,13 +264,29 @@ namespace ShadowInfection.UI.InventoryWindow
             if (selected == null || !selected.CanQuickEquip || equipment == null)
                 return;
 
-            var targetSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
-                ? slotSelection.SelectedSlot.Value
-                : selected.Definition.slot;
+            if (!TryResolveEquipTarget(selected.Definition, out var targetSlot))
+                return;
 
             if (equipment.TryEquip(selected.InstanceId, targetSlot))
                 view?.SetConfirmVisible(false);
             Refresh();
+        }
+
+        private bool TryResolveEquipTarget(ItemDefinition definition, out ItemSlot targetSlot)
+        {
+            targetSlot = default;
+            if (definition == null)
+                return false;
+
+            var active = GameServices.Characters?.GetActive();
+            if (active == null)
+                return false;
+
+            var selectedSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
+                ? slotSelection.SelectedSlot
+                : null;
+
+            return ItemRules.TryResolveEquipSlot(active, catalog, definition, selectedSlot, out targetSlot);
         }
 
         private void OnDestroyClicked()
@@ -333,7 +349,6 @@ namespace ShadowInfection.UI.InventoryWindow
             if (inventory == null)
                 return;
 
-            var mainHandWeapon = ResolveMainHandWeaponType();
             var equipmentRows = inventory.Equipment;
             if (equipmentRows != null)
             {
@@ -347,7 +362,7 @@ namespace ShadowInfection.UI.InventoryWindow
                     if (!PassesFilter(def, isStack: false) || !PassesSearch(def, entry.itemId))
                         continue;
 
-                    rows.Add(ToEquipmentRow(entry, def, mainHandWeapon));
+                    rows.Add(ToEquipmentRow(entry, def));
                 }
             }
 
@@ -369,21 +384,34 @@ namespace ShadowInfection.UI.InventoryWindow
             }
         }
 
-        private InventoryRowVm ToEquipmentRow(InventoryEntry entry, ItemDefinition def, WeaponType? mainHandWeapon)
+        private InventoryRowVm ToEquipmentRow(InventoryEntry entry, ItemDefinition def)
         {
             var equipped = equipment != null && equipment.IsEquipped(entry.instanceId);
-            var targetSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
-                ? slotSelection.SelectedSlot.Value
-                : def != null ? def.slot : ItemSlot.None;
+            var mainHandWeapon = ResolveMainHandWeaponType();
+            var offHandWeapon = ResolveOffHandWeaponType();
+            var active = GameServices.Characters?.GetActive();
+            var selectedSlot = slotSelection != null && slotSelection.SelectedSlot.HasValue
+                ? slotSelection.SelectedSlot
+                : (ItemSlot?)null;
             var weightReason = def != null
                 ? ItemPresentation.ArmorWeightMismatchReason(def, mainHandWeapon)
                 : null;
-            var slotMismatch = def != null && def.kind == ItemKind.Equipment && def.slot != targetSlot;
+            string handReason = null;
             var canEquip = def != null
                 && def.kind == ItemKind.Equipment
                 && !equipped
                 && string.IsNullOrEmpty(weightReason)
-                && !slotMismatch;
+                && active != null
+                && ItemRules.TryResolveEquipSlot(active, catalog, def, selectedSlot, out var _);
+
+            if (def != null && !canEquip && def.kind == ItemKind.Equipment && !equipped && string.IsNullOrEmpty(weightReason))
+            {
+                var probeSlot = selectedSlot
+                    ?? (def.weaponData != null && ItemRules.IsShieldWeapon(def.weaponData.weaponType)
+                        ? ItemSlot.OffHand
+                        : ItemSlot.MainHand);
+                handReason = ItemPresentation.HandEquipBlockReason(def, probeSlot, mainHandWeapon, offHandWeapon);
+            }
 
             return new InventoryRowVm
             {
@@ -403,9 +431,7 @@ namespace ShadowInfection.UI.InventoryWindow
                 CanQuickEquip = canEquip,
                 EquipBlockReason = equipped
                     ? "Equipped — unequip first"
-                    : slotMismatch
-                        ? $"Select the {ItemPresentation.SlotLabel(def.slot)} slot on your character."
-                        : weightReason
+                    : weightReason ?? handReason
             };
         }
 
@@ -455,6 +481,19 @@ namespace ShadowInfection.UI.InventoryWindow
             if (equipment == null || catalog == null)
                 return null;
             if (!equipment.TryGetEquippedEntry(ItemSlot.MainHand, out var entry)
+                || string.IsNullOrWhiteSpace(entry.itemId))
+                return null;
+            if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
+                return null;
+
+            return definition.weaponData.weaponType;
+        }
+
+        private WeaponType? ResolveOffHandWeaponType()
+        {
+            if (equipment == null || catalog == null)
+                return null;
+            if (!equipment.TryGetEquippedEntry(ItemSlot.OffHand, out var entry)
                 || string.IsNullOrWhiteSpace(entry.itemId))
                 return null;
             if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)

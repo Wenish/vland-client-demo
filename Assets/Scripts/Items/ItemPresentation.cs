@@ -139,5 +139,32 @@ namespace ShadowInfection.Items
 
             return $"Requires {required} armor with your equipped weapon.";
         }
+
+        public static string HandEquipBlockReason(
+            ItemDefinition piece,
+            ItemSlot targetSlot,
+            WeaponType? mainHandWeapon,
+            WeaponType? offHandWeapon)
+        {
+            if (piece == null || piece.kind != ItemKind.Equipment)
+                return null;
+
+            if (ItemRules.CanEquipToSlot(piece, targetSlot, mainHandWeapon, offHandWeapon))
+                return null;
+
+            if (piece.weaponData != null && ItemRules.IsShieldWeapon(piece.weaponData.weaponType))
+                return "Requires a one-hand sword in main hand.";
+
+            if (piece.weaponData != null && ItemRules.IsDualWieldWeapon(piece.weaponData.weaponType))
+            {
+                if (targetSlot == ItemSlot.OffHand)
+                    return "Requires an empty main hand or a one-hand sword or dagger in main hand.";
+            }
+
+            if (ItemRules.IsWeaponSlot(targetSlot))
+                return $"Cannot equip to {SlotLabel(targetSlot).ToLower()}.";
+
+            return $"Select the {SlotLabel(piece.slot)} slot on your character.";
+        }
     }
 }

@@ -284,12 +284,62 @@ public class CharacterManager : MonoBehaviour
             _roster.Characters = new List<CharacterSaveData>();
 
         for (var i = 0; i < _roster.Characters.Count; i++)
+        {
             CharacterInventory.EnsureLists(_roster.Characters[i]);
+            MigrateStarterSwordAndShield(_roster.Characters[i]);
+        }
 
         MigrateLegacyLoadoutIfNeeded();
 
         if (GetActive() == null && _roster.Characters.Count > 0)
             _roster.ActiveCharacterId = _roster.Characters[0].Id;
+    }
+
+    private void MigrateStarterSwordAndShield(CharacterSaveData character)
+    {
+        if (character == null)
+            return;
+
+        var migrated = false;
+
+        if (character.InventoryEquipment != null)
+        {
+            for (var i = 0; i < character.InventoryEquipment.Count; i++)
+            {
+                var entry = character.InventoryEquipment[i];
+                if (entry == null || entry.itemId != ItemIds.LegacyStarterSwordAndShield)
+                    continue;
+
+                entry.itemId = ItemIds.StarterSword;
+                character.InventoryEquipment.Add(new InventoryEntry
+                {
+                    instanceId = Guid.NewGuid().ToString("N"),
+                    itemId = ItemIds.StarterShield
+                });
+                migrated = true;
+            }
+        }
+
+        if (character.EquippedSlots != null)
+        {
+            for (var i = 0; i < character.EquippedSlots.Count; i++)
+            {
+                var entry = character.EquippedSlots[i];
+                if (entry == null || entry.itemId != ItemIds.LegacyStarterSwordAndShield)
+                    continue;
+
+                entry.itemId = ItemIds.StarterSword;
+                character.InventoryEquipment.Add(new InventoryEntry
+                {
+                    instanceId = Guid.NewGuid().ToString("N"),
+                    itemId = ItemIds.StarterShield
+                });
+                migrated = true;
+            }
+        }
+
+        if (migrated)
+            SaveRoster();
     }
 
     private void MigrateLegacyLoadoutIfNeeded()

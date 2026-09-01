@@ -43,8 +43,8 @@ namespace ShadowInfection.Items
             if (kind != ItemKind.Equipment)
                 slot = ItemSlot.None;
 
-            if (kind == ItemKind.Equipment && slot == ItemSlot.MainHand && weaponData == null)
-                UnityEngine.Debug.LogWarning($"ItemDefinition '{itemId}' is a main-hand weapon without WeaponData.", this);
+            if (kind == ItemKind.Equipment && ItemRules.IsWeaponSlot(slot) && weaponData == null)
+                UnityEngine.Debug.LogWarning($"ItemDefinition '{itemId}' is a weapon without WeaponData.", this);
         }
     }
 }

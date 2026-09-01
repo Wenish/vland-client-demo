@@ -63,6 +63,7 @@ namespace ShadowInfection.Items
             {
                 var usedSlots = new HashSet<ItemSlot>();
                 var mainHandWeapon = CharacterInventoryOperations.ResolveMainHandWeaponType(data, catalog);
+                var offHandWeapon = CharacterInventoryOperations.ResolveOffHandWeaponType(data, catalog);
                 for (var i = 0; i < equipped.Count; i++)
                 {
                     var entry = equipped[i];
@@ -84,9 +85,16 @@ namespace ShadowInfection.Items
                         return false;
                     }
 
-                    if (definition.kind != ItemKind.Equipment || definition.slot != entry.slot)
+                    if (definition.kind != ItemKind.Equipment)
                     {
-                        error = $"Item '{definition.DisplayName}' does not fit slot {entry.slot}.";
+                        error = $"Item '{definition.DisplayName}' is not equipment.";
+                        return false;
+                    }
+
+                    if (!ItemRules.CanEquipToSlot(definition, entry.slot, mainHandWeapon, offHandWeapon))
+                    {
+                        error = ItemPresentation.HandEquipBlockReason(definition, entry.slot, mainHandWeapon, offHandWeapon)
+                            ?? $"Item '{definition.DisplayName}' does not fit slot {entry.slot}.";
                         return false;
                     }
 

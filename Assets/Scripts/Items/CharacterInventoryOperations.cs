@@ -18,9 +18,20 @@ namespace ShadowInfection.Items
                 return false;
             if (!catalog.TryGet(bagEntry.itemId, out var definition))
                 return false;
-            if (definition.kind != ItemKind.Equipment || definition.slot != slot)
+
+            var mainHand = ResolveMainHandWeaponType(character, catalog);
+            var offHand = ResolveOffHandWeaponType(character, catalog);
+            var itemWeapon = definition.weaponData != null
+                ? (WeaponType?)definition.weaponData.weaponType
+                : null;
+            var projectedMain = slot == ItemSlot.MainHand ? itemWeapon : mainHand;
+            var projectedOff = slot == ItemSlot.OffHand ? itemWeapon : offHand;
+
+            if (definition.kind != ItemKind.Equipment
+                || !ItemRules.CanEquipToSlot(definition, slot, projectedMain, projectedOff))
                 return false;
-            if (!ItemRules.CanEquipWithWeapon(definition, ResolveMainHandWeaponType(character, catalog)))
+
+            if (!ItemRules.CanEquipWithWeapon(definition, projectedMain))
                 return false;
 
             if (CharacterInventory.TryGetEquipped(character, slot, out var incumbent)
@@ -38,6 +49,13 @@ namespace ShadowInfection.Items
                 return false;
 
             CharacterInventory.SetEquipped(character, slot, instanceId, bagEntry.itemId);
+
+            if (slot == ItemSlot.MainHand)
+            {
+                UnequipIncompatibleOffHand(character, catalog);
+                UnequipIncompatibleArmor(character, catalog);
+            }
+
             return true;
         }
 
@@ -62,14 +80,69 @@ namespace ShadowInfection.Items
 
         public static WeaponType? ResolveMainHandWeaponType(CharacterSaveData character, IItemCatalog catalog)
         {
-            if (!CharacterInventory.TryGetEquipped(character, ItemSlot.MainHand, out var entry)
+            return ResolveEquippedWeaponType(character, catalog, ItemSlot.MainHand);
+        }
+
+        public static WeaponType? ResolveOffHandWeaponType(CharacterSaveData character, IItemCatalog catalog)
+        {
+            return ResolveEquippedWeaponType(character, catalog, ItemSlot.OffHand);
+        }
+
+        private static WeaponType? ResolveEquippedWeaponType(
+            CharacterSaveData character,
+            IItemCatalog catalog,
+            ItemSlot slot)
+        {
+            if (!CharacterInventory.TryGetEquipped(character, slot, out var entry)
                 || string.IsNullOrWhiteSpace(entry.itemId))
                 return null;
 
-            if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
+            if (catalog == null || !catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
                 return null;
 
             return definition.weaponData.weaponType;
+        }
+
+        private static void UnequipIncompatibleOffHand(CharacterSaveData character, IItemCatalog catalog)
+        {
+            if (!CharacterInventory.TryGetEquipped(character, ItemSlot.OffHand, out var offHandEntry)
+                || string.IsNullOrWhiteSpace(offHandEntry.itemId)
+                || catalog == null
+                || !catalog.TryGet(offHandEntry.itemId, out var offHandDefinition))
+                return;
+
+            var mainHand = ResolveMainHandWeaponType(character, catalog);
+            var offHand = ResolveOffHandWeaponType(character, catalog);
+            if (ItemRules.CanEquipToSlot(offHandDefinition, ItemSlot.OffHand, mainHand, offHand))
+                return;
+
+            TryUnequip(character, ItemSlot.OffHand);
+        }
+
+        private static void UnequipIncompatibleArmor(CharacterSaveData character, IItemCatalog catalog)
+        {
+            if (character == null || catalog == null)
+                return;
+
+            var mainHand = ResolveMainHandWeaponType(character, catalog);
+            if (!mainHand.HasValue)
+                return;
+
+            for (var slot = ItemSlot.Head; slot <= ItemSlot.Gloves; slot++)
+            {
+                if (!ItemRules.EnforcesArmorWeight(slot))
+                    continue;
+
+                if (!CharacterInventory.TryGetEquipped(character, slot, out var entry)
+                    || string.IsNullOrWhiteSpace(entry.itemId)
+                    || !catalog.TryGet(entry.itemId, out var definition))
+                    continue;
+
+                if (ItemRules.CanEquipWithWeapon(definition, mainHand))
+                    continue;
+
+                TryUnequip(character, slot);
+            }
         }
     }
 }
