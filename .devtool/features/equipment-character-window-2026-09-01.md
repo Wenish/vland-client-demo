@@ -6,7 +6,7 @@ assignee: null
 epic: null
 dueDate: null
 created: "2026-09-01T16:30:00.000Z"
-modified: "2026-09-01T16:45:00.000Z"
+modified: "2026-09-01T18:40:00.000Z"
 completedAt: null
 labels: []
 order: "Zv"
@@ -19,7 +19,7 @@ This is a **new system** sitting on top of the finished item catalog + bag ticke
 
 ## Feel
 
-Open character **and** bag together — two floating panels side by side, like WoW `C` + `B`. Drag either window by the title bar; they stay out of each other's way. Select a paper-doll slot on the character panel → click an item in the inventory panel → it equips and leaves the bag. Click an occupied slot → unequip back to the bag. No full-screen dim blocking the game behind you. Stats and 3D meshes on the unit are still out of scope.
+Open character **and** bag together — two floating panels side by side, like WoW Classic character + all bags. **`U`** toggles character (paper doll); **`B`** toggles inventory (`C` is Skill 1 in this project). Drag either window by the title bar. **Right-click** or **double-click** a bag item to quick-equip; **right-click** an equipped slot to unequip — same muscle memory as Classic. Left-click a slot to select it and see details. No full-screen dim. Stats and 3D meshes on the unit are still out of scope.
 
 ## This ticket
 
@@ -34,14 +34,14 @@ Equipped slots + persistence + character UI. The unit **remembers** what is worn
   - Item `kind` must be `Equipment` and `slot` must match the target paper-doll slot.
   - **Armor weight**: use `ItemRules.CanEquipWithWeapon(piece, mainHandWeaponType)` — cape slot is exempt (`ItemRules.EnforcesArmorWeight`). Wrong weight stays in the bag; slot shows disabled / tooltip, no server toast.
   - **Swap**: equipping into an occupied slot unequips the incumbent back to the bag first, then moves the new instance from bag → slot. Unequip moves `instanceId` back to `InventoryEquipment`.
-  - Destroying a bag row that is currently equipped is impossible (or auto-unequips first — pick one and document).
+  - Destroying a bag row that is currently equipped is **blocked**; detail shows “Equipped — unequip first” (WoW Classic behavior).
 - **MessagePipe** `EquipmentChangedEvent` so UI refreshes when roster / active character / equip changes.
 - **Character window UI** (new, sibling to inventory + loadout):
   - WoW-style layout: **slots around the edges**, **center = model placeholder** (empty panel, label like "Character preview" — no RenderTexture or unit spawn this ticket).
   - Slots: Head, Shoulder, Cape, Chest, Pants, Feet, Gloves, Main hand, Off hand (off-hand visible but may stay empty in content).
   - Each slot shows empty chrome or the item icon + rarity border (reuse inventory icon resolve path).
-  - **No bag list on the character panel** — the inventory window is the bag. Select a slot on character → click a valid row in inventory (or an **Equip** action on inventory detail when a slot is selected) → equip. Click occupied slot → unequip. Inventory row highlight / disable when selected slot cannot accept that item.
-  - Opens in **lobby and in-match** (new keybind on the input map). **Can be open at the same time as inventory** — they are independent toggles, not mutual-exclusive.
+  - **No bag list on the character panel** — the inventory window is the bag. Equip via right-click / double-click on bag rows, or left-click slot then left-click row / **Equip** on detail (see [UX decisions](#ux-decisions-wow-classic)). Right-click occupied slot to unequip.
+  - Opens in **lobby and in-match**. Default bind: **`U`** (`PlayerActionId.Character`, settings label **Character**). **`C` is not used** — it is Skill 1. **Can be open at the same time as inventory** — independent toggles (`U` / `B`), like WoW Classic.
   - Search / destroy stay on the **inventory** window only.
 - **Inventory window update** (part of this ticket):
   - Refactor from centered full-screen modal (`inventory-overlay` dim + click-outside-to-close) to a **floating draggable panel**, same interaction model as `VendorView` (title-bar drag, clamp to viewport, position persisted in PlayerPrefs).
@@ -144,22 +144,45 @@ Implementation lives next to `CharacterInventory` static helpers or a `Character
 
 | Action | Inventory | Character | Loadout | Vendor |
 | --- | --- | --- | --- | --- |
-| Toggle inventory key | toggle | unchanged | closes inv + char | closes inv |
-| Toggle character key | unchanged | toggle | closes inv + char | closes char |
+| Toggle inventory (`B`) | toggle | unchanged | closes inv + char | closes inv |
+| Toggle character (`U`) | unchanged | toggle | closes inv + char | closes char |
 | Open loadout | closes | closes | toggle | — |
 | Open vendor | closes | closes | — | toggle |
 
-- New input action + `SetCharacterWindowOpenEvent`.
+- `PlayerActionId.Character` + catalog entry (default **`U`**, Interface group, settings label **Character**) + `SetCharacterWindowOpenEvent`.
 - Presenters subscribe to the other's open event only to run **default side-by-side layout** when both become visible (not to close).
 - Panel positions saved per window in PlayerPrefs (`InventoryPanelPos`, `CharacterPanelPos`). On resize, clamp both so they stay on screen.
 
-**Equip flow (v1)**
+## UX decisions (WoW Classic)
 
-1. Open character (inventory may already be open).
-2. Click paper-doll slot → `selectedEquipSlot` set; inventory refreshes row enabled state + detail **Equip** button.
-3. Click inventory row or **Equip** → `TryEquip(instanceId, slot)`.
-4. Click occupied paper-doll slot → `TryUnequip(slot)`.
-5. Item drag between panels is **out** this ticket (click only).
+Usability should match what Classic players expect. Implement all of the following.
+
+### Keybinds
+
+| Action | Default key | `PlayerActionId` | Notes |
+| --- | --- | --- | --- |
+| Character (paper doll) | **`U`** | `Character` (new, id 26) | Not `C` — Skill 1 uses `C`. `U` is free and rebindable in settings. |
+| Inventory (bags) | **`B`** | `Inventory` (existing) | Already the bag key; keep it. |
+
+Both keys are independent toggles. Pressing `U` does not auto-close `B`, and vice versa (Classic default).
+
+### Equip / unequip (three paths — all supported)
+
+1. **Quick equip (primary):** **Right-click** or **double-click** a bag row → `TryEquip` to that item’s slot (no slot pre-selection). If slot occupied → swap. If invalid (wrong weight / wrong slot) → no-op + brief detail reason.
+2. **Slot-first equip:** Left-click paper-doll slot → select (`selectedEquipSlot`). Left-click a valid bag row or **Equip** on inventory detail → equip.
+3. **Unequip:** **Right-click** an occupied paper-doll slot → `TryUnequip`. Left-click only selects; it does **not** unequip (avoids mis-clicks).
+
+### Other Classic behaviors
+
+- **Destroy equipped item:** blocked; show “Equipped — unequip first” on inventory detail. Destroy button disabled.
+- **Modal input:** while character and/or inventory is open, push `UiModalInputBlock` (movement/skills blocked — same as inventory today). No dark fullscreen overlay.
+- **Tooltips:** hover bag row or equipped slot → name, slot, stats text (reuse inventory detail strings). Wrong-weight items in bag show why they won’t equip when main-hand is set.
+- **Shift-click:** out of scope (no stack split on gear copies).
+- **Item drag** between panels: out of scope; window title-bar drag only.
+
+### Cross-window state
+
+`IEquipSlotSelection` (or `CharacterSlotSelectedEvent`) holds `selectedEquipSlot?`. Character presenter sets it on left-click slot; inventory presenter reads it for highlight, Equip button, and row enable state. Cleared when character window closes.
 
 ## Build order
 
@@ -168,10 +191,10 @@ Implementation lives next to `CharacterInventory` static helpers or a `Character
 3. `EquippedSlotEntry` + save field on `CharacterSaveData`; migration: drop `ArmorSlotIds`, init empty `EquippedSlots`.
 4. `CharacterEquipment` + `ICharacterEquipment` + `EquipmentChangedEvent`; wire in `GameLifetimeScope`.
 5. Character window UXML/USS + draggable panel + lifetime scope + bootstrap prefab.
-6. Cross-window equip UX: `selectedEquipSlot` shared state (small service or MessagePipe `CharacterSlotSelectedEvent`); inventory presenter calls `TryEquip` / shows Equip on detail.
+6. `IEquipSlotSelection` + right-click / double-click handlers on inventory rows; right-click unequip on character slots.
 7. Side-by-side default layout when both panels open without saved positions.
-8. Input bindings + open/close matrix (table above).
-9. Manual pass: open both → drag apart → restart → positions restored → vendor grants item → equip each slot → unequip → swap → destroy blocked on equipped item.
+8. `PlayerActionId.Character` in catalog (default `U`) + open/close matrix (table above).
+9. Manual pass: `U`+`B` open both → drag apart → restart → positions restored → right-click equip → double-click equip → slot-select equip → right-click unequip → swap → destroy blocked on equipped item.
 
 ## Follow-up ticket (not this one)
 
@@ -181,7 +204,7 @@ Implementation lives next to `CharacterInventory` static helpers or a `Character
 
 - Combat or visual side effects of wearing gear
 - Gem socketing UI
-- Dragging **items** between panels (click-to-equip is enough v1; window drag is in scope)
+- Dragging **items** between panels (right-click / double-click / slot-select equip cover Classic UX; window drag is in scope)
 - Replacing or merging the loadout window
 - Server RPC equip (local roster meta is enough for now; note in code if match sync is TODO)
 - Full item matrix content — a few armor + weapon assets from the catalog is enough to test slots
@@ -189,7 +212,7 @@ Implementation lives next to `CharacterInventory` static helpers or a `Character
 ## Done when
 
 - Player opens character and inventory **together** in lobby or match; panels default side by side, draggable, positions persist.
-- Equipping from inventory while a slot is selected works; unequip / swap works; state survives app restart.
+- Right-click / double-click quick-equip, slot-select equip, and right-click unequip all work; swap + persist across restart.
 - Inventory no longer uses full-screen dim or click-outside-to-close.
 - Old loadout weapon and `EquipWeapon` behavior unchanged.
 - No unit mesh / stat / combat changes.
