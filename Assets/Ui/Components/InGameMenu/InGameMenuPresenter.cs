@@ -1,9 +1,8 @@
 using System.Threading;
-using MessagePipe;
 using Mirror;
-using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
+using ShadowInfection.UI;
 using ShadowInfection.UI.Session;
 using ShadowInfection.UI.SettingsPanel;
 using ShadowInfection.Input;
@@ -14,14 +13,12 @@ namespace ShadowInfection.UI.InGameMenu
     internal sealed class InGameMenuPresenter
     {
         private readonly ISessionFlowCommands sessionCommands;
-        private readonly IPublisher<RequestCloseVendorWindowEvent> closeVendor;
-        private readonly ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility;
+        private readonly IUiOverlayRegistry overlays;
         private readonly IInputReader input;
 
         private InGameMenuView view;
         private SettingsPanelBinder settingsBinder;
         private R3.DisposableBag subscriptions;
-        private bool vendorIsOpen;
         private bool lastStopServerVisible;
         private bool lastEndMatchVisible;
         private bool lastLeaveServerVisible;
@@ -29,13 +26,11 @@ namespace ShadowInfection.UI.InGameMenu
 
         public InGameMenuPresenter(
             ISessionFlowCommands sessionCommands,
-            IPublisher<RequestCloseVendorWindowEvent> closeVendor,
-            ISubscriber<VendorWindowVisibilityChangedEvent> vendorVisibility,
+            IUiOverlayRegistry overlays,
             IInputReader input)
         {
             this.sessionCommands = sessionCommands;
-            this.closeVendor = closeVendor;
-            this.vendorVisibility = vendorVisibility;
+            this.overlays = overlays;
             this.input = input;
         }
 
@@ -62,7 +57,6 @@ namespace ShadowInfection.UI.InGameMenu
             }
 
             RefreshRoleButtons();
-            subscriptions.Add(vendorVisibility.Subscribe(OnVendorVisibilityChanged));
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, token)
                     .Subscribe(_ =>
@@ -93,7 +87,6 @@ namespace ShadowInfection.UI.InGameMenu
             subscriptions.Dispose();
             subscriptions = new R3.DisposableBag();
             view = null;
-            vendorIsOpen = false;
             hasRoleSnapshot = false;
         }
 
@@ -102,11 +95,8 @@ namespace ShadowInfection.UI.InGameMenu
             if (input == null || input.IsListening || !input.WasPressed(PlayerActionId.Menu))
                 return;
 
-            if (vendorIsOpen)
-            {
-                closeVendor.Publish(new RequestCloseVendorWindowEvent());
+            if (overlays != null && overlays.TryCloseAll())
                 return;
-            }
 
             if (view != null && view.IsSettingsOverlayVisible)
             {
@@ -122,7 +112,7 @@ namespace ShadowInfection.UI.InGameMenu
 
         private void OpenMenu()
         {
-            closeVendor.Publish(new RequestCloseVendorWindowEvent());
+            overlays?.TryCloseAll();
             CloseSettings();
             view?.SetVisible(true);
         }
@@ -144,11 +134,6 @@ namespace ShadowInfection.UI.InGameMenu
         {
             GameServices.Get<IInputBindingCommands>()?.CancelListen();
             view?.SetSettingsOverlayVisible(false);
-        }
-
-        private void OnVendorVisibilityChanged(VendorWindowVisibilityChangedEvent evt)
-        {
-            vendorIsOpen = evt != null && evt.IsOpen;
         }
 
         private void RefreshRoleButtons()

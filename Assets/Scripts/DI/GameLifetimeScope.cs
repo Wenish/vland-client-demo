@@ -312,6 +312,8 @@ namespace ShadowInfection.DI
             builder.Register<EquipSlotSelection>(Lifetime.Singleton)
                 .As<IEquipSlotSelection>();
             builder.Register<CharacterInventoryPanelCoordinator>(Lifetime.Singleton);
+            builder.Register<UiOverlayRegistry>(Lifetime.Singleton)
+                .As<IUiOverlayRegistry>();
             builder.RegisterEntryPoint<InventoryWindowBootstrap>();
             builder.RegisterEntryPoint<CharacterWindowBootstrap>();
 

@@ -6,6 +6,7 @@ using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.Input;
 using ShadowInfection.Items;
+using ShadowInfection.UI;
 using ShadowInfection.UI.ZombieMatch;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,7 +14,7 @@ using Vland.UI;
 
 namespace ShadowInfection.UI.VendorWindow
 {
-    internal sealed class VendorWindowPresenter
+    internal sealed class VendorWindowPresenter : IUiOverlay
     {
         private const string PrefPosX = "VendorWindow_PosX";
         private const string PrefPosY = "VendorWindow_PosY";
@@ -33,6 +34,7 @@ namespace ShadowInfection.UI.VendorWindow
         private readonly IItemCatalog itemCatalog;
         private readonly IItemInventory itemInventory;
         private readonly IInputReader input;
+        private readonly IUiOverlayRegistry overlays;
 
         private VendorView view;
         private R3.DisposableBag subscriptions;
@@ -66,7 +68,8 @@ namespace ShadowInfection.UI.VendorWindow
             IPublisher<SetCharacterWindowOpenEvent> characterOpen,
             IItemCatalog itemCatalog,
             IItemInventory itemInventory,
-            IInputReader input)
+            IInputReader input,
+            IUiOverlayRegistry overlays)
         {
             this.zombieMatchSession = zombieMatchSession;
             this.goldChanged = goldChanged;
@@ -83,6 +86,7 @@ namespace ShadowInfection.UI.VendorWindow
             this.itemCatalog = itemCatalog;
             this.itemInventory = itemInventory;
             this.input = input;
+            this.overlays = overlays;
         }
 
         public void Bind(VendorView nextView, CancellationToken token)
@@ -91,6 +95,8 @@ namespace ShadowInfection.UI.VendorWindow
             view = nextView;
             if (view == null)
                 return;
+
+            overlays?.Register(this);
 
             view.CloseClicked += Close;
             view.PositionChanged += PersistPosition;
@@ -117,6 +123,8 @@ namespace ShadowInfection.UI.VendorWindow
 
         public void Unbind()
         {
+            overlays?.Unregister(this);
+
             var wasOpen = IsOpen;
             if (wasOpen)
                 PersistPosition();
@@ -181,6 +189,12 @@ namespace ShadowInfection.UI.VendorWindow
             if (view == null || nextSession == null || nextSession.Catalog == null)
                 return;
 
+            if (IsSameOpenSession(nextSession))
+            {
+                Close();
+                return;
+            }
+
             loadoutOpen.Publish(new SetLoadoutWindowOpenEvent(false));
             inventoryOpen.Publish(new SetInventoryWindowOpenEvent(false));
             characterOpen.Publish(new SetCharacterWindowOpenEvent(false));
@@ -232,6 +246,18 @@ namespace ShadowInfection.UI.VendorWindow
         public void CloseIfZone(InteractionZone zone)
         {
             CloseIfInteractable(zone);
+        }
+
+        private bool IsSameOpenSession(IVendorSession nextSession)
+        {
+            if (!IsOpen || session == null || nextSession == null)
+                return false;
+
+            if (ReferenceEquals(session, nextSession))
+                return true;
+
+            return !string.IsNullOrEmpty(session.VendorId)
+                && session.VendorId == nextSession.VendorId;
         }
 
         private void BindPlayerStats()

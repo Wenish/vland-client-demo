@@ -7,13 +7,14 @@ using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
 using ShadowInfection.Input;
+using ShadowInfection.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vland.UI;
 
 namespace ShadowInfection.UI.LoadoutWindow
 {
-    internal sealed class LoadoutWindowPresenter
+    internal sealed class LoadoutWindowPresenter : IUiOverlay
     {
         private readonly ILoadoutStore store;
         private readonly ILoadoutCatalog catalog;
@@ -22,6 +23,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private readonly IPublisher<SetCharacterWindowOpenEvent> characterOpen;
         private readonly ApplicationSettings settings;
         private readonly IInputReader input;
+        private readonly IUiOverlayRegistry overlays;
 
         private LoadoutView view;
         private R3.DisposableBag subscriptions;
@@ -38,7 +40,8 @@ namespace ShadowInfection.UI.LoadoutWindow
             IPublisher<SetInventoryWindowOpenEvent> inventoryOpen,
             IPublisher<SetCharacterWindowOpenEvent> characterOpen,
             ApplicationSettings settings,
-            IInputReader input)
+            IInputReader input,
+            IUiOverlayRegistry overlays)
         {
             this.store = store;
             this.catalog = catalog;
@@ -47,7 +50,10 @@ namespace ShadowInfection.UI.LoadoutWindow
             this.characterOpen = characterOpen;
             this.settings = settings;
             this.input = input;
+            this.overlays = overlays;
         }
+
+        public bool IsOpen => view != null && view.IsOpen;
 
         public void Bind(LoadoutView nextView, CancellationToken token)
         {
@@ -59,6 +65,8 @@ namespace ShadowInfection.UI.LoadoutWindow
 
             foreach (var slot in LoadoutSlots.All)
                 selected[slot] = LoadoutItem.Empty;
+
+            overlays?.Register(this);
 
             view.CloseClicked += Close;
             view.OpenClicked += Open;
@@ -82,6 +90,8 @@ namespace ShadowInfection.UI.LoadoutWindow
 
         public void Unbind()
         {
+            overlays?.Unregister(this);
+
             if (view != null)
             {
                 view.CloseClicked -= Close;
@@ -109,7 +119,7 @@ namespace ShadowInfection.UI.LoadoutWindow
             view?.SetOpen(true);
         }
 
-        private void Close()
+        public void Close()
         {
             view?.SetOpen(false);
         }
