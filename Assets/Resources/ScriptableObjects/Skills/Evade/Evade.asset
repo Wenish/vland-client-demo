@@ -20,7 +20,7 @@ MonoBehaviour:
   castCost: 0
   canActivateWhileBusy: 1
   castRange: 0
-  aimPreviewIndicator: {fileID: 11400000, guid: ee6a4d0b8d077bb48b73304b5da40235, type: 2}
+  aimPreviewIndicator: {fileID: 0}
   hasRequiredWeapon: 0
   requiredWeapon: 0
   npcOnly: 0
