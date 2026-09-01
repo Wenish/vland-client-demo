@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
-  m_Name: LeatherCape
+  m_Name: HunterCape
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
-  itemId: leather_cape
-  displayName: Leather Cape
-  description: Short hunter cloak. Moves with you.
+  itemId: cape_hunter
+  displayName: Hunter Cape
+  description: Short hunter cloak with a rough hem. Moves with you.
   icon: {fileID: 2800000, guid: 09f5a42ac1f9af44a80e71c09059bb07, type: 3}
   kind: 0
   slot: 3
   rarity: 0
-  armorWeight: 1
+  armorWeight: 0
   weaponData: {fileID: 0}
   statModifiers:
   - Type: 1

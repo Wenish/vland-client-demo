@@ -23,7 +23,11 @@ namespace ShadowInfection.Items
                     if (ItemRules.IsWeaponSlot(item.slot))
                         return item.slot == ItemSlot.OffHand ? "Off Hand" : "Weapon";
                     if (ItemRules.IsArmorSlot(item.slot))
+                    {
+                        if (item.slot == ItemSlot.Cape)
+                            return SlotLabel(item.slot);
                         return $"{item.armorWeight} {SlotLabel(item.slot)}";
+                    }
                     return "Equipment";
             }
         }

@@ -1,15 +1,15 @@
 ---
 id: "item-starter-catalog-icons-2026-08-30"
-status: "backlog"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-08-30T20:36:00.000Z"
-modified: "2026-08-30T20:36:00.000Z"
-completedAt: null
+modified: "2026-09-01T16:23:23.324Z"
+completedAt: "2026-09-01T16:23:23.324Z"
 labels: ["Art"]
-order: "Zs"
+order: "Zo"
 ---
 # Item starter catalog icons
 
@@ -90,7 +90,7 @@ Soft pointed hood, fabric only, small metal clasp at the throat. No visor, no he
 
 Cloth draped over both shoulders, light padding underneath, a cord tying them. Not metal spaulders.
 
-### item_cloth_cape.png — Cloth Cape
+### item_cape_cloth.png — Cloth Cape
 
 Long falling cape, simple clasp, big readable folds. Personality piece — more drape than stats.
 
@@ -122,7 +122,7 @@ Close-fitting leather cap or light brimmed hat with a chin strap. Not a pot helm
 
 Layered hide spaulders, brass rivets, a strap across the chest. Chunky enough to silhouette, still clearly leather.
 
-### item_leather_cape.png — Leather Cape
+### item_cape_hunter.png — Hunter Cape
 
 Short hunter cloak, rough hem, leather clasp. Shorter and stiffer than the cloth cape.
 
@@ -154,7 +154,7 @@ Nasal or visored iron helm, faceted plates, eye slit, rivets. Closed and heavy. 
 
 Heavy angular shoulder plates, same facets as the helm. One or both shoulders, overlapping lames.
 
-### item_plate_cape.png — Iron Cape
+### item_cape_war.png — War Cape
 
 Heavy war cloak with a metal clasp and a short chain, steel-trimmed hem. Darker wool than cloth; still a cape, not a tabard-only stamp.
 

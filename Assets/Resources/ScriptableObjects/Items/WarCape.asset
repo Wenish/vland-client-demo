@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
-  m_Name: IronCape
+  m_Name: WarCape
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
-  itemId: iron_cape
-  displayName: Iron Cape
-  description: War cloak with a metal clasp. Still a cape.
+  itemId: cape_war
+  displayName: War Cape
+  description: Heavy war cloak with a metal clasp and chain-trimmed hem.
   icon: {fileID: 2800000, guid: 7d298de4d3a9be348b8bd2ac87a4c61b, type: 3}
   kind: 0
   slot: 3
   rarity: 0
-  armorWeight: 2
+  armorWeight: 0
   weaponData: {fileID: 0}
   statModifiers:
   - Type: 8
