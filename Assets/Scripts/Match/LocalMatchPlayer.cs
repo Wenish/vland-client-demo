@@ -51,7 +51,7 @@ namespace ShadowInfection.Match
                     return fromIdentity;
             }
 
-            var found = Object.FindObjectsByType<T>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var found = Object.FindObjectsByType<T>(FindObjectsInactive.Exclude);
             for (int i = 0; i < found.Length; i++)
             {
                 if (found[i] is NetworkBehaviour behaviour && behaviour.isLocalPlayer)

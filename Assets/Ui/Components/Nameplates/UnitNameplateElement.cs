@@ -59,7 +59,7 @@ namespace ShadowInfection.UI.Nameplates
         public void HideAndReset()
         {
             Hide();
-            transform.position = Vector3.zero;
+            style.translate = new Translate(0f, 0f);
         }
 
         public void Apply(in UnitNameplateSnapshot snapshot)
@@ -138,10 +138,9 @@ namespace ShadowInfection.UI.Nameplates
 
         private void ApplyTransform(Vector2 panelPosition)
         {
-            transform.position = new Vector3(
+            style.translate = new Translate(
                 panelPosition.x - cachedWidth * 0.5f,
-                panelPosition.y - cachedHeight,
-                0f);
+                panelPosition.y - cachedHeight);
         }
 
         private void OnGeometryChanged(GeometryChangedEvent evt)

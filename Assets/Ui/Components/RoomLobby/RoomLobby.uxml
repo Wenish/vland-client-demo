@@ -45,7 +45,7 @@
                 <ui:Label text="Gender" class="room-lobby__section-title" />
                 <ui:VisualElement class="room-lobby__gender-row">
                     <ui:Button name="genderMaleButton" text="Male" class="room-lobby__gender-button room-lobby__gender-button--active" />
-                    <ui:Button name="genderFemaleButton" text="Female" class="room-lobby__gender-button" />
+                    <ui:Button name="genderFemaleButton" text="Female" class="room-lobby__gender-button room-lobby__gender-button--last" />
                 </ui:VisualElement>
 
                 <ui:VisualElement name="characterCreateFooter" class="room-lobby__character-overlay-footer">

@@ -20,7 +20,7 @@ MonoBehaviour:
   slot: 8
   rarity: 0
   armorWeight: 0
-  weaponData: {fileID: 0}
+  weaponData: {fileID: 11400000, guid: e3a8c4f21b9d4e6a8f0c2d5e7b1a3947, type: 2}
   statModifiers:
   - Type: 7
     Value: 4

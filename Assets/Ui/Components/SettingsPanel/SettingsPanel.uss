@@ -305,9 +305,7 @@
 }
 
 .settings-panel .unity-base-field:focus > .unity-base-field__label,
-.settings-panel .unity-base-field:focus-within > .unity-base-field__label,
-.settings-content .unity-base-field:focus > .unity-base-field__label,
-.settings-content .unity-base-field:focus-within > .unity-base-field__label {
+.settings-content .unity-base-field:focus > .unity-base-field__label {
     color: rgb(254, 221, 183);
 }
 
