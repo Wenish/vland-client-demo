@@ -10,14 +10,9 @@ namespace ShadowInfection.UI.RoomLobby
         private const float MaxScrollHeight = 300f;
         private const float ScrollHeightFudge = 2f;
         private const float ChangeCharacterButtonGap = 12f;
-        // Title + subtitle + footer + panel padding/margins inside the 88% panel.
-        private const float CharacterPanelChromeReserve = 170f;
-        private const float CharacterScrollHeightPad = 8f;
-        private const float CharacterCardFallbackHeight = 92f;
 
         private readonly VisualElement root;
         private readonly VisualElement roomLobbyPanel;
-        private readonly Label subtitle;
         private readonly Label localStatus;
         private readonly Button readyButton;
         private readonly Button changeCharacterButton;
@@ -26,7 +21,9 @@ namespace ShadowInfection.UI.RoomLobby
         private readonly VisualElement characterSelectOverlay;
         private readonly VisualElement characterCreateOverlay;
         private readonly VisualElement characterDeleteConfirmOverlay;
-        private readonly Label characterOverlaySubtitle;
+        private readonly FloatingWindow characterSelectPanel;
+        private readonly FloatingWindow characterCreatePanel;
+        private readonly FloatingWindow characterDeleteConfirmPanel;
         private readonly Label characterDeleteConfirmMessage;
         private readonly ScrollView characterListScroll;
         private readonly VisualElement characterListContent;
@@ -46,9 +43,6 @@ namespace ShadowInfection.UI.RoomLobby
         private bool createOverlayVisible;
         private bool deleteConfirmVisible;
         private bool modalInputPushed;
-        private bool characterScrollTrackingBound;
-        private float lastCharacterListHeight = -1f;
-        private float lastCharacterListMaxHeight = -1f;
 
         public event Action ReadyButtonClicked;
         public event Action ChangeCharacterClicked;
@@ -65,7 +59,6 @@ namespace ShadowInfection.UI.RoomLobby
         {
             this.root = root;
             roomLobbyPanel = root.Q<VisualElement>("roomLobbyPanel");
-            subtitle = root.Q<Label>("subtitle");
             localStatus = root.Q<Label>("localStatus");
             readyButton = root.Q<OrnateButton>("readyButton") ?? root.Q<Button>("readyButton");
             changeCharacterButton = root.Q<OrnateButton>("changeCharacterButton") ?? root.Q<Button>("changeCharacterButton");
@@ -74,13 +67,14 @@ namespace ShadowInfection.UI.RoomLobby
             characterSelectOverlay = root.Q<VisualElement>("characterSelectOverlay");
             characterCreateOverlay = root.Q<VisualElement>("characterCreateOverlay");
             characterDeleteConfirmOverlay = root.Q<VisualElement>("characterDeleteConfirmOverlay");
-            characterOverlaySubtitle = root.Q<Label>("characterOverlaySubtitle");
+            characterSelectPanel = root.Q<FloatingWindow>("characterSelectPanel");
+            characterCreatePanel = root.Q<FloatingWindow>("characterCreatePanel");
+            characterDeleteConfirmPanel = root.Q<FloatingWindow>("characterDeleteConfirmPanel");
             characterDeleteConfirmMessage = root.Q<Label>("characterDeleteConfirmMessage");
             characterListScroll = root.Q<ScrollView>("characterListScroll");
             characterListContent = root.Q<VisualElement>("characterListContent");
             if (characterListScroll?.contentContainer != null)
                 characterListScroll.contentContainer.pickingMode = PickingMode.Position;
-            BindCharacterScrollHeightTracking();
             characterNameField = root.Q<TextField>("characterNameField");
             genderMaleButton = root.Q<Button>("genderMaleButton");
             genderFemaleButton = root.Q<Button>("genderFemaleButton");
@@ -111,15 +105,9 @@ namespace ShadowInfection.UI.RoomLobby
             if (characterDeleteConfirmOverlay != null)
                 characterDeleteConfirmOverlay.pickingMode = PickingMode.Position;
 
-            var selectPanel = root.Q<VisualElement>("characterSelectPanel");
-            var createPanel = root.Q<VisualElement>("characterCreatePanel");
-            var deletePanel = root.Q<VisualElement>("characterDeleteConfirmPanel");
-            if (selectPanel != null)
-                selectPanel.pickingMode = PickingMode.Position;
-            if (createPanel != null)
-                createPanel.pickingMode = PickingMode.Position;
-            if (deletePanel != null)
-                deletePanel.pickingMode = PickingMode.Position;
+            WireFloatingWindow(characterSelectPanel, () => CloseCharacterOverlayClicked?.Invoke());
+            WireFloatingWindow(characterCreatePanel, () => BackFromCreateClicked?.Invoke());
+            WireFloatingWindow(characterDeleteConfirmPanel, () => CancelDeleteCharacterClicked?.Invoke());
 
             if (readyButton != null)
                 readyButton.clicked += () => ReadyButtonClicked?.Invoke();
@@ -196,12 +184,6 @@ namespace ShadowInfection.UI.RoomLobby
             }
         }
 
-        public void SetSubtitle(string text)
-        {
-            if (subtitle != null)
-                subtitle.text = text ?? string.Empty;
-        }
-
         public void SetLocalReadyState(bool isReady)
         {
             if (localStatus != null)
@@ -229,9 +211,7 @@ namespace ShadowInfection.UI.RoomLobby
             selectOverlayVisible = visible;
             if (characterSelectOverlay != null)
                 characterSelectOverlay.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-
-            if (visible)
-                ScheduleCharacterScrollHeightUpdate();
+            characterSelectPanel?.SetOpen(visible);
 
             RefreshModalInputBlock();
         }
@@ -242,6 +222,7 @@ namespace ShadowInfection.UI.RoomLobby
             createOverlayVisible = visible;
             if (characterCreateOverlay != null)
                 characterCreateOverlay.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            characterCreatePanel?.SetOpen(visible);
 
             if (visible && !wasVisible && characterNameField != null)
             {
@@ -259,6 +240,8 @@ namespace ShadowInfection.UI.RoomLobby
 
         public void SetCharacterOverlayCanClose(bool canClose)
         {
+            characterSelectPanel?.SetCloseButtonVisible(canClose);
+
             if (closeCharacterOverlayButton == null)
                 return;
 
@@ -266,17 +249,12 @@ namespace ShadowInfection.UI.RoomLobby
             closeCharacterOverlayButton.SetEnabled(canClose);
         }
 
-        public void SetCharacterOverlaySubtitle(string text)
-        {
-            if (characterOverlaySubtitle != null)
-                characterOverlaySubtitle.text = text ?? string.Empty;
-        }
-
         public void SetCharacterDeleteConfirmVisible(bool visible, string characterDisplayName)
         {
             deleteConfirmVisible = visible;
             if (characterDeleteConfirmOverlay != null)
                 characterDeleteConfirmOverlay.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            characterDeleteConfirmPanel?.SetOpen(visible);
 
             if (characterDeleteConfirmMessage != null)
             {
@@ -330,9 +308,6 @@ namespace ShadowInfection.UI.RoomLobby
                 characterListContent.Add(empty);
                 if (characterListScroll != null)
                     characterListScroll.scrollOffset = Vector2.zero;
-                lastCharacterListHeight = -1f;
-                lastCharacterListMaxHeight = -1f;
-                ScheduleCharacterScrollHeightUpdate();
                 return;
             }
 
@@ -344,9 +319,6 @@ namespace ShadowInfection.UI.RoomLobby
 
             if (characterListScroll != null)
                 characterListScroll.scrollOffset = Vector2.zero;
-            lastCharacterListHeight = -1f;
-            lastCharacterListMaxHeight = -1f;
-            ScheduleCharacterScrollHeightUpdate();
             SetCharacterControlsEnabled(characterControlsEnabled);
         }
 
@@ -375,6 +347,16 @@ namespace ShadowInfection.UI.RoomLobby
             }
 
             ScheduleScrollHeightUpdate();
+        }
+
+        private static void WireFloatingWindow(FloatingWindow window, Action onClose)
+        {
+            if (window == null)
+                return;
+
+            window.pickingMode = PickingMode.Position;
+            window.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+            window.CloseClicked += onClose;
         }
 
         private void RefreshModalInputBlock()
@@ -421,114 +403,6 @@ namespace ShadowInfection.UI.RoomLobby
 
             changeCharacterButton.style.left = panelLayout.x;
             changeCharacterButton.style.top = panelLayout.y + panelLayout.height + ChangeCharacterButtonGap;
-        }
-
-        private void BindCharacterScrollHeightTracking()
-        {
-            if (characterScrollTrackingBound || characterListContent == null)
-                return;
-
-            characterScrollTrackingBound = true;
-            // Track content/overlay size only. Listening to the ScrollView itself
-            // refires on user scroll and reapplying height snaps back to the top.
-            EventCallback<GeometryChangedEvent> onGeometry = evt =>
-            {
-                if (Mathf.Abs(evt.newRect.height - evt.oldRect.height) < 0.5f
-                    && Mathf.Abs(evt.newRect.width - evt.oldRect.width) < 0.5f)
-                    return;
-
-                UpdateCharacterListHeight();
-            };
-            characterListContent.RegisterCallback(onGeometry);
-            characterSelectOverlay?.RegisterCallback(onGeometry);
-        }
-
-        private void ScheduleCharacterScrollHeightUpdate()
-        {
-            UpdateCharacterListHeight();
-            characterListScroll?.schedule.Execute(UpdateCharacterListHeight);
-        }
-
-        private void UpdateCharacterListHeight()
-        {
-            if (characterListScroll == null || characterListContent == null || !selectOverlayVisible)
-                return;
-
-            float contentHeight = MeasureCharacterListContentHeight();
-            if (contentHeight <= 0f)
-                return;
-
-            float maxHeight = GetCharacterListMaxHeight();
-            float padded = contentHeight + CharacterScrollHeightPad;
-            bool needsScroll = padded > maxHeight + 0.5f;
-            float height = needsScroll ? maxHeight : padded;
-
-            if (Mathf.Abs(height - lastCharacterListHeight) < 0.5f
-                && Mathf.Abs(maxHeight - lastCharacterListMaxHeight) < 0.5f)
-                return;
-
-            lastCharacterListHeight = height;
-            lastCharacterListMaxHeight = maxHeight;
-
-            characterListScroll.style.height = height;
-            characterListScroll.style.maxHeight = maxHeight;
-            characterListScroll.verticalScrollerVisibility =
-                needsScroll ? ScrollerVisibility.Auto : ScrollerVisibility.Hidden;
-        }
-
-        private float GetCharacterListMaxHeight()
-        {
-            float hostHeight = 0f;
-            if (characterSelectOverlay != null && characterSelectOverlay.layout.height > 1f)
-                hostHeight = characterSelectOverlay.layout.height;
-            else if (root != null && root.layout.height > 1f)
-                hostHeight = root.layout.height;
-            else
-                hostHeight = Screen.height;
-
-            // Character panel USS max-height is 88% of the overlay.
-            float panelMax = hostHeight * 0.88f;
-            return Mathf.Max(120f, panelMax - CharacterPanelChromeReserve);
-        }
-
-        private float MeasureCharacterListContentHeight()
-        {
-            // Always prefer summing cards. After we assign ScrollView.height, contentContainer
-            // layout often matches the viewport — using that locks the list permanently short.
-            float sum = 0f;
-            var counted = 0;
-            foreach (var child in characterListContent.Children())
-            {
-                if (child == null || child.resolvedStyle.display == DisplayStyle.None)
-                    continue;
-
-                float childHeight = child.layout.height;
-                if (childHeight <= 1f)
-                    childHeight = child.resolvedStyle.minHeight.value > 0f
-                        ? child.resolvedStyle.minHeight.value
-                        : 0f;
-                if (childHeight <= 1f)
-                    childHeight = CharacterCardFallbackHeight;
-
-                sum += childHeight
-                    + child.resolvedStyle.marginTop
-                    + child.resolvedStyle.marginBottom;
-                counted++;
-            }
-
-            if (counted > 0)
-            {
-                var scrollStyle = characterListScroll.resolvedStyle;
-                sum += scrollStyle.paddingTop + scrollStyle.paddingBottom
-                    + scrollStyle.borderTopWidth + scrollStyle.borderBottomWidth;
-                return sum;
-            }
-
-            var container = characterListScroll?.contentContainer;
-            if (container != null && container.layout.height > 1f)
-                return container.layout.height;
-
-            return characterListContent.layout.height;
         }
 
         private static void UpdateScrollHeightFromContent(ScrollView scroll, VisualElement content, float maxHeight)

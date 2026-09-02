@@ -32,7 +32,6 @@
                     <ui:SliderInt label="Ambient" value="100" high-value="100" fill="true" name="SliderAudioAmbient" low-value="0" class="input-slider" />
                 </ui:VisualElement>
                 <ui:VisualElement name="TabContentKeybindings" class="settings-tab-content" style="display: none;">
-                    <ui:Label name="KeybindingsHint" text="Click a key, then press a new one. Right-click to clear. Esc to cancel." class="keybind-hint" />
                     <ui:VisualElement name="KeybindingsHeader" class="keybind-header">
                         <ui:Label text="Action" class="keybind-header__action" />
                         <ui:Label text="Key" class="keybind-header__slot" />

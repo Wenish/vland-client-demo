@@ -331,9 +331,10 @@
 
 .room-lobby__character-scroll {
     width: 100%;
-    flex-grow: 0;
-    flex-shrink: 0;
-    margin-bottom: 18px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    margin-bottom: 12px;
 }
 
 .room-lobby__name-field {
@@ -428,10 +429,11 @@
 
 .room-lobby__create-button {
     min-width: 120px;
+    margin-left: auto;
 }
 
 .room-lobby__create-open-button {
-    margin-right: auto;
+    margin-left: auto;
 }
 
 .room-lobby__character-card {
@@ -552,33 +554,9 @@
 }
 
 .room-lobby__character-panel {
-    flex-direction: column;
-    align-items: stretch;
-    width: 520px;
     max-width: 92%;
     max-height: 88%;
-    padding-top: 24px;
-    padding-right: 24px;
-    padding-bottom: 20px;
-    padding-left: 24px;
-    background-color: rgba(2, 19, 52, 0.97);
-    border-top-width: 2px;
-    border-right-width: 2px;
-    border-bottom-width: 2px;
-    border-left-width: 2px;
-    border-left-color: rgb(202, 159, 108);
-    border-right-color: rgb(202, 159, 108);
-    border-top-color: rgb(202, 159, 108);
-    border-bottom-color: rgb(202, 159, 108);
     cursor: var(--cursor-ui);
-}
-
-.room-lobby__character-panel--create {
-    width: 420px;
-}
-
-.room-lobby__character-panel--confirm {
-    width: 440px;
 }
 
 .room-lobby__confirm-message {
@@ -596,22 +574,21 @@
     padding: 0;
 }
 
-.room-lobby__confirm-footer {
-    justify-content: flex-end;
-}
-
 .room-lobby__delete-confirm-button {
-    margin-left: 8px;
+    margin-left: auto;
     color: rgb(255, 180, 180);
 }
 
 .room-lobby__character-overlay-footer {
     flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    margin-top: 4px;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    width: 100%;
+    margin-top: auto;
 }
 
 .room-lobby__character-back-button {
-    margin-left: 8px;
+    flex-shrink: 0;
+    margin-right: 8px;
 }
