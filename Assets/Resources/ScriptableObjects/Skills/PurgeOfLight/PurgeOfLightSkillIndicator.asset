@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PurgeOfLightSkillIndicator
   m_EditorClassIdentifier: Assembly-CSharp::SkillIndicatorData
   shape: 1
-  placement: 1
+  placement: 0
   aimFollowMode: 0
   directionSource: 0
   showRangeRing: 1
