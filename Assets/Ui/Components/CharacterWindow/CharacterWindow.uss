@@ -15,41 +15,9 @@
 }
 
 .character-panel {
-    position: absolute;
-    left: 96px;
-    top: 120px;
     width: 360px;
     height: 620px;
-    flex-direction: column;
-    align-items: stretch;
-    overflow: hidden;
-    padding-top: 18px;
-    padding-right: 18px;
-    padding-bottom: 18px;
-    padding-left: 18px;
     cursor: var(--cursor-ui);
-}
-
-.character-header-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    flex-shrink: 0;
-    cursor: var(--cursor-hover);
-}
-
-.character-header {
-    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
-    font-size: 32px;
-    color: rgb(254, 221, 183);
-    letter-spacing: 1px;
-    margin: 0;
-    padding: 0;
-}
-
-.character-close-button {
-    flex-shrink: 0;
 }
 
 .character-subheading {

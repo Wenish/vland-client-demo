@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ShadowInfection.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Vland.UI;
@@ -7,7 +8,7 @@ using Vland.UI;
 public sealed class LoadoutView
 {
     private readonly VisualElement overlay;
-    private readonly VisualElement panel;
+    private readonly FloatingWindow window;
     private readonly VisualElement openHost;
     private readonly VisualElement slotsBar;
     private readonly VisualElement filterBar;
@@ -19,7 +20,6 @@ public sealed class LoadoutView
     private readonly Label detailMeta;
     private readonly Label detailDescription;
     private readonly Label detailEmpty;
-    private readonly Button closeButton;
     private readonly Button openButton;
 
     private readonly Dictionary<LoadoutSlot, VisualElement> slotElements = new();
@@ -43,7 +43,7 @@ public sealed class LoadoutView
     public LoadoutView(VisualElement root)
     {
         overlay = root.Q<VisualElement>("loadoutOverlay");
-        panel = root.Q<VisualElement>("LoadoutPanel");
+        window = root.Q<FloatingWindow>("LoadoutPanel");
         openHost = root.Q<VisualElement>("loadoutOpenHost");
         slotsBar = root.Q<VisualElement>("slotsBar");
         filterBar = root.Q<VisualElement>("filterBar");
@@ -55,17 +55,16 @@ public sealed class LoadoutView
         detailMeta = root.Q<Label>("detailMeta");
         detailDescription = root.Q<Label>("detailDescription");
         detailEmpty = root.Q<Label>("detailEmpty");
-        closeButton = root.Q<OrnateButton>("closeButton") ?? root.Q<Button>("closeButton");
         openButton = root.Q<OrnateButton>("openButton") ?? root.Q<Button>("openButton");
 
-        if (overlay == null || panel == null)
+        if (overlay == null || window == null)
         {
             Debug.LogError("LoadoutView: overlay or panel was not found in the loadout UI.");
             return;
         }
 
         overlay.pickingMode = PickingMode.Position;
-        panel.pickingMode = PickingMode.Position;
+        window.pickingMode = PickingMode.Position;
         UiGameplayInputGuard.Apply(overlay);
         if (openHost != null)
             UiGameplayInputGuard.Apply(openHost);
@@ -78,12 +77,8 @@ public sealed class LoadoutView
             if (evt.target == overlay)
                 OverlayClicked?.Invoke();
         });
-        panel.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
-
-        if (closeButton != null)
-            closeButton.clicked += () => CloseClicked?.Invoke();
-        else
-            Debug.LogError("LoadoutView: closeButton was not found in the loadout UI.");
+        window.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+        window.CloseClicked += () => CloseClicked?.Invoke();
 
         if (openButton != null)
             openButton.clicked += () => OpenClicked?.Invoke();
@@ -104,6 +99,7 @@ public sealed class LoadoutView
     public void SetOpen(bool open)
     {
         isOpen = open;
+        window?.SetOpen(open);
         if (overlay != null)
             overlay.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
         if (openHost != null)

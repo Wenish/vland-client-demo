@@ -33,11 +33,9 @@ namespace ShadowInfection.UI.CharacterWindow
         };
 
         private readonly VisualElement host;
-        private readonly VisualElement panel;
-        private readonly VisualElement headerRow;
+        private readonly FloatingWindow window;
         private readonly Label subheading;
         private readonly Dictionary<ItemSlot, VisualElement> slotElements = new();
-        private readonly UiDraggablePanel draggable;
 
         private bool isOpen;
         private bool modalInputPushed;
@@ -49,33 +47,27 @@ namespace ShadowInfection.UI.CharacterWindow
         public event Action PositionChanged;
 
         public bool IsOpen => isOpen;
-        public UiDraggablePanel Draggable => draggable;
+        public UiDraggablePanel Draggable => window?.DragController;
 
         public CharacterView(VisualElement root)
         {
             host = root.Q<VisualElement>("characterHost");
-            panel = root.Q<VisualElement>("CharacterPanel");
-            headerRow = root.Q<VisualElement>("headerRow");
+            window = root.Q<FloatingWindow>("CharacterPanel");
             subheading = root.Q<Label>("subheading");
 
-            if (host == null || panel == null)
+            if (host == null || window == null)
             {
                 UnityEngine.Debug.LogError("CharacterView: host or panel was not found.");
                 return;
             }
 
             host.pickingMode = PickingMode.Ignore;
-            panel.pickingMode = PickingMode.Position;
-            UiGameplayInputGuard.Apply(panel);
-            UiPointerState.RegisterBlockingElement(panel);
-            panel.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
-
-            draggable = new UiDraggablePanel(host, panel, headerRow, ComputeDefaultPosition);
-            draggable.PositionChanged += () => PositionChanged?.Invoke();
-
-            var closeButton = root.Q<OrnateButton>("closeButton") ?? root.Q<Button>("closeButton");
-            if (closeButton != null)
-                closeButton.clicked += () => CloseClicked?.Invoke();
+            window.pickingMode = PickingMode.Position;
+            UiGameplayInputGuard.Apply(window);
+            UiPointerState.RegisterBlockingElement(window);
+            window.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+            window.CloseClicked += () => CloseClicked?.Invoke();
+            window.PositionChanged += () => PositionChanged?.Invoke();
 
             BuildSlots(root);
             SetSubheading(null);
@@ -85,13 +77,13 @@ namespace ShadowInfection.UI.CharacterWindow
         public void Dispose()
         {
             ReleaseModalInputBlock();
-            UiPointerState.UnregisterBlockingElement(panel);
+            UiPointerState.UnregisterBlockingElement(window);
         }
 
         public void SetOpen(bool open)
         {
             isOpen = open;
-            draggable?.SetOpen(open);
+            window?.SetOpen(open);
             if (host != null)
                 host.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (!open)
@@ -99,15 +91,15 @@ namespace ShadowInfection.UI.CharacterWindow
             RefreshModalInputBlock();
         }
 
-        public void ApplyPosition(float left, float top) => draggable?.ApplyPosition(left, top);
+        public void ApplyPosition(float left, float top) => window?.ApplyPosition(left, top);
 
-        public void ApplyDefaultPosition() => draggable?.ApplyDefaultPosition();
+        public void ApplyDefaultPosition() => window?.ApplyDefaultPosition();
 
-        public Vector2 GetPosition() => draggable != null ? draggable.GetPosition() : Vector2.zero;
+        public Vector2 GetPosition() => window != null ? window.GetPosition() : Vector2.zero;
 
-        public bool HasUsableLayout() => draggable != null && draggable.HasUsableLayout();
+        public bool HasUsableLayout() => window != null && window.HasUsableLayout();
 
-        public void ClampToViewport() => draggable?.ClampToViewport();
+        public void ClampToViewport() => window?.ClampToViewport();
 
         public void SetActiveSlot(ItemSlot? slot)
         {
@@ -190,16 +182,6 @@ namespace ShadowInfection.UI.CharacterWindow
                 element.RegisterCallback<PointerEnterEvent>(_ => UiCursorRefresh.PushInteractiveHover(), TrickleDown.TrickleDown);
                 element.RegisterCallback<PointerLeaveEvent>(_ => UiCursorRefresh.PopInteractiveHover(), TrickleDown.TrickleDown);
             }
-        }
-
-        private (float left, float top) ComputeDefaultPosition(bool _)
-        {
-            if (draggable == null || !draggable.TryGetLayoutSize(out var hostWidth, out var hostHeight, out var width, out var height))
-                return (96f, 120f);
-
-            var left = Mathf.Clamp(hostWidth * 0.18f, 72f, hostWidth * 0.35f);
-            var top = (hostHeight - height) * 0.5f;
-            return (left, top);
         }
 
         private void RefreshModalInputBlock()

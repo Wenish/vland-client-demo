@@ -321,6 +321,11 @@ public static class UiCursorRefresh
         if (element is VendorRow row)
             return row.Model != null && !row.Model.Locked && !row.Model.CanTransact;
 
+        if (element.ClassListContains("floating-window__header")
+            && element.parent != null
+            && element.parent.ClassListContains("floating-window--draggable"))
+            return true;
+
         return HasAnyClass(
             element,
             "room-lobby__ready-button",
@@ -333,11 +338,9 @@ public static class UiCursorRefresh
             "loadout-slot",
             "loadout-filter",
             "loadout-open-button",
-            "loadout-close-button",
             "vendor-tab",
-            "vendor-title",
-            "vendor-close-button",
             "vendor-page__btn",
+            "floating-window__close",
             "unity-base-field__input",
             "unity-text-element__selectable",
             "unity-base-slider__dragger",
@@ -369,8 +372,10 @@ public static class UiCursorRefresh
             "si-panel__label",
             "si-hud-panel",
             "loadout-panel",
-            "loadout-header",
-            "loadout-header-row",
+            "floating-window",
+            "floating-window__header",
+            "floating-window__title",
+            "floating-window__content",
             "loadout-subheading",
             "loadout-overlay",
             "loadout-body",
@@ -391,7 +396,7 @@ public static class UiCursorRefresh
             "vendor-panel",
             "vendor-tabs",
             "vendor-portrait",
-            "vendor-title__text",
+            "vendor-identity",
             "vendor-hint",
             "vendor-list",
             "vendor-row",
