@@ -172,6 +172,15 @@ namespace ShadowInfection.UI
             dragController?.SetOpen(open);
         }
 
+        public void SetCloseButtonVisible(bool visible)
+        {
+            if (closeButton == null)
+                return;
+
+            closeButton.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            closeButton.SetEnabled(visible);
+        }
+
         public void ApplyPosition(float left, float top) => dragController?.ApplyPosition(left, top);
 
         public void ApplyDefaultPosition() => dragController?.ApplyDefaultPosition();

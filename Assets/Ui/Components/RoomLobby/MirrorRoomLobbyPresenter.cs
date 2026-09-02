@@ -95,7 +95,6 @@ namespace ShadowInfection.UI.RoomLobby
             if (!session.TryGetState(out var state))
             {
                 view.SetVisible(false);
-                view.SetSubtitle("No room manager found");
                 view.SetReadyButtonEnabled(false);
                 view.SetChangeCharacterButtonEnabled(false);
                 CloseAllOverlays();
@@ -143,11 +142,6 @@ namespace ShadowInfection.UI.RoomLobby
 
             ApplyOverlayVisibility(state);
 
-            var subtitle = state.HasSelectedCharacter
-                ? $"{state.Players.Count} player(s) · {state.ReadyCount} ready"
-                : $"{state.Players.Count} player(s) · select a character to ready";
-            view.SetSubtitle(subtitle);
-
             var snapshotHash = ComputeSnapshotHash(state.Players);
             if (snapshotHash != cachedHash)
             {
@@ -174,10 +168,6 @@ namespace ShadowInfection.UI.RoomLobby
                 && !deleteConfirmOpen
                 && state.HasSelectedCharacter
                 && !characterOverlayForced);
-            view.SetCharacterOverlaySubtitle(
-                state.HasSelectedCharacter
-                    ? "Switch character, or create a new one."
-                    : "Choose who you will play as.");
         }
 
         private void CloseAllOverlays()
