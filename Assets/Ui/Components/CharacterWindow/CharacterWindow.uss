@@ -49,7 +49,6 @@
 }
 
 .character-close-button {
-    min-width: 148px;
     flex-shrink: 0;
 }
 

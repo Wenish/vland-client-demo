@@ -6,7 +6,9 @@
             <ui:VisualElement name="InventoryPanel" picking-mode="Position" class="si-panel inventory-panel">
                 <ui:VisualElement name="headerRow" class="inventory-header-row">
                     <ui:Label text="Inventory" name="header" class="inventory-header" />
-                    <OrnateButton name="closeButton" text="Close" class="si-button si-button--compact inventory-close-button" />
+                    <OrnateButton name="closeButton" tooltip="Close" class="si-button si-button--icon inventory-close-button">
+                        <ui:VisualElement picking-mode="Ignore" class="si-button__icon" />
+                    </OrnateButton>
                 </ui:VisualElement>
                 <ui:TextField name="searchField" placeholder-text="Search items..." class="inventory-search" />
                 <ui:VisualElement name="filterBar" class="inventory-filters" />

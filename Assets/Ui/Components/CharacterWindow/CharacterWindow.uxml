@@ -6,7 +6,9 @@
             <ui:VisualElement name="CharacterPanel" picking-mode="Position" class="si-panel character-panel">
                 <ui:VisualElement name="headerRow" class="character-header-row">
                     <ui:Label text="Character" name="header" class="character-header" />
-                    <OrnateButton name="closeButton" text="Close" class="si-button si-button--compact character-close-button" />
+                    <OrnateButton name="closeButton" tooltip="Close" class="si-button si-button--icon character-close-button">
+                        <ui:VisualElement picking-mode="Ignore" class="si-button__icon" />
+                    </OrnateButton>
                 </ui:VisualElement>
                 <ui:Label name="subheading" text="" class="character-subheading" />
                 <ui:VisualElement name="paperDoll" class="character-paper-doll">

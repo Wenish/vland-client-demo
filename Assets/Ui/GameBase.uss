@@ -53,7 +53,8 @@ Label,
 .vendor-tab,
 .vendor-title,
 .vendor-close-button,
-.vendor-page__btn {
+.vendor-page__btn,
+.si-button--icon {
     cursor: var(--cursor-hover);
 }
 

@@ -61,6 +61,29 @@
     margin-bottom: 4px;
 }
 
+.si-button--icon {
+    min-width: 28px;
+    min-height: 28px;
+    width: 28px;
+    height: 28px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    overflow: visible;
+}
+
+.si-button--icon > .unity-text-element {
+    display: none;
+    width: 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
 .si-button__icon {
     width: 22px;
     height: 22px;
@@ -82,14 +105,32 @@
     width: 22px;
     height: 22px;
     margin-right: 8px;
+    -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgb(253, 199, 135);
+    -unity-image-tint-color: rgb(253, 199, 135);
 }
 
 .si-button:hover .unity-button__image,
 .si-button:focus .unity-button__image {
     -unity-background-image-tint-color: rgb(255, 244, 231);
+    -unity-image-tint-color: rgb(255, 244, 231);
 }
 
 .si-button:active .unity-button__image {
     -unity-background-image-tint-color: rgb(101, 80, 54);
+    -unity-image-tint-color: rgb(101, 80, 54);
+}
+
+.si-button.si-button--icon > .unity-button__image {
+    display: none;
+}
+
+.si-button.si-button--icon > .si-button__icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 0;
+    margin-right: 0;
+    flex-shrink: 0;
+    background-image: var(--icon-close);
+    -unity-background-scale-mode: scale-to-fit;
 }
