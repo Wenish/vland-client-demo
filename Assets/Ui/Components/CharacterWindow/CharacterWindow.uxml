@@ -4,33 +4,29 @@
     <ui:VisualElement name="characterRoot" picking-mode="Ignore" class="character">
         <ui:VisualElement name="characterHost" picking-mode="Ignore" class="character-host" style="display: none;">
             <si:FloatingWindow name="CharacterPanel" picking-mode="Position" class="character-panel" title="Character" draggable="true" width="360" height="620" default-placement="CenterLeft">
-                <ui:Label name="subheading" text="" class="character-subheading" />
                 <ui:VisualElement name="paperDoll" class="character-paper-doll">
-                    <ui:VisualElement name="rowHead" class="character-slot-row character-slot-row--center">
-                        <ui:VisualElement name="slotHead" class="character-slot" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="rowUpper" class="character-slot-row">
-                        <ui:VisualElement name="slotShoulder" class="character-slot" />
+                    <ui:VisualElement name="equipmentRow" class="character-equipment">
+                        <ui:VisualElement name="leftColumn" class="character-slot-column">
+                            <ui:VisualElement name="slotHead" class="character-slot" />
+                            <ui:VisualElement name="slotShoulder" class="character-slot" />
+                            <ui:VisualElement name="slotCape" class="character-slot" />
+                            <ui:VisualElement name="slotChest" class="character-slot" />
+                        </ui:VisualElement>
                         <ui:VisualElement name="modelPlaceholder" class="character-model-placeholder">
                             <ui:Label text="Character preview" class="character-model-placeholder__label" />
                         </ui:VisualElement>
-                        <ui:VisualElement name="slotCape" class="character-slot" />
+                        <ui:VisualElement name="rightColumn" class="character-slot-column">
+                            <ui:VisualElement name="slotGloves" class="character-slot" />
+                            <ui:VisualElement name="slotPants" class="character-slot" />
+                            <ui:VisualElement name="slotFeet" class="character-slot" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement name="rowMiddle" class="character-slot-row">
-                        <ui:VisualElement name="slotGloves" class="character-slot" />
-                        <ui:VisualElement name="slotChest" class="character-slot character-slot--center" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="rowLower" class="character-slot-row character-slot-row--center">
-                        <ui:VisualElement name="slotPants" class="character-slot" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="rowFeet" class="character-slot-row character-slot-row--center">
-                        <ui:VisualElement name="slotFeet" class="character-slot" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="rowWeapons" class="character-slot-row">
+                    <ui:VisualElement name="weaponsRow" class="character-weapons">
                         <ui:VisualElement name="slotMainHand" class="character-slot" />
                         <ui:VisualElement name="slotOffHand" class="character-slot" />
                     </ui:VisualElement>
                 </ui:VisualElement>
+                <ui:Label name="subheading" text="" class="character-subheading" />
             </si:FloatingWindow>
         </ui:VisualElement>
     </ui:VisualElement>
