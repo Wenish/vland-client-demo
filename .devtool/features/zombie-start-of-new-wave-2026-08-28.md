@@ -6,11 +6,16 @@ assignee: null
 epic: null
 dueDate: null
 created: "2026-08-27T23:41:36.329Z"
-modified: "2026-08-27T23:41:36.329Z"
+modified: "2026-09-02T21:35:42.811Z"
 completedAt: null
 labels: []
 order: "Zu"
 ---
-# Zombie start of new wave
+# Review Player at end of clearing sucessfully wave
 
-On a new wave start The dead Players should first respawn and after 5 seconds then should start the zombie spawning so player have some time to regroup.
+Currently:\
+At the moment player get reviewed at the start of a new wave but then also directly spawn zombies.
+
+\
+Should:\
+Player should spawn directly at the end of a wave when all zombies are killed. so they get some extra time to prepare for the next wave.
