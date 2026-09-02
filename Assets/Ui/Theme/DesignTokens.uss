@@ -33,6 +33,7 @@
     --icon-host: url("project://database/Assets/Art/Ui/Icons/icon-host.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea6&type=3#icon-host");
     --icon-join: url("project://database/Assets/Art/Ui/Icons/icon-join.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea7&type=3#icon-join");
     --icon-back: url("project://database/Assets/Art/Ui/Icons/icon-back.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea8&type=3#icon-back");
+    --icon-close: url("project://database/Assets/Art/Ui/Icons/close.svg?fileID=2800000&guid=0f040c8f10574be41be0c71338ef5d76&type=3#close");
     --icon-shield: url("project://database/Assets/Art/Ui/Icons/icon-shield.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7ea9&type=3#icon-shield");
     --icon-health: url("project://database/Assets/Art/Ui/Icons/icon-health.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7eaa&type=3#icon-health");
     --icon-coins: url("project://database/Assets/Art/Ui/Icons/icon-coins.svg?fileID=2800000&guid=e1a1b2c3d4e5f60718293a4b5c6d7eab&type=3#icon-coins");

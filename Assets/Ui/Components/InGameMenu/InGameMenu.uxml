@@ -19,7 +19,9 @@
         <ui:VisualElement name="settings-window" picking-mode="Position" class="si-panel in-game-settings-window">
             <ui:VisualElement name="settings-window-title-bar" class="in-game-settings-window__title-bar">
                 <ui:Label text="SETTINGS" class="in-game-settings-window__title" />
-                <OrnateButton name="buttonCloseSettings" text="X" class="si-button si-button--compact in-game-settings-window__close" />
+                <OrnateButton name="buttonCloseSettings" tooltip="Close" class="si-button si-button--icon in-game-settings-window__close">
+                    <ui:VisualElement picking-mode="Ignore" class="si-button__icon" />
+                </OrnateButton>
             </ui:VisualElement>
             <ui:Instance template="SettingsPanel" name="SettingsPanelOverlay" />
         </ui:VisualElement>

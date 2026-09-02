@@ -10,7 +10,9 @@
                         <ui:Label name="vendorName" text="Trader" class="vendor-title__name" />
                         <ui:Label name="vendorSubtitle" text="" class="vendor-title__subtitle" />
                     </ui:VisualElement>
-                    <OrnateButton name="closeButton" text="X" class="si-button si-button--compact vendor-close-button" />
+                    <OrnateButton name="closeButton" tooltip="Close" class="si-button si-button--icon vendor-close-button">
+                        <ui:VisualElement picking-mode="Ignore" class="si-button__icon" />
+                    </OrnateButton>
                 </ui:VisualElement>
                 <ui:VisualElement name="tabStrip" class="vendor-tabs">
                     <ui:Button name="tabBuy" text="BUY" class="vendor-tab vendor-tab--active" />

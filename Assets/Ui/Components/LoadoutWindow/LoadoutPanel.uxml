@@ -7,7 +7,9 @@
             <ui:VisualElement name="LoadoutPanel" picking-mode="Position" class="si-panel loadout-panel">
                 <ui:VisualElement name="headerRow" class="loadout-header-row">
                     <ui:Label text="Loadout" name="header" class="loadout-header" />
-                    <OrnateButton name="closeButton" text="Close" class="si-button si-button--compact loadout-close-button" />
+                    <OrnateButton name="closeButton" tooltip="Close" class="si-button si-button--icon loadout-close-button">
+                        <ui:VisualElement picking-mode="Ignore" class="si-button__icon" />
+                    </OrnateButton>
                 </ui:VisualElement>
                 <ui:VisualElement name="slotsBar" class="loadout-slots" />
                 <ui:Label name="subheading" text="Choosing: Weapon" class="loadout-subheading" />
