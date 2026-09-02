@@ -1,15 +1,9 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns:si="ShadowInfection.UI" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/GameBase.uss?fileID=7433441132597879392&amp;guid=b63ce31c77e10af4eab5a904fdde83f4&amp;type=3#GameBase" />
     <Style src="project://database/Assets/Ui/Components/InventoryWindow/InventoryWindow.uss?fileID=7433441132597879392&amp;guid=6a1b2c3d4e5f708192a3b4c5d6e7f802&amp;type=3#InventoryWindow" />
     <ui:VisualElement name="inventoryRoot" picking-mode="Ignore" class="inventory">
         <ui:VisualElement name="inventoryHost" picking-mode="Ignore" class="inventory-host" style="display: none;">
-            <ui:VisualElement name="InventoryPanel" picking-mode="Position" class="si-panel inventory-panel">
-                <ui:VisualElement name="headerRow" class="inventory-header-row">
-                    <ui:Label text="Inventory" name="header" class="inventory-header" />
-                    <OrnateButton name="closeButton" tooltip="Close" class="si-button si-button--icon inventory-close-button">
-                        <ui:VisualElement picking-mode="Ignore" class="si-button__icon" />
-                    </OrnateButton>
-                </ui:VisualElement>
+            <si:FloatingWindow name="InventoryPanel" picking-mode="Position" class="inventory-panel" title="Inventory" draggable="true" width="720" height="620" default-placement="CenterRight">
                 <ui:TextField name="searchField" placeholder-text="Search items..." class="inventory-search" />
                 <ui:VisualElement name="filterBar" class="inventory-filters" />
                 <ui:VisualElement name="body" class="inventory-body">
@@ -35,7 +29,7 @@
                         <OrnateButton name="confirmNo" text="Cancel" class="si-button si-button--compact" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-            </ui:VisualElement>
+            </si:FloatingWindow>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

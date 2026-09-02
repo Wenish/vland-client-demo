@@ -1,6 +1,7 @@
 @import url("Theme/DesignTokens.uss");
 @import url("Theme/OrnateButton.uss");
 @import url("Theme/Panels.uss");
+@import url("Components/FloatingWindow/FloatingWindow.uss");
 
 :root {
     cursor: var(--cursor-ui);
@@ -38,7 +39,10 @@ Label,
 .loadout-panel,
 .vendor,
 .vendor-host,
-.vendor-panel {
+.vendor-panel,
+.floating-window,
+.floating-window__content,
+.floating-window__title {
     cursor: var(--cursor-ui);
 }
 
@@ -48,12 +52,11 @@ Label,
 .loadout-slot__icon,
 .loadout-filter,
 .loadout-open-button,
-.loadout-close-button,
 .vendor-row,
 .vendor-tab,
-.vendor-title,
-.vendor-close-button,
 .vendor-page__btn,
+.floating-window__close,
+.floating-window--draggable > .floating-window__header,
 .si-button--icon {
     cursor: var(--cursor-hover);
 }

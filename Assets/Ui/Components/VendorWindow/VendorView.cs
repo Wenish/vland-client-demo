@@ -14,14 +14,12 @@ namespace Vland.UI
         private const float TooltipWidth = 240f;
 
         private readonly VisualElement host;
-        private readonly VisualElement panel;
-        private readonly VisualElement titleBar;
+        private readonly FloatingWindow window;
         private readonly VisualElement portrait;
         private readonly VisualElement rowList;
         private readonly VisualElement pageControl;
         private readonly VisualElement tooltip;
         private readonly VisualElement tooltipSeparator;
-        private readonly Label vendorName;
         private readonly Label vendorSubtitle;
         private readonly Label hint;
         private readonly Label emptyLabel;
@@ -35,7 +33,6 @@ namespace Vland.UI
         private readonly Label tooltipAction;
         private readonly Label tooltipPrice;
         private readonly Label buybackLabel;
-        private readonly Button closeButton;
         private readonly Button tabBuy;
         private readonly Button tabSell;
         private readonly Button tabUpgrades;
@@ -46,7 +43,6 @@ namespace Vland.UI
         private VendorRowVm pendingTooltip;
         private int tooltipToken;
         private bool isOpen;
-        private UiDraggablePanel draggable;
 
         public event Action CloseClicked;
         public event Action PositionChanged;
@@ -57,19 +53,17 @@ namespace Vland.UI
         public event Action<string> RowTransactRequested;
 
         public bool IsOpen => isOpen;
-        public VisualElement Panel => panel;
+        public VisualElement Panel => window;
 
         public VendorView(VisualElement root)
         {
             host = root.Q<VisualElement>("vendorHost");
-            panel = root.Q<VisualElement>("VendorPanel");
-            titleBar = root.Q<VisualElement>("titleBar");
+            window = root.Q<FloatingWindow>("VendorPanel");
             portrait = root.Q<VisualElement>("vendorPortrait");
             rowList = root.Q<VisualElement>("rowList");
             pageControl = root.Q<VisualElement>("pageControl");
             tooltip = root.Q<VisualElement>("vendorTooltip");
             tooltipSeparator = root.Q<VisualElement>("tooltipSeparator");
-            vendorName = root.Q<Label>("vendorName");
             vendorSubtitle = root.Q<Label>("vendorSubtitle");
             hint = root.Q<Label>("hintLine");
             emptyLabel = root.Q<Label>("emptyLabel");
@@ -83,7 +77,6 @@ namespace Vland.UI
             tooltipAction = root.Q<Label>("tooltipAction");
             tooltipPrice = root.Q<Label>("tooltipPrice");
             buybackLabel = root.Q<Label>("buybackLabel");
-            closeButton = root.Q<OrnateButton>("closeButton") ?? root.Q<Button>("closeButton");
             tabBuy = root.Q<Button>("tabBuy");
             tabSell = root.Q<Button>("tabSell");
             tabUpgrades = root.Q<Button>("tabUpgrades");
@@ -91,23 +84,22 @@ namespace Vland.UI
             pageNext = root.Q<Button>("pageNext");
             buybackButton = root.Q<Button>("buybackButton");
 
-            if (host == null || panel == null)
+            if (host == null || window == null)
             {
                 Debug.LogError("VendorView: host or panel was not found.");
                 return;
             }
 
             host.pickingMode = PickingMode.Ignore;
-            panel.pickingMode = PickingMode.Position;
-            UiGameplayInputGuard.Apply(panel);
-            UiPointerState.RegisterBlockingElement(panel);
+            window.pickingMode = PickingMode.Position;
+            UiGameplayInputGuard.Apply(window);
+            UiPointerState.RegisterBlockingElement(window);
             if (tooltip != null)
                 UiPointerState.RegisterBlockingElement(tooltip);
 
-            panel.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
-
-            if (closeButton != null)
-                closeButton.clicked += () => CloseClicked?.Invoke();
+            window.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+            window.CloseClicked += () => CloseClicked?.Invoke();
+            window.PositionChanged += () => PositionChanged?.Invoke();
 
             WireTab(tabBuy, VendorTab.Buy);
             WireTab(tabSell, VendorTab.Sell);
@@ -124,9 +116,6 @@ namespace Vland.UI
 
             if (tooltip != null)
                 tooltip.pickingMode = PickingMode.Position;
-
-            draggable = new UiDraggablePanel(host, panel, titleBar);
-            draggable.PositionChanged += () => PositionChanged?.Invoke();
 
             if (rowList != null)
             {
@@ -146,14 +135,14 @@ namespace Vland.UI
 
         public void Dispose()
         {
-            UiPointerState.UnregisterBlockingElement(panel);
+            UiPointerState.UnregisterBlockingElement(window);
             UiPointerState.UnregisterBlockingElement(tooltip);
         }
 
         public void SetOpen(bool open)
         {
             isOpen = open;
-            draggable?.SetOpen(open);
+            window?.SetOpen(open);
             if (host != null)
                 host.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (!open)
@@ -162,8 +151,8 @@ namespace Vland.UI
 
         public void SetVendor(string name, string subtitle, Texture2D portraitTexture)
         {
-            if (vendorName != null)
-                vendorName.text = name ?? string.Empty;
+            if (window != null)
+                window.Title = name ?? string.Empty;
             if (vendorSubtitle != null)
             {
                 vendorSubtitle.text = subtitle ?? string.Empty;
@@ -271,15 +260,15 @@ namespace Vland.UI
             }
         }
 
-        public void ApplyPosition(float left, float top) => draggable?.ApplyPosition(left, top);
+        public void ApplyPosition(float left, float top) => window?.ApplyPosition(left, top);
 
-        public void ApplyDefaultPosition() => draggable?.ApplyDefaultPosition();
+        public void ApplyDefaultPosition() => window?.ApplyDefaultPosition();
 
-        public Vector2 GetPosition() => draggable != null ? draggable.GetPosition() : Vector2.zero;
+        public Vector2 GetPosition() => window != null ? window.GetPosition() : Vector2.zero;
 
-        public bool HasUsableLayout() => draggable != null && draggable.HasUsableLayout();
+        public bool HasUsableLayout() => window != null && window.HasUsableLayout();
 
-        public void ClampToViewport() => draggable?.ClampToViewport();
+        public void ClampToViewport() => window?.ClampToViewport();
 
         private void WireTab(Button button, VendorTab tab)
         {
@@ -314,7 +303,7 @@ namespace Vland.UI
         {
             pendingTooltip = model;
             var token = ++tooltipToken;
-            panel.schedule.Execute(() =>
+            window.schedule.Execute(() =>
             {
                 if (token != tooltipToken)
                     return;
@@ -325,7 +314,7 @@ namespace Vland.UI
 
         private void ShowPendingTooltip()
         {
-            if (pendingTooltip == null || tooltip == null || panel == null)
+            if (pendingTooltip == null || tooltip == null || window == null)
                 return;
 
             var model = pendingTooltip;
@@ -356,12 +345,12 @@ namespace Vland.UI
 
         private void PositionTooltip()
         {
-            if (tooltip == null || panel == null || host == null)
+            if (tooltip == null || window == null || host == null)
                 return;
 
-            var panelLeft = panel.resolvedStyle.left;
-            var panelTop = panel.resolvedStyle.top;
-            var panelWidth = panel.resolvedStyle.width;
+            var panelLeft = window.resolvedStyle.left;
+            var panelTop = window.resolvedStyle.top;
+            var panelWidth = window.resolvedStyle.width;
             var tooltipWidth = tooltip.resolvedStyle.width > 0f ? tooltip.resolvedStyle.width : TooltipWidth;
             var tooltipHeight = tooltip.resolvedStyle.height;
             var hostWidth = host.resolvedStyle.width;

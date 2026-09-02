@@ -24,36 +24,7 @@
     max-height: 800px;
     min-width: 640px;
     min-height: 480px;
-    flex-direction: column;
-    align-items: stretch;
-    overflow: hidden;
-    padding-top: 18px;
-    padding-right: 18px;
-    padding-bottom: 18px;
-    padding-left: 18px;
     cursor: var(--cursor-ui);
-}
-
-.loadout-header-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    flex-shrink: 0;
-}
-
-.loadout-header {
-    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
-    font-size: 32px;
-    color: rgb(254, 221, 183);
-    letter-spacing: 1px;
-    margin: 0;
-    padding: 0;
-    cursor: var(--cursor-ui);
-}
-
-.loadout-close-button {
-    flex-shrink: 0;
 }
 
 .loadout-subheading {

@@ -1,0 +1,75 @@
+.si-panel.floating-window {
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    cursor: var(--cursor-ui);
+}
+
+.floating-window--draggable {
+    position: absolute;
+}
+
+.floating-window__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: 32px;
+    min-height: 32px;
+    padding-left: 10px;
+    padding-right: 6px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(202, 159, 108);
+    background-color: rgba(0, 4, 10, 0.35);
+    cursor: var(--cursor-ui);
+}
+
+.floating-window--draggable > .floating-window__header {
+    cursor: var(--cursor-hover);
+}
+
+.floating-window__title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    -unity-font-definition: url("project://database/Assets/Fonts/Cinzel_Decorative/CinzelDecorative-Bold.ttf?fileID=12800000&guid=d04ff877a79f3a3428c55a0b7e81074d&type=3#CinzelDecorative-Bold");
+    font-size: 14px;
+    color: rgb(254, 221, 183);
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -unity-text-align: middle-left;
+    cursor: var(--cursor-ui);
+}
+
+.floating-window--draggable > .floating-window__header > .floating-window__title {
+    cursor: var(--cursor-hover);
+}
+
+.floating-window__close {
+    flex-shrink: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 6px;
+}
+
+.floating-window__content {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 10px;
+    padding-right: 12px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+}

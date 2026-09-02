@@ -25,8 +25,7 @@ namespace ShadowInfection.UI.InventoryWindow
         };
 
         private readonly VisualElement host;
-        private readonly VisualElement panel;
-        private readonly VisualElement headerRow;
+        private readonly FloatingWindow window;
         private readonly VisualElement filterBar;
         private readonly VisualElement itemList;
         private readonly VisualElement detailIcon;
@@ -38,14 +37,12 @@ namespace ShadowInfection.UI.InventoryWindow
         private readonly Label detailNotice;
         private readonly Label detailEmpty;
         private readonly Label confirmMessage;
-        private readonly Button closeButton;
         private readonly Button equipButton;
         private readonly Button destroyButton;
         private readonly Button confirmYes;
         private readonly Button confirmNo;
         private readonly TextField searchField;
         private readonly Dictionary<InventoryFilter, Button> filterButtons = new();
-        private readonly UiDraggablePanel draggable;
 
         private bool isOpen;
         private bool searchInputActive;
@@ -64,13 +61,12 @@ namespace ShadowInfection.UI.InventoryWindow
 
         public bool IsOpen => isOpen;
         public bool IsSearchFocused => searchInputActive;
-        public UiDraggablePanel Draggable => draggable;
+        public UiDraggablePanel Draggable => window?.DragController;
 
         public InventoryView(VisualElement root)
         {
             host = root.Q<VisualElement>("inventoryHost");
-            panel = root.Q<VisualElement>("InventoryPanel");
-            headerRow = root.Q<VisualElement>("headerRow");
+            window = root.Q<FloatingWindow>("InventoryPanel");
             filterBar = root.Q<VisualElement>("filterBar");
             itemList = root.Q<VisualElement>("itemList");
             detailIcon = root.Q<VisualElement>("detailIcon");
@@ -82,30 +78,25 @@ namespace ShadowInfection.UI.InventoryWindow
             detailNotice = root.Q<Label>("detailNotice");
             detailEmpty = root.Q<Label>("detailEmpty");
             confirmMessage = root.Q<Label>("confirmMessage");
-            closeButton = root.Q<OrnateButton>("closeButton") ?? root.Q<Button>("closeButton");
             equipButton = root.Q<OrnateButton>("equipButton") ?? root.Q<Button>("equipButton");
             destroyButton = root.Q<OrnateButton>("destroyButton") ?? root.Q<Button>("destroyButton");
             confirmYes = root.Q<OrnateButton>("confirmYes") ?? root.Q<Button>("confirmYes");
             confirmNo = root.Q<OrnateButton>("confirmNo") ?? root.Q<Button>("confirmNo");
             searchField = root.Q<TextField>("searchField");
 
-            if (host == null || panel == null)
+            if (host == null || window == null)
             {
                 UnityEngine.Debug.LogError("InventoryView: host or panel was not found in the inventory UI.");
                 return;
             }
 
             host.pickingMode = PickingMode.Ignore;
-            panel.pickingMode = PickingMode.Position;
-            UiGameplayInputGuard.Apply(panel);
-            UiPointerState.RegisterBlockingElement(panel);
-            panel.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
-
-            draggable = new UiDraggablePanel(host, panel, headerRow, ComputeDefaultPosition);
-            draggable.PositionChanged += () => PositionChanged?.Invoke();
-
-            if (closeButton != null)
-                closeButton.clicked += () => CloseClicked?.Invoke();
+            window.pickingMode = PickingMode.Position;
+            UiGameplayInputGuard.Apply(window);
+            UiPointerState.RegisterBlockingElement(window);
+            window.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+            window.CloseClicked += () => CloseClicked?.Invoke();
+            window.PositionChanged += () => PositionChanged?.Invoke();
             if (equipButton != null)
                 equipButton.clicked += () => EquipClicked?.Invoke();
             if (destroyButton != null)
@@ -136,13 +127,13 @@ namespace ShadowInfection.UI.InventoryWindow
         {
             ReleaseModalInputBlock();
             ReleaseSearchInput();
-            UiPointerState.UnregisterBlockingElement(panel);
+            UiPointerState.UnregisterBlockingElement(window);
         }
 
         public void SetOpen(bool open)
         {
             isOpen = open;
-            draggable?.SetOpen(open);
+            window?.SetOpen(open);
             if (host != null)
                 host.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (open)
@@ -157,15 +148,15 @@ namespace ShadowInfection.UI.InventoryWindow
             RefreshModalInputBlock();
         }
 
-        public void ApplyPosition(float left, float top) => draggable?.ApplyPosition(left, top);
+        public void ApplyPosition(float left, float top) => window?.ApplyPosition(left, top);
 
-        public void ApplyDefaultPosition() => draggable?.ApplyDefaultPosition();
+        public void ApplyDefaultPosition() => window?.ApplyDefaultPosition();
 
-        public Vector2 GetPosition() => draggable != null ? draggable.GetPosition() : Vector2.zero;
+        public Vector2 GetPosition() => window != null ? window.GetPosition() : Vector2.zero;
 
-        public bool HasUsableLayout() => draggable != null && draggable.HasUsableLayout();
+        public bool HasUsableLayout() => window != null && window.HasUsableLayout();
 
-        public void ClampToViewport() => draggable?.ClampToViewport();
+        public void ClampToViewport() => window?.ClampToViewport();
 
         public void SetFilter(InventoryFilter filter)
         {
@@ -282,16 +273,6 @@ namespace ShadowInfection.UI.InventoryWindow
                 confirmHost.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
             if (confirmMessage != null && message != null)
                 confirmMessage.text = message;
-        }
-
-        private (float left, float top) ComputeDefaultPosition(bool _)
-        {
-            if (draggable == null || !draggable.TryGetLayoutSize(out var hostWidth, out var hostHeight, out var width, out var height))
-                return (96f, 120f);
-
-            var left = Mathf.Clamp(hostWidth * 0.52f, 360f, hostWidth - width - 24f);
-            var top = (hostHeight - height) * 0.5f;
-            return (left, top);
         }
 
         private void BuildFilters()
