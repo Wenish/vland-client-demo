@@ -38,7 +38,6 @@ namespace ShadowInfection.UI.CharacterWindow
         private readonly Dictionary<ItemSlot, VisualElement> slotElements = new();
 
         private bool isOpen;
-        private bool modalInputPushed;
         private ItemSlot? activeSlot;
 
         public event Action CloseClicked;
@@ -76,7 +75,6 @@ namespace ShadowInfection.UI.CharacterWindow
 
         public void Dispose()
         {
-            ReleaseModalInputBlock();
             UiPointerState.UnregisterBlockingElement(window);
         }
 
@@ -88,7 +86,6 @@ namespace ShadowInfection.UI.CharacterWindow
                 host.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (!open)
                 SetSubheading(null);
-            RefreshModalInputBlock();
         }
 
         public void ApplyPosition(float left, float top) => window?.ApplyPosition(left, top);
@@ -182,32 +179,5 @@ namespace ShadowInfection.UI.CharacterWindow
             }
         }
 
-        private void RefreshModalInputBlock()
-        {
-            var shouldBlock = isOpen;
-            if (shouldBlock == modalInputPushed)
-                return;
-
-            if (shouldBlock)
-            {
-                PlayerInput.CancelLocalGameplayInput();
-                UiModalInputBlock.Push();
-            }
-            else
-            {
-                UiModalInputBlock.Pop();
-            }
-
-            modalInputPushed = shouldBlock;
-        }
-
-        private void ReleaseModalInputBlock()
-        {
-            if (!modalInputPushed)
-                return;
-
-            UiModalInputBlock.Pop();
-            modalInputPushed = false;
-        }
     }
 }

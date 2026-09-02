@@ -1,8 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Suppresses world/camera gameplay input while a modal UI overlay is open
-/// (character select/create, etc.). Independent of pointer-hover blocking.
+/// Suppresses world/camera gameplay input while a true modal UI overlay is open
+/// (in-game menu, room lobby, character select/create, etc.). Floating panels
+/// (character, inventory, vendor) use pointer-hover blocking instead.
 /// </summary>
 public static class UiModalInputBlock
 {

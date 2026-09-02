@@ -46,7 +46,6 @@ namespace ShadowInfection.UI.InventoryWindow
 
         private bool isOpen;
         private bool searchInputActive;
-        private bool modalInputPushed;
 
         public event Action CloseClicked;
         public event Action<string> RowClicked;
@@ -125,7 +124,6 @@ namespace ShadowInfection.UI.InventoryWindow
 
         public void Dispose()
         {
-            ReleaseModalInputBlock();
             ReleaseSearchInput();
             UiPointerState.UnregisterBlockingElement(window);
         }
@@ -144,8 +142,6 @@ namespace ShadowInfection.UI.InventoryWindow
                 ReleaseSearchInput();
                 SetConfirmVisible(false);
             }
-
-            RefreshModalInputBlock();
         }
 
         public void ApplyPosition(float left, float top) => window?.ApplyPosition(left, top);
@@ -343,34 +339,6 @@ namespace ShadowInfection.UI.InventoryWindow
                 searchField.focusable = false;
                 searchField.Blur();
             });
-        }
-
-        private void RefreshModalInputBlock()
-        {
-            var shouldBlock = isOpen;
-            if (shouldBlock == modalInputPushed)
-                return;
-
-            if (shouldBlock)
-            {
-                PlayerInput.CancelLocalGameplayInput();
-                UiModalInputBlock.Push();
-            }
-            else
-            {
-                UiModalInputBlock.Pop();
-            }
-
-            modalInputPushed = shouldBlock;
-        }
-
-        private void ReleaseModalInputBlock()
-        {
-            if (!modalInputPushed)
-                return;
-
-            UiModalInputBlock.Pop();
-            modalInputPushed = false;
         }
 
         private void CaptureSearchInput()
