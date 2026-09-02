@@ -24,25 +24,35 @@
     -unity-font-definition: url("project://database/Assets/Fonts/Merriweather_Sans/MerriweatherSans-Regular.ttf?fileID=12800000&guid=c1a1b2c3d4e5f60718293a4b5c6d7e80&type=3#MerriweatherSans-Regular");
     font-size: 14px;
     color: rgb(254, 221, 183);
-    margin-bottom: 10px;
+    flex-shrink: 0;
+    margin-top: 10px;
     min-height: 18px;
+    height: 18px;
+    -unity-text-align: middle-center;
 }
 
 .character-paper-doll {
     flex-grow: 1;
     flex-direction: column;
-    justify-content: center;
+    min-height: 0;
 }
 
-.character-slot-row {
+.character-equipment {
+    flex-grow: 1;
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    align-items: stretch;
+    min-height: 0;
 }
 
-.character-slot-row--center {
-    justify-content: center;
+.character-slot-column {
+    width: 64px;
+    flex-shrink: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.character-slot-column .character-slot {
+    margin-bottom: 16px;
 }
 
 .character-slot {
@@ -61,11 +71,6 @@
     border-top-color: rgba(202, 159, 108, 0.45);
     border-bottom-color: rgba(202, 159, 108, 0.45);
     cursor: var(--cursor-hover);
-}
-
-.character-slot--center {
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .character-slot--active {
@@ -95,9 +100,13 @@
 }
 
 .character-model-placeholder {
-    width: 120px;
-    height: 160px;
-    flex-shrink: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    align-self: stretch;
+    min-width: 0;
+    min-height: 0;
+    margin-left: 12px;
+    margin-right: 12px;
     align-items: center;
     justify-content: center;
     background-color: rgba(255, 244, 231, 0.04);
@@ -121,6 +130,14 @@
     padding-right: 8px;
 }
 
-.character-row-weapons {
-    justify-content: space-around;
+.character-weapons {
+    flex-direction: row;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 12px;
+}
+
+.character-weapons .character-slot {
+    margin-left: 8px;
+    margin-right: 8px;
 }

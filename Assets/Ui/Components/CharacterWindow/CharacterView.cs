@@ -113,8 +113,6 @@ namespace ShadowInfection.UI.CharacterWindow
             if (subheading == null)
                 return;
 
-            var hasText = !string.IsNullOrWhiteSpace(text);
-            subheading.style.display = hasText ? DisplayStyle.Flex : DisplayStyle.None;
             subheading.text = text ?? string.Empty;
         }
 
