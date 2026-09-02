@@ -601,7 +601,6 @@
     overflow: hidden;
     align-items: center;
     justify-content: center;
-    picking-mode: Position;
 }
 
 .si-target-frame .buff-icon--debuff {

@@ -107,18 +107,15 @@
     margin-right: 8px;
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgb(253, 199, 135);
-    -unity-image-tint-color: rgb(253, 199, 135);
 }
 
 .si-button:hover .unity-button__image,
 .si-button:focus .unity-button__image {
     -unity-background-image-tint-color: rgb(255, 244, 231);
-    -unity-image-tint-color: rgb(255, 244, 231);
 }
 
 .si-button:active .unity-button__image {
     -unity-background-image-tint-color: rgb(101, 80, 54);
-    -unity-image-tint-color: rgb(101, 80, 54);
 }
 
 .si-button.si-button--icon > .unity-button__image {
