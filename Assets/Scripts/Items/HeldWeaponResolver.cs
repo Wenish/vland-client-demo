@@ -24,13 +24,21 @@ namespace ShadowInfection.Items
             return definition.weaponData;
         }
 
-        public static WeaponData ResolveOffHandAttackWeapon(ItemDatabase items, string itemId)
+        public static WeaponData ResolveOffHandAttackWeapon(
+            ItemDatabase items,
+            WeaponDatabase weapons,
+            string itemId,
+            WeaponData mainWeapon)
         {
-            var weapon = ResolveItemWeapon(items, itemId);
-            if (weapon == null || !ItemRules.IsDualWieldWeapon(weapon.weaponType))
+            var fromItem = ResolveItemWeapon(items, itemId);
+            if (fromItem != null)
+                return ItemRules.IsDualWieldWeapon(fromItem.weaponType) ? fromItem : null;
+
+            if (mainWeapon == null || mainWeapon.weaponType != WeaponType.Unarmed)
                 return null;
 
-            return weapon;
+            var fists = weapons != null ? weapons.GetWeaponByName(FistsWeaponName) : null;
+            return fists != null ? fists : mainWeapon;
         }
     }
 }

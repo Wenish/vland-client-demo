@@ -1,3 +1,4 @@
+using ShadowInfection.Items;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -130,7 +131,11 @@ public class UnitAnimationController : MonoBehaviour
         if (unitController.modelData != null) {
             var weapon = unitController.currentWeapon;
             if (weapon != null) {
-                var animSet = unitController.modelData.GetAnimationSetForWeapon(weapon.weaponType);
+                var offHand = unitController.offHandItemWeapon;
+                var stance = ItemRules.ResolveAnimationWeaponType(
+                    weapon.weaponType,
+                    offHand != null ? offHand.weaponType : (WeaponType?)null);
+                var animSet = unitController.modelData.GetAnimationSetForWeapon(stance);
                 if (animSet != null && animSet.animatorController != null) {
                     animator.runtimeAnimatorController = animSet.animatorController;
                 }

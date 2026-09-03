@@ -27,7 +27,7 @@ public class WeaponController : NetworkBehaviour
     private bool isAttacking;
 
     public bool HasOffHandAttack =>
-        offHandWeaponData != null && ItemRules.IsDualWieldWeapon(offHandWeaponData.weaponType);
+        offHandWeaponData != null && ItemRules.CanAttackWithOffHand(offHandWeaponData.weaponType);
 
     public bool CanStartMainAttack =>
         CanStartHand(weaponData, lastMainAttackTime, mainMagazineRemaining, mainReloadEndTime);
@@ -221,7 +221,9 @@ public class WeaponController : NetworkBehaviour
             return;
         }
 
-        var damageMultiplier = useOffHand ? ItemRules.OffHandDamageMultiplier : 1f;
+        var damageMultiplier = useOffHand
+            ? ItemRules.GetOffHandDamageMultiplier(swinging.weaponType)
+            : 1f;
         if (swinging is WeaponRangedData ranged)
             ranged.PerformAttack(attacker, GameServices.Projectiles, damageMultiplier);
         else
