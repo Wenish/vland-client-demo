@@ -37,9 +37,32 @@ namespace ShadowInfection.Items
             }
         }
 
+        public static bool IsTwoHanded(WeaponType weapon)
+        {
+            return weapon == WeaponType.TwoHandSword;
+        }
+
+        public static WeaponType ResolveAnimationWeaponType(WeaponType? mainHandWeapon, WeaponType? offHandWeapon)
+        {
+            if (mainHandWeapon == WeaponType.Sword && offHandWeapon == WeaponType.Shield)
+                return WeaponType.SwordAndShield;
+
+            return mainHandWeapon ?? WeaponType.Unarmed;
+        }
+
         public static bool IsDualWieldWeapon(WeaponType weapon)
         {
             return IsOneHandMelee(weapon) || weapon == WeaponType.Pistols;
+        }
+
+        public static bool CanAttackWithOffHand(WeaponType weapon)
+        {
+            return IsDualWieldWeapon(weapon) || weapon == WeaponType.Unarmed;
+        }
+
+        public static float GetOffHandDamageMultiplier(WeaponType weapon)
+        {
+            return weapon == WeaponType.Unarmed ? 1f : OffHandDamageMultiplier;
         }
 
         public static bool IsPairedTwoModelWeapon(WeaponType weapon)
@@ -113,6 +136,12 @@ namespace ShadowInfection.Items
                 return false;
 
             var weaponType = item.weaponData.weaponType;
+
+            if (IsTwoHanded(weaponType))
+                return targetSlot == ItemSlot.MainHand;
+
+            if (mainHandWeapon.HasValue && IsTwoHanded(mainHandWeapon.Value) && targetSlot == ItemSlot.OffHand)
+                return false;
 
             if (IsShieldWeapon(weaponType))
             {
@@ -214,6 +243,7 @@ namespace ShadowInfection.Items
                     return true;
                 case WeaponType.Sword:
                 case WeaponType.SwordAndShield:
+                case WeaponType.TwoHandSword:
                     weight = ArmorWeight.Plate;
                     return true;
                 default:

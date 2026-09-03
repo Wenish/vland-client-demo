@@ -59,4 +59,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8d5f2b3c4e6a7081a2b3c4d5e6f70236, type: 2}
   - {fileID: 11400000, guid: 8b2d0f5c3e9a47b1c4d6e8f0a2b3c4d5, type: 2}
   - {fileID: 11400000, guid: 9c3e1a6d4f0b48c2d5e7f9a1b3c4d5e6, type: 2}
+  - {fileID: 11400000, guid: ab7d24f5eb09726dd4f318e0a2c5d7f9, type: 2}
   defaultIcon: {fileID: 2800000, guid: cb7ac6100ecc3254c9605d71546b9259, type: 3}

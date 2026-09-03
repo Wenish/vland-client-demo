@@ -188,7 +188,8 @@ public class UnitController : NetworkBehaviour
 
         currentWeapon = HeldWeaponResolver.ResolveMain(items, weapons, mainHandItemId);
         offHandItemWeapon = HeldWeaponResolver.ResolveItemWeapon(items, offHandItemId);
-        currentOffHandWeapon = HeldWeaponResolver.ResolveOffHandAttackWeapon(items, offHandItemId);
+        currentOffHandWeapon = HeldWeaponResolver.ResolveOffHandAttackWeapon(
+            items, weapons, offHandItemId, currentWeapon);
 
         if (weaponController != null)
             weaponController.SetHeldWeapons(currentWeapon, currentOffHandWeapon);

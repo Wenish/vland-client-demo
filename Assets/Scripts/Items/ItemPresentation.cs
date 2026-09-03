@@ -21,7 +21,11 @@ namespace ShadowInfection.Items
                     return "Material";
                 default:
                     if (ItemRules.IsWeaponSlot(item.slot))
+                    {
+                        if (item.weaponData != null && ItemRules.IsTwoHanded(item.weaponData.weaponType))
+                            return "Two-Hand Weapon";
                         return item.slot == ItemSlot.OffHand ? "Off Hand" : "Weapon";
+                    }
                     if (ItemRules.IsArmorSlot(item.slot))
                     {
                         if (item.slot == ItemSlot.Cape)
@@ -174,6 +178,11 @@ namespace ShadowInfection.Items
 
             if (ItemRules.CanEquipToSlot(piece, targetSlot, mainHandWeapon, offHandWeapon))
                 return null;
+
+            if (targetSlot == ItemSlot.OffHand
+                && ((piece.weaponData != null && ItemRules.IsTwoHanded(piece.weaponData.weaponType))
+                    || (mainHandWeapon.HasValue && ItemRules.IsTwoHanded(mainHandWeapon.Value))))
+                return "Two-hand weapons occupy both hands.";
 
             if (piece.weaponData != null && ItemRules.IsShieldWeapon(piece.weaponData.weaponType))
                 return "Requires a one-hand sword in main hand.";

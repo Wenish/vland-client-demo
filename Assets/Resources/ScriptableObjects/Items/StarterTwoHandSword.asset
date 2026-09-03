@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
+  m_Name: StarterTwoHandSword
+  m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
+  itemId: starter_two_hand_sword
+  displayName: Starter Two-Hand Sword
+  description: A heavy two-hand sword. Occupies both hands.
+  icon: {fileID: 2800000, guid: ce6168d7f503649bbb8d9d02fb0108a5, type: 3}
+  kind: 0
+  slot: 8
+  rarity: 0
+  armorWeight: 2
+  weaponData: {fileID: 11400000, guid: 9a6c13e4daf8615cc3e207d9f1b4c6e8, type: 2}
+  statModifiers:
+  - Type: 6
+    Value: 5
+    ModifierType: 0
+  legendaryBuff: {fileID: 0}
+  keyword: 
+  keywordBonus: []
+  activeSkill: {fileID: 0}
