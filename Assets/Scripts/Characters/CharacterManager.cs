@@ -122,6 +122,7 @@ public class CharacterManager : MonoBehaviour
         var character = CharacterSaveData.CreateNew(sanitized, gender);
         CharacterInventory.EnsureLists(character);
         TryGrantItemOn(character, ItemIds.StarterDagger, persist: false);
+        TryAutoEquipMainHand(character);
         _roster.Characters.Add(character);
         SaveRoster();
         OnRosterChanged?.Invoke();
@@ -287,6 +288,7 @@ public class CharacterManager : MonoBehaviour
         {
             CharacterInventory.EnsureLists(_roster.Characters[i]);
             MigrateStarterSwordAndShield(_roster.Characters[i]);
+            TryAutoEquipMainHand(_roster.Characters[i]);
         }
 
         MigrateLegacyLoadoutIfNeeded();
@@ -369,6 +371,15 @@ public class CharacterManager : MonoBehaviour
         {
             Debug.LogWarning($"[CharacterManager] Legacy loadout migration failed: {e.Message}");
         }
+    }
+
+    private void TryAutoEquipMainHand(CharacterSaveData character)
+    {
+        var items = GameServices.Databases != null ? GameServices.Databases.Items : null;
+        if (items == null)
+            return;
+
+        CharacterInventoryOperations.TryAutoEquipFirstMainHandWeapon(character, new DatabaseItemCatalog(items));
     }
 
     private void SaveRoster()

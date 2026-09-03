@@ -1,3 +1,4 @@
+using ShadowInfection.Items;
 using UnityEngine;
 
 public class UnitModelWeaponEquipper : MonoBehaviour
@@ -21,7 +22,7 @@ public class UnitModelWeaponEquipper : MonoBehaviour
             Debug.LogWarning("UnitModelWeaponEquipper must be a child of a GameObject with a UnitController component.");
             return;
         }
-        EquipWeapon(unitController.currentWeapon);
+        RefreshVisuals();
         unitController.OnWeaponChange += HandleOnWeaponChange;
     }
 
@@ -33,35 +34,64 @@ public class UnitModelWeaponEquipper : MonoBehaviour
         }
     }
 
-    private void HandleOnWeaponChange(UnitController unitController)
+    private void HandleOnWeaponChange(UnitController _)
     {
-        EquipWeapon(unitController.currentWeapon);
+        RefreshVisuals();
     }
 
-    public void EquipWeapon(WeaponData weaponData)
+    public void RefreshVisuals()
     {
         if (currentWeaponRightHandInstance != null)
         {
             Destroy(currentWeaponRightHandInstance);
+            currentWeaponRightHandInstance = null;
         }
         if (currentWeaponLeftHandInstance != null)
         {
             Destroy(currentWeaponLeftHandInstance);
+            currentWeaponLeftHandInstance = null;
         }
 
-        if (weaponData != null && weaponData.weaponModelRightHand != null)
+        var main = unitController != null ? unitController.currentWeapon : null;
+        var off = unitController != null ? unitController.offHandItemWeapon : null;
+
+        var rightModel = main != null ? main.weaponModelRightHand : null;
+        if (rightModel != null && rightHandTransform != null)
         {
-            currentWeaponRightHandInstance = Instantiate(weaponData.weaponModelRightHand, rightHandTransform);
+            currentWeaponRightHandInstance = Instantiate(rightModel, rightHandTransform);
             currentWeaponRightHandInstance.transform.localPosition = Vector3.zero + positionOffset;
             currentWeaponRightHandInstance.transform.localRotation = Quaternion.identity * Quaternion.Euler(rotationOffset);
         }
-        if (weaponData != null && weaponData.weaponModelLeftHand != null && leftHandTransform != null)
+
+        var leftModel = ResolveLeftHandModel(main, off);
+        if (leftModel != null && leftHandTransform != null)
         {
-            currentWeaponLeftHandInstance = Instantiate(weaponData.weaponModelLeftHand, leftHandTransform);
+            currentWeaponLeftHandInstance = Instantiate(leftModel, leftHandTransform);
             currentWeaponLeftHandInstance.transform.localPosition = Vector3.zero + positionOffset;
             var leftHandRotationOffset = rotationOffset;
             leftHandRotationOffset.y += 180;
             currentWeaponLeftHandInstance.transform.localRotation = Quaternion.identity * Quaternion.Euler(leftHandRotationOffset);
         }
+    }
+
+    private static GameObject ResolveLeftHandModel(WeaponData main, WeaponData off)
+    {
+        if (off != null)
+        {
+            if (off.weaponModelLeftHand != null)
+                return off.weaponModelLeftHand;
+            return off.weaponModelRightHand;
+        }
+
+        if (main == null)
+            return null;
+
+        if (ItemRules.IsPairedTwoModelWeapon(main.weaponType))
+            return main.weaponModelLeftHand;
+
+        if (!ItemRules.IsDualWieldWeapon(main.weaponType))
+            return main.weaponModelLeftHand;
+
+        return null;
     }
 }

@@ -6,7 +6,7 @@
         <ui:VisualElement name="loadoutOverlay" picking-mode="Position" class="loadout-overlay" style="display: none;">
             <si:FloatingWindow name="LoadoutPanel" picking-mode="Position" class="loadout-panel" title="Loadout" draggable="false">
                 <ui:VisualElement name="slotsBar" class="loadout-slots" />
-                <ui:Label name="subheading" text="Choosing: Weapon" class="loadout-subheading" />
+                <ui:Label name="subheading" text="Choosing: Passive" class="loadout-subheading" />
                 <ui:VisualElement name="filterBar" class="loadout-filters" />
                 <ui:VisualElement name="body" class="loadout-body">
                     <ui:ScrollView name="itemScroll" mode="Vertical" horizontal-scroller-visibility="Hidden" class="loadout-scroll">
@@ -18,7 +18,7 @@
                         <ui:VisualElement name="detailTags" class="loadout-detail__tags" />
                         <ui:Label name="detailMeta" text="" class="loadout-detail__meta" />
                         <ui:Label name="detailDescription" text="" class="loadout-detail__description" />
-                        <ui:Label name="detailEmpty" text="Select a slot, then pick a weapon or skill." class="loadout-detail__empty" />
+                        <ui:Label name="detailEmpty" text="Select a slot, then pick a skill." class="loadout-detail__empty" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </si:FloatingWindow>

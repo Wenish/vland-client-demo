@@ -164,12 +164,7 @@ namespace NPCBehaviour
 
         private void TryUseAutoAttack(BehaviourContext context)
         {
-            // Only auto-attack if cooldown has elapsed
-            if (Time.time - context.LastAttackTime < autoAttackCooldown)
-                return;
-            
             context.Unit.Attack();
-            context.LastAttackTime = Time.time;
         }
     }
 }

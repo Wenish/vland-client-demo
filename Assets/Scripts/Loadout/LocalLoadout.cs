@@ -4,7 +4,6 @@ using System;
 public class LocalLoadout
 {
     public string UnitName;
-    public string WeaponId;
     public string PassiveId;
     public string Normal1Id;
     public string Normal2Id;
@@ -13,14 +12,13 @@ public class LocalLoadout
 
     /// <summary>
     /// Beginner-friendly melee kit: Daggers + sustain, escape, and simple AoE ultimate.
-    /// IDs must match WeaponData.weaponName / SkillData.skillName.
+    /// IDs must match SkillData.skillName. Weapon comes from equipped items.
     /// </summary>
     public static LocalLoadout CreateBeginnerDefault(string unitName = "")
     {
         return new LocalLoadout
         {
             UnitName = unitName ?? string.Empty,
-            WeaponId = "Daggers",
             PassiveId = "Blessing Of Nature",
             Normal1Id = "Swiftness",
             Normal2Id = "Evade",

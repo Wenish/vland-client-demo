@@ -35,9 +35,10 @@ public class UnitAttackAudio : MonoBehaviour
     private void HandleOnAttackStart((UnitController unitController, int attackIndex) obj)
     {
         if (obj.unitController != this.unitController) return;
-        if (this.unitController.currentWeapon == null) return;
+        var swinging = this.unitController.GetWeaponForAttackIndex(obj.attackIndex);
+        if (swinging == null) return;
 
-        var onAttackStartAudioList = this.unitController.currentWeapon.onAttackStartAudioClips;
+        var onAttackStartAudioList = swinging.onAttackStartAudioClips;
         if (onAttackStartAudioList == null || onAttackStartAudioList.Count == 0) return;
 
         var audioListItem = onAttackStartAudioList[obj.attackIndex % onAttackStartAudioList.Count];
@@ -47,9 +48,10 @@ public class UnitAttackAudio : MonoBehaviour
     private void HandleOnAttackSwing((UnitController attacker, int attackIndex) obj)
     {
         if (obj.attacker != unitController) return;
-        if (unitController.currentWeapon == null) return;
+        var swinging = unitController.GetWeaponForAttackIndex(obj.attackIndex);
+        if (swinging == null) return;
 
-        var swingAudioList = unitController.currentWeapon.swingAudioClips;
+        var swingAudioList = swinging.swingAudioClips;
         if (swingAudioList == null || swingAudioList.Count == 0) return;
 
         var swingAudioListItem = swingAudioList[obj.attackIndex % swingAudioList.Count];

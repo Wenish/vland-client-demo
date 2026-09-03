@@ -19,21 +19,12 @@ public enum VendorCatalogSource : byte
 public class VendorBuyEntry
 {
     public string entryId;
-    public WeaponData weapon;
     [Min(0)]
     public int goldCost;
     [Tooltip("Initial listed stock copied into a runtime session. 0 or less means unlimited. Do not treat this asset as live NPC inventory.")]
     public int stock;
 
-    public string ResolvedId
-    {
-        get
-        {
-            if (!string.IsNullOrWhiteSpace(entryId))
-                return entryId;
-            return weapon != null ? weapon.weaponName : string.Empty;
-        }
-    }
+    public string ResolvedId => entryId ?? string.Empty;
 
     public bool IsUnlimitedStock => stock <= 0;
 }
@@ -70,7 +61,7 @@ public class VendorDefinition : ScriptableObject
     public List<UpgradeDefinition> upgradeEntries = new List<UpgradeDefinition>();
 
     [Header("Catalog Source")]
-    [Tooltip("BuyEntries uses the weapon list below. ItemDatabase lists every ItemDefinition (debug stall).")]
+    [Tooltip("ItemDatabase lists every ItemDefinition (debug stall). BuyEntries are unused for in-match weapon shops.")]
     public VendorCatalogSource catalogSource = VendorCatalogSource.BuyEntries;
 
     public bool UsesItemCatalog => catalogSource == VendorCatalogSource.ItemDatabase;
@@ -113,7 +104,7 @@ public class VendorDefinition : ScriptableObject
 
         foreach (var candidate in buyEntries)
         {
-            if (candidate == null || candidate.weapon == null)
+            if (candidate == null || string.IsNullOrWhiteSpace(candidate.ResolvedId))
                 continue;
             if (candidate.ResolvedId == id)
             {

@@ -20,7 +20,8 @@ MonoBehaviour:
   shield: 0
   maxShield: 0
   moveSpeed: 0
-  weapon: {fileID: 0}
+  mainHandItem: {fileID: 0}
+  offHandItem: {fileID: 0}
   modelData: {fileID: 11400000, guid: 7c161a4b5ca32cd4eaae7314c8488508, type: 2}
   passiveSkills: []
   normalSkills: []

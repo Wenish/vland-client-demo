@@ -272,6 +272,27 @@ public class SkillSystem : NetworkBehaviour
     }
 
     [Server]
+    public void RemoveSkillsIncompatibleWithWeapon(WeaponType? weaponType)
+    {
+        RemoveIncompatibleSkills(SkillSlotType.Passive, weaponType);
+        RemoveIncompatibleSkills(SkillSlotType.Normal, weaponType);
+        RemoveIncompatibleSkills(SkillSlotType.Ultimate, weaponType);
+    }
+
+    [Server]
+    private void RemoveIncompatibleSkills(SkillSlotType slot, WeaponType? weaponType)
+    {
+        var list = GetList(slot);
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            var skill = list[i];
+            var data = skill != null ? skill.skillData : null;
+            if (data != null && !data.CanBeUsedWithWeapon(weaponType))
+                RemoveSkill(slot, i);
+        }
+    }
+
+    [Server]
     public void ClearAllSkills()
     {
         ClearSkills(SkillSlotType.Passive);

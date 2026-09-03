@@ -133,7 +133,10 @@ public class VendorManager : NetworkBehaviour
         switch (tab)
         {
             case VendorTab.Buy:
-                TryBuyWeapon(buyer, unitController, session, entryId, out success, out message);
+                if (session.Catalog.UsesItemCatalog)
+                    message = "Items are granted from the stall list.";
+                else
+                    message = "This vendor does not sell weapons.";
                 return;
             case VendorTab.Upgrades:
                 TryBuyUpgrade(buyer, session.Catalog, entryId, out success, out message, out timesBought);
@@ -166,7 +169,7 @@ public class VendorManager : NetworkBehaviour
             var listedStock = new List<int>(catalog.buyEntries.Count);
             foreach (var entry in catalog.buyEntries)
             {
-                if (entry == null || entry.weapon == null)
+                if (entry == null || string.IsNullOrWhiteSpace(entry.ResolvedId))
                     continue;
 
                 listedIds.Add(entry.ResolvedId);
@@ -195,66 +198,6 @@ public class VendorManager : NetworkBehaviour
 
         upgradeIds = ids.ToArray();
         counts = values.ToArray();
-    }
-
-    [Server]
-    private static void TryBuyWeapon(
-        PlayerController buyer,
-        UnitController unitController,
-        IVendorSession session,
-        string entryId,
-        out bool success,
-        out string message)
-    {
-        success = false;
-        message = string.Empty;
-
-        var catalog = session.Catalog;
-        if (!catalog.TryGetBuyEntry(entryId, out var entry) || entry.weapon == null)
-        {
-            message = "That item is not sold here.";
-            return;
-        }
-
-        if (entry.goldCost < 0)
-        {
-            message = "Item has invalid cost.";
-            return;
-        }
-
-        var stock = session.GetBuyStock(entry.ResolvedId);
-        if (stock == 0)
-        {
-            message = "Sold out.";
-            return;
-        }
-
-        if (!buyer.SpendGold(entry.goldCost))
-        {
-            message = "Not enough gold.";
-            return;
-        }
-
-        if (!session.TryCreditGold(entry.goldCost))
-        {
-            buyer.AddGold(entry.goldCost);
-            message = "The vendor cannot take that payment.";
-            return;
-        }
-
-        if (!session.TryConsumeBuyStock(entry.ResolvedId))
-        {
-            buyer.AddGold(entry.goldCost);
-            session.TrySpendGold(entry.goldCost);
-            message = "Sold out.";
-            return;
-        }
-
-        unitController.EquipWeapon(entry.weapon.weaponName);
-        success = true;
-        message = entry.goldCost > 0
-            ? $"Bought {entry.weapon.weaponName} for {entry.goldCost}"
-            : $"Bought {entry.weapon.weaponName}";
     }
 
     [Server]

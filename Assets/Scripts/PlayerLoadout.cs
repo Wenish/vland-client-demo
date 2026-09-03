@@ -1,6 +1,7 @@
 using System.Linq;
 using Mirror;
 using ShadowInfection.DI;
+using ShadowInfection.Items;
 using UnityEngine;
 
 public class PlayerLoadout : NetworkBehaviour
@@ -147,7 +148,6 @@ public class PlayerLoadout : NetworkBehaviour
 
         CmdRequestSetLoadout(
             characterName,
-            newLoadout.WeaponId,
             newLoadout.GetNormals(),
             newLoadout.UltimateId,
             newLoadout.GetPassives(),
@@ -176,7 +176,6 @@ public class PlayerLoadout : NetworkBehaviour
     [Command]
     public void CmdRequestSetLoadout(
         string desiredUnitName,
-        string desiredWeaponName,
         string[] desiredNormalSkills,
         string desiredUltimateSkill,
         string[] desiredPassiveSkills,
@@ -192,19 +191,20 @@ public class PlayerLoadout : NetworkBehaviour
             return;
         }
 
-        var weaponDb = GameServices.Databases?.Weapons;
-        var weaponData = weaponDb != null ? weaponDb.GetWeaponByName(desiredWeaponName) : null;
-        if (weaponData == null)
-        {
-            TargetAckSetLoadout(connectionToClient, false, "Unknown weapon.");
-            return;
-        }
-
         var skillDb = GameServices.Databases?.Skills;
         if (skillDb == null)
         {
             TargetAckSetLoadout(connectionToClient, false, "Skill database missing.");
             return;
+        }
+
+        WeaponType? equippedWeaponType = null;
+        if (ServerPlayerInventories.TryGet(connectionToClient.connectionId, out var inventory))
+        {
+            var items = GameServices.Databases?.Items;
+            var catalog = items != null ? new DatabaseItemCatalog(items) : null;
+            equippedWeaponType = CharacterInventoryOperations.ResolveMainHandWeaponType(inventory, catalog)
+                ?? WeaponType.Unarmed;
         }
 
         desiredNormalSkills = desiredNormalSkills ?? System.Array.Empty<string>();
@@ -219,7 +219,7 @@ public class PlayerLoadout : NetworkBehaviour
                 return;
             }
 
-            if (!skill.CanBeUsedWithWeapon(weaponData.weaponType))
+            if (equippedWeaponType.HasValue && !skill.CanBeUsedWithWeapon(equippedWeaponType))
             {
                 TargetAckSetLoadout(connectionToClient, false, $"Skill '{name}' requires weapon: {skill.GetRequiredWeaponLabel()}");
                 return;
@@ -235,7 +235,7 @@ public class PlayerLoadout : NetworkBehaviour
                 return;
             }
 
-            if (!skill.CanBeUsedWithWeapon(weaponData.weaponType))
+            if (equippedWeaponType.HasValue && !skill.CanBeUsedWithWeapon(equippedWeaponType))
             {
                 TargetAckSetLoadout(connectionToClient, false, $"Passive '{name}' requires weapon: {skill.GetRequiredWeaponLabel()}");
                 return;
@@ -250,7 +250,7 @@ public class PlayerLoadout : NetworkBehaviour
                 return;
             }
 
-            if (!ultimate.CanBeUsedWithWeapon(weaponData.weaponType))
+            if (equippedWeaponType.HasValue && !ultimate.CanBeUsedWithWeapon(equippedWeaponType))
             {
                 TargetAckSetLoadout(connectionToClient, false, $"Ultimate '{desiredUltimateSkill}' requires weapon: {ultimate.GetRequiredWeaponLabel()}");
                 return;
@@ -265,7 +265,6 @@ public class PlayerLoadout : NetworkBehaviour
         }
 
         unitController.unitName = sanitized;
-        unitController.EquipWeapon(weaponData.weaponName);
         var skills = unitController.unitMediator.Skills;
         skills.ReplaceLoadout(passiveUnique, normalUnique, new[] { desiredUltimateSkill });
 

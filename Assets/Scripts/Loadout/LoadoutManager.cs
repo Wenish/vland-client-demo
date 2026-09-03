@@ -62,12 +62,6 @@ public class LoadoutManager : MonoBehaviour
             OnLoadoutChanged?.Invoke(_current);
     }
 
-    public void SetSlotWeapon(string weaponId)
-    {
-        _current.WeaponId = weaponId;
-        SaveAndNotify();
-    }
-
     public void SetSlotPassive(string passiveId)
     {
         _current.PassiveId = passiveId;
@@ -140,7 +134,6 @@ public class LoadoutManager : MonoBehaviour
             _current = new LocalLoadout
             {
                 UnitName = string.Empty,
-                WeaponId = string.Empty,
                 PassiveId = string.Empty,
                 Normal1Id = string.Empty,
                 Normal2Id = string.Empty,
@@ -188,7 +181,6 @@ public class LoadoutManager : MonoBehaviour
         return new LocalLoadout
         {
             UnitName = source.UnitName ?? string.Empty,
-            WeaponId = source.WeaponId ?? string.Empty,
             PassiveId = source.PassiveId ?? string.Empty,
             Normal1Id = source.Normal1Id ?? string.Empty,
             Normal2Id = source.Normal2Id ?? string.Empty,

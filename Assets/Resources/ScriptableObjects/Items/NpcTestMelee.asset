@@ -10,24 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c4e1a2b3d5f4e6980a1b2c3d4e5f610, type: 3}
-  m_Name: StarterPistols
+  m_Name: NpcTestMelee
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
-  itemId: starter_pistols
-  displayName: Starter Pistol
-  description: One short barrel. Equip a second copy in off-hand to dual-wield.
-  icon: {fileID: 2800000, guid: b7b31abbb8643144fb6187d6ae47259f, type: 3}
+  itemId: npc_test_melee
+  displayName: Test Melee
+  description: NPC test melee.
+  icon: {fileID: 2800000, guid: fa0c47ba7d6e44ecabea895caf7b3660, type: 3}
   kind: 0
   slot: 8
   rarity: 0
   armorWeight: 1
-  weaponData: {fileID: 11400000, guid: 44b19ec7ca0fc44d090b2fc3dea559a3, type: 2}
-  statModifiers:
-  - Type: 6
-    Value: 2
-    ModifierType: 0
-  - Type: 5
-    Value: 0.1
-    ModifierType: 0
+  weaponData: {fileID: 11400000, guid: d530e13dc282fdb48b31d1c518c8f067, type: 2}
+  statModifiers: []
   legendaryBuff: {fileID: 0}
   keyword: 
   keywordBonus: []

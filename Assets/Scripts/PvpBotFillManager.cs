@@ -3,6 +3,7 @@ using Mirror;
 using UnityEngine;
 using System.Linq;
 using ShadowInfection.DI;
+using ShadowInfection.Items;
 
 [DisallowMultipleComponent]
 public class PvpBotFillManager : NetworkBehaviour
@@ -113,29 +114,38 @@ public class PvpBotFillManager : NetworkBehaviour
 
         var databases = GameServices.Databases;
         var skillDb = databases?.Skills;
-        var weaponDb = databases?.Weapons;
+        var items = databases?.Items;
 
-        if (skillDb == null || weaponDb == null)
+        if (skillDb == null || items == null)
         {
             return;
         }
 
-        var validWeapons = new List<WeaponData>();
-        foreach (var weapon in weaponDb.allWeapons)
+        var validItems = new List<ItemDefinition>();
+        foreach (var item in items.All)
         {
-            if (weapon == null || weapon.npcOnly)
-            {
+            if (item == null || item.weaponData == null || item.weaponData.npcOnly)
                 continue;
-            }
-
-            validWeapons.Add(weapon);
+            if (!ItemRules.CanEquipToSlot(item, ItemSlot.MainHand, item.weaponData.weaponType, null))
+                continue;
+            validItems.Add(item);
         }
 
-        if (validWeapons.Count > 0)
-        {
-            var randomWeapon = validWeapons[Random.Range(0, validWeapons.Count)];
-            unitController.EquipWeapon(randomWeapon.weaponName);
-        }
+        ItemDefinition mainItem = null;
+        if (validItems.Count > 0)
+            mainItem = validItems[Random.Range(0, validItems.Count)];
+
+        var offItemId = string.Empty;
+        if (mainItem != null && ItemRules.IsDualWieldWeapon(mainItem.weaponData.weaponType))
+            offItemId = mainItem.itemId;
+
+        unitController.EquipHeldItems(
+            mainItem != null ? mainItem.itemId : string.Empty,
+            offItemId);
+
+        var weaponType = unitController.currentWeapon != null
+            ? (WeaponType?)unitController.currentWeapon.weaponType
+            : WeaponType.Unarmed;
 
         var passiveSkills = new List<SkillData>();
         var normalSkills = new List<SkillData>();
@@ -143,7 +153,7 @@ public class PvpBotFillManager : NetworkBehaviour
 
         foreach (var skill in skillDb.allSkills)
         {
-            if (skill == null || skill.npcOnly)
+            if (skill == null || skill.npcOnly || !skill.CanBeUsedWithWeapon(weaponType))
             {
                 continue;
             }

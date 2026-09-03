@@ -32,13 +32,13 @@ public abstract class WeaponData : ScriptableObject
     public List<AudioListItem> swingAudioClips = new List<AudioListItem>();
     public List<AudioListItem> onHitAudioClips = new List<AudioListItem>();
 
-    public abstract void PerformAttack(UnitController attacker);
+    public abstract void PerformAttack(UnitController attacker, float damageMultiplier = 1f);
 
-    public int CalculateDamage(UnitController attacker)
+    public int CalculateDamage(UnitController attacker, float damageMultiplier = 1f)
     {
         var unitAttackPower = Mathf.CeilToInt(attacker.unitMediator.Stats.GetStat(StatType.AttackPower));
         var damage = attackPower + unitAttackPower;
-        return damage;
+        return Mathf.Max(0, Mathf.CeilToInt(damage * Mathf.Max(0f, damageMultiplier)));
     }
 
     [System.Serializable]

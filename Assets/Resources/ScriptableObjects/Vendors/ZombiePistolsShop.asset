@@ -16,15 +16,11 @@ MonoBehaviour:
   displayName: Sidearms
   subtitle: Twin barrels
   portrait: {fileID: 0}
-  defaultTab: 0
-  showBuyTab: 1
+  defaultTab: 2
+  showBuyTab: 0
   showSellTab: 0
   showUpgradesTab: 1
-  buyEntries:
-  - entryId: buy_pistols
-    weapon: {fileID: 11400000, guid: 44b19ec7ca0fc44d090b2fc3dea559a3, type: 2}
-    goldCost: 100
-    stock: 0
+  buyEntries: []
   sellEntries: []
   upgradeEntries:
   - {fileID: 11400000, guid: 67cbcd763ca3c5f4588004758265fb79, type: 2}

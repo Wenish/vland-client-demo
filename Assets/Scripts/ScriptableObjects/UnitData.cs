@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NaughtyAttributes;
 using NPCBehaviour;
+using ShadowInfection.Items;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewUnit", menuName = "Game/Unit/Unit")]
@@ -79,7 +80,10 @@ public class UnitData : ScriptableObject
 
     [BoxGroup("Loadout")]
     [Expandable]
-    public WeaponData weapon;
+    public ItemDefinition mainHandItem;
+    [BoxGroup("Loadout")]
+    [Expandable]
+    public ItemDefinition offHandItem;
     [BoxGroup("Loadout")]
     [Expandable]
     public ModelData modelData;

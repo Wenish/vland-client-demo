@@ -80,6 +80,29 @@ namespace ShadowInfection.Items
             return builder.ToString();
         }
 
+        public static string FormatWeaponCombat(WeaponData weapon)
+        {
+            if (weapon == null)
+                return string.Empty;
+
+            var period = weapon.attackTime + weapon.attackSpeed;
+            return $"Damage {weapon.attackPower}\nAttack Speed {period:0.##}s";
+        }
+
+        public static string FormatEquipmentSummary(ItemDefinition item)
+        {
+            if (item == null)
+                return string.Empty;
+
+            var combat = FormatWeaponCombat(item.weaponData);
+            var stats = FormatStats(item.statModifiers);
+            if (string.IsNullOrEmpty(combat))
+                return stats;
+            if (string.IsNullOrEmpty(stats))
+                return combat;
+            return combat + "\n" + stats;
+        }
+
         public static string FormatStat(StatModifier modifier)
         {
             if (modifier == null)
@@ -158,7 +181,11 @@ namespace ShadowInfection.Items
             if (piece.weaponData != null && ItemRules.IsDualWieldWeapon(piece.weaponData.weaponType))
             {
                 if (targetSlot == ItemSlot.OffHand)
+                {
+                    if (piece.weaponData.weaponType == WeaponType.Pistols)
+                        return "Requires an empty main hand or a pistol in main hand.";
                     return "Requires an empty main hand or a one-hand sword or dagger in main hand.";
+                }
             }
 
             if (ItemRules.IsWeaponSlot(targetSlot))
