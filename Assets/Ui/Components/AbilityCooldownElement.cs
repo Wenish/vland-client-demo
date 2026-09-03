@@ -11,6 +11,7 @@ public partial class AbilityCooldownElement : VisualElement
     private VisualElement _iconOverlay;
     private VisualElement _cooldownOverlay;
     private Label _cooldownLabel;
+    private Label _ammoLabel;
     private Label _keyLabel;
     private VisualElement _keyIcon; // displays the activation key
 
@@ -65,6 +66,24 @@ public partial class AbilityCooldownElement : VisualElement
     {
         get => _tooltipText;
         set => _tooltipText = value;
+    }
+
+    [SerializeField, DontCreateProperty]
+    private string _ammoText;
+    [UxmlAttribute, CreateProperty]
+    public string AmmoText
+    {
+        get => _ammoText;
+        set
+        {
+            _ammoText = value ?? string.Empty;
+            if (_ammoLabel == null)
+                return;
+            _ammoLabel.text = _ammoText;
+            _ammoLabel.style.display = string.IsNullOrEmpty(_ammoText)
+                ? DisplayStyle.None
+                : DisplayStyle.Flex;
+        }
     }
 
     [SerializeField, DontCreateProperty]
@@ -166,6 +185,12 @@ public partial class AbilityCooldownElement : VisualElement
         _cooldownLabel = new Label { name = "CooldownLabel" };
         _cooldownLabel.AddToClassList("cooldown-label");
         cooldownLabelContainer.Add(_cooldownLabel);
+
+        _ammoLabel = new Label { name = "AmmoLabel" };
+        _ammoLabel.AddToClassList("ammo-label");
+        _ammoLabel.pickingMode = PickingMode.Ignore;
+        _ammoLabel.style.display = DisplayStyle.None;
+        Add(_ammoLabel);
 
         // activation key label
         _keyLabel = new Label { name = "KeyLabel" };
