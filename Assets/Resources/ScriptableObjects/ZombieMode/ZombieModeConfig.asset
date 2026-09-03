@@ -17,6 +17,7 @@ MonoBehaviour:
     timeBetweenSpawnsSeconds: 0.35
     maxZombiesAlive: 30
     despawnDelaySeconds: 5
+    maxDistanceFromPlayer: 32
   regularWave:
     waveName: Regular Wave
     baseTotalSpawnCount: 5

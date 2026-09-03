@@ -87,6 +87,9 @@ public class ZombieModeConfig : ScriptableObject
 
         [Tooltip("Delay after a zombie dies until it is despawned from network in seconds.")]
         [Min(0f)] public float despawnDelaySeconds = 5f;
+
+        [Tooltip("Prefer active spawn points within this distance of a living player. If fewer than 4 are in range, the next-closest active points are added to the random pool.")]
+        [Min(0f)] public float maxDistanceFromPlayer = 32f;
     }
 
     [Serializable]
