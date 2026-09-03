@@ -122,7 +122,8 @@ public class CharacterManager : MonoBehaviour
         var character = CharacterSaveData.CreateNew(sanitized, gender);
         CharacterInventory.EnsureLists(character);
         TryGrantItemOn(character, ItemIds.StarterDagger, persist: false);
-        TryAutoEquipMainHand(character);
+        TryGrantItemOn(character, ItemIds.StarterDagger, persist: false);
+        TryAutoEquipHands(character);
         _roster.Characters.Add(character);
         SaveRoster();
         OnRosterChanged?.Invoke();
@@ -288,7 +289,15 @@ public class CharacterManager : MonoBehaviour
         {
             CharacterInventory.EnsureLists(_roster.Characters[i]);
             MigrateStarterSwordAndShield(_roster.Characters[i]);
-            TryAutoEquipMainHand(_roster.Characters[i]);
+            if (_roster.Version < CharacterRosterSave.CurrentVersion)
+                MigrateStarterDualDaggers(_roster.Characters[i]);
+            TryAutoEquipHands(_roster.Characters[i]);
+        }
+
+        if (_roster.Version < CharacterRosterSave.CurrentVersion)
+        {
+            _roster.Version = CharacterRosterSave.CurrentVersion;
+            SaveRoster();
         }
 
         MigrateLegacyLoadoutIfNeeded();
@@ -344,6 +353,48 @@ public class CharacterManager : MonoBehaviour
             SaveRoster();
     }
 
+    private void MigrateStarterDualDaggers(CharacterSaveData character)
+    {
+        if (character == null || CountOwnedItem(character, ItemIds.StarterDagger) != 1)
+            return;
+
+        CharacterInventory.EnsureLists(character);
+        character.InventoryEquipment.Add(new InventoryEntry
+        {
+            instanceId = Guid.NewGuid().ToString("N"),
+            itemId = ItemIds.StarterDagger
+        });
+    }
+
+    private static int CountOwnedItem(CharacterSaveData character, string itemId)
+    {
+        if (character == null || string.IsNullOrWhiteSpace(itemId))
+            return 0;
+
+        var count = 0;
+        if (character.InventoryEquipment != null)
+        {
+            for (var i = 0; i < character.InventoryEquipment.Count; i++)
+            {
+                var entry = character.InventoryEquipment[i];
+                if (entry != null && entry.itemId == itemId)
+                    count++;
+            }
+        }
+
+        if (character.EquippedSlots != null)
+        {
+            for (var i = 0; i < character.EquippedSlots.Count; i++)
+            {
+                var entry = character.EquippedSlots[i];
+                if (entry != null && entry.itemId == itemId)
+                    count++;
+            }
+        }
+
+        return count;
+    }
+
     private void MigrateLegacyLoadoutIfNeeded()
     {
         if (_roster.Characters.Count > 0)
@@ -373,13 +424,15 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    private void TryAutoEquipMainHand(CharacterSaveData character)
+    private void TryAutoEquipHands(CharacterSaveData character)
     {
         var items = GameServices.Databases != null ? GameServices.Databases.Items : null;
         if (items == null)
             return;
 
-        CharacterInventoryOperations.TryAutoEquipFirstMainHandWeapon(character, new DatabaseItemCatalog(items));
+        var catalog = new DatabaseItemCatalog(items);
+        CharacterInventoryOperations.TryAutoEquipFirstMainHandWeapon(character, catalog);
+        CharacterInventoryOperations.TryAutoEquipFirstOffHandWeapon(character, catalog);
     }
 
     private void SaveRoster()

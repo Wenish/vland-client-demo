@@ -1,13 +1,13 @@
 ---
 id: "rework-how-unit-gets-the-basic-auto-attack-2026-09-03"
-status: "backlog"
+status: "done"
 priority: "medium"
 assignee: null
 epic: null
 dueDate: null
 created: "2026-09-03T18:53:06.833Z"
-modified: "2026-09-03T18:53:06.833Z"
-completedAt: null
+modified: "2026-09-03T20:20:00.000Z"
+completedAt: "2026-09-03T20:20:00.000Z"
 labels: []
 order: "Zr"
 ---

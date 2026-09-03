@@ -70,8 +70,11 @@ MonoBehaviour:
   shield: 0
   maxShield: 0
   moveSpeed: 0
-  weaponName: 
+  mainHandItemId: 
+  offHandItemId: 
   currentWeapon: {fileID: 0}
+  currentOffHandWeapon: {fileID: 0}
+  offHandItemWeapon: {fileID: 0}
   modelName: 
   modelData: {fileID: 0}
   modelInstance: {fileID: 0}

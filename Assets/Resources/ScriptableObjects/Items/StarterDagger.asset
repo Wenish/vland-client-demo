@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
   itemId: starter_dagger
   displayName: Starter Dagger
-  description: A simple blade. Enough to start.
+  description: A simple blade. Equip a second copy in off-hand to dual-wield.
   icon: {fileID: 2800000, guid: bc0d4856d43d087448af5f12bc4036d1, type: 3}
   kind: 0
   slot: 8

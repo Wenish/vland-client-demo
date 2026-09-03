@@ -63,9 +63,10 @@ public class UnitAttackAudio : MonoBehaviour
         if (obj.target != unitController) return;
         var attackerUnit = obj.attacker;
         if (attackerUnit == null) return;
-        if (attackerUnit.currentWeapon == null) return;
+        var swinging = attackerUnit.GetWeaponForAttackIndex(attackerUnit.LastAttackIndex);
+        if (swinging == null) return;
 
-        var onHitAudioList = attackerUnit.currentWeapon.onHitAudioClips;
+        var onHitAudioList = swinging.onHitAudioClips;
         if (onHitAudioList == null || onHitAudioList.Count == 0)
             return;
 
