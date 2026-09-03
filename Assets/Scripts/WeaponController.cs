@@ -3,24 +3,79 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mirror;
 using ShadowInfection.DI;
+using ShadowInfection.Items;
 using UnityEngine;
 
 public class WeaponController : NetworkBehaviour
 {
     public WeaponData weaponData;
+    public WeaponData offHandWeaponData;
 
     [SerializeField, SyncVar]
-    private double lastAttackTime = -Mathf.Infinity;
+    private double lastMainAttackTime = double.NegativeInfinity;
+    [SerializeField, SyncVar]
+    private double lastOffHandAttackTime = double.NegativeInfinity;
     [SerializeField]
     private bool isAttacking;
 
-    public bool IsAttackOnCooldown => NetworkTime.time - lastAttackTime < AttackCooldown;
-    public float AttackCooldownRemaining => Mathf.Max(0f, AttackCooldown - (float)(NetworkTime.time - lastAttackTime));
-    public float AttackCooldownProgress => (AttackCooldownRemaining / AttackCooldown) * 100f;
-    // Higher attackSpeedMultiplier should result in faster (shorter) cooldowns
-    public float AttackCooldown => (weaponData.attackTime + weaponData.attackSpeed) / Mathf.Max(attackSpeedMultiplier, 0.01f);
+    public bool HasOffHandAttack =>
+        offHandWeaponData != null && ItemRules.IsDualWieldWeapon(offHandWeaponData.weaponType);
 
-    private int attackIndex = 0;
+    public bool CanStartMainAttack =>
+        weaponData != null && !IsHandOnCooldown(lastMainAttackTime, weaponData);
+
+    public bool CanStartOffHandAttack =>
+        HasOffHandAttack && !IsHandOnCooldown(lastOffHandAttackTime, offHandWeaponData);
+
+    public bool IsAttackOnCooldown => !CanStartMainAttack && !CanStartOffHandAttack;
+
+    public float AttackCooldownRemaining
+    {
+        get
+        {
+            if (CanStartMainAttack || CanStartOffHandAttack)
+                return 0f;
+
+            var mainRemaining = HandCooldownRemaining(lastMainAttackTime, weaponData);
+            if (!HasOffHandAttack)
+                return mainRemaining;
+
+            return Mathf.Min(
+                mainRemaining,
+                HandCooldownRemaining(lastOffHandAttackTime, offHandWeaponData));
+        }
+    }
+
+    public float AttackCooldown
+    {
+        get
+        {
+            if (CanStartMainAttack)
+                return HandCooldown(weaponData);
+            if (CanStartOffHandAttack)
+                return HandCooldown(offHandWeaponData);
+
+            var mainCooldown = HandCooldown(weaponData);
+            if (!HasOffHandAttack)
+                return mainCooldown;
+
+            var offCooldown = HandCooldown(offHandWeaponData);
+            var mainRemaining = HandCooldownRemaining(lastMainAttackTime, weaponData);
+            var offRemaining = HandCooldownRemaining(lastOffHandAttackTime, offHandWeaponData);
+            return offRemaining < mainRemaining ? offCooldown : mainCooldown;
+        }
+    }
+
+    public float AttackCooldownProgress
+    {
+        get
+        {
+            var cooldown = AttackCooldown;
+            if (cooldown <= 0.0001f)
+                return 0f;
+            return (AttackCooldownRemaining / cooldown) * 100f;
+        }
+    }
 
     private float attackSpeedMultiplier => attackerMediator.Stats.GetStat(StatType.AttackSpeed);
 
@@ -32,39 +87,72 @@ public class WeaponController : NetworkBehaviour
         attackerMediator = GetComponent<UnitMediator>();
     }
 
+    public void SetHeldWeapons(WeaponData main, WeaponData offHand)
+    {
+        weaponData = main;
+        offHandWeaponData = offHand;
+    }
+
+    private bool TryChooseAttackingHand(out bool useOffHand)
+    {
+        useOffHand = false;
+        var mainReady = CanStartMainAttack;
+        var offReady = CanStartOffHandAttack;
+        if (!mainReady && !offReady)
+            return false;
+
+        if (mainReady && offReady)
+        {
+            useOffHand = lastOffHandAttackTime < lastMainAttackTime;
+            return true;
+        }
+
+        useOffHand = offReady;
+        return true;
+    }
+
     [Server]
     public async Task Attack(UnitController attacker)
     {
-        if (weaponData == null)
-        {
-            Debug.LogError("Weapon data is not assigned.");
+        if (isAttacking || attacker == null || attacker.unitActionState.IsActive)
             return;
-        }
-        ;
 
-        if (isAttacking || IsAttackOnCooldown || attacker.unitActionState.IsActive) return;
+        if (!TryChooseAttackingHand(out var useOffHand))
+            return;
 
-        // Create a new cancellation token for this attack
+        var swinging = useOffHand ? offHandWeaponData : weaponData;
+        if (swinging == null)
+            return;
+
         attackCancellationTokenSource = new CancellationTokenSource();
         CancellationToken cancellationToken = attackCancellationTokenSource.Token;
 
         isAttacking = true;
+        var attackIndex = useOffHand ? 1 : 0;
         attacker.RaiseOnAttackStartEvent(attackIndex);
 
-        lastAttackTime = NetworkTime.time;
+        var now = NetworkTime.time;
+        if (useOffHand)
+            lastOffHandAttackTime = now;
+        else
+            lastMainAttackTime = now;
 
-        // Scale attack animation/duration by attack speed (higher speed -> shorter duration)
-        var attackDuration = weaponData.attackTime / Mathf.Max(attackSpeedMultiplier, 0.01f);
+        var attackDuration = swinging.attackTime / Mathf.Max(attackSpeedMultiplier, 0.01f);
         var delay = attackDuration * 1000;
-        attacker.unitActionState.SetUnitActionState(UnitActionState.ActionType.Attacking, NetworkTime.time, attackDuration, weaponData.weaponName);
+        attacker.unitActionState.SetUnitActionState(
+            UnitActionState.ActionType.Attacking,
+            NetworkTime.time,
+            attackDuration,
+            swinging.weaponName);
+
         StatModifier moveSpeedModifier = new StatModifier()
         {
             Type = StatType.MovementSpeed,
             ModifierType = ModifierType.Percent,
-            Value = weaponData.moveSpeedPercentWhileAttacking,
+            Value = swinging.moveSpeedPercentWhileAttacking,
         };
         attacker.unitMediator.Stats.ApplyModifier(moveSpeedModifier);
-        
+
         try
         {
             await Task.Delay((int)delay, cancellationToken);
@@ -79,7 +167,9 @@ public class WeaponController : NetworkBehaviour
             DisposeAttackCancellation();
         }
 
-        if (attacker == null) return;
+        if (attacker == null)
+            return;
+
         ClearAttackingStateIfOwned(attacker);
         attacker.unitMediator.Stats.RemoveModifier(moveSpeedModifier);
         if (attacker.IsDead)
@@ -88,18 +178,16 @@ public class WeaponController : NetworkBehaviour
             return;
         }
 
-        if (weaponData is WeaponRangedData ranged)
-            ranged.PerformAttack(attacker, GameServices.Projectiles);
+        var damageMultiplier = useOffHand ? ItemRules.OffHandDamageMultiplier : 1f;
+        if (swinging is WeaponRangedData ranged)
+            ranged.PerformAttack(attacker, GameServices.Projectiles, damageMultiplier);
         else
-            weaponData.PerformAttack(attacker);
+            swinging.PerformAttack(attacker, damageMultiplier);
+
         attacker.RaiseOnAttackSwingEvent(attackIndex);
         isAttacking = false;
-        attackIndex = (attackIndex + 1) % 2;
     }
 
-    /// <summary>
-    /// Cancels the current attack if one is in progress.
-    /// </summary>
     public void CancelAttack()
     {
         if (attackCancellationTokenSource != null && !attackCancellationTokenSource.Token.IsCancellationRequested)
@@ -107,6 +195,23 @@ public class WeaponController : NetworkBehaviour
             attackCancellationTokenSource.Cancel();
         }
         isAttacking = false;
+    }
+
+    private float HandCooldown(WeaponData weapon)
+    {
+        if (weapon == null)
+            return 0.01f;
+        return (weapon.attackTime + weapon.attackSpeed) / Mathf.Max(attackSpeedMultiplier, 0.01f);
+    }
+
+    private bool IsHandOnCooldown(double lastAttackTime, WeaponData weapon)
+    {
+        return NetworkTime.time - lastAttackTime < HandCooldown(weapon);
+    }
+
+    private float HandCooldownRemaining(double lastAttackTime, WeaponData weapon)
+    {
+        return Mathf.Max(0f, HandCooldown(weapon) - (float)(NetworkTime.time - lastAttackTime));
     }
 
     private void FinishCancelledAttack(UnitController attacker, StatModifier moveSpeedModifier)
@@ -121,14 +226,17 @@ public class WeaponController : NetworkBehaviour
 
     private static void ClearAttackingStateIfOwned(UnitController attacker)
     {
-        if (attacker == null || attacker.unitActionState == null) return;
-        if (attacker.unitActionState.state.type != UnitActionState.ActionType.Attacking) return;
+        if (attacker == null || attacker.unitActionState == null)
+            return;
+        if (attacker.unitActionState.state.type != UnitActionState.ActionType.Attacking)
+            return;
         attacker.unitActionState.SetUnitActionStateToIdle();
     }
 
     private void DisposeAttackCancellation()
     {
-        if (attackCancellationTokenSource == null) return;
+        if (attackCancellationTokenSource == null)
+            return;
         attackCancellationTokenSource.Dispose();
         attackCancellationTokenSource = null;
     }

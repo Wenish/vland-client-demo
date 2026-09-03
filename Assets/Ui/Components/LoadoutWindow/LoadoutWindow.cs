@@ -4,7 +4,6 @@ namespace Vland.UI
 {
     public enum LoadoutSlot
     {
-        Weapon,
         Passive,
         Normal1,
         Normal2,
@@ -22,7 +21,6 @@ namespace Vland.UI
         public Texture2D icon;
         public LoadoutSlot slot;
         public SkillTag tags;
-        public bool isWeapon;
 
         public static LoadoutItem Empty => new LoadoutItem
         {
@@ -40,7 +38,6 @@ namespace Vland.UI
     {
         public static readonly LoadoutSlot[] All =
         {
-            LoadoutSlot.Weapon,
             LoadoutSlot.Passive,
             LoadoutSlot.Normal1,
             LoadoutSlot.Normal2,
@@ -59,7 +56,6 @@ namespace Vland.UI
         {
             return slot switch
             {
-                LoadoutSlot.Weapon => "Weapon",
                 LoadoutSlot.Passive => "Passive",
                 LoadoutSlot.Normal1 => "Skill 1 (Q)",
                 LoadoutSlot.Normal2 => "Skill 2 (E)",
@@ -73,7 +69,6 @@ namespace Vland.UI
         {
             return slot switch
             {
-                LoadoutSlot.Weapon => "Choosing: Weapon",
                 LoadoutSlot.Passive => "Choosing: Passive",
                 LoadoutSlot.Normal1 => "Choosing: Skill 1 (Q)",
                 LoadoutSlot.Normal2 => "Choosing: Skill 2 (E)",
@@ -87,7 +82,6 @@ namespace Vland.UI
         {
             return slot switch
             {
-                LoadoutSlot.Weapon => "Weapons",
                 LoadoutSlot.Passive => "Passive skills",
                 LoadoutSlot.Ultimate => "Ultimate skills",
                 _ => "Normal skills",

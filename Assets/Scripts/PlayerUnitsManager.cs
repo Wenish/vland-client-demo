@@ -101,6 +101,7 @@ public class PlayerUnitsManager : NetworkBehaviour
                     unitController.EquipModel(modelName);
                 if (!string.IsNullOrWhiteSpace(characterName))
                     unitController.SetUnitName(characterName);
+                PlayerEquipment.ServerApplyHeldItems(conn.connectionId, unitController);
             }
 
             return existing;
@@ -277,6 +278,7 @@ public class PlayerUnitsManager : NetworkBehaviour
                     unitController.EquipModel(modelName);
                 if (!string.IsNullOrWhiteSpace(characterName))
                     unitController.SetUnitName(characterName);
+                PlayerEquipment.ServerApplyHeldItems(connectionId, unitController);
             }
         }
 

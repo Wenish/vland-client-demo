@@ -14,6 +14,7 @@ namespace ShadowInfection.UI.CharacterWindow
         public Texture2D Icon;
         public string RarityClass;
         public string EmptyLabel;
+        public string Tooltip;
         public bool Occupied;
     }
 
@@ -125,7 +126,7 @@ namespace ShadowInfection.UI.CharacterWindow
                     continue;
 
                 element.Clear();
-                element.tooltip = vm.Occupied ? null : vm.EmptyLabel;
+                element.tooltip = string.IsNullOrEmpty(vm.Tooltip) ? vm.EmptyLabel : vm.Tooltip;
                 if (vm.Occupied && vm.Icon != null)
                 {
                     var icon = new VisualElement { pickingMode = PickingMode.Ignore };

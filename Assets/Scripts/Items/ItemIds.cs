@@ -6,5 +6,7 @@ namespace ShadowInfection.Items
         public const string StarterSword = "starter_sword";
         public const string StarterShield = "starter_shield";
         public const string LegacyStarterSwordAndShield = "starter_sword_and_shield";
+        public const string NpcClaw = "npc_claw";
+        public const string NpcTestMelee = "npc_test_melee";
     }
 }

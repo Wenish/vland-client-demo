@@ -28,9 +28,10 @@ public class UnitSwingVfx : MonoBehaviour
     private void HandleOnAttackSwing((UnitController attacker, int attackIndex) obj)
     {
         if (obj.attacker != unitController) return;
-        if (unitController.currentWeapon == null) return;
+        var swinging = unitController.GetWeaponForAttackIndex(obj.attackIndex);
+        if (swinging == null) return;
 
-        var swingVfxList = unitController.currentWeapon.swingVfxs;
+        var swingVfxList = swinging.swingVfxs;
         if (swingVfxList == null || swingVfxList.Count == 0) return;
 
         var swingVfxListItem = swingVfxList[obj.attackIndex % swingVfxList.Count];

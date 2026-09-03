@@ -3,6 +3,7 @@ namespace ShadowInfection.Items
     public static class ItemRules
     {
         public const int SocketsPerPiece = 2;
+        public const float OffHandDamageMultiplier = 0.5f;
 
         public static bool IsStackable(ItemKind kind)
         {
@@ -38,7 +39,29 @@ namespace ShadowInfection.Items
 
         public static bool IsDualWieldWeapon(WeaponType weapon)
         {
-            return IsOneHandMelee(weapon);
+            return IsOneHandMelee(weapon) || weapon == WeaponType.Pistols;
+        }
+
+        public static bool IsPairedTwoModelWeapon(WeaponType weapon)
+        {
+            return weapon == WeaponType.SwordAndShield;
+        }
+
+        public static bool CanDualWieldTogether(WeaponType? mainHandWeapon, WeaponType offHandWeapon)
+        {
+            if (!IsDualWieldWeapon(offHandWeapon))
+                return false;
+
+            if (!mainHandWeapon.HasValue || mainHandWeapon.Value == WeaponType.Unarmed)
+                return true;
+
+            if (IsOneHandMelee(offHandWeapon))
+                return IsOneHandMelee(mainHandWeapon.Value);
+
+            if (offHandWeapon == WeaponType.Pistols)
+                return mainHandWeapon.Value == WeaponType.Pistols;
+
+            return false;
         }
 
         public static bool IsShieldWeapon(WeaponType weapon)
@@ -105,12 +128,7 @@ namespace ShadowInfection.Items
                     return true;
 
                 if (targetSlot == ItemSlot.OffHand)
-                {
-                    if (!mainHandWeapon.HasValue)
-                        return true;
-
-                    return IsOneHandMelee(mainHandWeapon.Value);
-                }
+                    return CanDualWieldTogether(mainHandWeapon, weaponType);
 
                 return false;
             }

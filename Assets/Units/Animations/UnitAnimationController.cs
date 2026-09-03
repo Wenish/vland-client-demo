@@ -65,9 +65,10 @@ public class UnitAnimationController : MonoBehaviour
 
     private void HandleOnAttackStartChange((UnitController unitController, int attackIndex) obj)
     {
-        if (unitController.currentWeapon != null)
+        var swinging = unitController.GetWeaponForAttackIndex(obj.attackIndex);
+        if (swinging != null)
         {
-            SetAttackTime(unitController.currentWeapon.attackTime);
+            SetAttackTime(swinging.attackTime);
         }
         animator.SetInteger("AttackVersion", obj.attackIndex % 2);
         animator.SetTrigger("Attack");

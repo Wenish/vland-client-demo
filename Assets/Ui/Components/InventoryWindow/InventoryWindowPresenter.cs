@@ -429,7 +429,7 @@ namespace ShadowInfection.UI.InventoryWindow
                 Name = def != null ? def.DisplayName : "Unknown item",
                 Meta = def != null ? $"{def.rarity} · {ItemPresentation.TypeLine(def)}" : entry.itemId,
                 Description = def != null ? def.description : string.Empty,
-                Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
+                Summary = def != null ? ItemPresentation.FormatEquipmentSummary(def) : string.Empty,
                 Icon = catalog != null ? catalog.ResolveIcon(def) : null,
                 RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
                 Definition = def,
@@ -454,7 +454,7 @@ namespace ShadowInfection.UI.InventoryWindow
                     ? $"{def.rarity} · {ItemPresentation.TypeLine(def)} · ×{stack.count}"
                     : $"{stack.itemId} · ×{stack.count}",
                 Description = def != null ? def.description : string.Empty,
-                Summary = def != null ? ItemPresentation.FormatStats(def.statModifiers) : string.Empty,
+                Summary = def != null ? ItemPresentation.FormatEquipmentSummary(def) : string.Empty,
                 Icon = catalog != null ? catalog.ResolveIcon(def) : null,
                 RarityClass = def != null ? ItemPresentation.RarityClass(def.rarity) : ItemPresentation.RarityClass(ItemRarity.Common),
                 Definition = def,

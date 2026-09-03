@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: StarterPistols
   m_EditorClassIdentifier: Assembly-CSharp::ShadowInfection.Items.ItemDefinition
   itemId: starter_pistols
-  displayName: Starter Pistols
-  description: A matched pair. Fast and close.
+  displayName: Starter Pistol
+  description: One short barrel. Equip a second copy in off-hand to dual-wield.
   icon: {fileID: 2800000, guid: b7b31abbb8643144fb6187d6ae47259f, type: 3}
   kind: 0
   slot: 8

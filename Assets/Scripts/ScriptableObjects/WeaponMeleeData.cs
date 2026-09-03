@@ -12,7 +12,7 @@ public class WeaponMeleeData : WeaponData
     public int numRays = 21;
     public float weighting = 0.5f;
 
-    public override void PerformAttack(UnitController attacker)
+    public override void PerformAttack(UnitController attacker, float damageMultiplier = 1f)
     {
         Vector3 unitPosition = attacker.transform.position;
         Vector3 attackerForwardXZ = Vector3.ProjectOnPlane(attacker.transform.forward, Vector3.up);
@@ -66,7 +66,7 @@ public class WeaponMeleeData : WeaponData
         var hasHitAnyEnemy = enemiesHit.Count > 0;
         if (!hasHitAnyEnemy) return;
 
-        var damage = CalculateDamage(attacker);
+        var damage = CalculateDamage(attacker, damageMultiplier);
 
         // If only one enemy was hit, deal damage to that enemy
 

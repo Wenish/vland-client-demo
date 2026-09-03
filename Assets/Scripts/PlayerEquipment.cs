@@ -1,4 +1,6 @@
 using Mirror;
+using MyGame.Events;
+using R3;
 using ShadowInfection.DI;
 using ShadowInfection.Items;
 using UnityEngine;
@@ -13,10 +15,17 @@ public class PlayerEquipment : NetworkBehaviour
 
     private PlayerInput playerInput;
     private Coroutine deferredSyncCoroutine;
+    private DisposableBag serverSubscriptions;
 
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        GameMessages.Subscribe<PlayerUnitSpawnedEvent>(ref serverSubscriptions, OnPlayerUnitSpawned);
     }
 
     public override void OnStartLocalPlayer()
@@ -30,17 +39,17 @@ public class PlayerEquipment : NetworkBehaviour
         if (Local == this)
             Local = null;
 
-        if (deferredSyncCoroutine != null)
-        {
-            StopCoroutine(deferredSyncCoroutine);
-            deferredSyncCoroutine = null;
-        }
+        StopDeferredSync();
     }
 
     private void OnDestroy()
     {
         if (Local == this)
             Local = null;
+
+        StopDeferredSync();
+        serverSubscriptions.Dispose();
+        serverSubscriptions = new DisposableBag();
     }
 
     public static bool ShouldSyncToServer()
@@ -65,16 +74,24 @@ public class PlayerEquipment : NetworkBehaviour
         if (!isLocalPlayer)
             return;
 
-        if (deferredSyncCoroutine != null)
-            StopCoroutine(deferredSyncCoroutine);
-
+        StopDeferredSync();
         deferredSyncCoroutine = StartCoroutine(DeferredSyncWhenUnitReady());
+    }
+
+    private void StopDeferredSync()
+    {
+        if (deferredSyncCoroutine == null)
+            return;
+
+        StopCoroutine(deferredSyncCoroutine);
+        deferredSyncCoroutine = null;
     }
 
     private System.Collections.IEnumerator DeferredSyncWhenUnitReady()
     {
         while (isLocalPlayer)
         {
+            EnsurePlayerInput();
             if (playerInput != null && playerInput.myUnit != null)
                 break;
 
@@ -89,6 +106,23 @@ public class PlayerEquipment : NetworkBehaviour
 
         RequestSyncInventory();
         deferredSyncCoroutine = null;
+    }
+
+    private void EnsurePlayerInput()
+    {
+        if (playerInput != null)
+            return;
+
+        playerInput = GetComponent<PlayerInput>();
+    }
+
+    [Server]
+    private void OnPlayerUnitSpawned(PlayerUnitSpawnedEvent e)
+    {
+        if (connectionToClient == null || e == null || e.ConnectionId != connectionToClient.connectionId)
+            return;
+
+        ApplyEquippedHandsToUnit(e.Unit != null ? e.Unit.GetComponent<UnitController>() : null);
     }
 
     private static CharacterInventorySnapshot BuildLocalSnapshot()
@@ -120,29 +154,78 @@ public class PlayerEquipment : NetworkBehaviour
         }
 
         ServerPlayerInventories.SetFromSnapshot(connectionToClient.connectionId, snapshot);
-        ApplyEquippedMainHandToUnit();
+        ApplyEquippedHandsToUnit();
     }
 
-    private void ApplyEquippedMainHandToUnit()
+    [Server]
+    private void ApplyEquippedHandsToUnit(UnitController unit = null)
     {
-        var unit = playerInput != null ? playerInput.myUnit?.GetComponent<UnitController>() : null;
-        if (unit == null || connectionToClient == null)
+        if (connectionToClient == null)
             return;
 
-        if (!ServerPlayerInventories.TryGet(connectionToClient.connectionId, out var inventory))
+        if (unit == null)
+            unit = ResolveControlledUnit();
+
+        ServerApplyHeldItems(connectionToClient.connectionId, unit);
+    }
+
+    [Server]
+    private UnitController ResolveControlledUnit()
+    {
+        EnsurePlayerInput();
+        var fromInput = playerInput != null ? playerInput.myUnit : null;
+        if (fromInput != null)
+            return fromInput.GetComponent<UnitController>();
+
+        var spawned = GameServices.PlayerUnits != null
+            ? GameServices.PlayerUnits.GetPlayerUnit(connectionToClient.connectionId)
+            : null;
+        return spawned != null ? spawned.GetComponent<UnitController>() : null;
+    }
+
+    [Server]
+    public static void ServerApplyHeldItems(int connectionId, UnitController unit)
+    {
+        if (unit == null)
+            return;
+
+        if (!ServerPlayerInventories.TryGet(connectionId, out var inventory))
             return;
 
         var catalog = ResolveCatalog();
         if (catalog == null)
             return;
 
-        if (!CharacterInventory.TryGetEquipped(inventory, ItemSlot.MainHand, out var entry)
-            || string.IsNullOrWhiteSpace(entry.itemId)
-            || !catalog.TryGet(entry.itemId, out var definition)
-            || definition.weaponData == null)
-            return;
+        var mainId = string.Empty;
+        if (CharacterInventory.TryGetEquipped(inventory, ItemSlot.MainHand, out var mainEntry)
+            && !string.IsNullOrWhiteSpace(mainEntry.itemId)
+            && catalog.TryGet(mainEntry.itemId, out var mainDefinition)
+            && mainDefinition.weaponData != null)
+        {
+            mainId = mainEntry.itemId;
+        }
 
-        unit.EquipWeapon(definition.weaponData.weaponName);
+        var offId = string.Empty;
+        if (CharacterInventory.TryGetEquipped(inventory, ItemSlot.OffHand, out var offEntry)
+            && !string.IsNullOrWhiteSpace(offEntry.itemId)
+            && catalog.TryGet(offEntry.itemId, out var offDefinition)
+            && offDefinition.weaponData != null)
+        {
+            offId = offEntry.itemId;
+        }
+
+        var previousType = unit.currentWeapon != null
+            ? (WeaponType?)unit.currentWeapon.weaponType
+            : null;
+
+        unit.EquipHeldItems(mainId, offId);
+
+        var nextType = unit.currentWeapon != null
+            ? (WeaponType?)unit.currentWeapon.weaponType
+            : WeaponType.Unarmed;
+
+        if (previousType != nextType)
+            unit.unitMediator?.Skills?.RemoveSkillsIncompatibleWithWeapon(nextType);
     }
 
     [TargetRpc]

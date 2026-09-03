@@ -256,10 +256,12 @@ namespace ShadowInfection.UI.CharacterWindow
 
                 Texture2D icon = null;
                 string rarityClass = null;
-                if (occupied && catalog.TryGet(entry.itemId, out var definition))
+                string tooltip = ItemPresentation.SlotLabel(slot);
+                if (occupied && catalog.TryGet(entry.itemId, out var definition) && definition != null)
                 {
                     icon = catalog.ResolveIcon(definition);
                     rarityClass = ItemPresentation.RarityClass(definition.rarity);
+                    tooltip = BuildEquippedTooltip(definition);
                 }
 
                 slotVms.Add(new CharacterSlotVm
@@ -268,9 +270,29 @@ namespace ShadowInfection.UI.CharacterWindow
                     Icon = icon,
                     RarityClass = rarityClass,
                     EmptyLabel = ItemPresentation.SlotLabel(slot),
+                    Tooltip = tooltip,
                     Occupied = occupied
                 });
             }
+        }
+
+        private static string BuildEquippedTooltip(ItemDefinition definition)
+        {
+            if (definition == null)
+                return string.Empty;
+
+            var typeLine = ItemPresentation.TypeLine(definition);
+            var summary = ItemPresentation.FormatEquipmentSummary(definition);
+            if (string.IsNullOrEmpty(summary))
+            {
+                return string.IsNullOrEmpty(typeLine)
+                    ? definition.DisplayName
+                    : $"{definition.DisplayName}\n{typeLine}";
+            }
+
+            return string.IsNullOrEmpty(typeLine)
+                ? $"{definition.DisplayName}\n{summary}"
+                : $"{definition.DisplayName}\n{typeLine}\n{summary}";
         }
 
         private void RestorePosition()

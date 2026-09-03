@@ -26,10 +26,6 @@ namespace NPCBehaviour
         [MinValue(0f)]
         public float skillCooldown = 1f;
 
-        [Tooltip("Minimum time between auto-attacks (seconds)")]
-        [MinValue(0f)]
-        public float autoAttackCooldown = 0.5f;
-
         [Header("Facing")]
         [Tooltip("Should the NPC face its target while attacking?")]
         public bool faceTarget = true;
@@ -164,12 +160,7 @@ namespace NPCBehaviour
 
         private void TryUseAutoAttack(BehaviourContext context)
         {
-            // Only auto-attack if cooldown has elapsed
-            if (Time.time - context.LastAttackTime < autoAttackCooldown)
-                return;
-            
             context.Unit.Attack();
-            context.LastAttackTime = Time.time;
         }
     }
 }

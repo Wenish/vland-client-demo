@@ -9,12 +9,12 @@ public class WeaponRangedData : WeaponData
     [Header("Projectile")]
     public ProjectileData projectile;
 
-    public override void PerformAttack(UnitController attacker)
+    public override void PerformAttack(UnitController attacker, float damageMultiplier = 1f)
     {
-        PerformAttack(attacker, null);
+        PerformAttack(attacker, null, damageMultiplier);
     }
 
-    public void PerformAttack(UnitController attacker, IProjectileSpawner projectileSpawner)
+    public void PerformAttack(UnitController attacker, IProjectileSpawner projectileSpawner, float damageMultiplier = 1f)
     {
         if (projectile == null)
         {
@@ -45,18 +45,18 @@ public class WeaponRangedData : WeaponData
         ProjectileController projectileController = projectileInstance.GetComponent<ProjectileController>();
         projectileController.shooter = attacker;
 
-        projectileController.OnProjectileUnitHit += OnProjectileUnitHit;
-        projectileController.OnProjectileDestroyed += (proj) =>
+        var multiplier = damageMultiplier;
+        System.Action<(UnitController target, UnitController attacker)> onHit = hit =>
         {
-            proj.OnProjectileUnitHit -= OnProjectileUnitHit;
-            proj.OnProjectileDestroyed -= (p) => { };
+            var damage = CalculateDamage(hit.attacker, multiplier);
+            hit.target.TakeDamage(DamageInstance.Physical(damage, DamageSourceKind.BasicAttack), hit.attacker);
+            hit.target.RaiseOnAttackHitReceivedEvent(hit.attacker);
         };
-    }
 
-    private void OnProjectileUnitHit((UnitController target, UnitController attacker) obj)
-    {
-        var damage = CalculateDamage(obj.attacker);
-        obj.target.TakeDamage(DamageInstance.Physical(damage, DamageSourceKind.BasicAttack), obj.attacker);
-        obj.target.RaiseOnAttackHitReceivedEvent(obj.attacker);
+        projectileController.OnProjectileUnitHit += onHit;
+        projectileController.OnProjectileDestroyed += proj =>
+        {
+            proj.OnProjectileUnitHit -= onHit;
+        };
     }
 }

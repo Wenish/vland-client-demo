@@ -7,6 +7,7 @@ using MyGame.Events.Ui;
 using R3;
 using ShadowInfection.DI;
 using ShadowInfection.Input;
+using ShadowInfection.Items;
 using ShadowInfection.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,7 +19,10 @@ namespace ShadowInfection.UI.LoadoutWindow
     {
         private readonly ILoadoutStore store;
         private readonly ILoadoutCatalog catalog;
+        private readonly ICharacterEquipment equipment;
+        private readonly IItemCatalog items;
         private readonly ISubscriber<SetLoadoutWindowOpenEvent> setOpen;
+        private readonly ISubscriber<EquipmentChangedEvent> equipmentChanged;
         private readonly IPublisher<SetInventoryWindowOpenEvent> inventoryOpen;
         private readonly IPublisher<SetCharacterWindowOpenEvent> characterOpen;
         private readonly ApplicationSettings settings;
@@ -28,7 +32,7 @@ namespace ShadowInfection.UI.LoadoutWindow
         private LoadoutView view;
         private R3.DisposableBag subscriptions;
         private CancellationToken bindToken;
-        private LoadoutSlot activeSlot = LoadoutSlot.Weapon;
+        private LoadoutSlot activeSlot = LoadoutSlot.Passive;
         private SkillTag? tagFilter;
         private readonly Dictionary<LoadoutSlot, LoadoutItem> selected = new();
         private bool applyPending;
@@ -36,7 +40,10 @@ namespace ShadowInfection.UI.LoadoutWindow
         public LoadoutWindowPresenter(
             ILoadoutStore store,
             ILoadoutCatalog catalog,
+            ICharacterEquipment equipment,
+            IItemCatalog items,
             ISubscriber<SetLoadoutWindowOpenEvent> setOpen,
+            ISubscriber<EquipmentChangedEvent> equipmentChanged,
             IPublisher<SetInventoryWindowOpenEvent> inventoryOpen,
             IPublisher<SetCharacterWindowOpenEvent> characterOpen,
             ApplicationSettings settings,
@@ -45,7 +52,10 @@ namespace ShadowInfection.UI.LoadoutWindow
         {
             this.store = store;
             this.catalog = catalog;
+            this.equipment = equipment;
+            this.items = items;
             this.setOpen = setOpen;
+            this.equipmentChanged = equipmentChanged;
             this.inventoryOpen = inventoryOpen;
             this.characterOpen = characterOpen;
             this.settings = settings;
@@ -77,12 +87,13 @@ namespace ShadowInfection.UI.LoadoutWindow
 
             TryInitializeFromSavedLoadout();
             view.SetActiveSlot(activeSlot);
-            view.SetFilter(tagFilter, activeSlot != LoadoutSlot.Weapon);
+            view.SetFilter(tagFilter, true);
             ClearIncompatibleSkillSelections();
             RefreshList();
             ApplyCurrentLoadout();
 
             subscriptions.Add(setOpen.Subscribe(OnSetOpen));
+            subscriptions.Add(equipmentChanged.Subscribe(_ => OnEquipmentChanged()));
             subscriptions.Add(
                 Observable.EveryUpdate(UnityFrameProvider.Update, token)
                     .Subscribe(_ => TickToggle()));
@@ -107,7 +118,7 @@ namespace ShadowInfection.UI.LoadoutWindow
             view = null;
             bindToken = default;
             applyPending = false;
-            activeSlot = LoadoutSlot.Weapon;
+            activeSlot = LoadoutSlot.Passive;
             tagFilter = null;
             selected.Clear();
         }
@@ -139,13 +150,18 @@ namespace ShadowInfection.UI.LoadoutWindow
             view?.SetOpen(wantOpen);
         }
 
+        private void OnEquipmentChanged()
+        {
+            ClearIncompatibleSkillSelections();
+            RefreshList();
+            ScheduleApply();
+        }
+
         private void TickToggle()
         {
             if (view == null || input == null || !input.WasPressed(PlayerActionId.Loadout))
                 return;
 
-            // Character select/create (and other modals) are not gameplay — don't open loadout.
-            // Loadout is lobby-only; never open during a match.
             if (UiModalInputBlock.IsBlocked || !IsInRoomLobby())
             {
                 if (view.IsOpen)
@@ -172,14 +188,14 @@ namespace ShadowInfection.UI.LoadoutWindow
         {
             activeSlot = slot;
             view.SetActiveSlot(slot);
-            view.SetFilter(tagFilter, slot != LoadoutSlot.Weapon);
+            view.SetFilter(tagFilter, true);
             RefreshList();
         }
 
         private void HandleFilterClicked(SkillTag? tag)
         {
             tagFilter = tag;
-            view.SetFilter(tagFilter, activeSlot != LoadoutSlot.Weapon);
+            view.SetFilter(tagFilter, true);
             RefreshList();
         }
 
@@ -188,8 +204,8 @@ namespace ShadowInfection.UI.LoadoutWindow
             if (string.IsNullOrEmpty(id))
                 return;
 
-            var items = BuildItemsForActiveSlot();
-            var clicked = items.FirstOrDefault(item => item.id == id);
+            var itemsForSlot = BuildItemsForActiveSlot();
+            var clicked = itemsForSlot.FirstOrDefault(item => item.id == id);
             if (!clicked.HasId)
                 return;
 
@@ -224,17 +240,7 @@ namespace ShadowInfection.UI.LoadoutWindow
             }
 
             AssignSlot(activeSlot, clicked);
-
-            if (activeSlot == LoadoutSlot.Weapon)
-            {
-                ClearIncompatibleSkillSelections();
-                RefreshList();
-            }
-            else
-            {
-                RefreshList();
-            }
-
+            RefreshList();
             ScheduleApply();
         }
 
@@ -244,7 +250,6 @@ namespace ShadowInfection.UI.LoadoutWindow
             if (saved == null)
                 return;
 
-            AssignSlot(LoadoutSlot.Weapon, MakeWeaponItem(saved.WeaponId));
             AssignSlot(LoadoutSlot.Passive, MakeSkillItem(saved.PassiveId, LoadoutSlot.Passive));
             AssignSlot(LoadoutSlot.Normal1, MakeSkillItem(saved.Normal1Id, LoadoutSlot.Normal1));
             AssignSlot(LoadoutSlot.Normal2, MakeSkillItem(saved.Normal2Id, LoadoutSlot.Normal2));
@@ -263,25 +268,17 @@ namespace ShadowInfection.UI.LoadoutWindow
             if (view == null)
                 return;
 
-            var items = BuildItemsForActiveSlot();
+            var list = BuildItemsForActiveSlot();
             var selectedId = GetSelectedId(activeSlot);
-            view.SetItems(items, selectedId, BuildEmptyMessage());
-            view.SetSubheading(BuildSubheading(items.Count));
-            view.SetFilter(tagFilter, activeSlot != LoadoutSlot.Weapon);
+            view.SetItems(list, selectedId, BuildEmptyMessage());
+            view.SetSubheading(BuildSubheading(list.Count));
+            view.SetFilter(tagFilter, true);
         }
 
         private List<LoadoutItem> BuildItemsForActiveSlot()
         {
-            var items = new List<LoadoutItem>();
-            var selectedWeaponType = GetSelectedWeaponType();
-
-            if (activeSlot == LoadoutSlot.Weapon)
-            {
-                var weapons = catalog.GetPlayerWeapons();
-                for (var i = 0; i < weapons.Count; i++)
-                    items.Add(ToWeaponItem(weapons[i]));
-                return items;
-            }
+            var list = new List<LoadoutItem>();
+            var equippedWeaponType = GetEquippedWeaponType();
 
             var expectedType = activeSlot == LoadoutSlot.Passive
                 ? SkillType.Passive
@@ -295,72 +292,39 @@ namespace ShadowInfection.UI.LoadoutWindow
                 var skill = skills[i];
                 if (skill.skillType != expectedType)
                     continue;
-                if (!skill.CanBeUsedWithWeapon(selectedWeaponType))
+                if (!skill.CanBeUsedWithWeapon(equippedWeaponType))
                     continue;
                 if (tagFilter.HasValue && !skill.HasTag(tagFilter.Value))
                     continue;
 
-                items.Add(ToSkillItem(skill, expectedType == SkillType.Normal ? LoadoutSlot.Normal1 : activeSlot));
+                list.Add(ToSkillItem(skill, expectedType == SkillType.Normal ? LoadoutSlot.Normal1 : activeSlot));
             }
 
-            return items;
+            return list;
         }
 
         private string BuildSubheading(int visibleCount)
         {
             var choosing = LoadoutSlots.ChoosingLabel(activeSlot);
-            if (activeSlot == LoadoutSlot.Weapon)
-                return $"{choosing} · {visibleCount} weapons";
-
             var typeLabel = LoadoutSlots.SlotTypeLabel(activeSlot);
-            var weapon = GetSelectedWeapon();
-            var weaponText = weapon != null
-                ? $"compatible with {weapon.weaponName}"
-                : "that work with any weapon";
+            var weaponText = DescribeEquippedWeapon();
             var tagText = tagFilter.HasValue ? $"{SkillTagUtil.GetLabel(tagFilter.Value)} · " : string.Empty;
-            return $"{choosing} · {tagText}{typeLabel} {weaponText}";
+            return $"{choosing} · {tagText}{typeLabel} compatible with {weaponText}";
         }
 
         private string BuildEmptyMessage()
         {
-            if (activeSlot == LoadoutSlot.Weapon)
-                return "No weapons available.";
-
-            var weapon = GetSelectedWeapon();
-            var weaponText = weapon != null ? weapon.weaponName : "this slot";
+            var weaponText = DescribeEquippedWeapon();
             if (tagFilter.HasValue)
                 return $"No {SkillTagUtil.GetLabel(tagFilter.Value)} skills for this slot with {weaponText}.";
 
-            return weapon != null
-                ? $"No skills for this slot with {weapon.weaponName}."
-                : "No skills for this slot. Choose a weapon to unlock more.";
-        }
-
-        private LoadoutItem MakeWeaponItem(string id)
-        {
-            var weapon = catalog.GetWeapon(id);
-            return weapon != null ? ToWeaponItem(weapon) : LoadoutItem.Empty;
+            return $"No skills for this slot with {weaponText}.";
         }
 
         private LoadoutItem MakeSkillItem(string id, LoadoutSlot slot)
         {
             var skill = catalog.GetSkill(id);
             return skill != null ? ToSkillItem(skill, slot) : LoadoutItem.Empty;
-        }
-
-        private static LoadoutItem ToWeaponItem(WeaponData weapon)
-        {
-            return new LoadoutItem
-            {
-                id = weapon.weaponName,
-                name = weapon.weaponName,
-                icon = weapon.iconTexture,
-                slot = LoadoutSlot.Weapon,
-                isWeapon = true,
-                summary = $"Type: {weapon.weaponType}",
-                meta = $"Damage: +{weapon.attackPower} · Range: {weapon.attackRange}",
-                description = $"Type: {weapon.weaponType}\nDamage: +{weapon.attackPower}\nRange: {weapon.attackRange}",
-            };
         }
 
         private static LoadoutItem ToSkillItem(SkillData skill, LoadoutSlot slot)
@@ -389,22 +353,39 @@ namespace ShadowInfection.UI.LoadoutWindow
             return selected.TryGetValue(slot, out var item) ? item.id : null;
         }
 
-        private WeaponData GetSelectedWeapon()
+        private WeaponType GetEquippedWeaponType()
         {
-            return catalog.GetWeapon(GetSelectedId(LoadoutSlot.Weapon));
+            if (equipment != null
+                && equipment.TryGetEquippedEntry(ItemSlot.MainHand, out var entry)
+                && !string.IsNullOrWhiteSpace(entry.itemId)
+                && items != null
+                && items.TryGet(entry.itemId, out var definition)
+                && definition.weaponData != null)
+            {
+                return definition.weaponData.weaponType;
+            }
+
+            return WeaponType.Unarmed;
         }
 
-        private WeaponType? GetSelectedWeaponType()
+        private string DescribeEquippedWeapon()
         {
-            return GetSelectedWeapon()?.weaponType;
+            if (equipment != null
+                && equipment.TryGetEquippedEntry(ItemSlot.MainHand, out var entry)
+                && !string.IsNullOrWhiteSpace(entry.itemId)
+                && items != null
+                && items.TryGet(entry.itemId, out var definition)
+                && definition != null)
+            {
+                return definition.DisplayName;
+            }
+
+            return "Unarmed";
         }
 
         private void ClearIncompatibleSkillSelections()
         {
-            var weaponType = GetSelectedWeaponType();
-            if (!weaponType.HasValue)
-                return;
-
+            var weaponType = GetEquippedWeaponType();
             var slotsToCheck = new[]
             {
                 LoadoutSlot.Passive,
@@ -450,7 +431,6 @@ namespace ShadowInfection.UI.LoadoutWindow
             var newLocalLoadout = new LocalLoadout
             {
                 UnitName = ApplicationSettings.SanitizeNickname(characterName),
-                WeaponId = GetSelectedId(LoadoutSlot.Weapon) ?? string.Empty,
                 PassiveId = GetSelectedId(LoadoutSlot.Passive) ?? string.Empty,
                 Normal1Id = GetSelectedId(LoadoutSlot.Normal1) ?? string.Empty,
                 Normal2Id = GetSelectedId(LoadoutSlot.Normal2) ?? string.Empty,

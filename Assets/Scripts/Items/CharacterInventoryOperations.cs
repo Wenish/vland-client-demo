@@ -59,6 +59,61 @@ namespace ShadowInfection.Items
             return true;
         }
 
+        public static bool TryAutoEquipFirstMainHandWeapon(CharacterSaveData character, IItemCatalog catalog)
+        {
+            if (character == null || catalog == null)
+                return false;
+
+            CharacterInventory.EnsureLists(character);
+            if (CharacterInventory.TryGetEquipped(character, ItemSlot.MainHand, out var equipped)
+                && !string.IsNullOrWhiteSpace(equipped.instanceId))
+            {
+                return false;
+            }
+
+            for (var i = 0; i < character.InventoryEquipment.Count; i++)
+            {
+                var entry = character.InventoryEquipment[i];
+                if (entry == null || string.IsNullOrWhiteSpace(entry.instanceId))
+                    continue;
+                if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
+                    continue;
+                if (!ItemRules.CanEquipToSlot(definition, ItemSlot.MainHand, definition.weaponData.weaponType, null))
+                    continue;
+                return TryEquip(character, catalog, entry.instanceId, ItemSlot.MainHand);
+            }
+
+            return false;
+        }
+
+        public static bool TryAutoEquipFirstOffHandWeapon(CharacterSaveData character, IItemCatalog catalog)
+        {
+            if (character == null || catalog == null)
+                return false;
+
+            CharacterInventory.EnsureLists(character);
+            if (CharacterInventory.TryGetEquipped(character, ItemSlot.OffHand, out var equipped)
+                && !string.IsNullOrWhiteSpace(equipped.instanceId))
+            {
+                return false;
+            }
+
+            var mainHand = ResolveMainHandWeaponType(character, catalog);
+            for (var i = 0; i < character.InventoryEquipment.Count; i++)
+            {
+                var entry = character.InventoryEquipment[i];
+                if (entry == null || string.IsNullOrWhiteSpace(entry.instanceId))
+                    continue;
+                if (!catalog.TryGet(entry.itemId, out var definition) || definition.weaponData == null)
+                    continue;
+                if (!ItemRules.CanEquipToSlot(definition, ItemSlot.OffHand, mainHand, null))
+                    continue;
+                return TryEquip(character, catalog, entry.instanceId, ItemSlot.OffHand);
+            }
+
+            return false;
+        }
+
         public static bool TryUnequip(CharacterSaveData character, ItemSlot slot)
         {
             if (character == null)

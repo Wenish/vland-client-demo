@@ -9,7 +9,6 @@ public class CharacterSaveData
     public string Name;
     public CharacterGender Gender;
 
-    public string WeaponId;
     public string PassiveId;
     public string Normal1Id;
     public string Normal2Id;
@@ -29,7 +28,6 @@ public class CharacterSaveData
         return new LocalLoadout
         {
             UnitName = Name,
-            WeaponId = WeaponId ?? string.Empty,
             PassiveId = PassiveId ?? string.Empty,
             Normal1Id = Normal1Id ?? string.Empty,
             Normal2Id = Normal2Id ?? string.Empty,
@@ -43,7 +41,6 @@ public class CharacterSaveData
         if (loadout == null)
             return;
 
-        WeaponId = loadout.WeaponId ?? string.Empty;
         PassiveId = loadout.PassiveId ?? string.Empty;
         Normal1Id = loadout.Normal1Id ?? string.Empty;
         Normal2Id = loadout.Normal2Id ?? string.Empty;

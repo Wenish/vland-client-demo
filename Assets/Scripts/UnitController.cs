@@ -2,6 +2,7 @@ using System;
 using Mirror;
 using MyGame.Events;
 using ShadowInfection.DI;
+using ShadowInfection.Items;
 using ShadowInfection.Units;
 using UnityEngine;
 using UnityEngine.InputSystem; // New Input System
@@ -147,36 +148,59 @@ public class UnitController : NetworkBehaviour
     [SyncVar]
     public float moveSpeed = 5f;
 
-    [SyncVar(hook = nameof(OnWeaponNameChanged))]
-    public string weaponName;
+    [SyncVar(hook = nameof(OnMainHandItemIdChanged))]
+    public string mainHandItemId = "";
+    [SyncVar(hook = nameof(OnOffHandItemIdChanged))]
+    public string offHandItemId = "";
     public WeaponData currentWeapon;
+    public WeaponData currentOffHandWeapon;
+    public WeaponData offHandItemWeapon;
+    public int LastAttackIndex { get; private set; }
     private WeaponController weaponController;
     public event Action<UnitController> OnWeaponChange = delegate { };
 
-    private void OnWeaponNameChanged(string oldWeaponName, string newWeaponName)
+    private void OnMainHandItemIdChanged(string oldItemId, string newItemId)
     {
-        if (isServer) return;
-        SetWeaponData(newWeaponName);
+        RefreshHeldWeapons();
     }
 
-    private void SetWeaponData(string weaponName)
+    private void OnOffHandItemIdChanged(string oldItemId, string newItemId)
     {
-        WeaponData weaponData = GameServices.Databases?.Weapons?.GetWeaponByName(weaponName);
-        if (weaponData == null)
-        {
-            Debug.LogError($"Weapon {weaponName} not found in database.");
-            return;
-        }
-        currentWeapon = weaponData;
-        weaponController.weaponData = weaponData;
-        OnWeaponChange(this);
+        RefreshHeldWeapons();
     }
 
     [Server]
-    public void EquipWeapon(string weaponName)
+    public void EquipHeldItems(string mainItemId, string offItemId)
     {
-        this.weaponName = weaponName;
-        SetWeaponData(weaponName);
+        mainHandItemId = mainItemId ?? string.Empty;
+        offHandItemId = offItemId ?? string.Empty;
+        RefreshHeldWeapons();
+    }
+
+    private void RefreshHeldWeapons()
+    {
+        if (weaponController == null)
+            weaponController = GetComponent<WeaponController>();
+
+        var databases = GameServices.Databases;
+        var items = databases?.Items;
+        var weapons = databases?.Weapons;
+
+        currentWeapon = HeldWeaponResolver.ResolveMain(items, weapons, mainHandItemId);
+        offHandItemWeapon = HeldWeaponResolver.ResolveItemWeapon(items, offHandItemId);
+        currentOffHandWeapon = HeldWeaponResolver.ResolveOffHandAttackWeapon(items, offHandItemId);
+
+        if (weaponController != null)
+            weaponController.SetHeldWeapons(currentWeapon, currentOffHandWeapon);
+
+        OnWeaponChange(this);
+    }
+
+    public WeaponData GetWeaponForAttackIndex(int attackIndex)
+    {
+        if (attackIndex == 1 && currentOffHandWeapon != null)
+            return currentOffHandWeapon;
+        return currentWeapon;
     }
 
     [SyncVar(hook = nameof(OnModelNameChanged))]
@@ -297,6 +321,7 @@ public class UnitController : NetworkBehaviour
     {
         base.OnStartClient();
         ConfigureClientObserverPhysics();
+        RefreshHeldWeapons();
     }
 
     // Start is called before the first frame update
@@ -308,6 +333,7 @@ public class UnitController : NetworkBehaviour
             unitCollider = GetComponent<Collider>();
 
         ConfigureClientObserverPhysics();
+        RefreshHeldWeapons();
 
         if (isServer)
         {
@@ -315,21 +341,12 @@ public class UnitController : NetworkBehaviour
             {
                 EquipModel(modelName);
             }
-
-            if (!string.IsNullOrEmpty(weaponName))
-            {
-                EquipWeapon(weaponName);
-            }
         }
         RaiseHealthChangeEvent();
         RaiseShieldChangeEvent();
 
         if (!isServer)
         {
-            if (!string.IsNullOrEmpty(weaponName))
-            {
-                SetWeaponData(weaponName);
-            }
             if (!string.IsNullOrEmpty(modelName))
             {
                 SetModelData(modelName);
@@ -1055,6 +1072,7 @@ public class UnitController : NetworkBehaviour
     [Server]
     public void RaiseOnAttackStartEvent(int attackIndex)
     {
+        LastAttackIndex = attackIndex;
         OnAttackStart((this, attackIndex));
         RpcRaiseOnAttackStartEvent(attackIndex);
     }
@@ -1063,6 +1081,7 @@ public class UnitController : NetworkBehaviour
     public void RpcRaiseOnAttackStartEvent(int attackIndex)
     {
         if (isServer) return;
+        LastAttackIndex = attackIndex;
         OnAttackStart((this, attackIndex));
     }
 

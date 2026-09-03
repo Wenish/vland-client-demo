@@ -516,46 +516,6 @@ namespace ShadowInfection.UI.VendorWindow
                 return;
             }
 
-            if (Catalog.buyEntries == null)
-                return;
-
-            var gold = player != null ? player.Gold : 0;
-            foreach (var entry in Catalog.buyEntries)
-            {
-                if (entry == null || entry.weapon == null)
-                    continue;
-
-                var stock = ResolveBuyStock(entry.ResolvedId);
-                var soldOut = stock == 0;
-                var shortfall = Mathf.Max(0, entry.goldCost - gold);
-                var unaffordable = !soldOut && shortfall > 0;
-                string subtitle;
-                if (soldOut)
-                    subtitle = "Sold out";
-                else if (unaffordable)
-                    subtitle = $"{shortfall} short";
-                else
-                    subtitle = entry.weapon.weaponType.ToString();
-
-                rows.Add(new VendorRowVm
-                {
-                    Id = entry.ResolvedId,
-                    Tab = VendorTab.Buy,
-                    Icon = entry.weapon.iconTexture,
-                    IconClass = "vendor-row__icon--weapon",
-                    Name = entry.weapon.weaponName,
-                    Subtitle = subtitle,
-                    TypeLine = entry.weapon.weaponType.ToString(),
-                    StatBlock = $"Damage: +{entry.weapon.attackPower} · Range: {entry.weapon.attackRange}",
-                    PriceGold = entry.goldCost,
-                    StackCount = stock > 1 ? stock : 1,
-                    Dimmed = soldOut || unaffordable,
-                    Locked = soldOut,
-                    CanTransact = !soldOut,
-                    PriceNote = soldOut ? "sold out" : null,
-                    TooltipAction = "Right-click to buy"
-                });
-            }
         }
 
         private void BuildItemCatalogRows(List<VendorRowVm> rows)
@@ -569,6 +529,8 @@ namespace ShadowInfection.UI.VendorWindow
                 var item = all[i];
                 if (item == null || string.IsNullOrWhiteSpace(item.itemId))
                     continue;
+                if (item.weaponData != null && item.weaponData.npcOnly)
+                    continue;
 
                 var typeLine = ItemPresentation.TypeLine(item);
                 rows.Add(new VendorRowVm
@@ -580,7 +542,7 @@ namespace ShadowInfection.UI.VendorWindow
                     Name = item.DisplayName,
                     Subtitle = $"{item.rarity} · {typeLine}",
                     TypeLine = typeLine,
-                    StatBlock = ItemPresentation.FormatStats(item.statModifiers),
+                    StatBlock = ItemPresentation.FormatEquipmentSummary(item),
                     PriceGold = 0,
                     StackCount = 1,
                     Dimmed = false,

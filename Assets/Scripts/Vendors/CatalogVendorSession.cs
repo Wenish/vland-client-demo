@@ -110,7 +110,7 @@ public sealed class CatalogVendorSession : IVendorSession
 
         foreach (var entry in catalog.buyEntries)
         {
-            if (entry == null || entry.weapon == null)
+            if (entry == null || string.IsNullOrWhiteSpace(entry.ResolvedId))
                 continue;
 
             buyStock[entry.ResolvedId] = entry.IsUnlimitedStock

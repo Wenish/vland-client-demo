@@ -42,8 +42,9 @@ public class UnitSpawner : NetworkBehaviour, IUnitSpawner
             unitController.team = unitData.team;
             unitController.unitType = unitData.unitType;
             unitController.unitName = unitData.unitName;
-            unitController.weaponName = unitData.weapon?.weaponName ?? "";
-            unitController.currentWeapon = unitData.weapon;
+            unitController.EquipHeldItems(
+                unitData.mainHandItem != null ? unitData.mainHandItem.itemId : string.Empty,
+                unitData.offHandItem != null ? unitData.offHandItem.itemId : string.Empty);
             unitController.EquipModel(unitData.modelData.modelName);
         }
 

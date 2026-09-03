@@ -75,6 +75,7 @@ namespace ShadowInfection.UI.PlayerHud
         private SkillData lastNormal3Data;
         private SkillData lastUltimateData;
         private WeaponData lastWeaponData;
+        private WeaponData lastOffHandWeaponData;
         private string passiveTooltip = string.Empty;
         private string normal1Tooltip = string.Empty;
         private string normal2Tooltip = string.Empty;
@@ -370,10 +371,12 @@ namespace ShadowInfection.UI.PlayerHud
 
             if (weaponController != null && weaponController.weaponData != null)
             {
-                if (!ReferenceEquals(lastWeaponData, weaponController.weaponData))
+                if (!ReferenceEquals(lastWeaponData, weaponController.weaponData)
+                    || !ReferenceEquals(lastOffHandWeaponData, weaponController.offHandWeaponData))
                 {
                     lastWeaponData = weaponController.weaponData;
-                    weaponTooltip = BuildWeaponTooltip(lastWeaponData);
+                    lastOffHandWeaponData = weaponController.offHandWeaponData;
+                    weaponTooltip = BuildWeaponTooltip(lastWeaponData, lastOffHandWeaponData);
                 }
 
                 view.SetAbilitySlot(PlayerHudAbilitySlot.BaseAttack, new AbilitySlotVm(
@@ -620,6 +623,7 @@ namespace ShadowInfection.UI.PlayerHud
             lastNormal3Data = null;
             lastUltimateData = null;
             lastWeaponData = null;
+            lastOffHandWeaponData = null;
 
             if (view == null)
                 return;
@@ -669,6 +673,7 @@ namespace ShadowInfection.UI.PlayerHud
         private void OnWeaponChange(UnitController unitController)
         {
             lastWeaponData = null;
+            lastOffHandWeaponData = null;
         }
 
         private void HandleStatChanged(StatType statType)
@@ -742,19 +747,45 @@ namespace ShadowInfection.UI.PlayerHud
             return sb.ToString();
         }
 
-        private static string BuildWeaponTooltip(WeaponData weaponData)
+        private static string BuildWeaponTooltip(WeaponData weaponData, WeaponData offHandWeapon)
         {
-            using var sb = ZString.CreateStringBuilder();
+            var sb = ZString.CreateStringBuilder();
+            try
+            {
+                AppendWeaponTooltip(ref sb, weaponData, "Main");
+                if (offHandWeapon != null)
+                {
+                    sb.Append('\n');
+                    AppendWeaponTooltip(ref sb, offHandWeapon, "Off");
+                }
+
+                return sb.ToString();
+            }
+            finally
+            {
+                sb.Dispose();
+            }
+        }
+
+        private static void AppendWeaponTooltip(ref Utf16ValueStringBuilder sb, WeaponData weaponData, string hand)
+        {
+            if (weaponData == null)
+                return;
+
+            var period = weaponData.attackTime + weaponData.attackSpeed;
             sb.Append("<size=20><b>");
             sb.Append(weaponData.weaponName);
-            sb.Append("</b></size>\n<color=#cccccc><size=16>Type: ");
+            sb.Append("</b></size>\n<color=#cccccc><size=16>");
+            sb.Append(hand);
+            sb.Append(" · ");
             sb.Append(weaponData.weaponType.ToString());
-            sb.Append("</size>\n<size=16>Damage: +");
+            sb.Append("</size>\n<size=16>Damage: ");
             sb.Append(weaponData.attackPower);
-            sb.Append("</size>\n<size=16>Range: ");
+            sb.Append("</size>\n<size=16>Attack Speed: ");
+            sb.Append(period.ToString("0.##"));
+            sb.Append("s</size>\n<size=16>Range: ");
             sb.Append(weaponData.attackRange);
             sb.Append("</size></color>");
-            return sb.ToString();
         }
     }
 }
