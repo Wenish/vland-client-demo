@@ -12,10 +12,10 @@ using UnityEngine.InputSystem;
 public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRunEndHost, IZombieGoldHost
 {
     private const float LeaderboardReconcileIntervalSeconds = 1f;
+    private const int MinSpawnCandidates = 4;
 
     [Header("Config")]
     [SerializeField] private ZombieModeConfig modeConfig;
-    [SerializeField] private ZombieSpawnController[] zombieSpawns;
     [SerializeField] private bool autoStartOnServer = true;
 
     [Header("Runtime State")]
@@ -65,6 +65,15 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
     private ZombieLeaderboardService leaderboardService;
     private ZombieRunEndService runEndService;
     private ZombieGoldService goldService;
+    private readonly List<Vector3> livingPlayerPositions = new List<Vector3>(8);
+    private readonly List<ZombieSpawnController> nearbyActiveSpawns = new List<ZombieSpawnController>(16);
+    private readonly List<RankedSpawn> fartherActiveSpawns = new List<RankedSpawn>(16);
+
+    private struct RankedSpawn
+    {
+        public ZombieSpawnController Spawn;
+        public float SqrDistance;
+    }
 
     public int CurrentWave => currentWave;
     public bool IsGamePaused => isGamePaused;
@@ -110,7 +119,6 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
 
     private void Awake()
     {
-        RefreshZombieSpawns();
         EnsureServices();
     }
 
@@ -259,39 +267,105 @@ public class ZombieGameManager : NetworkBehaviour, IZombieWaveRuntime, IZombieRu
         GameMessages.Publish(new ZombieReturnToLobbyCountdownEvent(autoReturnToLobbyEnabled, newValue));
     }
 
-    private void RefreshZombieSpawns()
+    private Vector3 GetZombieSpawnPosition()
     {
         var registry = GameServices.Get<IZombieSpawnRegistry>();
         if (registry == null)
         {
-            zombieSpawns = System.Array.Empty<ZombieSpawnController>();
-            return;
+            Debug.LogError("Zombie spawn registry is missing. Cannot pick a spawn position.", this);
+            return Vector3.zero;
         }
 
-        var list = new List<ZombieSpawnController>(registry.Spawns.Count);
+        CollectLivingPlayerPositions();
+        nearbyActiveSpawns.Clear();
+        fartherActiveSpawns.Clear();
+
+        float maxDistance = modeConfig != null ? modeConfig.spawnSettings.maxDistanceFromPlayer : 32f;
+        float maxDistanceSqr = maxDistance * maxDistance;
+        bool hasPlayers = livingPlayerPositions.Count > 0;
+
         foreach (var spawn in registry.Spawns)
         {
-            if (spawn != null)
-                list.Add(spawn);
+            if (spawn == null || !spawn.isActive)
+                continue;
+
+            if (!hasPlayers)
+            {
+                nearbyActiveSpawns.Add(spawn);
+                continue;
+            }
+
+            float sqrDistance = NearestLivingPlayerSqrDistanceXZ(spawn.transform.position);
+            if (sqrDistance <= maxDistanceSqr)
+            {
+                nearbyActiveSpawns.Add(spawn);
+                continue;
+            }
+
+            fartherActiveSpawns.Add(new RankedSpawn
+            {
+                Spawn = spawn,
+                SqrDistance = sqrDistance
+            });
         }
 
-        zombieSpawns = list.ToArray();
-    }
+        FillSpawnCandidatesFromFartherSpawns();
 
-    private Vector3 GetZombieSpawnPosition()
-    {
-        if (zombieSpawns == null || zombieSpawns.Length == 0)
-            RefreshZombieSpawns();
-
-        var activeSpawns = Array.FindAll(zombieSpawns, spawn => spawn != null && spawn.isActive);
-        if (activeSpawns.Length == 0)
+        if (nearbyActiveSpawns.Count == 0)
         {
             Debug.LogError("No active zombie spawns available.", this);
             return Vector3.zero;
         }
 
-        int spawnIndex = UnityEngine.Random.Range(0, activeSpawns.Length);
-        return activeSpawns[spawnIndex].transform.position;
+        int spawnIndex = UnityEngine.Random.Range(0, nearbyActiveSpawns.Count);
+        return nearbyActiveSpawns[spawnIndex].transform.position;
+    }
+
+    private void FillSpawnCandidatesFromFartherSpawns()
+    {
+        if (nearbyActiveSpawns.Count >= MinSpawnCandidates || fartherActiveSpawns.Count == 0)
+            return;
+
+        fartherActiveSpawns.Sort((a, b) => a.SqrDistance.CompareTo(b.SqrDistance));
+        for (int i = 0; i < fartherActiveSpawns.Count && nearbyActiveSpawns.Count < MinSpawnCandidates; i++)
+            nearbyActiveSpawns.Add(fartherActiveSpawns[i].Spawn);
+    }
+
+    private void CollectLivingPlayerPositions()
+    {
+        livingPlayerPositions.Clear();
+        var playerUnits = GameServices.PlayerUnits;
+        if (playerUnits == null)
+            return;
+
+        for (int i = 0; i < playerUnits.playerUnits.Count; i++)
+        {
+            var unitObject = playerUnits.playerUnits[i].Unit;
+            if (unitObject == null)
+                continue;
+
+            var unit = unitObject.GetComponent<UnitController>();
+            if (unit == null || unit.IsDead)
+                continue;
+
+            livingPlayerPositions.Add(unit.transform.position);
+        }
+    }
+
+    private float NearestLivingPlayerSqrDistanceXZ(Vector3 spawnPosition)
+    {
+        float nearestSqr = float.MaxValue;
+        for (int i = 0; i < livingPlayerPositions.Count; i++)
+        {
+            Vector3 playerPosition = livingPlayerPositions[i];
+            float dx = spawnPosition.x - playerPosition.x;
+            float dz = spawnPosition.z - playerPosition.z;
+            float sqrDistance = dx * dx + dz * dz;
+            if (sqrDistance < nearestSqr)
+                nearestSqr = sqrDistance;
+        }
+
+        return nearestSqr;
     }
 
     [Server]

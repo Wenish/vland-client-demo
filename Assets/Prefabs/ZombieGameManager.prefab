@@ -49,7 +49,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   modeConfig: {fileID: 11400000, guid: 5ca6a1675dad2d344acbd97fcbf85579, type: 2}
-  zombieSpawns: []
   autoStartOnServer: 1
   currentWave: 0
   isGamePaused: 0
