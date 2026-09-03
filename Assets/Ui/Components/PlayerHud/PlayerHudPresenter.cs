@@ -387,7 +387,10 @@ namespace ShadowInfection.UI.PlayerHud
                     0f,
                     lastWeaponData.iconTexture,
                     weaponTooltip,
-                    HudActivationKey(PlayerActionId.Attack)));
+                    HudActivationKey(PlayerActionId.Attack),
+                    weaponController.HasMagazineAmmo
+                        ? ZString.Format("({0})", weaponController.MagazineAmmoRemaining)
+                        : string.Empty));
             }
             else
             {
@@ -785,7 +788,17 @@ namespace ShadowInfection.UI.PlayerHud
             sb.Append(period.ToString("0.##"));
             sb.Append("s</size>\n<size=16>Range: ");
             sb.Append(weaponData.attackRange);
-            sb.Append("</size></color>");
+            sb.Append("</size>");
+            if (weaponData is WeaponMagazineRangedData magazine)
+            {
+                sb.Append("\n<size=16>Magazine: ");
+                sb.Append(magazine.magazineSize);
+                sb.Append("</size>\n<size=16>Reload: ");
+                sb.Append(magazine.reloadTime.ToString("0.##"));
+                sb.Append("s</size>");
+            }
+
+            sb.Append("</color>");
         }
     }
 }

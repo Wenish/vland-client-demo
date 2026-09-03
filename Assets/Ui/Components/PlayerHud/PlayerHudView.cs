@@ -27,6 +27,7 @@ namespace ShadowInfection.UI.PlayerHud
         public readonly Texture2D Icon;
         public readonly string Tooltip;
         public readonly string ActivationKey;
+        public readonly string AmmoText;
 
         public AbilitySlotVm(
             bool hasSkill,
@@ -36,7 +37,8 @@ namespace ShadowInfection.UI.PlayerHud
             float recastRemaining,
             Texture2D icon,
             string tooltip,
-            string activationKey = "")
+            string activationKey = "",
+            string ammoText = "")
         {
             HasSkill = hasSkill;
             CooldownRemaining = cooldownRemaining;
@@ -46,6 +48,7 @@ namespace ShadowInfection.UI.PlayerHud
             Icon = icon;
             Tooltip = tooltip;
             ActivationKey = activationKey ?? string.Empty;
+            AmmoText = ammoText ?? string.Empty;
         }
 
         public static AbilitySlotVm Empty =>
@@ -407,6 +410,7 @@ namespace ShadowInfection.UI.PlayerHud
             element.IconTexture = vm.Icon;
             element.TooltipText = vm.Tooltip ?? string.Empty;
             element.ActivationKey = vm.ActivationKey ?? string.Empty;
+            element.AmmoText = vm.AmmoText ?? string.Empty;
         }
 
         public void ShowCastBar()
@@ -535,6 +539,7 @@ namespace ShadowInfection.UI.PlayerHud
             element.IconTexture = null;
             element.TooltipText = string.Empty;
             element.ActivationKey = string.Empty;
+            element.AmmoText = string.Empty;
         }
 
         private static void SetBarFill(VisualElement fillElement, int current, int max)
