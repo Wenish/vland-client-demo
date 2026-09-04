@@ -6,27 +6,7 @@ public class ModelData : ScriptableObject
     public string modelName;
     public GameObject prefab;
 
-    [Header("Default Animation Set")]
+    [Header("Animation")]
+    [Tooltip("Unit AnimatorOverrideController (sparse clips) or the shared Humanoid controller. Missing clips fall back to Humanoid defaults.")]
     public AnimationSetData defaultAnimationSet;
-
-    [Header("Weapon-Specific Animation Sets")]
-    public WeaponAnimationEntry[] weaponAnimationOverrides;
-
-    public AnimationSetData GetAnimationSetForWeapon(WeaponType weaponType)
-    {
-        foreach (var entry in weaponAnimationOverrides)
-        {
-            if (entry.weaponType == weaponType)
-                return entry.animationSet;
-        }
-
-        return defaultAnimationSet;
-    }
-}
-
-[System.Serializable]
-public struct WeaponAnimationEntry
-{
-    public WeaponType weaponType;
-    public AnimationSetData animationSet;
 }

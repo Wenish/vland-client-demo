@@ -15,4 +15,3 @@ MonoBehaviour:
   modelName: zombieCrawler
   prefab: {fileID: 8460791704541548606, guid: 30891c519904b1c48a5db81c103a32a3, type: 3}
   defaultAnimationSet: {fileID: 11400000, guid: f4787dc5493b2491bbad0b72c6dd2f6d, type: 2}
-  weaponAnimationOverrides: []

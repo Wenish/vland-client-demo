@@ -17,7 +17,7 @@ MonoBehaviour:
   applyToCaster: 1
   applyToTargets: 0
   mode: 0
-  triggerName: Attack
+  triggerName: Cast
   stateName: 
   layer: 0
   transitionDuration: 0.05

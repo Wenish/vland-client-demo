@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Staff
   m_EditorClassIdentifier: 
   weaponName: Staff
-  weaponType: 7
+  weaponType: 6
   npcOnly: 0
   attackPower: 18
   attackRange: 3.5

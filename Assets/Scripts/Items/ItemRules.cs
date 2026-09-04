@@ -42,11 +42,15 @@ namespace ShadowInfection.Items
             return weapon == WeaponType.TwoHandSword;
         }
 
-        public static WeaponType ResolveAnimationWeaponType(WeaponType? mainHandWeapon, WeaponType? offHandWeapon)
+        public static WeaponType ResolveAnimationWeaponType(WeaponData mainHand, WeaponData offHand)
         {
-            if (mainHandWeapon == WeaponType.Sword && offHandWeapon == WeaponType.Shield)
-                return WeaponType.SwordAndShield;
+            return ResolveAnimationWeaponType(
+                mainHand != null ? mainHand.weaponType : (WeaponType?)null,
+                offHand != null ? offHand.weaponType : (WeaponType?)null);
+        }
 
+        public static WeaponType ResolveAnimationWeaponType(WeaponType? mainHandWeapon, WeaponType? offHandWeapon = null)
+        {
             return mainHandWeapon ?? WeaponType.Unarmed;
         }
 
@@ -63,11 +67,6 @@ namespace ShadowInfection.Items
         public static float GetOffHandDamageMultiplier(WeaponType weapon)
         {
             return weapon == WeaponType.Unarmed ? 1f : OffHandDamageMultiplier;
-        }
-
-        public static bool IsPairedTwoModelWeapon(WeaponType weapon)
-        {
-            return weapon == WeaponType.SwordAndShield;
         }
 
         public static bool CanDualWieldTogether(WeaponType? mainHandWeapon, WeaponType offHandWeapon)
@@ -94,8 +93,7 @@ namespace ShadowInfection.Items
 
         public static bool CanShieldWithMainHand(WeaponType? mainHandWeapon)
         {
-            return mainHandWeapon == WeaponType.Sword
-                || mainHandWeapon == WeaponType.SwordAndShield;
+            return mainHandWeapon == WeaponType.Sword;
         }
 
         public static bool CanEquipWithWeapon(ItemDefinition piece, WeaponType? mainHandWeapon)
@@ -242,7 +240,6 @@ namespace ShadowInfection.Items
                     weight = ArmorWeight.Leather;
                     return true;
                 case WeaponType.Sword:
-                case WeaponType.SwordAndShield:
                 case WeaponType.TwoHandSword:
                     weight = ArmorWeight.Plate;
                     return true;

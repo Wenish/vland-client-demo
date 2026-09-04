@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield
   m_EditorClassIdentifier: 
   weaponName: Shield
-  weaponType: 8
+  weaponType: 7
   npcOnly: 0
   attackPower: 0
   attackRange: 0

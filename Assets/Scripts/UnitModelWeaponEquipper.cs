@@ -86,9 +86,6 @@ public class UnitModelWeaponEquipper : MonoBehaviour
         if (main == null)
             return null;
 
-        if (ItemRules.IsPairedTwoModelWeapon(main.weaponType))
-            return main.weaponModelLeftHand;
-
         if (!ItemRules.IsDualWieldWeapon(main.weaponType))
             return main.weaponModelLeftHand;
 

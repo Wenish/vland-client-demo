@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b36c5779a50d426893bb81edb750fed, type: 3}
   m_Name: HumanoidTwoHandSword
   m_EditorClassIdentifier: 
-  animatorController: {fileID: 22100000, guid: bc8e3506fc1a837ee50429f1b3d6e80a, type: 2}
+  animatorController: {fileID: 9100000, guid: 3787a2e4bb814d4c9d480081fc380f58, type: 2}
