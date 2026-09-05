@@ -246,8 +246,17 @@ public class UnitAnimationController : MonoBehaviour
     private void SetAttackTime(float attackTime)
     {
         var baseAnimationDuration = 0.8f;
-        float animationSpeed = baseAnimationDuration / attackTime;
+        var effectiveAttackTime = attackTime / Mathf.Max(GetAttackSpeedMultiplier(), 0.01f);
+        float animationSpeed = baseAnimationDuration / Mathf.Max(effectiveAttackTime, 0.01f);
         animator.SetFloat("AttackTime", animationSpeed / 2f);
+    }
+
+    private float GetAttackSpeedMultiplier()
+    {
+        var stats = unitController != null ? unitController.unitMediator?.Stats : null;
+        if (stats == null)
+            return 1f;
+        return stats.GetStat(StatType.AttackSpeed);
     }
 
     private void HandleOnWeaponChange(UnitController unitController)
