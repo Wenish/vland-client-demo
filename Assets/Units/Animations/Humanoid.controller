@@ -1000,10 +1000,18 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: VelocityX
     m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 1000000000000000004}
+    m_Threshold: 9.0
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: VelocityX
+    m_Mirror: 0
   m_BlendParameter: StanceBlend
   m_BlendParameterY: Blend
   m_MinThreshold: 0
-  m_MaxThreshold: 8
+  m_MaxThreshold: 9
   m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
   m_BlendType: 0
@@ -1221,7 +1229,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unarmed_Main_0
+  m_Name: Attack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1248,7 +1256,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unarmed_Off_0
+  m_Name: Attack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1326,9 +1334,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: AttackVersion
     m_EventTreshold: 0
-  - m_ConditionMode: 6
-    m_ConditionEvent: Stance
-    m_EventTreshold: 0
   - m_ConditionMode: 3
     m_ConditionEvent: Health
     m_EventTreshold: 0
@@ -1360,9 +1365,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: AttackVersion
     m_EventTreshold: 1
-  - m_ConditionMode: 6
-    m_ConditionEvent: Stance
-    m_EventTreshold: 0
   - m_ConditionMode: 3
     m_ConditionEvent: Health
     m_EventTreshold: 0
@@ -2893,78 +2895,14 @@ AnimatorStateMachine:
     m_Position: {x: 30, y: 220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1000000000000000022}
-    m_Position: {x: 280, y: 40, z: 0}
+    m_Position: {x: 300, y: 40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1000000000000000023}
-    m_Position: {x: 460, y: 40, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000029}
-    m_Position: {x: 640, y: 40, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000030}
-    m_Position: {x: 820, y: 40, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000036}
-    m_Position: {x: 1000, y: 40, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000037}
-    m_Position: {x: 1180, y: 40, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000043}
-    m_Position: {x: 280, y: 160, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000044}
-    m_Position: {x: 460, y: 160, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000050}
-    m_Position: {x: 640, y: 160, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000051}
-    m_Position: {x: 820, y: 160, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000057}
-    m_Position: {x: 1000, y: 160, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000058}
-    m_Position: {x: 1180, y: 160, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000071}
-    m_Position: {x: 280, y: 280, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000072}
-    m_Position: {x: 460, y: 280, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000078}
-    m_Position: {x: 640, y: 280, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000079}
-    m_Position: {x: 820, y: 280, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000085}
-    m_Position: {x: 1000, y: 280, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1000000000000000086}
-    m_Position: {x: 1180, y: 280, z: 0}
+    m_Position: {x: 300, y: 160, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 1000000000000000026}
   - {fileID: 1000000000000000027}
-  - {fileID: 1000000000000000033}
-  - {fileID: 1000000000000000034}
-  - {fileID: 1000000000000000040}
-  - {fileID: 1000000000000000041}
-  - {fileID: 1000000000000000047}
-  - {fileID: 1000000000000000048}
-  - {fileID: 1000000000000000054}
-  - {fileID: 1000000000000000055}
-  - {fileID: 1000000000000000061}
-  - {fileID: 1000000000000000062}
-  - {fileID: 1000000000000000075}
-  - {fileID: 1000000000000000076}
-  - {fileID: 1000000000000000082}
-  - {fileID: 1000000000000000083}
-  - {fileID: 1000000000000000089}
-  - {fileID: 1000000000000000090}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []

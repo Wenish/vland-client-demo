@@ -13,3 +13,12 @@ MonoBehaviour:
   m_Name: HumanoidZombieCrawlerUnarmed
   m_EditorClassIdentifier: 
   animatorController: {fileID: 22100000, guid: bfa276def84894d1c9fbec1fce1dcdcc, type: 2}
+  fallback: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
+  attackMainPlaceholder: {fileID: 0}
+  attackOffPlaceholder: {fileID: 0}
+  weaponAttacks:
+  - weapon: 0
+    mainHand:
+    - {fileID: -203655887218126122, guid: 5ebadad9bb5074a928316744bb08f006, type: 3}
+    offHand:
+    - {fileID: -203655887218126122, guid: 5ebadad9bb5074a928316744bb08f006, type: 3}

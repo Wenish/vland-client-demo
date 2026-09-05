@@ -1,3 +1,5 @@
+using ShadowInfection.Animations;
+
 namespace ShadowInfection.Items
 {
     public static class ItemRules
@@ -42,16 +44,49 @@ namespace ShadowInfection.Items
             return weapon == WeaponType.TwoHandSword;
         }
 
-        public static WeaponType ResolveAnimationWeaponType(WeaponData mainHand, WeaponData offHand)
+        public static AnimationStance ResolveAnimationStance(WeaponData mainHand, WeaponData offHand)
         {
-            return ResolveAnimationWeaponType(
+            return ResolveAnimationStance(
                 mainHand != null ? mainHand.weaponType : (WeaponType?)null,
                 offHand != null ? offHand.weaponType : (WeaponType?)null);
         }
 
-        public static WeaponType ResolveAnimationWeaponType(WeaponType? mainHandWeapon, WeaponType? offHandWeapon = null)
+        public static AnimationStance ResolveAnimationStance(
+            WeaponType? mainHandWeapon,
+            WeaponType? offHandWeapon = null)
         {
-            return mainHandWeapon ?? WeaponType.Unarmed;
+            var main = mainHandWeapon ?? WeaponType.Unarmed;
+            var off = offHandWeapon;
+
+            switch (main)
+            {
+                case WeaponType.TwoHandSword:
+                    return AnimationStance.TwoHandSword;
+                case WeaponType.Bow:
+                    return AnimationStance.Bow;
+                case WeaponType.Gun:
+                    return AnimationStance.Gun;
+                case WeaponType.Staff:
+                    return AnimationStance.Staff;
+                case WeaponType.Pistols:
+                    return AnimationStance.Pistols;
+                case WeaponType.Daggers:
+                    return off == WeaponType.Sword
+                        ? AnimationStance.Armed
+                        : AnimationStance.Daggers;
+                case WeaponType.Sword:
+                    if (off == WeaponType.Sword || off == WeaponType.Daggers)
+                        return AnimationStance.Armed;
+                    return AnimationStance.Sword;
+                default:
+                    if (off == WeaponType.Pistols)
+                        return AnimationStance.Pistols;
+                    if (off == WeaponType.Daggers)
+                        return AnimationStance.Daggers;
+                    if (off == WeaponType.Sword)
+                        return AnimationStance.Sword;
+                    return AnimationStance.Unarmed;
+            }
         }
 
         public static bool IsDualWieldWeapon(WeaponType weapon)

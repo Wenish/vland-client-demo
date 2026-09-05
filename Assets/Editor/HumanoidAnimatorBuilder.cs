@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ShadowInfection.Animations;
+using ShadowInfection.Items;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -11,22 +12,27 @@ public static class HumanoidAnimatorBuilder
     private const string HumanoidPath = "Assets/Units/Animations/Humanoid.controller";
     private const string AvatarMaskPath = "Assets/Units/Animations/AvatarTop.mask";
     private const string HumanoidSetPath = "Assets/Resources/ScriptableObjects/AnimationSets/HumanoidUnarmed.asset";
-
     private const string OneHandSwordOverridePath = "Assets/Units/Animations/SwordAndShield.overrideController";
 
-    private static readonly (WeaponType type, string overridePath)[] StanceOverrides =
+    private static readonly (AnimationStance stance, string overridePath)[] StanceOverrides =
     {
-        (WeaponType.Daggers, "Assets/Units/Animations/Daggers.overrideController"),
-        (WeaponType.Bow, "Assets/Units/Animations/Bow.overrideController"),
-        (WeaponType.Gun, "Assets/Units/Animations/Gun.overrideController"),
-        (WeaponType.Pistols, "Assets/Units/Animations/Pistols.overrideController"),
-        (WeaponType.TwoHandSword, "Assets/Units/Animations/Sword.overrideController"),
+        (AnimationStance.Daggers, "Assets/Units/Animations/Daggers.overrideController"),
+        (AnimationStance.Bow, "Assets/Units/Animations/Bow.overrideController"),
+        (AnimationStance.Gun, "Assets/Units/Animations/Gun.overrideController"),
+        (AnimationStance.Pistols, "Assets/Units/Animations/Pistols.overrideController"),
+        (AnimationStance.TwoHandSword, "Assets/Units/Animations/Sword.overrideController"),
     };
 
-    private static readonly string[] UnitOverridePaths =
+    private static readonly (string overridePath, string animationSetPath)[] UnitSets =
     {
-        "Assets/Units/Animations/ZombieUnarmed.overrideController",
-        "Assets/Units/Animations/ZombieCrawlerUnarmed.overrideController",
+        (
+            "Assets/Units/Animations/ZombieUnarmed.overrideController",
+            "Assets/Resources/ScriptableObjects/AnimationSets/HumanoidZombieUnarmed.asset"
+        ),
+        (
+            "Assets/Units/Animations/ZombieCrawlerUnarmed.overrideController",
+            "Assets/Resources/ScriptableObjects/AnimationSets/HumanoidZombieCrawlerUnarmed.asset"
+        ),
     };
 
     [MenuItem("Tools/Animation/Rebuild Humanoid Controller")]
@@ -34,6 +40,69 @@ public static class HumanoidAnimatorBuilder
     {
         Build();
         Debug.Log("Humanoid animator rebuild finished.");
+    }
+
+    [InitializeOnLoadMethod]
+    private static void RebuildLegacyAttackLayer()
+    {
+        EditorApplication.delayCall += TryRebuildLegacyAttackLayer;
+    }
+
+    private static int autoRebuildTries;
+
+    private static void TryRebuildLegacyAttackLayer()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            ScheduleAutoRebuildRetry();
+            return;
+        }
+
+        var unarmed = AssetDatabase.LoadAssetAtPath<AnimatorController>(UnarmedPath);
+        var existing = AssetDatabase.LoadAssetAtPath<AnimatorController>(HumanoidPath);
+        if (unarmed == null || existing == null || existing.layers.Length < 2)
+        {
+            ScheduleAutoRebuildRetry();
+            return;
+        }
+
+        if (existing.layers[1].stateMachine.states.Length <= 3)
+            return;
+
+        var preview = ExtractBaseClips(unarmed);
+        if (preview.Loco == null || preview.Loco.Length == 0)
+        {
+            ScheduleAutoRebuildRetry();
+            return;
+        }
+
+        try
+        {
+            Build();
+            Debug.Log("Humanoid animator rebuilt (legacy per-weapon attack states).");
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            ScheduleAutoRebuildRetry();
+        }
+    }
+
+    private static void ScheduleAutoRebuildRetry()
+    {
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            EditorApplication.delayCall += TryRebuildLegacyAttackLayer;
+            return;
+        }
+
+        if (autoRebuildTries >= 30)
+            return;
+        autoRebuildTries++;
+        EditorApplication.delayCall += TryRebuildLegacyAttackLayer;
     }
 
     public static void Build()
@@ -44,11 +113,12 @@ public static class HumanoidAnimatorBuilder
 
         var mask = AssetDatabase.LoadAssetAtPath<AvatarMask>(AvatarMaskPath);
         var baseClips = ExtractBaseClips(unarmed);
-        if (baseClips.Loco.Length == 0)
+        if (baseClips.Loco == null || baseClips.Loco.Length == 0)
             throw new InvalidOperationException("Unarmed.controller has no locomotion blend tree clips.");
 
         var overrideMaps = LoadOverrideMaps();
         ApplyOneHandSwordRemaps(overrideMaps, baseClips);
+        ApplyArmedPlaceholder(overrideMaps);
 
         if (AssetDatabase.LoadAssetAtPath<AnimatorController>(HumanoidPath) != null)
             AssetDatabase.DeleteAsset(HumanoidPath);
@@ -61,7 +131,7 @@ public static class HumanoidAnimatorBuilder
         ConfigureLayers(controller, mask);
 
         BuildBaseLayer(controller, baseClips, overrideMaps);
-        BuildAttackLayer(controller, baseClips, overrideMaps);
+        BuildAttackLayer(controller, baseClips);
         BuildHittedLayer(controller, baseClips.Hit);
         BuildCastLayer(controller, baseClips.Idle);
 
@@ -69,8 +139,9 @@ public static class HumanoidAnimatorBuilder
         AssetDatabase.SaveAssets();
 
         RetargetUnitOverrides(controller);
-        PointDefaultSetAtHumanoid(controller);
-        ClearWeaponAnimationOverridesOnModels();
+        SeedHumanoidUnarmedSet(controller, baseClips, overrideMaps);
+        SeedUnitAnimationSets(baseClips);
+        StripUnitAttackRemaps(baseClips);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
@@ -118,7 +189,7 @@ public static class HumanoidAnimatorBuilder
     private static void BuildBaseLayer(
         AnimatorController controller,
         BaseClipSet baseClips,
-        Dictionary<WeaponType, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
     {
         var sm = controller.layers[0].stateMachine;
         ClearStateMachine(sm);
@@ -129,7 +200,7 @@ public static class HumanoidAnimatorBuilder
         stanceTree.blendParameter = "StanceBlend";
         stanceTree.useAutomaticThresholds = false;
 
-        var stanceValues = (WeaponType[])Enum.GetValues(typeof(WeaponType));
+        var stanceValues = (AnimationStance[])Enum.GetValues(typeof(AnimationStance));
         var children = new ChildMotion[stanceValues.Length];
         for (int i = 0; i < stanceValues.Length; i++)
         {
@@ -190,10 +261,7 @@ public static class HumanoidAnimatorBuilder
         sm.defaultState = movement;
     }
 
-    private static void BuildAttackLayer(
-        AnimatorController controller,
-        BaseClipSet baseClips,
-        Dictionary<WeaponType, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
+    private static void BuildAttackLayer(AnimatorController controller, BaseClipSet baseClips)
     {
         var root = controller.layers[1].stateMachine;
         ClearStateMachine(root);
@@ -201,88 +269,10 @@ public static class HumanoidAnimatorBuilder
         var none = root.AddState("None", new Vector3(30, 220, 0));
         root.defaultState = none;
 
-        var clipSet = AssetDatabase.LoadAssetAtPath<HumanoidAttackClipSet>(HumanoidAttackClipSet.AssetPath);
-        var stanceValues = (WeaponType[])Enum.GetValues(typeof(WeaponType));
-        for (int i = 0; i < stanceValues.Length; i++)
-        {
-            var stance = stanceValues[i];
-            if (HumanoidAttackVariants.UsesSplitHands(stance))
-            {
-                var mainClips = CollectAttackClips(
-                    Remap(baseClips.Attack0, stance, overrideMaps),
-                    GetExtraClips(clipSet, stance, false));
-                var offClips = CollectAttackClips(
-                    Remap(baseClips.Attack1, stance, overrideMaps),
-                    GetExtraClips(clipSet, stance, true));
-
-                AddAttackVariantStates(root, none, stance, mainClips, stance + "_Main_", 0, 1);
-                AddAttackVariantStates(root, none, stance, offClips, stance + "_Off_", 1, 1);
-            }
-            else
-            {
-                var pool = CollectAttackClips(
-                    Remap(baseClips.Attack0, stance, overrideMaps),
-                    Remap(baseClips.Attack1, stance, overrideMaps),
-                    GetExtraClips(clipSet, stance, false));
-                AddAttackVariantStates(root, none, stance, pool, stance + "_", 0);
-            }
-        }
-    }
-
-    private static AnimationClip[] GetExtraClips(
-        HumanoidAttackClipSet clipSet,
-        WeaponType stance,
-        bool offHand)
-    {
-        if (clipSet == null)
-            return Array.Empty<AnimationClip>();
-        return clipSet.GetExtraClips(stance, offHand);
-    }
-
-    private static void AddAttackVariantStates(
-        AnimatorStateMachine root,
-        AnimatorState none,
-        WeaponType stance,
-        AnimationClip[] clips,
-        string namePrefix,
-        int versionStart,
-        int maxClips = int.MaxValue)
-    {
-        int count = Mathf.Min(clips.Length, maxClips);
-        for (int i = 0; i < count; i++)
-        {
-            var state = AddAttackState(root, namePrefix + i, clips[i], none, i);
-            AddAttackAnyState(root, state, stance, versionStart + i);
-        }
-    }
-
-    private static AnimationClip[] CollectAttackClips(AnimationClip baseline, AnimationClip[] extras)
-    {
-        var clips = new List<AnimationClip> { baseline };
-        AppendNonNull(clips, extras);
-        return clips.ToArray();
-    }
-
-    private static AnimationClip[] CollectAttackClips(
-        AnimationClip first,
-        AnimationClip second,
-        AnimationClip[] extras)
-    {
-        var clips = new List<AnimationClip> { first, second };
-        AppendNonNull(clips, extras);
-        return clips.ToArray();
-    }
-
-    private static void AppendNonNull(List<AnimationClip> clips, AnimationClip[] extras)
-    {
-        if (extras == null)
-            return;
-
-        for (int i = 0; i < extras.Length; i++)
-        {
-            if (extras[i] != null)
-                clips.Add(extras[i]);
-        }
+        var attack0 = AddAttackState(root, "Attack0", baseClips.Attack0, none, new Vector3(300, 40, 0));
+        var attack1 = AddAttackState(root, "Attack1", baseClips.Attack1, none, new Vector3(300, 160, 0));
+        AddAttackAnyState(root, attack0, 0);
+        AddAttackAnyState(root, attack1, 1);
     }
 
     private static AnimatorState AddAttackState(
@@ -290,9 +280,9 @@ public static class HumanoidAnimatorBuilder
         string name,
         AnimationClip clip,
         AnimatorState none,
-        int variantIndex)
+        Vector3 position)
     {
-        var state = sm.AddState(name, new Vector3(300, 40 + variantIndex * 120, 0));
+        var state = sm.AddState(name, position);
         state.motion = clip;
         state.speedParameterActive = true;
         state.speedParameter = "AttackTime";
@@ -305,11 +295,7 @@ public static class HumanoidAnimatorBuilder
         return state;
     }
 
-    private static void AddAttackAnyState(
-        AnimatorStateMachine root,
-        AnimatorState dest,
-        WeaponType stance,
-        int attackVersion)
+    private static void AddAttackAnyState(AnimatorStateMachine root, AnimatorState dest, int attackVersion)
     {
         var transition = root.AddAnyStateTransition(dest);
         transition.hasExitTime = false;
@@ -318,7 +304,6 @@ public static class HumanoidAnimatorBuilder
         transition.canTransitionToSelf = true;
         transition.AddCondition(AnimatorConditionMode.If, 0, "Attack");
         transition.AddCondition(AnimatorConditionMode.Equals, attackVersion, "AttackVersion");
-        transition.AddCondition(AnimatorConditionMode.Equals, (int)stance, "Stance");
         transition.AddCondition(AnimatorConditionMode.Greater, 0, "Health");
     }
 
@@ -412,8 +397,8 @@ public static class HumanoidAnimatorBuilder
 
     private static AnimationClip Remap(
         AnimationClip original,
-        WeaponType stance,
-        Dictionary<WeaponType, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
+        AnimationStance stance,
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
     {
         if (original == null)
             return null;
@@ -424,43 +409,28 @@ public static class HumanoidAnimatorBuilder
         return original;
     }
 
-    private static Dictionary<WeaponType, Dictionary<AnimationClip, AnimationClip>> LoadOverrideMaps()
+    private static Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> LoadOverrideMaps()
     {
-        var maps = new Dictionary<WeaponType, Dictionary<AnimationClip, AnimationClip>>();
-        foreach (var (type, path) in StanceOverrides)
+        var maps = new Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>>();
+        foreach (var (stance, path) in StanceOverrides)
         {
-            var ovr = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(path);
-            if (ovr == null)
-            {
-                Debug.LogWarning("HumanoidAnimatorBuilder: missing override " + path);
-                continue;
-            }
-
-            var list = new List<KeyValuePair<AnimationClip, AnimationClip>>();
-            ovr.GetOverrides(list);
-            var map = new Dictionary<AnimationClip, AnimationClip>();
-            foreach (var pair in list)
-            {
-                if (pair.Key != null && pair.Value != null)
-                    map[pair.Key] = pair.Value;
-            }
-
-            maps[type] = map;
+            var map = LoadOverrideMap(path);
+            if (map != null)
+                maps[stance] = map;
         }
 
         return maps;
     }
 
     private static void ApplyOneHandSwordRemaps(
-        Dictionary<WeaponType, Dictionary<AnimationClip, AnimationClip>> overrideMaps,
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps,
         BaseClipSet baseClips)
     {
-        var sasMap = LoadOverrideMap(OneHandSwordOverridePath);
-        if (sasMap == null)
+        var swordMap = LoadOverrideMap(OneHandSwordOverridePath);
+        if (swordMap == null)
             return;
 
-        var swordMap = new Dictionary<AnimationClip, AnimationClip>(sasMap);
-        if (overrideMaps.TryGetValue(WeaponType.Daggers, out var daggerMap)
+        if (overrideMaps.TryGetValue(AnimationStance.Daggers, out var daggerMap)
             && baseClips.Attack1 != null
             && daggerMap.TryGetValue(baseClips.Attack1, out var daggerOff)
             && daggerOff != null)
@@ -468,7 +438,16 @@ public static class HumanoidAnimatorBuilder
             swordMap[baseClips.Attack1] = daggerOff;
         }
 
-        overrideMaps[WeaponType.Sword] = swordMap;
+        overrideMaps[AnimationStance.Sword] = swordMap;
+    }
+
+    private static void ApplyArmedPlaceholder(
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
+    {
+        if (!overrideMaps.TryGetValue(AnimationStance.Daggers, out var daggerMap) || daggerMap == null)
+            return;
+
+        overrideMaps[AnimationStance.Armed] = new Dictionary<AnimationClip, AnimationClip>(daggerMap);
     }
 
     private static Dictionary<AnimationClip, AnimationClip> LoadOverrideMap(string path)
@@ -494,7 +473,7 @@ public static class HumanoidAnimatorBuilder
 
     private static BaseClipSet ExtractBaseClips(AnimatorController unarmed)
     {
-        var set = new BaseClipSet();
+        var set = new BaseClipSet { Loco = Array.Empty<LocoClip>() };
         foreach (var layer in unarmed.layers)
         {
             CollectFromStateMachine(layer.stateMachine, set);
@@ -541,9 +520,9 @@ public static class HumanoidAnimatorBuilder
 
     private static void RetargetUnitOverrides(AnimatorController humanoid)
     {
-        foreach (var path in UnitOverridePaths)
+        foreach (var (overridePath, _) in UnitSets)
         {
-            var ovr = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(path);
+            var ovr = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(overridePath);
             if (ovr == null)
                 continue;
 
@@ -552,27 +531,167 @@ public static class HumanoidAnimatorBuilder
         }
     }
 
-    private static void PointDefaultSetAtHumanoid(AnimatorController humanoid)
+    private static void SeedHumanoidUnarmedSet(
+        AnimatorController humanoid,
+        BaseClipSet baseClips,
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
     {
         var set = AssetDatabase.LoadAssetAtPath<AnimationSetData>(HumanoidSetPath);
         if (set == null)
             return;
 
         set.animatorController = humanoid;
+        set.fallback = null;
+        set.attackMainPlaceholder = baseClips.Attack0;
+        set.attackOffPlaceholder = baseClips.Attack1;
+        set.weaponAttacks = BuildDefaultWeaponAttacks(baseClips, overrideMaps);
         EditorUtility.SetDirty(set);
     }
 
-    private static void ClearWeaponAnimationOverridesOnModels()
+    private static AnimationSetData.WeaponAttackEntry[] BuildDefaultWeaponAttacks(
+        BaseClipSet baseClips,
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
     {
-        var guids = AssetDatabase.FindAssets("t:ModelData");
-        foreach (var guid in guids)
+        var weapons = (WeaponType[])Enum.GetValues(typeof(WeaponType));
+        var entries = new List<AnimationSetData.WeaponAttackEntry>(weapons.Length);
+        for (int i = 0; i < weapons.Length; i++)
         {
-            var path = AssetDatabase.GUIDToAssetPath(guid);
-            var model = AssetDatabase.LoadAssetAtPath<ModelData>(path);
-            if (model == null)
+            var weapon = weapons[i];
+            if (weapon == WeaponType.Shield)
                 continue;
 
-            EditorUtility.SetDirty(model);
+            var stance = StanceForWeaponPack(weapon);
+            var attack0 = Remap(baseClips.Attack0, stance, overrideMaps);
+            var attack1 = Remap(baseClips.Attack1, stance, overrideMaps);
+            var entry = new AnimationSetData.WeaponAttackEntry { weapon = weapon };
+
+            if (ItemRules.CanAttackWithOffHand(weapon))
+            {
+                entry.mainHand = attack0 != null ? new[] { attack0 } : Array.Empty<AnimationClip>();
+                entry.offHand = attack1 != null ? new[] { attack1 } : Array.Empty<AnimationClip>();
+            }
+            else
+            {
+                entry.mainHand = CollectDistinct(attack0, attack1);
+                entry.offHand = Array.Empty<AnimationClip>();
+            }
+
+            entries.Add(entry);
+        }
+
+        return entries.ToArray();
+    }
+
+    private static AnimationStance StanceForWeaponPack(WeaponType weapon)
+    {
+        switch (weapon)
+        {
+            case WeaponType.Sword:
+                return AnimationStance.Sword;
+            case WeaponType.Daggers:
+                return AnimationStance.Daggers;
+            case WeaponType.Bow:
+                return AnimationStance.Bow;
+            case WeaponType.Gun:
+                return AnimationStance.Gun;
+            case WeaponType.Pistols:
+                return AnimationStance.Pistols;
+            case WeaponType.Staff:
+                return AnimationStance.Staff;
+            case WeaponType.TwoHandSword:
+                return AnimationStance.TwoHandSword;
+            default:
+                return AnimationStance.Unarmed;
+        }
+    }
+
+    private static AnimationClip[] CollectDistinct(AnimationClip first, AnimationClip second)
+    {
+        if (first == null && second == null)
+            return Array.Empty<AnimationClip>();
+        if (first == null)
+            return new[] { second };
+        if (second == null || second == first)
+            return new[] { first };
+        return new[] { first, second };
+    }
+
+    private static void SeedUnitAnimationSets(BaseClipSet baseClips)
+    {
+        var humanoidSet = AssetDatabase.LoadAssetAtPath<AnimationSetData>(HumanoidSetPath);
+        foreach (var (overridePath, setPath) in UnitSets)
+        {
+            var set = AssetDatabase.LoadAssetAtPath<AnimationSetData>(setPath);
+            var ovr = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(overridePath);
+            if (set == null || ovr == null)
+                continue;
+
+            set.fallback = humanoidSet;
+            set.animatorController = ovr;
+            set.attackMainPlaceholder = null;
+            set.attackOffPlaceholder = null;
+
+            var map = LoadOverrideMap(overridePath) ?? new Dictionary<AnimationClip, AnimationClip>();
+            var main = RemapClip(baseClips.Attack0, map);
+            var off = RemapClip(baseClips.Attack1, map);
+            var hasUnitAttackOverride =
+                (main != null && main != baseClips.Attack0)
+                || (off != null && off != baseClips.Attack1);
+
+            if (hasUnitAttackOverride || set.weaponAttacks == null || set.weaponAttacks.Length == 0)
+            {
+                set.weaponAttacks = new[]
+                {
+                    new AnimationSetData.WeaponAttackEntry
+                    {
+                        weapon = WeaponType.Unarmed,
+                        mainHand = main != null ? new[] { main } : Array.Empty<AnimationClip>(),
+                        offHand = off != null ? new[] { off } : Array.Empty<AnimationClip>(),
+                    },
+                };
+            }
+
+            EditorUtility.SetDirty(set);
+        }
+    }
+
+    private static AnimationClip RemapClip(AnimationClip original, Dictionary<AnimationClip, AnimationClip> map)
+    {
+        if (original == null)
+            return null;
+        if (map.TryGetValue(original, out var mapped) && mapped != null)
+            return mapped;
+        return original;
+    }
+
+    private static void StripUnitAttackRemaps(BaseClipSet baseClips)
+    {
+        foreach (var (overridePath, _) in UnitSets)
+        {
+            var ovr = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(overridePath);
+            if (ovr == null)
+                continue;
+
+            var list = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+            ovr.GetOverrides(list);
+            var changed = false;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var original = list[i].Key;
+                if (original != baseClips.Attack0 && original != baseClips.Attack1)
+                    continue;
+                if (list[i].Value == null)
+                    continue;
+
+                list[i] = new KeyValuePair<AnimationClip, AnimationClip>(original, null);
+                changed = true;
+            }
+
+            if (!changed)
+                continue;
+
+            ovr.ApplyOverrides(list);
+            EditorUtility.SetDirty(ovr);
         }
     }
 

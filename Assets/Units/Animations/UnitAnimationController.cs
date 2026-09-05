@@ -1,3 +1,4 @@
+using ShadowInfection.Animations;
 using ShadowInfection.Items;
 using UnityEngine;
 
@@ -19,6 +20,11 @@ public class UnitAnimationController : MonoBehaviour
     UnitActionState actionState;
     Animator animator;
     bool wasCasting;
+    AnimatorOverrideController runtimeOverride;
+    RuntimeAnimatorController boundSource;
+    AnimationSetData boundAnimSet;
+    AnimationClip attackMainPlaceholder;
+    AnimationClip attackOffPlaceholder;
 
     void Awake() {
         animator = GetComponent<Animator>();
@@ -87,15 +93,44 @@ public class UnitAnimationController : MonoBehaviour
 
     private void HandleOnAttackStartChange((UnitController unitController, int attackIndex) obj)
     {
+        var offHand = obj.attackIndex == 1;
         var swinging = unitController.GetWeaponForAttackIndex(obj.attackIndex);
         if (swinging != null)
-        {
             SetAttackTime(swinging.attackTime);
-        }
+
         if (HasParam("Health"))
             animator.SetInteger("Health", unitController.health);
-        animator.SetInteger("AttackVersion", obj.attackIndex % 2);
-        animator.SetTrigger(AttackTriggerName);
+
+        ApplyAttackClip(swinging, offHand);
+
+        if (HasParam("AttackVersion"))
+            animator.SetInteger("AttackVersion", offHand ? 1 : 0);
+        if (HasParam(AttackTriggerName))
+        {
+            animator.ResetTrigger(AttackTriggerName);
+            animator.SetTrigger(AttackTriggerName);
+        }
+    }
+
+    private void ApplyAttackClip(WeaponData swinging, bool offHand)
+    {
+        if (runtimeOverride == null)
+            return;
+
+        var placeholder = offHand ? attackOffPlaceholder : attackMainPlaceholder;
+        if (placeholder == null)
+            return;
+
+        var weaponType = swinging != null ? swinging.weaponType : WeaponType.Unarmed;
+        var clip = boundAnimSet != null
+            ? boundAnimSet.PickAttackClip(weaponType, offHand)
+            : null;
+        if (clip == null && boundAnimSet != null && offHand)
+            clip = boundAnimSet.PickAttackClip(weaponType, false);
+        if (clip == null)
+            clip = placeholder;
+
+        runtimeOverride[placeholder] = clip;
     }
 
     private void HandleOnActionInterrupted(
@@ -226,11 +261,25 @@ public class UnitAnimationController : MonoBehaviour
         if (animator == null || unitController == null)
             return;
 
-        var animSet = unitController.modelData != null
+        boundAnimSet = unitController.modelData != null
             ? unitController.modelData.defaultAnimationSet
             : null;
-        if (animSet != null && animSet.animatorController != null)
-            animator.runtimeAnimatorController = animSet.animatorController;
+        var source = boundAnimSet != null && boundAnimSet.animatorController != null
+            ? boundAnimSet.animatorController
+            : animator.runtimeAnimatorController;
+
+        if (source != null && (runtimeOverride == null || boundSource != source))
+        {
+            runtimeOverride = new AnimatorOverrideController(source);
+            runtimeOverride.hideFlags = HideFlags.HideAndDontSave;
+            boundSource = source;
+            animator.runtimeAnimatorController = runtimeOverride;
+        }
+
+        attackMainPlaceholder = null;
+        attackOffPlaceholder = null;
+        if (boundAnimSet != null)
+            boundAnimSet.TryGetAttackPlaceholders(out attackMainPlaceholder, out attackOffPlaceholder);
 
         animator.applyRootMotion = false;
         animator.SetInteger("Health", unitController.health);
@@ -256,9 +305,9 @@ public class UnitAnimationController : MonoBehaviour
             animator.SetFloat(StanceBlendParamName, stance);
     }
 
-    private WeaponType ResolveStance()
+    private AnimationStance ResolveStance()
     {
-        return ItemRules.ResolveAnimationWeaponType(
+        return ItemRules.ResolveAnimationStance(
             unitController.currentWeapon,
             unitController.currentOffHandWeapon != null
                 ? unitController.currentOffHandWeapon
