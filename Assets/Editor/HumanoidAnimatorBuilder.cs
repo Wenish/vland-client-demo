@@ -235,12 +235,12 @@ public static class HumanoidAnimatorBuilder
         movement.motion = stanceTree;
 
         var dead = sm.AddState("Dead", new Vector3(270, 160, 0));
-        dead.motion = baseClips.Dead;
+        dead.motion = CreateStanceClipTree(controller, "StanceDead", baseClips.Dead, overrideMaps);
         dead.speedParameterActive = true;
         dead.speedParameter = "DeadSpeedMultiplier";
 
         var revive = sm.AddState("Revive", new Vector3(390, 30, 0));
-        revive.motion = baseClips.Revive;
+        revive.motion = CreateStanceClipTree(controller, "StanceRevive", baseClips.Revive, overrideMaps);
 
         var toDead = sm.AddAnyStateTransition(dead);
         toDead.hasExitTime = false;
@@ -367,6 +367,34 @@ public static class HumanoidAnimatorBuilder
         endToNone.duration = 0.1f;
 
         sm.defaultState = none;
+    }
+
+    private static BlendTree CreateStanceClipTree(
+        AnimatorController controller,
+        string name,
+        AnimationClip baseClip,
+        Dictionary<AnimationStance, Dictionary<AnimationClip, AnimationClip>> overrideMaps)
+    {
+        var tree = CreateBlendTree(controller, name);
+        tree.blendType = BlendTreeType.Simple1D;
+        tree.blendParameter = "StanceBlend";
+        tree.useAutomaticThresholds = false;
+
+        var stanceValues = (AnimationStance[])Enum.GetValues(typeof(AnimationStance));
+        var children = new ChildMotion[stanceValues.Length];
+        for (int i = 0; i < stanceValues.Length; i++)
+        {
+            var stance = stanceValues[i];
+            children[i] = new ChildMotion
+            {
+                motion = Remap(baseClip, stance, overrideMaps),
+                timeScale = 1f,
+                threshold = (int)stance,
+            };
+        }
+
+        tree.children = children;
+        return tree;
     }
 
     private static BlendTree CreateBlendTree(AnimatorController controller, string name)
