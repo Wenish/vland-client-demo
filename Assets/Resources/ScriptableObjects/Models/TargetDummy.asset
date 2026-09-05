@@ -15,4 +15,3 @@ MonoBehaviour:
   modelName: targetDummy
   prefab: {fileID: 6849180908754271025, guid: 78a31724b33f444baafe3667d8ed2573, type: 3}
   defaultAnimationSet: {fileID: 0}
-  weaponAnimationOverrides: []

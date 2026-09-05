@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TwoHandSword
   m_EditorClassIdentifier: 
   weaponName: Two-Hand Sword
-  weaponType: 9
+  weaponType: 8
   npcOnly: 0
   attackPower: 35
   attackRange: 3.5

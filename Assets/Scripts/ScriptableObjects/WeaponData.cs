@@ -67,7 +67,6 @@ public enum WeaponType : byte
     Bow,
     Gun,
     Pistols,
-    SwordAndShield,
     Staff,
     Shield,
     TwoHandSword,

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ShadowInfection.Animations;
 using ShadowInfection.Items;
 using UnityEngine;
 
@@ -5,12 +7,25 @@ using UnityEngine;
 public class UnitAnimationController : MonoBehaviour
 {
     private const string AttackLayerName = "Attack";
+    private const string CastLayerName = "Cast";
     private const string AttackTriggerName = "Attack";
-    private const string AttackIdleStateName = "None";
+    private const string CastTriggerName = "Cast";
+    private const string CastEndTriggerName = "CastEnd";
+    private const string IsCastingParamName = "IsCasting";
+    private const string StanceParamName = "Stance";
+    private const string StanceBlendParamName = "StanceBlend";
+    private const string LayerIdleStateName = "None";
 
     public float maxSpeed = 5f;
     UnitController unitController;
+    UnitActionState actionState;
     Animator animator;
+    bool wasCasting;
+    AnimatorOverrideController runtimeOverride;
+    RuntimeAnimatorController boundSource;
+    AnimationSetData boundAnimSet;
+    AnimationClip attackMainPlaceholder;
+    AnimationClip attackOffPlaceholder;
 
     void Awake() {
         animator = GetComponent<Animator>();
@@ -29,7 +44,18 @@ public class UnitAnimationController : MonoBehaviour
         unitController.OnWeaponChange += HandleOnWeaponChange;
         unitController.OnActionInterrupted += HandleOnActionInterrupted;
 
-        SelectAnimator(unitController);
+        actionState = unitController.unitActionState != null
+            ? unitController.unitActionState
+            : unitController.GetComponent<UnitActionState>();
+        if (actionState != null)
+            actionState.OnActionStateChanged += HandleOnActionStateChanged;
+
+        BindUnitAnimator();
+    }
+
+    void Start()
+    {
+        BindUnitAnimator();
     }
 
     void OnDestroy()
@@ -40,7 +66,9 @@ public class UnitAnimationController : MonoBehaviour
             unitController.OnTakeDamage -= HandleOnTakeDamage;
             unitController.OnWeaponChange -= HandleOnWeaponChange;
             unitController.OnActionInterrupted -= HandleOnActionInterrupted;
-        }    
+        }
+        if (actionState != null)
+            actionState.OnActionStateChanged -= HandleOnActionStateChanged;
     }
 
     void Update()
@@ -66,36 +94,138 @@ public class UnitAnimationController : MonoBehaviour
 
     private void HandleOnAttackStartChange((UnitController unitController, int attackIndex) obj)
     {
+        var offHand = obj.attackIndex == 1;
         var swinging = unitController.GetWeaponForAttackIndex(obj.attackIndex);
         if (swinging != null)
-        {
             SetAttackTime(swinging.attackTime);
+
+        if (HasParam("Health"))
+            animator.SetInteger("Health", unitController.health);
+
+        ApplyAttackClip(swinging, offHand);
+
+        if (HasParam("AttackVersion"))
+            animator.SetInteger("AttackVersion", offHand ? 1 : 0);
+        if (HasParam(AttackTriggerName))
+        {
+            animator.ResetTrigger(AttackTriggerName);
+            animator.SetTrigger(AttackTriggerName);
         }
-        animator.SetInteger("AttackVersion", obj.attackIndex % 2);
-        animator.SetTrigger("Attack");
+    }
+
+    private void ApplyAttackClip(WeaponData swinging, bool offHand)
+    {
+        if (runtimeOverride == null)
+            return;
+
+        var placeholder = offHand ? attackOffPlaceholder : attackMainPlaceholder;
+        if (placeholder == null)
+            return;
+
+        var weaponType = swinging != null ? swinging.weaponType : WeaponType.Unarmed;
+        var clip = boundAnimSet != null
+            ? boundAnimSet.PickAttackClip(weaponType, offHand)
+            : null;
+        if (clip == null && boundAnimSet != null && offHand)
+            clip = boundAnimSet.PickAttackClip(weaponType, false);
+        if (clip == null)
+            clip = placeholder;
+
+        runtimeOverride[placeholder] = clip;
     }
 
     private void HandleOnActionInterrupted(
         (UnitController target, UnitActionState.ActionStateData interruptedAction) data)
     {
-        if (data.interruptedAction.type != UnitActionState.ActionType.Attacking)
-            return;
+        if (data.interruptedAction.type == UnitActionState.ActionType.Attacking)
+            InterruptLayer(AttackLayerName, AttackTriggerName);
 
-        InterruptAttackAnimation();
+        if (data.interruptedAction.type == UnitActionState.ActionType.Casting
+            || data.interruptedAction.type == UnitActionState.ActionType.Channeling)
+            InterruptCastAnimation();
     }
 
-    private void InterruptAttackAnimation()
+    private void HandleOnActionStateChanged(UnitActionState actionState)
+    {
+        bool casting = IsCastingOrChanneling(actionState);
+        if (casting == wasCasting)
+            return;
+
+        if (casting)
+            BeginCastAnimation();
+        else
+            EndCastAnimation();
+
+        wasCasting = casting;
+    }
+
+    private static bool IsCastingOrChanneling(UnitActionState actionState)
+    {
+        if (actionState == null)
+            return false;
+
+        return actionState.IsPerforming(UnitActionState.ActionType.Casting)
+            || actionState.IsPerforming(UnitActionState.ActionType.Channeling);
+    }
+
+    private void BeginCastAnimation()
     {
         if (animator == null || !animator.isActiveAndEnabled)
             return;
 
-        animator.ResetTrigger(AttackTriggerName);
+        if (HasParam(CastEndTriggerName))
+            animator.ResetTrigger(CastEndTriggerName);
+        if (HasParam(IsCastingParamName))
+            animator.SetBool(IsCastingParamName, true);
+        if (HasParam(CastTriggerName))
+        {
+            animator.ResetTrigger(CastTriggerName);
+            animator.SetTrigger(CastTriggerName);
+        }
+    }
 
-        int attackLayer = animator.GetLayerIndex(AttackLayerName);
-        if (attackLayer < 0)
+    private void EndCastAnimation()
+    {
+        if (animator == null || !animator.isActiveAndEnabled)
             return;
 
-        animator.Play(AttackIdleStateName, attackLayer, 0f);
+        if (HasParam(CastTriggerName))
+            animator.ResetTrigger(CastTriggerName);
+        if (HasParam(IsCastingParamName))
+            animator.SetBool(IsCastingParamName, false);
+        if (HasParam(CastEndTriggerName))
+        {
+            animator.ResetTrigger(CastEndTriggerName);
+            animator.SetTrigger(CastEndTriggerName);
+        }
+    }
+
+    private void InterruptCastAnimation()
+    {
+        if (HasParam(CastTriggerName))
+            animator.ResetTrigger(CastTriggerName);
+        if (HasParam(CastEndTriggerName))
+            animator.ResetTrigger(CastEndTriggerName);
+        if (HasParam(IsCastingParamName))
+            animator.SetBool(IsCastingParamName, false);
+
+        InterruptLayer(CastLayerName, null);
+        wasCasting = false;
+    }
+
+    private void InterruptLayer(string layerName, string triggerToReset)
+    {
+        if (animator == null || !animator.isActiveAndEnabled)
+            return;
+
+        if (!string.IsNullOrEmpty(triggerToReset) && HasParam(triggerToReset))
+            animator.ResetTrigger(triggerToReset);
+
+        int layer = animator.GetLayerIndex(layerName);
+        if (layer < 0)
+            return;
+
+        animator.Play(LayerIdleStateName, layer, 0f);
         animator.Update(0f);
     }
 
@@ -122,32 +252,114 @@ public class UnitAnimationController : MonoBehaviour
 
     private void HandleOnWeaponChange(UnitController unitController)
     {
-        SelectAnimator(unitController);
+        ApplyStance();
+        if (unitController.currentWeapon != null)
+            SetAttackTime(unitController.currentWeapon.attackTime);
     }
 
-    private void SelectAnimator(UnitController unitController) {
-        if (animator == null || unitController == null) return;
+    private void BindUnitAnimator()
+    {
+        if (animator == null || unitController == null)
+            return;
 
-        if (unitController.modelData != null) {
-            var weapon = unitController.currentWeapon;
-            if (weapon != null) {
-                var offHand = unitController.offHandItemWeapon;
-                var stance = ItemRules.ResolveAnimationWeaponType(
-                    weapon.weaponType,
-                    offHand != null ? offHand.weaponType : (WeaponType?)null);
-                var animSet = unitController.modelData.GetAnimationSetForWeapon(stance);
-                if (animSet != null && animSet.animatorController != null) {
-                    animator.runtimeAnimatorController = animSet.animatorController;
-                }
-            }
-            // If no weapon yet, keep current controller; OnWeaponChange will refresh it later.
+        boundAnimSet = unitController.modelData != null
+            ? unitController.modelData.defaultAnimationSet
+            : null;
+        var source = boundAnimSet != null && boundAnimSet.animatorController != null
+            ? boundAnimSet.animatorController
+            : animator.runtimeAnimatorController;
+
+        if (source != null && (runtimeOverride == null || boundSource != source))
+        {
+            runtimeOverride = CreateRuntimeOverride(source);
+            boundSource = source;
+            animator.runtimeAnimatorController = runtimeOverride;
         }
+
+        attackMainPlaceholder = null;
+        attackOffPlaceholder = null;
+        if (boundAnimSet != null)
+            boundAnimSet.TryGetAttackPlaceholders(out attackMainPlaceholder, out attackOffPlaceholder);
 
         animator.applyRootMotion = false;
         animator.SetInteger("Health", unitController.health);
+        ApplyStance();
 
-        if (unitController.currentWeapon != null) {
+        if (unitController.currentWeapon != null)
             SetAttackTime(unitController.currentWeapon.attackTime);
+
+        wasCasting = IsCastingOrChanneling(actionState);
+        if (wasCasting)
+            BeginCastAnimation();
+    }
+
+    private static AnimatorOverrideController CreateRuntimeOverride(RuntimeAnimatorController source)
+    {
+        var chain = new List<AnimatorOverrideController>();
+        var current = source;
+        while (current is AnimatorOverrideController nested)
+        {
+            chain.Add(nested);
+            current = nested.runtimeAnimatorController;
         }
+
+        var runtime = new AnimatorOverrideController(current != null ? current : source);
+        runtime.hideFlags = HideFlags.HideAndDontSave;
+
+        var merged = new Dictionary<AnimationClip, AnimationClip>();
+        for (int i = chain.Count - 1; i >= 0; i--)
+        {
+            var pairs = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+            chain[i].GetOverrides(pairs);
+            for (int p = 0; p < pairs.Count; p++)
+            {
+                var original = pairs[p].Key;
+                var mapped = pairs[p].Value;
+                if (original == null || mapped == null || mapped == original)
+                    continue;
+                merged[original] = mapped;
+            }
+        }
+
+        if (merged.Count > 0)
+            runtime.ApplyOverrides(new List<KeyValuePair<AnimationClip, AnimationClip>>(merged));
+
+        return runtime;
+    }
+
+    private void ApplyStance()
+    {
+        if (animator == null || unitController == null)
+            return;
+
+        var stance = (int)ResolveStance();
+        if (HasParam(StanceParamName))
+            animator.SetInteger(StanceParamName, stance);
+        if (HasParam(StanceBlendParamName))
+            animator.SetFloat(StanceBlendParamName, stance);
+    }
+
+    private AnimationStance ResolveStance()
+    {
+        return ItemRules.ResolveAnimationStance(
+            unitController.currentWeapon,
+            unitController.currentOffHandWeapon != null
+                ? unitController.currentOffHandWeapon
+                : unitController.offHandItemWeapon);
+    }
+
+    private bool HasParam(string name)
+    {
+        if (animator == null || string.IsNullOrEmpty(name))
+            return false;
+
+        var parameters = animator.parameters;
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if (parameters[i].name == name)
+                return true;
+        }
+
+        return false;
     }
 }

@@ -12,4 +12,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b36c5779a50d426893bb81edb750fed, type: 3}
   m_Name: HumanoidUnarmed
   m_EditorClassIdentifier: 
-  animatorController: {fileID: 9100000, guid: 5d42d8ba6489eee4e82c90ef3d9e7902, type: 2}
+  animatorController: {fileID: 9100000, guid: 3787a2e4bb814d4c9d480081fc380f58, type: 2}
+  fallback: {fileID: 0}
+  attackMainPlaceholder: {fileID: 7400000, guid: 3414c515c6a2f334da03b4ab3d547691, type: 3}
+  attackOffPlaceholder: {fileID: 7400000, guid: 69f3b1b43eb337548a8633b7b82d6fc6, type: 3}
+  weaponAttacks:
+  - weapon: 0
+    mainHand:
+    - {fileID: 7400000, guid: 3414c515c6a2f334da03b4ab3d547691, type: 3}
+    offHand:
+    - {fileID: 7400000, guid: 69f3b1b43eb337548a8633b7b82d6fc6, type: 3}
+  - weapon: 1
+    mainHand:
+    - {fileID: 7400000, guid: 58f2909dff975b54c8395d479180996e, type: 3}
+    offHand:
+    - {fileID: 7400000, guid: 475796453e56ae447b098689c94bcfb5, type: 3}
+  - weapon: 2
+    mainHand:
+    - {fileID: 7400000, guid: 65ab56ec63abae340b7646d2ed24c864, type: 3}
+    offHand:
+    - {fileID: 7400000, guid: 178c4e04ea221294a8b4befca0ba9aad, type: 3}
+  - weapon: 3
+    mainHand:
+    - {fileID: 7400000, guid: 522e6e5c331853c46a1b4bf644d62789, type: 3}
+    offHand: []
+  - weapon: 4
+    mainHand:
+    - {fileID: 7400000, guid: 26f0fb4f7ac665546a43a8c74e2b99dd, type: 3}
+    - {fileID: 7400000, guid: 36b7c3aada657af4ab2e05f079d7e464, type: 3}
+    offHand: []
+  - weapon: 5
+    mainHand:
+    - {fileID: 7400000, guid: 5a1595ed82ec689419c4279b2645c92a, type: 3}
+    offHand:
+    - {fileID: 7400000, guid: e09064ae1e1e96f489df2505990de15f, type: 3}
+  - weapon: 6
+    mainHand:
+    - {fileID: 7400000, guid: 3414c515c6a2f334da03b4ab3d547691, type: 3}
+    - {fileID: 7400000, guid: 69f3b1b43eb337548a8633b7b82d6fc6, type: 3}
+    offHand: []
+  - weapon: 8
+    mainHand:
+    - {fileID: 7400000, guid: 7b5b17e2d42e0424f9c36012595dc9b6, type: 3}
+    - {fileID: 7400000, guid: dce280ced5e006c4cb0eb0fab2f51b75, type: 3}
+    offHand: []

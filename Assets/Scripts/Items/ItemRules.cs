@@ -1,3 +1,5 @@
+using ShadowInfection.Animations;
+
 namespace ShadowInfection.Items
 {
     public static class ItemRules
@@ -42,12 +44,49 @@ namespace ShadowInfection.Items
             return weapon == WeaponType.TwoHandSword;
         }
 
-        public static WeaponType ResolveAnimationWeaponType(WeaponType? mainHandWeapon, WeaponType? offHandWeapon)
+        public static AnimationStance ResolveAnimationStance(WeaponData mainHand, WeaponData offHand)
         {
-            if (mainHandWeapon == WeaponType.Sword && offHandWeapon == WeaponType.Shield)
-                return WeaponType.SwordAndShield;
+            return ResolveAnimationStance(
+                mainHand != null ? mainHand.weaponType : (WeaponType?)null,
+                offHand != null ? offHand.weaponType : (WeaponType?)null);
+        }
 
-            return mainHandWeapon ?? WeaponType.Unarmed;
+        public static AnimationStance ResolveAnimationStance(
+            WeaponType? mainHandWeapon,
+            WeaponType? offHandWeapon = null)
+        {
+            var main = mainHandWeapon ?? WeaponType.Unarmed;
+            var off = offHandWeapon;
+
+            switch (main)
+            {
+                case WeaponType.TwoHandSword:
+                    return AnimationStance.TwoHandSword;
+                case WeaponType.Bow:
+                    return AnimationStance.Bow;
+                case WeaponType.Gun:
+                    return AnimationStance.Gun;
+                case WeaponType.Staff:
+                    return AnimationStance.Staff;
+                case WeaponType.Pistols:
+                    return AnimationStance.Pistols;
+                case WeaponType.Daggers:
+                    return off == WeaponType.Sword
+                        ? AnimationStance.Armed
+                        : AnimationStance.Daggers;
+                case WeaponType.Sword:
+                    if (off == WeaponType.Sword || off == WeaponType.Daggers)
+                        return AnimationStance.Armed;
+                    return AnimationStance.Sword;
+                default:
+                    if (off == WeaponType.Pistols)
+                        return AnimationStance.Pistols;
+                    if (off == WeaponType.Daggers)
+                        return AnimationStance.Daggers;
+                    if (off == WeaponType.Sword)
+                        return AnimationStance.Sword;
+                    return AnimationStance.Unarmed;
+            }
         }
 
         public static bool IsDualWieldWeapon(WeaponType weapon)
@@ -63,11 +102,6 @@ namespace ShadowInfection.Items
         public static float GetOffHandDamageMultiplier(WeaponType weapon)
         {
             return weapon == WeaponType.Unarmed ? 1f : OffHandDamageMultiplier;
-        }
-
-        public static bool IsPairedTwoModelWeapon(WeaponType weapon)
-        {
-            return weapon == WeaponType.SwordAndShield;
         }
 
         public static bool CanDualWieldTogether(WeaponType? mainHandWeapon, WeaponType offHandWeapon)
@@ -94,8 +128,7 @@ namespace ShadowInfection.Items
 
         public static bool CanShieldWithMainHand(WeaponType? mainHandWeapon)
         {
-            return mainHandWeapon == WeaponType.Sword
-                || mainHandWeapon == WeaponType.SwordAndShield;
+            return mainHandWeapon == WeaponType.Sword;
         }
 
         public static bool CanEquipWithWeapon(ItemDefinition piece, WeaponType? mainHandWeapon)
@@ -242,7 +275,6 @@ namespace ShadowInfection.Items
                     weight = ArmorWeight.Leather;
                     return true;
                 case WeaponType.Sword:
-                case WeaponType.SwordAndShield:
                 case WeaponType.TwoHandSword:
                     weight = ArmorWeight.Plate;
                     return true;

@@ -15,4 +15,3 @@ MonoBehaviour:
   modelName: totemOfNature
   prefab: {fileID: 8647720966992147204, guid: f678ca48cdaa7084383728340cc23a58, type: 3}
   defaultAnimationSet: {fileID: 0}
-  weaponAnimationOverrides: []

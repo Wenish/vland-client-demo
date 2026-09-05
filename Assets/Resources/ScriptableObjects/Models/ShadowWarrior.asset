@@ -15,18 +15,3 @@ MonoBehaviour:
   modelName: shadowWarrior
   prefab: {fileID: 7239584528087667514, guid: f215cdb812633413396334faa2f243b9, type: 3}
   defaultAnimationSet: {fileID: 11400000, guid: bec1bb204dcf24bd2aa530e8c015e485, type: 2}
-  weaponAnimationOverrides:
-  - weaponType: 3
-    animationSet: {fileID: 11400000, guid: 051281fdff18e4b1abcd3fa9dbb3efe1, type: 2}
-  - weaponType: 1
-    animationSet: {fileID: 11400000, guid: a1e66d9cbcbde4be8813018f9d2392fe, type: 2}
-  - weaponType: 2
-    animationSet: {fileID: 11400000, guid: 0cdf72966701f493db7202ae92a01dfa, type: 2}
-  - weaponType: 4
-    animationSet: {fileID: 11400000, guid: d4424c69e2fe34c6ebd3e664c1b1733a, type: 2}
-  - weaponType: 5
-    animationSet: {fileID: 11400000, guid: 5e9b076841e1942539e8f39e213691e4, type: 2}
-  - weaponType: 6
-    animationSet: {fileID: 11400000, guid: aa54fac528ec6471885b34ca2d9ba350, type: 2}
-  - weaponType: 9
-    animationSet: {fileID: 11400000, guid: cd9f46170d2b948ff6153a02c4e7f91b, type: 2}

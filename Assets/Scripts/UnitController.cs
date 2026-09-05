@@ -156,6 +156,7 @@ public class UnitController : NetworkBehaviour
     public WeaponData currentOffHandWeapon;
     public WeaponData offHandItemWeapon;
     public int LastAttackIndex { get; private set; }
+    public int LastAttackVersion { get; private set; }
     private WeaponController weaponController;
     public event Action<UnitController> OnWeaponChange = delegate { };
 
@@ -1074,15 +1075,17 @@ public class UnitController : NetworkBehaviour
     public void RaiseOnAttackStartEvent(int attackIndex)
     {
         LastAttackIndex = attackIndex;
+        LastAttackVersion = attackIndex % 2;
         OnAttackStart((this, attackIndex));
-        RpcRaiseOnAttackStartEvent(attackIndex);
+        RpcRaiseOnAttackStartEvent(attackIndex, LastAttackVersion);
     }
 
     [ClientRpc]
-    public void RpcRaiseOnAttackStartEvent(int attackIndex)
+    public void RpcRaiseOnAttackStartEvent(int attackIndex, int attackVersion)
     {
         if (isServer) return;
         LastAttackIndex = attackIndex;
+        LastAttackVersion = attackVersion;
         OnAttackStart((this, attackIndex));
     }
 
