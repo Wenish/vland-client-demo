@@ -54,17 +54,35 @@ jobs:
       - name: Disk space after cleanup
         run: df -h
 
-      # 6. Cache Unity Library
+      # 6. Unity 6.6 Windows/mac images get SIGKILL (exit 137) on 16GB runners with no swap
+      - name: Add swap space
+        run: |
+          sudo swapoff -a || true
+          sudo rm -f /swapfile
+          sudo fallocate -l 8G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=8192
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          sudo sysctl vm.swappiness=80
+          free -h
+          swapon --show
+
+      - name: Read Unity version
+        id: unity
+        run: |
+          ver="$(awk '/m_EditorVersion:/{print $2; exit}' ProjectSettings/ProjectVersion.txt)"
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+
+      # 7. Cache Unity Library
       - name: Cache Library
         uses: actions/cache@v6
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ matrix.targetPlatform }}-${{ steps.unity.outputs.version }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-${{ matrix.targetPlatform }}-
-            Library-
+            Library-${{ matrix.targetPlatform }}-${{ steps.unity.outputs.version }}-
 
-      # 7. Extract version from tag
+      # 8. Extract version from tag
       - name: Extract version from tag
         id: version
         shell: bash
@@ -79,7 +97,7 @@ jobs:
           ver="${ref#v}"
           echo "version=$ver" >> "$GITHUB_OUTPUT"
 
-      # 8. Build with Unity
+      # 9. Build with Unity
       - name: Build with Unity
         id: buildStep
         uses: game-ci/unity-builder@v5
@@ -92,14 +110,14 @@ jobs:
           versioning: Semantic
           buildName: "Shadow Infection"
 
-      # 9. Zip build
+      # 10. Zip build
       - name: Zip build
         run: |
           mkdir -p artifacts
           cd build/${{ matrix.targetPlatform }}
           zip -r "../../artifacts/${{ matrix.targetPlatform }}_${{ steps.version.outputs.version }}.zip" .
 
-      # 10. Upload artifact
+      # 11. Upload artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
