@@ -7,7 +7,7 @@ public class AnimationSetData : ScriptableObject
     [Tooltip("Shared Humanoid controller, or a sparse AnimatorOverrideController of it.")]
     public RuntimeAnimatorController animatorController;
 
-    [Tooltip("When a weapon has no clips here, use this set. Zombie overrides Unarmed and falls back to Humanoid for bow, etc.")]
+    [Tooltip("When a weapon has no clips here, use this set. Zombie overrides Unarmed attacks and falls back to Humanoid for other weapons.")]
     public AnimationSetData fallback;
 
     [Tooltip("Placeholder clip on Humanoid Attack0. Runtime swaps this for the chosen attack.")]
