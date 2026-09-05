@@ -142,13 +142,7 @@ public class WeaponController : NetworkBehaviour
         if (!mainReady && !offReady)
             return false;
 
-        if (mainReady && offReady)
-        {
-            useOffHand = lastOffHandAttackTime < lastMainAttackTime;
-            return true;
-        }
-
-        useOffHand = offReady;
+        useOffHand = offReady && !mainReady;
         return true;
     }
 
