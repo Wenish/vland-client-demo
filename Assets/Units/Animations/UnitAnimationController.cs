@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ShadowInfection.Animations;
 using ShadowInfection.Items;
 using UnityEngine;
@@ -270,8 +271,7 @@ public class UnitAnimationController : MonoBehaviour
 
         if (source != null && (runtimeOverride == null || boundSource != source))
         {
-            runtimeOverride = new AnimatorOverrideController(source);
-            runtimeOverride.hideFlags = HideFlags.HideAndDontSave;
+            runtimeOverride = CreateRuntimeOverride(source);
             boundSource = source;
             animator.runtimeAnimatorController = runtimeOverride;
         }
@@ -291,6 +291,40 @@ public class UnitAnimationController : MonoBehaviour
         wasCasting = IsCastingOrChanneling(actionState);
         if (wasCasting)
             BeginCastAnimation();
+    }
+
+    private static AnimatorOverrideController CreateRuntimeOverride(RuntimeAnimatorController source)
+    {
+        var chain = new List<AnimatorOverrideController>();
+        var current = source;
+        while (current is AnimatorOverrideController nested)
+        {
+            chain.Add(nested);
+            current = nested.runtimeAnimatorController;
+        }
+
+        var runtime = new AnimatorOverrideController(current != null ? current : source);
+        runtime.hideFlags = HideFlags.HideAndDontSave;
+
+        var merged = new Dictionary<AnimationClip, AnimationClip>();
+        for (int i = chain.Count - 1; i >= 0; i--)
+        {
+            var pairs = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+            chain[i].GetOverrides(pairs);
+            for (int p = 0; p < pairs.Count; p++)
+            {
+                var original = pairs[p].Key;
+                var mapped = pairs[p].Value;
+                if (original == null || mapped == null || mapped == original)
+                    continue;
+                merged[original] = mapped;
+            }
+        }
+
+        if (merged.Count > 0)
+            runtime.ApplyOverrides(new List<KeyValuePair<AnimationClip, AnimationClip>>(merged));
+
+        return runtime;
     }
 
     private void ApplyStance()
